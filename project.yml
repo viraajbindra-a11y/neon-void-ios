@@ -37,6 +37,7 @@ targets:
             echo "Copied WebContent to app bundle"
           fi
         name: Copy WebContent Fallback
+        basedOnDependencyAnalysis: false
     info:
       path: NeonVoid/Info.plist
       properties:

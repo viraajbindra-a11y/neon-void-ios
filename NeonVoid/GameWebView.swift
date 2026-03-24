@@ -25,9 +25,10 @@ struct GameWebView: UIViewRepresentable {
         config.userContentController.addUserScript(safeAreaScript)
 
         let webView = WKWebView(frame: .zero, configuration: config)
-        webView.isOpaque = false
-        webView.backgroundColor = .black
-        webView.scrollView.backgroundColor = .black
+        webView.isOpaque = true
+        webView.backgroundColor = UIColor(red: 0.024, green: 0.024, blue: 0.047, alpha: 1.0) // #06060c
+        webView.scrollView.backgroundColor = UIColor(red: 0.024, green: 0.024, blue: 0.047, alpha: 1.0)
+        webView.overrideUserInterfaceStyle = .dark
         webView.scrollView.isScrollEnabled = false
         webView.scrollView.bounces = false
         webView.scrollView.contentInsetAdjustmentBehavior = .never
