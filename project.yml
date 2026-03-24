@@ -3,6 +3,7 @@ options:
   bundleIdPrefix: com.neonvoid
   deploymentTarget:
     iOS: "16.0"
+    visionOS: "1.0"
   xcodeVersion: "15.0"
 
 settings:
@@ -39,3 +40,23 @@ targets:
         CURRENT_PROJECT_VERSION: 1
         CODE_SIGN_STYLE: Automatic
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+
+  NeonVoidVision:
+    type: application
+    platform: visionOS
+    sources:
+      - path: NeonVoidVision
+      - path: NeonVoid/GameWebView.swift
+    resources:
+      - path: NeonVoid/WebContent
+        type: folder
+      - path: NeonVoid/Assets.xcassets
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.neonvoid.vision
+        PRODUCT_NAME: NeonVoidVision
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: 1
+        CODE_SIGN_STYLE: Automatic
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        SWIFT_VERSION: "5.9"
