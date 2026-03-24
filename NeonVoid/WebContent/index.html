@@ -11755,13 +11755,14 @@ if(mp.grappleHook){let gh=mp.grappleHook;mx.strokeStyle=COLORS.neon;mx.lineWidth
         // ==================== FUNCTION ALIASES ====================
         // These expose functions defined in later script blocks so main-script menu buttons can call them.
         // They use late-binding so the last-script-block definitions will already exist when called.
-        window.openLeaderboards = function(){ if(window.openLeaderboardsPanel) window.openLeaderboardsPanel(); else if(window.openPersonalLeaderboard) window.openPersonalLeaderboard(); else alert('Leaderboards coming soon'); };
-        window.openClan = function(){ if(window.openClanMenu) window.openClanMenu(); else alert('Clans coming soon'); };
-        window.openMastery = function(){ if(window.openMasteryPanel) window.openMasteryPanel(); else alert('Mastery coming soon'); };
-        window.openBlueprints = function(){ if(window.openBlueprintsPanel) window.openBlueprintsPanel(); else alert('Blueprints coming soon'); };
-        window.openBounties = function(){ if(window.openBountyBoard) window.openBountyBoard(); else alert('Bounties coming soon'); };
-        window.startEscort = function(){ if(window.startEscortMission) window.startEscortMission(); else alert('Escort coming soon'); };
-        window.openVIPPanel = function(){ if(window.openVIPPanelFn) window.openVIPPanelFn(); else alert('VIP Panel coming soon'); };
+        function _tryCall(fns, label) { for(var i=0;i<fns.length;i++){if(typeof window[fns[i]]==='function'){window[fns[i]]();return;}} setTimeout(function(){for(var i=0;i<fns.length;i++){if(typeof window[fns[i]]==='function'){window[fns[i]]();return;}} alert(label+' is still loading. Try again in a moment.');},500); }
+        window.openLeaderboards = function(){ _tryCall(['openLeaderboardsPanel','openPersonalLeaderboard','openLeaderboards'],'Leaderboards'); };
+        window.openClan = function(){ _tryCall(['openClanMenu'],'Clan'); };
+        window.openMastery = function(){ _tryCall(['openMasteryPanel'],'Mastery'); };
+        window.openBlueprints = function(){ _tryCall(['openBlueprintsPanel'],'Blueprints'); };
+        window.openBounties = function(){ _tryCall(['openBountyBoard'],'Bounties'); };
+        window.startEscort = function(){ _tryCall(['startEscortMission'],'Escort'); };
+        window.openVIPPanel = function(){ _tryCall(['openVIPPanelFn'],'VIP'); };
         window.openPhotoMode = function(){
             if(typeof state!=='undefined'&&state.active){
                 photoMode=true; state.paused=true;
@@ -11772,11 +11773,11 @@ if(mp.grappleHook){let gh=mp.grappleHook;mx.strokeStyle=COLORS.neon;mx.lineWidth
         };
         // These will be assigned once the last script block runs, but defining stubs here
         // prevents "not defined" errors if buttons are clicked before that block executes.
-        window.openBlackMarket = window.openBlackMarket || function(){ alert('Black Market loading...'); };
-        window.openContracts = window.openContracts || function(){ alert('Contracts loading...'); };
-        window.openRebirth = window.openRebirth || function(){ alert('Rebirth loading...'); };
-        window.openGemShop = window.openGemShop || function(){ alert('Gem Shop loading...'); };
-        window.openTradePost = window.openTradePost || function(){ alert('Trade Post loading...'); };
+        window.openBlackMarket = function(){ _tryCall(['_real_openBlackMarket'],'Black Market'); };
+        window.openContracts = function(){ _tryCall(['_real_openContracts'],'Contracts'); };
+        window.openRebirth = function(){ _tryCall(['_real_openRebirth'],'Rebirth'); };
+        window.openGemShop = function(){ _tryCall(['_real_openGemShop'],'Gem Shop'); };
+        window.openTradePost = function(){ _tryCall(['_real_openTradePost'],'Trade Post'); };
     </script>
     <script>
     if ('serviceWorker' in navigator) {
@@ -12557,6 +12558,12 @@ window.openPersonalLeaderboard = openPersonalLeaderboard;
 window.openLeaderboards = openPersonalLeaderboard;
 window.playBootCinematic = playBootCinematic;
 window.openBountyBoard = (typeof openBountyBoard === 'function') ? openBountyBoard : function(){ alert('Bounties coming soon'); };
+// _real_ prefixed exports for the retry-call system in main script
+window._real_openBlackMarket = openBlackMarket;
+window._real_openContracts = openContracts;
+window._real_openRebirth = openRebirth;
+window._real_openGemShop = openGemShop;
+window._real_openTradePost = openTradePost;
 window.openVIPPanelFn = function(){
   var t = getVIPTier();
   var ol = document.createElement('div');
@@ -12641,21 +12648,11 @@ window.openAchievementsPanel = function(){
   var _osi=typeof startInfinite==='function'?startInfinite:null;
   if(_osi)startInfinite=function(){try{applySeasonalTheme();}catch(_){}startReplayRecording();resetComboAnn();_osi();};
 
-  // Hook returnToMenu - inject extra buttons
+  // Hook returnToMenu - just update VIP badge, buttons are in modern UI already
   var _ortm=typeof returnToMenu==='function'?returnToMenu:null;
-  if(_ortm)returnToMenu=function(){
+  if(_ortm)window.returnToMenu=function(){
     _ortm();
-    setTimeout(function(){
-      var mb=document.getElementById('menu-btns');if(!mb)return;
-      if(document.getElementById('extra-menu-btns'))return;
-      var extDiv=document.createElement('div');extDiv.id='extra-menu-btns';extDiv.style.cssText='margin-top:8px;display:flex;flex-wrap:wrap;gap:4px;justify-content:center;max-width:540px';
-      var btns=[['BATTLE PASS','openBattlePass()','#ffe04b'],['CONTRACTS','openContracts()','#44ff88'],['BLACK MARKET','openBlackMarket()','#ff4488'],['LEADERBOARD','openPersonalLeaderboard()','#00ff88'],['MASTERY','openMasteryPanel()','#ffaa00'],['BLUEPRINTS','openBlueprintsPanel()','#44ffdd'],['GEM SHOP','openGemShop()','#88eeff'],['TRADE POST','openTradePost()','#ffcc44'],['CLAN','openClanMenu()','#ff9900'],['EMOTES','openEmoteWheel()','#ffcc88'],['TITLES','openTitleSelector()','#c8a0ff'],['GLOW','openGlowColorPicker()','#00ffff'],['BG THEME','openBGThemePicker()','#aaddff'],['REPLAY','openReplayViewer()','#ffbb44'],['REBIRTH','openRebirth()','#ff6622']];
-      for(var i=0;i<btns.length;i++){var b=btns[i];var btn=document.createElement('button');btn.textContent=b[0];btn.setAttribute('onclick',b[1]);btn.style.cssText='background:#111;color:'+b[2]+';border:1px solid '+b[2]+';padding:5px 10px;font-family:monospace;font-size:11px;cursor:pointer;border-radius:3px';extDiv.appendChild(btn);}
-      mb.parentNode&&mb.parentNode.insertBefore(extDiv,mb.nextSibling);
-      if(!document.getElementById('player-title-display')){var td=document.createElement('div');td.id='player-title-display';td.style.cssText='text-align:center;color:#c8a0ff;font-family:monospace;font-size:13px;margin-top:4px';td.textContent='['+equippedTitle+']';extDiv.parentNode&&extDiv.parentNode.insertBefore(td,extDiv);}
-      if(!document.getElementById('vip-badge')){var vd=document.createElement('div');vd.id='vip-badge';vd.style.cssText='text-align:center;font-family:monospace;font-size:12px;margin-top:2px';extDiv.parentNode&&extDiv.parentNode.appendChild(vd);}
-      updateVIPBadge();
-    },150);
+    setTimeout(function(){ try{updateVIPBadge();}catch(_){} },150);
   };
 })();
 
