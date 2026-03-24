@@ -250,7 +250,7 @@
                     drawShip(ctx,sh.x,curY,sh.scale,sh.tilt);
                     ctx.globalAlpha=1;
                 }
-                if(document.getElementById('login-screen')&&!document.getElementById('login-screen').classList.contains('hidden'))requestAnimationFrame(loop);
+                if(document.getElementById('login-screen')&&!document.getElementById('login-screen').classList.contains('hidden'))requestAnimationFrame(loop);else{ctx.clearRect(0,0,lsc.width,lsc.height);lsc.style.display='none';}
             }
             loop();
         })();
@@ -2013,6 +2013,7 @@
 
 
             shoot() {
+                if (state._hordeNoShoot || state._pacifistMode) return;
                 // Feature 1: Fire charged shot if flag set
                 if (this._fireCharged) { this._fireCharged = false; this._shootCharged(); return; }
                 // Feature 3: Railgun mode
@@ -6107,6 +6108,7 @@
             state = { active: true, paused: false, mode: 'horde_defense', frame: 0, score: 0, combo: 1, xp: 0, level: 1, xpNeeded: 99999, runCoins: 0, kills: 0, shake: 0, currentStage: 1, bossesDefeated: 0, difficulty: 1, nextBossLevel: 9999, spawningBoss: false, warping: false, warpFrames: 0, hardcore: false, hyper: false, stats: getBaseStats() };
             hordeState = { wave: 0, maxWaves: 20, baseHp: 1000, baseMaxHp: 1000, coins: 100, turrets: [], waveActive: false, waveEnemies: 0, waveKills: 0, placingTurret: null, betweenWaves: true, betweenTimer: 180 };
             ui.status.innerText = 'HORDE DEFENSE - PLACE TURRETS, SURVIVE 20 WAVES';
+            state.stats.bombDrones=0;state.stats.laserDrones=0;state.stats.miniDrones=0;state.stats.scatterDrones=0;state.stats.empDrones=0;state.stats.sawDrones=0;state.stats.sniperDrones=0;state.stats.guardian=0;state.stats.tesla=0;state.stats.projCount=0;state.stats.homing=false;state.stats.explosive=false;state._hordeNoShoot=true;
             initGameBase();
             setTimeout(() => {
                 showHordePlacementUI();
@@ -7943,6 +7945,7 @@
         let menuFrame = 0;
         function animateMenuBg() {
             menuFrame++;
+            if(menuFrame%2===0){menuAnimId=requestAnimationFrame(animateMenuBg);return;}
             menuCtx.fillStyle = 'rgba(0,0,0,0.15)';
             menuCtx.fillRect(0, 0, menuCanvas.width, menuCanvas.height);
             // Nebula clouds
@@ -10167,6 +10170,7 @@ function generateSyncCode() {
 
                     let menuShipRAF = null;
                     function drawMenuShip() {
+                        if(shipFrame%2===0){menuShipRAF=requestAnimationFrame(drawMenuShip);shipFrame++;return;}
                         shipFrame++;
                         shipBob = Math.sin(shipFrame * 0.03) * 3 * shipScale;
                         let curX = shipX + Math.sin(shipFrame * 0.015) * 15 * shipScale;
@@ -11751,13 +11755,13 @@ if(mp.grappleHook){let gh=mp.grappleHook;mx.strokeStyle=COLORS.neon;mx.lineWidth
         // ==================== FUNCTION ALIASES ====================
         // These expose functions defined in later script blocks so main-script menu buttons can call them.
         // They use late-binding so the last-script-block definitions will already exist when called.
-        window.openLeaderboards = function(){ if(typeof openLeaderboardsPanel==='function') openLeaderboardsPanel(); else if(typeof openPersonalLeaderboard==='function') openPersonalLeaderboard(); else alert('Leaderboards coming soon'); };
-        window.openClan = function(){ if(typeof openClanMenu==='function') openClanMenu(); else alert('Clans coming soon'); };
-        window.openMastery = function(){ if(typeof openMasteryPanel==='function') openMasteryPanel(); else alert('Mastery coming soon'); };
-        window.openBlueprints = function(){ if(typeof openBlueprintsPanel==='function') openBlueprintsPanel(); else alert('Blueprints coming soon'); };
-        window.openBounties = function(){ if(typeof openBountyBoard==='function') openBountyBoard(); else alert('Bounties coming soon'); };
-        window.startEscort = function(){ if(typeof startEscortMission==='function') startEscortMission(); else alert('Escort coming soon'); };
-        window.openVIPPanel = function(){ if(typeof openVIPPanelFn==='function') openVIPPanelFn(); else alert('VIP Panel coming soon'); };
+        window.openLeaderboards = function(){ if(window.openLeaderboardsPanel) window.openLeaderboardsPanel(); else if(window.openPersonalLeaderboard) window.openPersonalLeaderboard(); else alert('Leaderboards coming soon'); };
+        window.openClan = function(){ if(window.openClanMenu) window.openClanMenu(); else alert('Clans coming soon'); };
+        window.openMastery = function(){ if(window.openMasteryPanel) window.openMasteryPanel(); else alert('Mastery coming soon'); };
+        window.openBlueprints = function(){ if(window.openBlueprintsPanel) window.openBlueprintsPanel(); else alert('Blueprints coming soon'); };
+        window.openBounties = function(){ if(window.openBountyBoard) window.openBountyBoard(); else alert('Bounties coming soon'); };
+        window.startEscort = function(){ if(window.startEscortMission) window.startEscortMission(); else alert('Escort coming soon'); };
+        window.openVIPPanel = function(){ if(window.openVIPPanelFn) window.openVIPPanelFn(); else alert('VIP Panel coming soon'); };
         window.openPhotoMode = function(){
             if(typeof state!=='undefined'&&state.active){
                 photoMode=true; state.paused=true;
@@ -12537,11 +12541,14 @@ function playBootCinematic(onDone){
 window.openClanMenu = openClanMenu;
 window.openMasteryPanel = openMasteryPanel;
 window.openBlueprintsPanel = openBlueprintsPanel;
-window.openBlackMarket = openBlackMarket;
-window.openContracts = openContracts;
-window.openRebirth = openRebirth;
-window.openGemShop = openGemShop;
-window.openTradePost = openTradePost;
+window.openBlackMarket = typeof openBlackMarket==='function'?openBlackMarket:function(){alert('Black Market coming soon');};
+window.openContracts = typeof openContracts==='function'?openContracts:function(){alert('Contracts coming soon');};
+window.openRebirth = typeof openRebirth==='function'?openRebirth:function(){alert('Rebirth coming soon');};
+window.openGemShop = typeof openGemShop==='function'?openGemShop:function(){alert('Gem Shop coming soon');};
+window.openTradePost = typeof openTradePost==='function'?openTradePost:function(){alert('Trade Post coming soon');};
+window.openBattlePass = typeof openBattlePass==='function'?openBattlePass:function(){alert('Battle Pass coming soon');};
+window.openAchievements = typeof openAchievementsPanel==='function'?openAchievementsPanel:function(){alert('Achievements coming soon');};
+window.openPrestige = typeof openPrestigePanel==='function'?openPrestigePanel:function(){alert('Prestige coming soon');};
 window.openLeaderboardsPanel = openPersonalLeaderboard;
 window.openBountyBoard = (typeof openBountyBoard === 'function') ? openBountyBoard : function(){ alert('Bounties coming soon'); };
 window.openVIPPanelFn = function(){
