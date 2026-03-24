@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Void Energy - Idle Clicker</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --neon-cyan: #00f0ff;
+    --neon-magenta: #ff00ff;
+    --neon-purple: #b000ff;
+    --neon-blue: #4040ff;
+    --neon-green: #00ff88;
+    --neon-yellow: #ffff00;
+    --neon-orange: #ff8800;
+    --neon-red: #ff2244;
+    --bg-dark: #050510;
+    --bg-panel: rgba(10, 10, 30, 0.85);
+    --border-glow: rgba(0, 240, 255, 0.3);
+  }
+
+  body {
+    background: var(--bg-dark);
+    color: #e0e0ff;
+    font-family: 'Rajdhani', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* Background grid effect */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      linear-gradient(rgba(0,240,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,240,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at 50% 30%, rgba(0,100,255,0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  #game-container {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 320px 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 16px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px;
+    min-height: 100vh;
+  }
+
+  /* Header */
+  #header {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 12px 0 8px;
+  }
+
+  #header h1 {
+    font-family: 'Orbitron', monospace;
+    font-size: 2rem;
+    font-weight: 900;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta), var(--neon-cyan));
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: titleShimmer 4s linear infinite;
+    text-shadow: none;
+    filter: drop-shadow(0 0 10px rgba(0,240,255,0.5));
+  }
+
+  @keyframes titleShimmer {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+
+  #energy-display {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.8rem;
+    color: var(--neon-cyan);
+    text-shadow: 0 0 20px rgba(0,240,255,0.6);
+    margin: 6px 0 2px;
+  }
+
+  #eps-display {
+    font-size: 1rem;
+    color: rgba(0,240,255,0.6);
+    font-family: 'Rajdhani', sans-serif;
+  }
+
+  /* Panels */
+  .panel {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-glow);
+    border-radius: 12px;
+    padding: 16px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 20px rgba(0,240,255,0.05), inset 0 0 30px rgba(0,0,0,0.3);
+  }
+
+  .panel-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--neon-cyan);
+    text-shadow: 0 0 10px rgba(0,240,255,0.4);
+    border-bottom: 1px solid rgba(0,240,255,0.15);
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+  }
+
+  /* Left panel - Generators */
+  #generators-panel {
+    grid-column: 1;
+    grid-row: 2;
+    overflow-y: auto;
+    max-height: calc(100vh - 140px);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,240,255,0.3) transparent;
+  }
+
+  .generator-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 2px 12px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    border: 1px solid rgba(0,240,255,0.1);
+    border-radius: 8px;
+    background: rgba(0,240,255,0.02);
+    transition: all 0.3s;
+  }
+
+  .generator-item:hover {
+    border-color: rgba(0,240,255,0.3);
+    background: rgba(0,240,255,0.05);
+  }
+
+  .generator-item.cant-afford {
+    opacity: 0.45;
+  }
+
+  .gen-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--neon-cyan);
+  }
+
+  .gen-count {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85rem;
+    color: var(--neon-green);
+    text-align: right;
+    text-shadow: 0 0 8px rgba(0,255,136,0.4);
+    transition: transform 0.3s, color 0.3s;
+  }
+
+  .gen-count.just-bought {
+    transform: scale(1.5);
+    color: var(--neon-yellow);
+  }
+
+  .gen-info {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.4);
+  }
+
+  .gen-eps {
+    color: rgba(0,255,136,0.6);
+  }
+
+  .gen-buy {
+    grid-column: 1 / -1;
+    margin-top: 6px;
+    padding: 6px 16px;
+    border: 1px solid var(--neon-cyan);
+    border-radius: 6px;
+    background: rgba(0,240,255,0.08);
+    color: var(--neon-cyan);
+    font-family: 'Orbitron', monospace;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .gen-buy:hover:not(:disabled) {
+    background: rgba(0,240,255,0.2);
+    box-shadow: 0 0 15px rgba(0,240,255,0.3);
+    transform: translateY(-1px);
+  }
+
+  .gen-buy:disabled {
+    cursor: not-allowed;
+    border-color: rgba(0,240,255,0.15);
+    color: rgba(0,240,255,0.3);
+  }
+
+  .gen-buy:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  /* Center - Orb */
+  #orb-panel {
+    grid-column: 2;
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    position: relative;
+  }
+
+  #orb-container {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #orb {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%,
+      rgba(100,200,255,0.4) 0%,
+      rgba(0,150,255,0.2) 30%,
+      rgba(0,50,200,0.3) 60%,
+      rgba(10,0,40,0.8) 100%
+    );
+    border: 2px solid rgba(0,240,255,0.4);
+    box-shadow:
+      0 0 30px rgba(0,240,255,0.3),
+      0 0 60px rgba(0,100,255,0.2),
+      0 0 100px rgba(0,50,200,0.1),
+      inset 0 0 40px rgba(0,150,255,0.2);
+    transition: box-shadow 0.15s, transform 0.1s;
+    animation: orbPulse 3s ease-in-out infinite;
+    position: relative;
+    z-index: 2;
+  }
+
+  #orb::before {
+    content: '';
+    position: absolute;
+    top: 15%; left: 20%;
+    width: 25%; height: 20%;
+    background: radial-gradient(ellipse, rgba(180,220,255,0.6) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(4px);
+  }
+
+  #orb::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(0,200,255,0.05) 100%);
+    animation: orbInnerRotate 8s linear infinite;
+  }
+
+  @keyframes orbPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+  }
+
+  @keyframes orbInnerRotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  #orb-container:active #orb {
+    transform: scale(0.95);
+  }
+
+  #orb.clicking {
+    box-shadow:
+      0 0 50px rgba(0,240,255,0.6),
+      0 0 100px rgba(0,100,255,0.4),
+      0 0 150px rgba(0,50,200,0.2),
+      0 0 200px rgba(180,0,255,0.15),
+      inset 0 0 60px rgba(0,200,255,0.4);
+    border-color: rgba(0,240,255,0.8);
+  }
+
+  #orb-ring {
+    position: absolute;
+    top: -10px; left: -10px; right: -10px; bottom: -10px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,240,255,0.15);
+    animation: ringRotate 20s linear infinite;
+    z-index: 1;
+  }
+
+  #orb-ring::before, #orb-ring::after {
+    content: '';
+    position: absolute;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--neon-cyan);
+    box-shadow: 0 0 10px var(--neon-cyan);
+  }
+
+  #orb-ring::before { top: -4px; left: 50%; transform: translateX(-50%); }
+  #orb-ring::after { bottom: -4px; left: 50%; transform: translateX(-50%); }
+
+  @keyframes ringRotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  #click-value-display {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.8rem;
+    color: rgba(0,240,255,0.5);
+    text-align: center;
+  }
+
+  /* Particles */
+  .particle {
+    position: absolute;
+    pointer-events: none;
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    color: var(--neon-cyan);
+    text-shadow: 0 0 8px rgba(0,240,255,0.8);
+    z-index: 100;
+    animation: particleFly 1s ease-out forwards;
+    font-size: 0.85rem;
+  }
+
+  @keyframes particleFly {
+    0% {
+      opacity: 1;
+      transform: translate(0, 0) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(var(--dx), var(--dy)) scale(0.5);
+    }
+  }
+
+  .dot-particle {
+    position: absolute;
+    pointer-events: none;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    z-index: 99;
+    animation: dotFly 0.8s ease-out forwards;
+  }
+
+  @keyframes dotFly {
+    0% {
+      opacity: 1;
+      transform: translate(0,0) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(var(--dx), var(--dy)) scale(0);
+    }
+  }
+
+  /* Right panel - Upgrades/Prestige/Stats */
+  #right-panel {
+    grid-column: 3;
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,240,255,0.3) transparent;
+  }
+
+  /* Upgrades */
+  .upgrade-item {
+    padding: 10px 12px;
+    margin-bottom: 6px;
+    border: 1px solid rgba(255,0,255,0.15);
+    border-radius: 8px;
+    background: rgba(255,0,255,0.03);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .upgrade-item:hover:not(.owned):not(.cant-afford-upgrade) {
+    border-color: rgba(255,0,255,0.4);
+    background: rgba(255,0,255,0.08);
+    box-shadow: 0 0 15px rgba(255,0,255,0.1);
+  }
+
+  .upgrade-item.owned {
+    border-color: rgba(0,255,136,0.3);
+    background: rgba(0,255,136,0.05);
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  .upgrade-item.cant-afford-upgrade {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .upgrade-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+    color: var(--neon-magenta);
+    margin-bottom: 2px;
+  }
+
+  .upgrade-item.owned .upgrade-name {
+    color: var(--neon-green);
+  }
+
+  .upgrade-desc {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.4);
+  }
+
+  .upgrade-cost {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.7rem;
+    color: var(--neon-magenta);
+    margin-top: 4px;
+  }
+
+  .upgrade-item.owned .upgrade-cost {
+    color: var(--neon-green);
+  }
+
+  /* Prestige */
+  #prestige-panel {
+    border-color: rgba(180,0,255,0.3);
+  }
+
+  #prestige-panel .panel-title {
+    color: var(--neon-purple);
+    border-color: rgba(180,0,255,0.2);
+  }
+
+  .prestige-info {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+
+  .prestige-shards {
+    font-family: 'Orbitron', monospace;
+    font-size: 1rem;
+    color: var(--neon-purple);
+    text-shadow: 0 0 10px rgba(180,0,255,0.5);
+    margin-bottom: 4px;
+  }
+
+  .prestige-multiplier {
+    font-size: 0.8rem;
+    color: rgba(180,0,255,0.6);
+    margin-bottom: 10px;
+  }
+
+  .prestige-gain {
+    font-size: 0.75rem;
+    color: rgba(180,0,255,0.5);
+    margin-bottom: 10px;
+  }
+
+  #prestige-btn {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--neon-purple);
+    border-radius: 8px;
+    background: rgba(180,0,255,0.1);
+    color: var(--neon-purple);
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  #prestige-btn:hover:not(:disabled) {
+    background: rgba(180,0,255,0.25);
+    box-shadow: 0 0 25px rgba(180,0,255,0.3);
+  }
+
+  #prestige-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  /* Stats */
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 0.8rem;
+    border-bottom: 1px solid rgba(0,240,255,0.05);
+  }
+
+  .stat-label {
+    color: rgba(255,255,255,0.4);
+  }
+
+  .stat-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+    color: var(--neon-cyan);
+  }
+
+  /* Save notification */
+  #save-notification {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(60px);
+    background: rgba(0,255,136,0.15);
+    border: 1px solid rgba(0,255,136,0.3);
+    padding: 8px 24px;
+    border-radius: 6px;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.7rem;
+    color: var(--neon-green);
+    transition: transform 0.3s;
+    z-index: 1000;
+  }
+
+  #save-notification.show {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Prestige flash */
+  #prestige-flash {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle, rgba(180,0,255,0.4) 0%, transparent 70%);
+    pointer-events: none;
+    opacity: 0;
+    z-index: 999;
+    transition: opacity 0.5s;
+  }
+
+  #prestige-flash.active {
+    opacity: 1;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    #game-container {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto auto auto;
+    }
+    #generators-panel { grid-column: 1; grid-row: 3; max-height: none; }
+    #orb-panel { grid-column: 1; grid-row: 2; }
+    #right-panel { grid-column: 1; grid-row: 4; max-height: none; }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0,240,255,0.2);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(0,240,255,0.4); }
+</style>
+</head>
+<body>
+
+<div id="game-container">
+  <div id="header">
+    <h1>VOID ENERGY</h1>
+    <div id="energy-display">0</div>
+    <div id="eps-display">0 energy/sec</div>
+  </div>
+
+  <div id="generators-panel" class="panel">
+    <div class="panel-title">Generators</div>
+    <div id="generators-list"></div>
+  </div>
+
+  <div id="orb-panel">
+    <div id="orb-container">
+      <div id="orb-ring"></div>
+      <div id="orb"></div>
+    </div>
+    <div id="click-value-display">+1 per click</div>
+  </div>
+
+  <div id="right-panel">
+    <div class="panel" id="upgrades-panel">
+      <div class="panel-title">Upgrades</div>
+      <div id="upgrades-list"></div>
+    </div>
+
+    <div class="panel" id="prestige-panel">
+      <div class="panel-title">Prestige</div>
+      <div class="prestige-shards">Void Shards: <span id="shard-count">0</span></div>
+      <div class="prestige-multiplier">Multiplier: <span id="prestige-mult">1.00</span>x</div>
+      <div class="prestige-gain">Reset to gain: <span id="prestige-gain-value">0</span> shards</div>
+      <div class="prestige-info">Each shard gives +5% to all production. Requires 1,000 total energy earned.</div>
+      <button id="prestige-btn" disabled>Prestige</button>
+    </div>
+
+    <div class="panel" id="stats-panel">
+      <div class="panel-title">Stats</div>
+      <div class="stat-row"><span class="stat-label">Total Clicks</span><span class="stat-value" id="stat-clicks">0</span></div>
+      <div class="stat-row"><span class="stat-label">Total Earned</span><span class="stat-value" id="stat-earned">0</span></div>
+      <div class="stat-row"><span class="stat-label">Prestige Count</span><span class="stat-value" id="stat-prestige">0</span></div>
+      <div class="stat-row"><span class="stat-label">Time Played</span><span class="stat-value" id="stat-time">0s</span></div>
+    </div>
+  </div>
+</div>
+
+<div id="save-notification">Game Saved</div>
+<div id="prestige-flash"></div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ========== NUMBER FORMATTING ==========
+  const SUFFIXES = ['', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc'];
+
+  function formatNum(n) {
+    if (n < 1000) return Math.floor(n).toString();
+    let tier = Math.floor(Math.log10(Math.abs(n)) / 3);
+    if (tier >= SUFFIXES.length) tier = SUFFIXES.length - 1;
+    const scaled = n / Math.pow(10, tier * 3);
+    const str = scaled >= 100 ? scaled.toFixed(0)
+              : scaled >= 10 ? scaled.toFixed(1)
+              : scaled.toFixed(2);
+    return str + SUFFIXES[tier];
+  }
+
+  // ========== GENERATOR DEFINITIONS ==========
+  const GEN_DEFS = [
+    { id: 'drone',    name: 'Drone',        baseEps: 1,     baseCost: 10,     color: '#00f0ff' },
+    { id: 'miner',    name: 'Miner',        baseEps: 5,     baseCost: 50,     color: '#00ff88' },
+    { id: 'factory',  name: 'Factory',      baseEps: 20,    baseCost: 200,    color: '#ffff00' },
+    { id: 'reactor',  name: 'Reactor',      baseEps: 100,   baseCost: 1000,   color: '#ff8800' },
+    { id: 'qcore',    name: 'Quantum Core', baseEps: 500,   baseCost: 5000,   color: '#ff00ff' },
+    { id: 'singular', name: 'Singularity',  baseEps: 2500,  baseCost: 25000,  color: '#b000ff' },
+    { id: 'vrift',    name: 'Void Rift',    baseEps: 15000, baseCost: 150000, color: '#ff2244' },
+  ];
+
+  // ========== UPGRADE DEFINITIONS ==========
+  const UPGRADE_DEFS = [
+    { id: 'click2x',       name: 'Enhanced Tap',       desc: 'Double click value',              cost: 100,     type: 'click', mult: 2 },
+    { id: 'click4x',       name: 'Void Touch',         desc: 'Double click value again',        cost: 5000,    type: 'click', mult: 2 },
+    { id: 'click8x',       name: 'Quantum Fingers',    desc: 'Double click value again',        cost: 100000,  type: 'click', mult: 2 },
+    { id: 'drone2x',       name: 'Drone Swarm',        desc: '2x Drone output',                 cost: 100,     type: 'gen', genId: 'drone', mult: 2 },
+    { id: 'miner2x',       name: 'Deep Drill',         desc: '2x Miner output',                 cost: 500,     type: 'gen', genId: 'miner', mult: 2 },
+    { id: 'factory2x',     name: 'Assembly Line',      desc: '2x Factory output',               cost: 2000,    type: 'gen', genId: 'factory', mult: 2 },
+    { id: 'reactor2x',     name: 'Fusion Boost',       desc: '2x Reactor output',               cost: 10000,   type: 'gen', genId: 'reactor', mult: 2 },
+    { id: 'qcore2x',       name: 'Entanglement',       desc: '2x Quantum Core output',          cost: 50000,   type: 'gen', genId: 'qcore', mult: 2 },
+    { id: 'singular2x',    name: 'Event Horizon',      desc: '2x Singularity output',           cost: 250000,  type: 'gen', genId: 'singular', mult: 2 },
+    { id: 'vrift2x',       name: 'Dimensional Tear',   desc: '2x Void Rift output',             cost: 1500000, type: 'gen', genId: 'vrift', mult: 2 },
+  ];
+
+  // ========== GAME STATE ==========
+  let state = {
+    energy: 0,
+    totalEarned: 0,
+    totalClicks: 0,
+    clickValue: 1,
+    generators: {},
+    upgrades: {},
+    voidShards: 0,
+    prestigeCount: 0,
+    startTime: Date.now(),
+    lastSave: Date.now(),
+    lastTick: Date.now(),
+  };
+
+  // Init generators
+  GEN_DEFS.forEach(g => {
+    state.generators[g.id] = { count: 0, upgradeMult: 1 };
+  });
+
+  // Init upgrades
+  UPGRADE_DEFS.forEach(u => {
+    state.upgrades[u.id] = false;
+  });
+
+  // ========== COMPUTED VALUES ==========
+  function getPrestigeMult() {
+    return 1 + state.voidShards * 0.05;
+  }
+
+  function getClickValue() {
+    let v = 1;
+    UPGRADE_DEFS.forEach(u => {
+      if (u.type === 'click' && state.upgrades[u.id]) v *= u.mult;
+    });
+    return v * getPrestigeMult();
+  }
+
+  function getGenEps(genDef) {
+    const gs = state.generators[genDef.id];
+    let eps = genDef.baseEps * gs.count * gs.upgradeMult;
+    return eps * getPrestigeMult();
+  }
+
+  function getTotalEps() {
+    let total = 0;
+    GEN_DEFS.forEach(g => { total += getGenEps(g); });
+    return total;
+  }
+
+  function getGenCost(genDef) {
+    const count = state.generators[genDef.id].count;
+    return Math.floor(genDef.baseCost * Math.pow(1.15, count));
+  }
+
+  function getPrestigeGain() {
+    if (state.totalEarned < 1000) return 0;
+    return Math.floor(Math.sqrt(state.totalEarned / 1000));
+  }
+
+  // ========== DOM REFERENCES ==========
+  const energyEl = document.getElementById('energy-display');
+  const epsEl = document.getElementById('eps-display');
+  const genListEl = document.getElementById('generators-list');
+  const upgListEl = document.getElementById('upgrades-list');
+  const clickValEl = document.getElementById('click-value-display');
+  const shardCountEl = document.getElementById('shard-count');
+  const prestigeMultEl = document.getElementById('prestige-mult');
+  const prestigeGainEl = document.getElementById('prestige-gain-value');
+  const prestigeBtn = document.getElementById('prestige-btn');
+  const orbEl = document.getElementById('orb');
+  const orbContainer = document.getElementById('orb-container');
+  const saveNotif = document.getElementById('save-notification');
+  const prestigeFlash = document.getElementById('prestige-flash');
+  const statClicks = document.getElementById('stat-clicks');
+  const statEarned = document.getElementById('stat-earned');
+  const statPrestige = document.getElementById('stat-prestige');
+  const statTime = document.getElementById('stat-time');
+
+  // ========== BUILD UI ==========
+  function buildGenerators() {
+    genListEl.innerHTML = '';
+    GEN_DEFS.forEach(g => {
+      const div = document.createElement('div');
+      div.className = 'generator-item';
+      div.id = 'gen-' + g.id;
+      div.innerHTML = `
+        <span class="gen-name" style="color:${g.color}">${g.name}</span>
+        <span class="gen-count" id="gen-count-${g.id}">0</span>
+        <span class="gen-info"><span class="gen-eps" id="gen-eps-${g.id}">0</span>/s each</span>
+        <button class="gen-buy" id="gen-buy-${g.id}" style="border-color:${g.color};color:${g.color}">
+          Buy - ${formatNum(g.baseCost)}
+        </button>
+      `;
+      genListEl.appendChild(div);
+
+      document.getElementById('gen-buy-' + g.id).addEventListener('click', () => buyGenerator(g));
+    });
+  }
+
+  function buildUpgrades() {
+    upgListEl.innerHTML = '';
+    UPGRADE_DEFS.forEach(u => {
+      const div = document.createElement('div');
+      div.className = 'upgrade-item';
+      div.id = 'upg-' + u.id;
+      div.innerHTML = `
+        <div class="upgrade-name">${u.name}</div>
+        <div class="upgrade-desc">${u.desc}</div>
+        <div class="upgrade-cost">Cost: ${formatNum(u.cost)}</div>
+      `;
+      div.addEventListener('click', () => buyUpgrade(u));
+      upgListEl.appendChild(div);
+    });
+  }
+
+  // ========== ACTIONS ==========
+  function buyGenerator(genDef) {
+    const cost = getGenCost(genDef);
+    if (state.energy < cost) return;
+    state.energy -= cost;
+    state.generators[genDef.id].count++;
+
+    // Animate count
+    const countEl = document.getElementById('gen-count-' + genDef.id);
+    countEl.classList.add('just-bought');
+    setTimeout(() => countEl.classList.remove('just-bought'), 300);
+
+    updateUI();
+  }
+
+  function buyUpgrade(upgDef) {
+    if (state.upgrades[upgDef.id]) return;
+    if (state.energy < upgDef.cost) return;
+    state.energy -= upgDef.cost;
+    state.upgrades[upgDef.id] = true;
+
+    if (upgDef.type === 'gen') {
+      state.generators[upgDef.genId].upgradeMult *= upgDef.mult;
+    }
+
+    updateUI();
+  }
+
+  function doPrestige() {
+    const gain = getPrestigeGain();
+    if (gain <= 0) return;
+
+    // Flash
+    prestigeFlash.classList.add('active');
+    setTimeout(() => prestigeFlash.classList.remove('active'), 600);
+
+    state.voidShards += gain;
+    state.prestigeCount++;
+
+    // Reset progress
+    state.energy = 0;
+    state.totalEarned = 0;
+    state.clickValue = 1;
+    GEN_DEFS.forEach(g => {
+      state.generators[g.id] = { count: 0, upgradeMult: 1 };
+    });
+    UPGRADE_DEFS.forEach(u => {
+      state.upgrades[u.id] = false;
+    });
+
+    updateUI();
+  }
+
+  // ========== CLICK HANDLER ==========
+  let recentClicks = [];
+
+  function handleOrbClick(e) {
+    const cv = getClickValue();
+    state.energy += cv;
+    state.totalEarned += cv;
+    state.totalClicks++;
+
+    // Track click speed
+    recentClicks.push(Date.now());
+    recentClicks = recentClicks.filter(t => Date.now() - t < 2000);
+    updateOrbGlow();
+
+    // Spawn particles
+    spawnClickParticle(e, cv);
+    spawnDotParticles(e);
+
+    // Pulse
+    orbEl.classList.add('clicking');
+    setTimeout(() => orbEl.classList.remove('clicking'), 100);
+
+    updateUI();
+  }
+
+  function updateOrbGlow() {
+    const cps = recentClicks.length / 2;
+    const intensity = Math.min(cps / 10, 1);
+    const r = Math.floor(intensity * 180);
+    const spread = 30 + intensity * 120;
+    orbEl.style.boxShadow = `
+      0 0 ${30 + intensity * 50}px rgba(${r},240,255,${0.3 + intensity * 0.4}),
+      0 0 ${60 + intensity * 80}px rgba(${r},100,255,${0.2 + intensity * 0.3}),
+      0 0 ${100 + intensity * 100}px rgba(${Math.floor(intensity * 100)},50,200,${0.1 + intensity * 0.2}),
+      inset 0 0 ${40 + intensity * 40}px rgba(${r},200,255,${0.2 + intensity * 0.3})
+    `;
+  }
+
+  function spawnClickParticle(e, value) {
+    const rect = orbContainer.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.textContent = '+' + formatNum(value);
+    const angle = -Math.PI / 2 + (Math.random() - 0.5) * 1.2;
+    const dist = 60 + Math.random() * 60;
+    p.style.left = x + 'px';
+    p.style.top = y + 'px';
+    p.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+    p.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+    orbContainer.appendChild(p);
+    setTimeout(() => p.remove(), 1000);
+  }
+
+  function spawnDotParticles(e) {
+    const rect = orbContainer.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const colors = ['#00f0ff', '#00ff88', '#ff00ff', '#b000ff', '#ffff00'];
+    for (let i = 0; i < 5; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'dot-particle';
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 30 + Math.random() * 80;
+      dot.style.left = x + 'px';
+      dot.style.top = y + 'px';
+      dot.style.background = colors[Math.floor(Math.random() * colors.length)];
+      dot.style.boxShadow = '0 0 6px ' + dot.style.background;
+      dot.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+      dot.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+      orbContainer.appendChild(dot);
+      setTimeout(() => dot.remove(), 800);
+    }
+  }
+
+  orbContainer.addEventListener('click', handleOrbClick);
+  orbContainer.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    handleOrbClick({ clientX: touch.clientX, clientY: touch.clientY });
+  }, { passive: false });
+
+  // ========== PRESTIGE BUTTON ==========
+  prestigeBtn.addEventListener('click', doPrestige);
+
+  // ========== UPDATE UI ==========
+  function updateUI() {
+    energyEl.textContent = formatNum(state.energy);
+    const eps = getTotalEps();
+    epsEl.textContent = formatNum(eps) + ' energy/sec';
+    clickValEl.textContent = '+' + formatNum(getClickValue()) + ' per click';
+
+    // Generators
+    GEN_DEFS.forEach(g => {
+      const gs = state.generators[g.id];
+      const cost = getGenCost(g);
+      const countEl = document.getElementById('gen-count-' + g.id);
+      const epsGenEl = document.getElementById('gen-eps-' + g.id);
+      const buyBtn = document.getElementById('gen-buy-' + g.id);
+      const item = document.getElementById('gen-' + g.id);
+
+      countEl.textContent = gs.count;
+      epsGenEl.textContent = formatNum(g.baseEps * gs.upgradeMult * getPrestigeMult());
+      buyBtn.textContent = 'Buy - ' + formatNum(cost);
+      buyBtn.disabled = state.energy < cost;
+      item.classList.toggle('cant-afford', state.energy < cost);
+    });
+
+    // Upgrades
+    UPGRADE_DEFS.forEach(u => {
+      const el = document.getElementById('upg-' + u.id);
+      if (state.upgrades[u.id]) {
+        el.classList.add('owned');
+        el.classList.remove('cant-afford-upgrade');
+        el.querySelector('.upgrade-cost').textContent = 'OWNED';
+      } else {
+        el.classList.remove('owned');
+        el.classList.toggle('cant-afford-upgrade', state.energy < u.cost);
+      }
+    });
+
+    // Prestige
+    shardCountEl.textContent = formatNum(state.voidShards);
+    prestigeMultEl.textContent = getPrestigeMult().toFixed(2);
+    const pg = getPrestigeGain();
+    prestigeGainEl.textContent = formatNum(pg);
+    prestigeBtn.disabled = pg <= 0;
+
+    // Stats
+    statClicks.textContent = formatNum(state.totalClicks);
+    statEarned.textContent = formatNum(state.totalEarned);
+    statPrestige.textContent = state.prestigeCount;
+    const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
+    const h = Math.floor(elapsed / 3600);
+    const m = Math.floor((elapsed % 3600) / 60);
+    const s = elapsed % 60;
+    statTime.textContent = h > 0 ? `${h}h ${m}m` : m > 0 ? `${m}m ${s}s` : `${s}s`;
+  }
+
+  // ========== GAME LOOP ==========
+  function gameTick() {
+    const now = Date.now();
+    const dt = (now - state.lastTick) / 1000;
+    state.lastTick = now;
+
+    const eps = getTotalEps();
+    const gain = eps * dt;
+    if (gain > 0) {
+      state.energy += gain;
+      state.totalEarned += gain;
+    }
+
+    // Decay click tracking
+    recentClicks = recentClicks.filter(t => now - t < 2000);
+    if (recentClicks.length === 0) {
+      updateOrbGlow();
+    }
+
+    updateUI();
+  }
+
+  // ========== SAVE / LOAD ==========
+  const SAVE_KEY = 'voidEnergyIdle_v1';
+
+  function saveGame() {
+    const data = {
+      energy: state.energy,
+      totalEarned: state.totalEarned,
+      totalClicks: state.totalClicks,
+      generators: state.generators,
+      upgrades: state.upgrades,
+      voidShards: state.voidShards,
+      prestigeCount: state.prestigeCount,
+      startTime: state.startTime,
+      lastSave: Date.now(),
+    };
+    try {
+      localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+      saveNotif.classList.add('show');
+      setTimeout(() => saveNotif.classList.remove('show'), 1500);
+    } catch (e) {}
+  }
+
+  function loadGame() {
+    try {
+      const raw = localStorage.getItem(SAVE_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+
+      state.energy = data.energy || 0;
+      state.totalEarned = data.totalEarned || 0;
+      state.totalClicks = data.totalClicks || 0;
+      state.voidShards = data.voidShards || 0;
+      state.prestigeCount = data.prestigeCount || 0;
+      state.startTime = data.startTime || Date.now();
+
+      if (data.generators) {
+        GEN_DEFS.forEach(g => {
+          if (data.generators[g.id]) {
+            state.generators[g.id] = data.generators[g.id];
+          }
+        });
+      }
+
+      if (data.upgrades) {
+        UPGRADE_DEFS.forEach(u => {
+          if (data.upgrades[u.id] !== undefined) {
+            state.upgrades[u.id] = data.upgrades[u.id];
+          }
+        });
+      }
+
+      // Offline progress
+      if (data.lastSave) {
+        const offlineSec = (Date.now() - data.lastSave) / 1000;
+        if (offlineSec > 2) {
+          const eps = getTotalEps();
+          const offlineGain = eps * offlineSec;
+          if (offlineGain > 0) {
+            state.energy += offlineGain;
+            state.totalEarned += offlineGain;
+            showOfflineGain(offlineGain, offlineSec);
+          }
+        }
+      }
+
+      state.lastTick = Date.now();
+    } catch (e) {}
+  }
+
+  function showOfflineGain(gain, seconds) {
+    const banner = document.createElement('div');
+    banner.style.cssText = `
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      background: rgba(10,10,30,0.95); border: 1px solid rgba(0,240,255,0.4);
+      border-radius: 16px; padding: 30px 40px; text-align: center; z-index: 2000;
+      box-shadow: 0 0 40px rgba(0,240,255,0.2);
+    `;
+    const timeStr = seconds > 3600
+      ? (seconds / 3600).toFixed(1) + ' hours'
+      : seconds > 60
+        ? (seconds / 60).toFixed(0) + ' minutes'
+        : Math.floor(seconds) + ' seconds';
+    banner.innerHTML = `
+      <div style="font-family:'Orbitron',monospace;font-size:1rem;color:#00f0ff;margin-bottom:12px;">Welcome Back</div>
+      <div style="font-size:0.85rem;color:rgba(255,255,255,0.5);margin-bottom:8px;">You were away for ${timeStr}</div>
+      <div style="font-family:'Orbitron',monospace;font-size:1.4rem;color:#00ff88;text-shadow:0 0 15px rgba(0,255,136,0.5);">+${formatNum(gain)} energy</div>
+      <div style="margin-top:16px;font-size:0.7rem;color:rgba(255,255,255,0.3);cursor:pointer;" id="offline-dismiss">Click to continue</div>
+    `;
+    document.body.appendChild(banner);
+    banner.addEventListener('click', () => banner.remove());
+    setTimeout(() => { if (banner.parentNode) banner.remove(); }, 8000);
+  }
+
+  // ========== INIT ==========
+  buildGenerators();
+  buildUpgrades();
+  loadGame();
+  updateUI();
+
+  // Main game loop at 20fps
+  setInterval(gameTick, 50);
+
+  // Auto-save every 10 seconds
+  setInterval(saveGame, 10000);
+
+  // Save on close
+  window.addEventListener('beforeunload', saveGame);
+})();
+</script>
+</body>
+</html>

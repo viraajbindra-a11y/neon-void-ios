@@ -1,0 +1,1898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neon Bloons TD</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #0a0a1a;
+  color: #fff;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  overflow: hidden;
+  user-select: none;
+  display: flex;
+  height: 100vh;
+}
+#gameCanvas {
+  display: block;
+  cursor: crosshair;
+}
+#sidebar {
+  width: 260px;
+  min-width: 260px;
+  background: linear-gradient(180deg, #12122a 0%, #0d0d20 100%);
+  border-left: 2px solid #2a2a5a;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #3a3a6a #12122a;
+}
+#hud {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(0,0,0,0.5);
+  border-bottom: 1px solid #2a2a5a;
+  font-size: 14px;
+  gap: 10px;
+}
+.hud-item { display: flex; align-items: center; gap: 4px; }
+.hud-item span { font-weight: bold; }
+.hud-money { color: #ffd700; }
+.hud-lives { color: #ff4466; }
+.hud-wave { color: #44ccff; }
+.hud-score { color: #cc88ff; }
+#controls {
+  display: flex;
+  gap: 6px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #2a2a5a;
+}
+#controls button {
+  flex: 1;
+  padding: 8px 4px;
+  border: 1px solid #3a3a6a;
+  border-radius: 6px;
+  background: #1a1a3a;
+  color: #fff;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+#controls button:hover { background: #2a2a5a; border-color: #5a5a9a; }
+#controls button.active { background: #3a3a7a; border-color: #7a7aff; color: #aaf; }
+#startWaveBtn { border-color: #44cc44 !important; color: #44ff44 !important; }
+#startWaveBtn:hover { background: #1a3a1a !important; }
+#startWaveBtn.waiting { border-color: #666 !important; color: #666 !important; cursor: default; }
+.section-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #7a7aaa;
+  padding: 8px 12px 4px;
+  border-bottom: 1px solid #1a1a3a;
+}
+#towerPanel { padding: 4px 8px; }
+.tower-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  margin: 3px 0;
+  border: 1px solid #2a2a4a;
+  border-radius: 6px;
+  background: #15152a;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+.tower-btn:hover { border-color: #5a5a9a; background: #1e1e3a; }
+.tower-btn.selected { border-color: #7a7aff; background: #25254a; box-shadow: 0 0 10px rgba(120,120,255,0.3); }
+.tower-btn.too-expensive { opacity: 0.4; cursor: not-allowed; }
+.tower-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.tower-info { flex: 1; min-width: 0; }
+.tower-name { font-size: 12px; font-weight: bold; }
+.tower-cost { font-size: 11px; color: #ffd700; }
+.tower-desc { font-size: 10px; color: #8888aa; line-height: 1.2; }
+#upgradePanel {
+  padding: 8px 12px;
+  display: none;
+}
+#upgradePanel.visible { display: block; }
+.upgrade-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.upgrade-tower-name { font-size: 14px; font-weight: bold; color: #aaf; }
+.upgrade-path {
+  margin-bottom: 6px;
+  padding: 6px;
+  background: #15152a;
+  border-radius: 6px;
+  border: 1px solid #2a2a4a;
+}
+.upgrade-path-title { font-size: 11px; color: #7a7aaa; margin-bottom: 4px; }
+.upgrade-btn {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #3a3a6a;
+  border-radius: 4px;
+  background: #1a1a3a;
+  color: #fff;
+  cursor: pointer;
+  font-size: 11px;
+  text-align: left;
+  transition: all 0.2s;
+  margin-top: 3px;
+}
+.upgrade-btn:hover { background: #2a2a5a; border-color: #5a5a9a; }
+.upgrade-btn.maxed { background: #1a2a1a; border-color: #2a5a2a; color: #5a8a5a; cursor: default; }
+.upgrade-btn .cost { color: #ffd700; float: right; }
+.target-select {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+}
+.target-btn {
+  flex: 1;
+  padding: 4px;
+  border: 1px solid #2a2a4a;
+  border-radius: 4px;
+  background: #15152a;
+  color: #888;
+  cursor: pointer;
+  font-size: 10px;
+  text-align: center;
+}
+.target-btn.active { border-color: #5a5aaa; color: #aaf; background: #1e1e3e; }
+.sell-btn {
+  width: 100%;
+  padding: 6px;
+  border: 1px solid #aa3333;
+  border-radius: 4px;
+  background: #2a1515;
+  color: #ff6666;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  margin-top: 8px;
+}
+.sell-btn:hover { background: #3a1a1a; }
+#tooltip {
+  position: absolute;
+  background: rgba(10,10,30,0.95);
+  border: 1px solid #3a3a6a;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  pointer-events: none;
+  display: none;
+  z-index: 100;
+  max-width: 200px;
+}
+#gameOverOverlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  flex-direction: column;
+}
+#gameOverOverlay.visible { display: flex; }
+#gameOverOverlay h1 { font-size: 48px; color: #ff4466; margin-bottom: 10px; text-shadow: 0 0 20px #ff4466; }
+#gameOverOverlay p { font-size: 18px; color: #aaa; margin-bottom: 20px; }
+#gameOverOverlay button {
+  padding: 12px 40px;
+  font-size: 18px;
+  border: 2px solid #44cc44;
+  border-radius: 8px;
+  background: #1a3a1a;
+  color: #44ff44;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+<canvas id="gameCanvas"></canvas>
+<div id="sidebar">
+  <div id="hud">
+    <div class="hud-item hud-money">$<span id="moneyDisplay">650</span></div>
+    <div class="hud-item hud-lives">&#9829;<span id="livesDisplay">20</span></div>
+    <div class="hud-item hud-wave">W<span id="waveDisplay">0</span></div>
+    <div class="hud-item hud-score">&#9733;<span id="scoreDisplay">0</span></div>
+  </div>
+  <div id="controls">
+    <button id="startWaveBtn" onclick="startWave()">Start Wave</button>
+    <button id="speedBtn1" class="active" onclick="setSpeed(1)">1x</button>
+    <button id="speedBtn2" onclick="setSpeed(2)">2x</button>
+    <button id="speedBtn3" onclick="setSpeed(3)">3x</button>
+  </div>
+  <div class="section-title">Towers</div>
+  <div id="towerPanel"></div>
+  <div class="section-title" id="upgradeSectionTitle" style="display:none;">Selected Tower</div>
+  <div id="upgradePanel"></div>
+</div>
+<div id="tooltip"></div>
+<div id="gameOverOverlay">
+  <h1>GAME OVER</h1>
+  <p>You survived <span id="finalWave">0</span> waves and scored <span id="finalScore">0</span> points!</p>
+  <button onclick="restartGame()">Play Again</button>
+</div>
+
+<script>
+// ======================== CORE SETUP ========================
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const sidebar = document.getElementById('sidebar');
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth - 260;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+// ======================== AUDIO ENGINE ========================
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx;
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new AudioCtx();
+}
+
+function playSound(type) {
+  ensureAudio();
+  const now = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  switch(type) {
+    case 'pop':
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(800 + Math.random()*400, now);
+      osc.frequency.exponentialRampToValueAtTime(200, now+0.08);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now+0.08);
+      osc.start(now); osc.stop(now+0.08);
+      break;
+    case 'place':
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(400, now);
+      osc.frequency.exponentialRampToValueAtTime(800, now+0.12);
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now+0.12);
+      osc.start(now); osc.stop(now+0.12);
+      break;
+    case 'shoot':
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(600, now);
+      osc.frequency.exponentialRampToValueAtTime(100, now+0.05);
+      gain.gain.setValueAtTime(0.06, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now+0.05);
+      osc.start(now); osc.stop(now+0.05);
+      break;
+    case 'waveStart':
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(300, now);
+      osc.frequency.exponentialRampToValueAtTime(600, now+0.15);
+      osc.frequency.exponentialRampToValueAtTime(300, now+0.3);
+      gain.gain.setValueAtTime(0.1, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now+0.3);
+      osc.start(now); osc.stop(now+0.3);
+      break;
+    case 'moab':
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(80, now);
+      osc.frequency.exponentialRampToValueAtTime(40, now+0.6);
+      gain.gain.setValueAtTime(0.25, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now+0.6);
+      osc.start(now); osc.stop(now+0.6);
+      break;
+    case 'freeze':
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1200, now);
+      osc.frequency.exponentialRampToValueAtTime(600, now+0.2);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now+0.2);
+      osc.start(now); osc.stop(now+0.2);
+      break;
+    case 'bomb':
+      const noise = audioCtx.createBufferSource();
+      const buf = audioCtx.createBuffer(1, audioCtx.sampleRate*0.15, audioCtx.sampleRate);
+      const d = buf.getChannelData(0);
+      for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.exp(-i/(d.length*0.3));
+      noise.buffer = buf;
+      const ng = audioCtx.createGain();
+      ng.gain.setValueAtTime(0.3, now);
+      ng.gain.exponentialRampToValueAtTime(0.001, now+0.15);
+      noise.connect(ng); ng.connect(audioCtx.destination);
+      noise.start(now); noise.stop(now+0.15);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(150, now);
+      osc.frequency.exponentialRampToValueAtTime(40, now+0.2);
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now+0.2);
+      osc.start(now); osc.stop(now+0.2);
+      break;
+  }
+}
+
+// ======================== GAME STATE ========================
+let money = 650, lives = 20, wave = 0, score = 0;
+let gameSpeed = 1, waveActive = false, gameOver = false;
+let selectedTowerType = null, selectedPlacedTower = null;
+let hoveredTowerBtn = null;
+let mouseX = 0, mouseY = 0;
+let bloons = [], towers = [], projectiles = [], particles = [], explosions = [];
+let waveQueue = [];
+let spawnTimer = 0;
+let popThisFrame = false;
+
+// ======================== PATH DEFINITION ========================
+const CELL = 40;
+const pathWaypoints = [
+  {x: -20, y: 160},
+  {x: 120, y: 160},
+  {x: 120, y: 80},
+  {x: 320, y: 80},
+  {x: 320, y: 280},
+  {x: 160, y: 280},
+  {x: 160, y: 440},
+  {x: 480, y: 440},
+  {x: 480, y: 160},
+  {x: 600, y: 160},
+  {x: 600, y: 520},
+  {x: 280, y: 520},
+  {x: 280, y: 640},
+  {x: 720, y: 640},
+  {x: 720, y: 360},
+  {x: 840, y: 360},
+  {x: 840, y: 720},
+  {x: canvas.width + 40, y: 720}
+];
+
+function getPathLength() {
+  let len = 0;
+  for (let i = 1; i < pathWaypoints.length; i++) {
+    const dx = pathWaypoints[i].x - pathWaypoints[i-1].x;
+    const dy = pathWaypoints[i].y - pathWaypoints[i-1].y;
+    len += Math.sqrt(dx*dx + dy*dy);
+  }
+  return len;
+}
+
+function getPointOnPath(dist) {
+  let remaining = dist;
+  for (let i = 1; i < pathWaypoints.length; i++) {
+    const dx = pathWaypoints[i].x - pathWaypoints[i-1].x;
+    const dy = pathWaypoints[i].y - pathWaypoints[i-1].y;
+    const segLen = Math.sqrt(dx*dx + dy*dy);
+    if (remaining <= segLen) {
+      const t = remaining / segLen;
+      return {
+        x: pathWaypoints[i-1].x + dx*t,
+        y: pathWaypoints[i-1].y + dy*t,
+        angle: Math.atan2(dy, dx)
+      };
+    }
+    remaining -= segLen;
+  }
+  const last = pathWaypoints[pathWaypoints.length-1];
+  return {x: last.x, y: last.y, angle: 0};
+}
+
+const totalPathLength = getPathLength();
+
+function isOnPath(x, y, margin) {
+  const m = margin || 22;
+  for (let i = 1; i < pathWaypoints.length; i++) {
+    const ax = pathWaypoints[i-1].x, ay = pathWaypoints[i-1].y;
+    const bx = pathWaypoints[i].x, by = pathWaypoints[i].y;
+    const dx = bx-ax, dy = by-ay;
+    const lenSq = dx*dx + dy*dy;
+    let t = ((x-ax)*dx + (y-ay)*dy) / lenSq;
+    t = Math.max(0, Math.min(1, t));
+    const px = ax + t*dx, py = ay + t*dy;
+    const dist = Math.sqrt((x-px)*(x-px) + (y-py)*(y-py));
+    if (dist < m) return true;
+  }
+  return false;
+}
+
+// ======================== BLOON DEFINITIONS ========================
+const BLOON_TYPES = {
+  red:     {color:'#ff3344', glow:'#ff3344', hp:1, speed:1.0, radius:10, children:[], layerCount:1,   name:'Red Bloon'},
+  blue:    {color:'#3388ff', glow:'#3388ff', hp:1, speed:1.2, radius:11, children:['red'], layerCount:2, name:'Blue Bloon'},
+  green:   {color:'#33dd55', glow:'#33dd55', hp:1, speed:1.5, radius:12, children:['blue'], layerCount:3, name:'Green Bloon'},
+  yellow:  {color:'#ffdd33', glow:'#ffdd33', hp:1, speed:2.0, radius:12, children:['green'], layerCount:4, name:'Yellow Bloon'},
+  pink:    {color:'#ff66cc', glow:'#ff66cc', hp:1, speed:2.5, radius:11, children:['yellow'], layerCount:5, name:'Pink Bloon'},
+  black:   {color:'#333344', glow:'#6666aa', hp:1, speed:1.6, radius:12, children:['pink','pink'], layerCount:11, name:'Black Bloon', immuneExplosion:true},
+  white:   {color:'#ddddee', glow:'#ffffff', hp:1, speed:1.8, radius:12, children:['pink','pink'], layerCount:11, name:'White Bloon', immuneFreeze:true},
+  lead:    {color:'#667788', glow:'#8899aa', hp:1, speed:1.0, radius:14, children:['black','black'], layerCount:23, name:'Lead Bloon', immuneSharp:true},
+  rainbow: {color:'rainbow', glow:'#ff88ff', hp:1, speed:1.8, radius:13, children:['black','black'], layerCount:23, name:'Rainbow Bloon'},
+  moab:    {color:'#2244aa', glow:'#4488ff', hp:200, speed:0.5, radius:28, children:['rainbow','rainbow','rainbow','rainbow'], layerCount:115, name:'M.O.A.B.', isMoab:true}
+};
+
+// ======================== TOWER DEFINITIONS ========================
+const TOWER_DEFS = [
+  {
+    id:'dart', name:'Dart Monkey', cost:200, range:120, fireRate:25, damage:1,
+    projectileType:'sharp', color:'#bb7744', accent:'#ffaa66',
+    desc:'Throws darts quickly. Cheap and reliable.',
+    emoji:'🐵',
+    upgrades:[
+      [{name:'Longer Range',cost:100,effect:{range:30}},{name:'Sharp Darts',cost:200,effect:{damage:1,pierce:1}},{name:'Triple Shot',cost:500,effect:{multishot:3}}],
+      [{name:'Quick Shots',cost:120,effect:{fireRate:-5}},{name:'Razor Darts',cost:250,effect:{damage:1}},{name:'Dart Storm',cost:600,effect:{fireRate:-8}}]
+    ]
+  },
+  {
+    id:'tack', name:'Tack Shooter', cost:350, range:80, fireRate:40, damage:1,
+    projectileType:'sharp', color:'#dd6633', accent:'#ff8844', isTack:true,
+    desc:'Shoots 8 tacks in all directions.',
+    emoji:'🎯',
+    upgrades:[
+      [{name:'More Tacks',cost:150,effect:{tackCount:4}},{name:'Even More',cost:300,effect:{tackCount:4}},{name:'Tack Sprayer',cost:600,effect:{tackCount:4,fireRate:-10}}],
+      [{name:'Longer Range',cost:120,effect:{range:20}},{name:'Hot Tacks',cost:350,effect:{canPopLead:true,damage:1}},{name:'Ring of Fire',cost:700,effect:{isRingOfFire:true,range:15}}]
+    ]
+  },
+  {
+    id:'sniper', name:'Sniper Monkey', cost:500, range:9999, fireRate:80, damage:2,
+    projectileType:'sharp', color:'#556677', accent:'#88aacc', isSniper:true,
+    desc:'Infinite range. Targets strongest bloon.',
+    emoji:'🎯',
+    upgrades:[
+      [{name:'Full Metal',cost:200,effect:{damage:2}},{name:'Deadly Prec.',cost:400,effect:{damage:3}},{name:'Cripple MOAB',cost:800,effect:{damage:5,moabSlow:true}}],
+      [{name:'Fast Firing',cost:180,effect:{fireRate:-15}},{name:'Night Vision',cost:250,effect:{canSeeCamo:true}},{name:'Semi-Auto',cost:500,effect:{fireRate:-20}}]
+    ]
+  },
+  {
+    id:'bomb', name:'Bomb Shooter', cost:600, range:110, fireRate:55, damage:1,
+    projectileType:'explosion', color:'#444444', accent:'#ff6644', isExplosion:true,
+    desc:'Lobs bombs. AOE damage. Pops lead.',
+    emoji:'💣',
+    upgrades:[
+      [{name:'Bigger Bombs',cost:200,effect:{explosionRadius:15,damage:1}},{name:'Heavy Bombs',cost:350,effect:{damage:2}},{name:'MOAB Mauler',cost:700,effect:{moabDamage:10}}],
+      [{name:'Faster Reload',cost:150,effect:{fireRate:-10}},{name:'Missile',cost:400,effect:{fireRate:-10,range:40}},{name:'MOAB Assassin',cost:800,effect:{moabDamage:20}}]
+    ]
+  },
+  {
+    id:'ice', name:'Ice Monkey', cost:450, range:80, fireRate:100, damage:0,
+    projectileType:'freeze', color:'#66ccff', accent:'#aaeeff', isFreeze:true,
+    desc:'Freezes bloons in range. AOE.',
+    emoji:'🧊',
+    upgrades:[
+      [{name:'Permafrost',cost:150,effect:{slowDuration:30}},{name:'Deep Freeze',cost:350,effect:{damage:1}},{name:'Arctic Wind',cost:700,effect:{range:30,slowNearby:true}}],
+      [{name:'Longer Freeze',cost:120,effect:{freezeDuration:30}},{name:'Snap Freeze',cost:300,effect:{damage:1}},{name:'Viral Frost',cost:600,effect:{viralFrost:true}}]
+    ]
+  },
+  {
+    id:'super', name:'Super Monkey', cost:3000, range:150, fireRate:5, damage:1,
+    projectileType:'sharp', color:'#8833cc', accent:'#cc66ff',
+    desc:'Insanely fast. Very expensive.',
+    emoji:'🦸',
+    upgrades:[
+      [{name:'Laser Vision',cost:500,effect:{canPopLead:true,damage:1}},{name:'Plasma',cost:1000,effect:{damage:2}},{name:'Sun Avatar',cost:2000,effect:{damage:3,multishot:3}}],
+      [{name:'Super Range',cost:400,effect:{range:40}},{name:'Epic Range',cost:600,effect:{range:40}},{name:'Dark Knight',cost:1500,effect:{damage:2,fireRate:-1}}]
+    ]
+  },
+  {
+    id:'ninja', name:'Ninja Monkey', cost:500, range:100, fireRate:28, damage:1,
+    projectileType:'sharp', color:'#334455', accent:'#5588aa', canSeeCamo:true,
+    desc:'Fast shurikens. Can detect camo.',
+    emoji:'🥷',
+    upgrades:[
+      [{name:'Sharper Shuriken',cost:150,effect:{damage:1}},{name:'Double Shot',cost:350,effect:{multishot:2}},{name:'Bloonjitsu',cost:700,effect:{multishot:3,damage:1}}],
+      [{name:'Seeking Shuriken',cost:200,effect:{seeking:true}},{name:'Distraction',cost:350,effect:{knockback:true}},{name:'Grandmaster',cost:900,effect:{fireRate:-8,damage:2}}]
+    ]
+  },
+  {
+    id:'wizard', name:'Wizard Monkey', cost:600, range:110, fireRate:35, damage:2,
+    projectileType:'magic', color:'#6633aa', accent:'#aa66ff',
+    desc:'Magic bolts that chain between bloons.',
+    emoji:'🧙',
+    upgrades:[
+      [{name:'Intense Magic',cost:200,effect:{damage:1,pierce:2}},{name:'Arcane Blast',cost:400,effect:{damage:2,chainCount:2}},{name:'Arcane Spike',cost:800,effect:{damage:4,moabDamage:8}}],
+      [{name:'Fireball',cost:150,effect:{fireball:true}},{name:'Dragon Breath',cost:500,effect:{canPopLead:true,fireRate:-8}},{name:'Summon Phoenix',cost:900,effect:{damage:3,range:30}}]
+    ]
+  }
+];
+
+// ======================== BLOON FACTORY ========================
+function createBloon(type, dist) {
+  const def = BLOON_TYPES[type];
+  const pos = getPointOnPath(dist);
+  return {
+    type, ...def,
+    x: pos.x, y: pos.y, angle: pos.angle,
+    dist: dist,
+    currentHp: def.hp,
+    maxHp: def.hp,
+    frozen: 0,
+    slowed: 0,
+    id: Math.random(),
+    rainbowHue: 0
+  };
+}
+
+// ======================== TOWER FACTORY ========================
+function createTower(defId, x, y) {
+  const def = TOWER_DEFS.find(d => d.id === defId);
+  return {
+    ...def,
+    x, y,
+    cooldown: 0,
+    totalInvested: def.cost,
+    upgradeLevels: [0, 0],
+    target: 'first',
+    pierce: 1,
+    multishot: 1,
+    tackCount: 8,
+    explosionRadius: 25,
+    chainCount: 2,
+    freezeDuration: 60,
+    slowDuration: 0,
+    moabDamage: 0,
+    canPopLead: def.isExplosion || false,
+    seeking: false,
+    knockback: false,
+    isRingOfFire: false,
+    viralFrost: false,
+    moabSlow: false,
+    fireball: false,
+    canSeeCamo: def.canSeeCamo || false,
+    kills: 0,
+    angle: 0,
+    id: Math.random()
+  };
+}
+
+// ======================== PROJECTILE FACTORY ========================
+function createProjectile(tower, targetBloon) {
+  const angle = Math.atan2(targetBloon.y - tower.y, targetBloon.x - tower.x);
+  const speed = tower.isSniper ? 30 : (tower.projectileType === 'explosion' ? 5 : 8);
+  return {
+    x: tower.x, y: tower.y,
+    vx: Math.cos(angle) * speed,
+    vy: Math.sin(angle) * speed,
+    damage: tower.damage + (targetBloon.isMoab ? tower.moabDamage : 0),
+    pierce: tower.pierce,
+    type: tower.projectileType,
+    isExplosion: tower.isExplosion || false,
+    canPopLead: tower.canPopLead,
+    explosionRadius: tower.explosionRadius,
+    chainCount: tower.chainCount,
+    isFreeze: tower.isFreeze || false,
+    freezeDuration: tower.freezeDuration,
+    slowDuration: tower.slowDuration,
+    seeking: tower.seeking,
+    knockback: tower.knockback,
+    targetId: targetBloon.id,
+    moabSlow: tower.moabSlow,
+    viralFrost: tower.viralFrost || false,
+    towerId: tower.id + '_' + tower.x + '_' + tower.y,
+    life: 120,
+    radius: targetBloon.isMoab ? 6 : 4,
+    color: tower.isExplosion ? '#ff6644' : tower.isFreeze ? '#88ddff' : tower.projectileType === 'magic' ? '#cc66ff' : '#ffcc44',
+    angle: angle,
+    trail: []
+  };
+}
+
+function creditKill(towerId) {
+  if (!towerId) return;
+  const parts = towerId.split('_');
+  const tid = parts[0], tx = parseFloat(parts[1]), ty = parseFloat(parts[2]);
+  const tower = towers.find(t => t.id === tid && t.x === tx && t.y === ty);
+  if (tower) tower.kills++;
+}
+
+// ======================== PARTICLE EFFECTS ========================
+function spawnPopParticles(x, y, color, count) {
+  for (let i = 0; i < count; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 1 + Math.random() * 3;
+    particles.push({
+      x, y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - 1,
+      life: 20 + Math.random() * 20,
+      maxLife: 40,
+      color: color,
+      radius: 2 + Math.random() * 3
+    });
+  }
+}
+
+function spawnExplosion(x, y, radius) {
+  explosions.push({x, y, radius, life: 15, maxLife: 15});
+}
+
+// ======================== WAVE GENERATION ========================
+function generateWave(waveNum) {
+  const q = [];
+  const n = waveNum;
+  if (n <= 3) {
+    for (let i = 0; i < 5 + n * 3; i++) q.push({type:'red', delay: i * 30});
+  } else if (n <= 6) {
+    for (let i = 0; i < 5; i++) q.push({type:'red', delay: i * 25});
+    for (let i = 0; i < n * 2; i++) q.push({type:'blue', delay: 150 + i * 25});
+  } else if (n <= 10) {
+    for (let i = 0; i < 8; i++) q.push({type:'blue', delay: i * 20});
+    for (let i = 0; i < n; i++) q.push({type:'green', delay: 160 + i * 22});
+    if (n >= 9) for (let i = 0; i < 3; i++) q.push({type:'yellow', delay: 400 + i * 18});
+  } else if (n <= 15) {
+    for (let i = 0; i < 10; i++) q.push({type:'green', delay: i * 18});
+    for (let i = 0; i < n - 5; i++) q.push({type:'yellow', delay: 180 + i * 16});
+    for (let i = 0; i < Math.floor(n/3); i++) q.push({type:'pink', delay: 350 + i * 14});
+  } else if (n <= 20) {
+    for (let i = 0; i < 8; i++) q.push({type:'yellow', delay: i * 15});
+    for (let i = 0; i < n - 8; i++) q.push({type:'pink', delay: 120 + i * 13});
+    for (let i = 0; i < Math.floor(n/5); i++) q.push({type:'black', delay: 280 + i * 25});
+    if (n >= 18) for (let i = 0; i < 2; i++) q.push({type:'white', delay: 350 + i * 25});
+  } else if (n <= 28) {
+    for (let i = 0; i < 10; i++) q.push({type:'pink', delay: i * 12});
+    for (let i = 0; i < n - 15; i++) q.push({type:'black', delay: 120 + i * 20});
+    for (let i = 0; i < Math.floor(n/7); i++) q.push({type:'white', delay: 300 + i * 20});
+    if (n >= 23) for (let i = 0; i < Math.floor((n-20)/2); i++) q.push({type:'lead', delay: 400 + i * 35});
+    if (n >= 25) for (let i = 0; i < 2; i++) q.push({type:'rainbow', delay: 550 + i * 30});
+  } else {
+    for (let i = 0; i < 15; i++) q.push({type:'pink', delay: i * 10});
+    for (let i = 0; i < n - 20; i++) q.push({type:'black', delay: 150 + i * 12});
+    for (let i = 0; i < Math.floor(n/5); i++) q.push({type:'white', delay: 350 + i * 15});
+    for (let i = 0; i < Math.floor(n/8); i++) q.push({type:'lead', delay: 450 + i * 25});
+    for (let i = 0; i < Math.floor(n/6); i++) q.push({type:'rainbow', delay: 550 + i * 20});
+  }
+  // MOAB every 10 waves
+  if (n % 10 === 0 && n > 0) {
+    const moabCount = Math.floor(n / 10);
+    for (let i = 0; i < moabCount; i++) {
+      q.push({type:'moab', delay: 700 + i * 200});
+    }
+  }
+  return q;
+}
+
+// ======================== WAVE CONTROL ========================
+function startWave() {
+  if (waveActive || gameOver) return;
+  wave++;
+  waveActive = true;
+  waveQueue = generateWave(wave);
+  spawnTimer = 0;
+  money += 50 + wave * 5;
+  playSound('waveStart');
+  if (waveQueue.some(b => b.type === 'moab')) {
+    setTimeout(() => playSound('moab'), 500);
+  }
+  updateHUD();
+  document.getElementById('startWaveBtn').classList.add('waiting');
+  document.getElementById('startWaveBtn').textContent = 'Wave ' + wave;
+}
+
+function setSpeed(s) {
+  gameSpeed = s;
+  document.querySelectorAll('#controls button:not(#startWaveBtn)').forEach(b => b.classList.remove('active'));
+  document.getElementById('speedBtn' + s).classList.add('active');
+}
+
+// ======================== TARGETING ========================
+function getTarget(tower) {
+  let candidates = bloons.filter(b => {
+    if (b.frozen > 0 && tower.isFreeze) return false;
+    const dx = b.x - tower.x, dy = b.y - tower.y;
+    return Math.sqrt(dx*dx + dy*dy) <= tower.range;
+  });
+  if (candidates.length === 0) return null;
+  switch(tower.target) {
+    case 'first': return candidates.reduce((a,b) => b.dist > a.dist ? b : a);
+    case 'last': return candidates.reduce((a,b) => b.dist < a.dist ? b : a);
+    case 'strong': return candidates.reduce((a,b) => {
+      const aLayers = BLOON_TYPES[a.type].layerCount;
+      const bLayers = BLOON_TYPES[b.type].layerCount;
+      return bLayers > aLayers ? b : a;
+    });
+    case 'close':
+      return candidates.reduce((a,b) => {
+        const da = Math.sqrt((a.x-tower.x)**2 + (a.y-tower.y)**2);
+        const db = Math.sqrt((b.x-tower.x)**2 + (b.y-tower.y)**2);
+        return db < da ? b : a;
+      });
+    default: return candidates[0];
+  }
+}
+
+// ======================== TOWER SHOOTING ========================
+function towerShoot(tower) {
+  if (tower.cooldown > 0) { tower.cooldown--; return; }
+
+  const iceRofKey = tower.id + '_' + tower.x + '_' + tower.y;
+
+  // Ice monkey: freeze area
+  if (tower.isFreeze) {
+    let froze = false;
+    bloons.forEach(b => {
+      if (b.immuneFreeze) return;
+      const dx = b.x - tower.x, dy = b.y - tower.y;
+      if (Math.sqrt(dx*dx+dy*dy) <= tower.range) {
+        b.frozen = tower.freezeDuration;
+        if (tower.damage > 0) {
+          damageBloon(b, tower.damage, 'freeze', iceRofKey);
+        }
+        froze = true;
+      }
+    });
+    if (froze) {
+      playSound('freeze');
+      tower.cooldown = tower.fireRate;
+    }
+    return;
+  }
+
+  // Ring of Fire: constant damage
+  if (tower.isRingOfFire) {
+    bloons.forEach(b => {
+      const dx = b.x - tower.x, dy = b.y - tower.y;
+      if (Math.sqrt(dx*dx+dy*dy) <= tower.range) {
+        damageBloon(b, tower.damage, 'explosion', iceRofKey);
+      }
+    });
+    tower.cooldown = 8;
+    return;
+  }
+
+  const target = tower.isSniper
+    ? bloons.reduce((best, b) => {
+        const layers = BLOON_TYPES[b.type].layerCount;
+        return (!best || layers > BLOON_TYPES[best.type].layerCount) ? b : best;
+      }, null)
+    : getTarget(tower);
+
+  if (!target) return;
+
+  tower.angle = Math.atan2(target.y - tower.y, target.x - tower.x);
+
+  const towerKey = tower.id + '_' + tower.x + '_' + tower.y;
+
+  // Sniper: instant hit
+  if (tower.isSniper) {
+    damageBloon(target, tower.damage + (target.isMoab ? tower.moabDamage : 0), 'sharp', towerKey);
+    if (tower.moabSlow && target.isMoab) target.slowed = 120;
+    playSound('shoot');
+    // Visual: line flash
+    particles.push({
+      x: tower.x, y: tower.y,
+      vx: 0, vy: 0, life: 5, maxLife: 5,
+      color: '#ffff44', radius: 1,
+      isLine: true, tx: target.x, ty: target.y
+    });
+    tower.cooldown = tower.fireRate;
+    return;
+  }
+
+  // Tack shooter: fire in all directions
+  if (tower.isTack) {
+    const count = tower.tackCount;
+    for (let i = 0; i < count; i++) {
+      const angle = (Math.PI * 2 / count) * i;
+      const p = {
+        x: tower.x, y: tower.y,
+        vx: Math.cos(angle) * 6,
+        vy: Math.sin(angle) * 6,
+        damage: tower.damage,
+        pierce: 1,
+        type: 'sharp',
+        canPopLead: tower.canPopLead,
+        towerId: towerKey,
+        life: 20,
+        radius: 3,
+        color: '#ff8844',
+        angle: angle,
+        trail: []
+      };
+      projectiles.push(p);
+    }
+    playSound('shoot');
+    tower.cooldown = tower.fireRate;
+    return;
+  }
+
+  // Multi-shot
+  const shots = tower.multishot || 1;
+  for (let i = 0; i < shots; i++) {
+    const p = createProjectile(tower, target);
+    if (shots > 1) {
+      const spread = (i - (shots-1)/2) * 0.15;
+      const cos = Math.cos(spread), sin = Math.sin(spread);
+      const nvx = p.vx * cos - p.vy * sin;
+      const nvy = p.vx * sin + p.vy * cos;
+      p.vx = nvx; p.vy = nvy;
+    }
+    projectiles.push(p);
+  }
+
+  if (tower.fireball) {
+    const fb = createProjectile(tower, target);
+    fb.isExplosion = true;
+    fb.canPopLead = true;
+    fb.explosionRadius = 30;
+    fb.damage = tower.damage + 1;
+    fb.color = '#ff6622';
+    fb.radius = 6;
+    projectiles.push(fb);
+  }
+
+  playSound('shoot');
+  tower.cooldown = tower.fireRate;
+}
+
+// ======================== DAMAGE & POP LOGIC ========================
+function damageBloon(bloon, damage, type, towerId) {
+  if (bloon.currentHp <= 0) return;
+  if (type === 'sharp' && bloon.immuneSharp) return;
+  if (type === 'explosion' && bloon.immuneExplosion) return;
+  if (type === 'freeze' && bloon.immuneFreeze) return;
+
+  bloon.currentHp -= damage;
+  if (towerId) bloon.lastTowerId = towerId;
+  if (bloon.currentHp <= 0) {
+    popBloon(bloon);
+  }
+}
+
+function popBloon(bloon) {
+  const def = BLOON_TYPES[bloon.type];
+  const clr = bloon.type === 'rainbow' ? `hsl(${bloon.rainbowHue},100%,60%)` : def.color;
+  spawnPopParticles(bloon.x, bloon.y, clr, bloon.isMoab ? 30 : 8);
+  score += bloon.isMoab ? 100 : 1;
+  money += bloon.isMoab ? 50 : 1;
+  popThisFrame = true;
+  if (bloon.lastTowerId) creditKill(bloon.lastTowerId);
+
+  // Spawn children
+  def.children.forEach(childType => {
+    const child = createBloon(childType, bloon.dist);
+    child.x = bloon.x + (Math.random()-0.5) * 8;
+    child.y = bloon.y + (Math.random()-0.5) * 8;
+    bloons.push(child);
+  });
+
+  // Remove
+  bloon.currentHp = -999;
+}
+
+// ======================== GAME UPDATE ========================
+function update() {
+  if (gameOver) return;
+
+  for (let s = 0; s < gameSpeed; s++) {
+    popThisFrame = false;
+
+    // Spawn from wave queue
+    if (waveQueue.length > 0) {
+      spawnTimer++;
+      const toSpawn = waveQueue.filter(w => w.delay <= spawnTimer);
+      toSpawn.forEach(w => {
+        bloons.push(createBloon(w.type, 0));
+        waveQueue = waveQueue.filter(q => q !== w);
+      });
+    }
+
+    // Check wave complete
+    if (waveActive && waveQueue.length === 0 && bloons.length === 0) {
+      waveActive = false;
+      document.getElementById('startWaveBtn').classList.remove('waiting');
+      document.getElementById('startWaveBtn').textContent = 'Start Wave';
+    }
+
+    // Update bloons
+    for (let i = bloons.length - 1; i >= 0; i--) {
+      const b = bloons[i];
+      if (b.currentHp <= -999) { bloons.splice(i, 1); continue; }
+
+      if (b.frozen > 0) { b.frozen--; continue; }
+
+      let spd = b.speed;
+      if (b.slowed > 0) { spd *= 0.5; b.slowed--; }
+
+      b.dist += spd;
+      const pos = getPointOnPath(b.dist);
+      b.x = pos.x; b.y = pos.y; b.angle = pos.angle;
+
+      if (b.type === 'rainbow') b.rainbowHue = (b.rainbowHue + 3) % 360;
+
+      // Reached end?
+      if (b.dist >= totalPathLength) {
+        lives -= BLOON_TYPES[b.type].layerCount;
+        bloons.splice(i, 1);
+        if (lives <= 0) {
+          lives = 0;
+          endGame();
+          return;
+        }
+      }
+    }
+
+    // Update towers
+    towers.forEach(t => towerShoot(t));
+
+    // Update projectiles
+    for (let i = projectiles.length - 1; i >= 0; i--) {
+      const p = projectiles[i];
+
+      // Seeking
+      if (p.seeking && p.targetId) {
+        const target = bloons.find(b => b.id === p.targetId && b.currentHp > 0);
+        if (target) {
+          const angle = Math.atan2(target.y - p.y, target.x - p.x);
+          const speed = Math.sqrt(p.vx*p.vx + p.vy*p.vy);
+          p.vx += Math.cos(angle) * 0.5;
+          p.vy += Math.sin(angle) * 0.5;
+          const ns = Math.sqrt(p.vx*p.vx + p.vy*p.vy);
+          p.vx = p.vx/ns * speed;
+          p.vy = p.vy/ns * speed;
+        }
+      }
+
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life--;
+      p.angle = Math.atan2(p.vy, p.vx);
+
+      // Trail
+      if (p.trail) {
+        p.trail.push({x: p.x, y: p.y});
+        if (p.trail.length > 6) p.trail.shift();
+      }
+
+      if (p.life <= 0 || p.x < -50 || p.x > canvas.width+50 || p.y < -50 || p.y > canvas.height+50) {
+        projectiles.splice(i, 1);
+        continue;
+      }
+
+      // Hit detection
+      for (let j = bloons.length - 1; j >= 0; j--) {
+        const b = bloons[j];
+        if (b.currentHp <= 0) continue;
+        const dx = p.x - b.x, dy = p.y - b.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < b.radius + p.radius) {
+          if (p.isExplosion) {
+            spawnExplosion(p.x, p.y, p.explosionRadius);
+            playSound('bomb');
+            bloons.forEach(eb => {
+              const edx = p.x - eb.x, edy = p.y - eb.y;
+              if (Math.sqrt(edx*edx+edy*edy) <= p.explosionRadius) {
+                damageBloon(eb, p.damage, 'explosion', p.towerId);
+                if (p.knockback) eb.dist = Math.max(0, eb.dist - 15);
+              }
+            });
+            projectiles.splice(i, 1);
+            break;
+          }
+
+          if (p.isFreeze) {
+            if (!b.immuneFreeze) {
+              b.frozen = p.freezeDuration;
+            }
+            if (p.damage) damageBloon(b, p.damage, 'freeze', p.towerId);
+          } else {
+            const dmgType = p.canPopLead ? 'explosion' : (p.type || 'sharp');
+            damageBloon(b, p.damage, dmgType, p.towerId);
+            if (p.knockback && !b.isMoab) b.dist = Math.max(0, b.dist - 20);
+            if (p.moabSlow && b.isMoab) b.slowed = 120;
+          }
+
+          p.pierce--;
+          if (p.pierce <= 0) {
+            // Chain for magic
+            if (p.chainCount && p.chainCount > 0) {
+              const nearby = bloons.filter(nb => nb.id !== b.id && nb.currentHp > 0 && Math.sqrt((nb.x-b.x)**2+(nb.y-b.y)**2) < 80);
+              if (nearby.length > 0) {
+                const next = nearby[0];
+                p.chainCount--;
+                p.pierce = 1;
+                p.x = b.x; p.y = b.y;
+                const a = Math.atan2(next.y - b.y, next.x - b.x);
+                const sp = Math.sqrt(p.vx*p.vx + p.vy*p.vy);
+                p.vx = Math.cos(a)*sp; p.vy = Math.sin(a)*sp;
+                p.targetId = next.id;
+                continue;
+              }
+            }
+            projectiles.splice(i, 1);
+            break;
+          }
+        }
+      }
+    }
+
+    // Update particles
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.1;
+      p.life--;
+      if (p.life <= 0) particles.splice(i, 1);
+    }
+
+    // Update explosions
+    for (let i = explosions.length - 1; i >= 0; i--) {
+      explosions[i].life--;
+      if (explosions[i].life <= 0) explosions.splice(i, 1);
+    }
+
+    if (popThisFrame) playSound('pop');
+  }
+
+  updateHUD();
+}
+
+// ======================== DRAWING ========================
+function drawPath() {
+  // Draw path background
+  ctx.strokeStyle = '#1a1a3a';
+  ctx.lineWidth = CELL;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.moveTo(pathWaypoints[0].x, pathWaypoints[0].y);
+  for (let i = 1; i < pathWaypoints.length; i++) {
+    ctx.lineTo(pathWaypoints[i].x, pathWaypoints[i].y);
+  }
+  ctx.stroke();
+
+  // Draw path border glow
+  ctx.strokeStyle = '#2a2a5a';
+  ctx.lineWidth = CELL + 4;
+  ctx.globalAlpha = 0.3;
+  ctx.beginPath();
+  ctx.moveTo(pathWaypoints[0].x, pathWaypoints[0].y);
+  for (let i = 1; i < pathWaypoints.length; i++) {
+    ctx.lineTo(pathWaypoints[i].x, pathWaypoints[i].y);
+  }
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  // Draw path surface
+  ctx.strokeStyle = '#222244';
+  ctx.lineWidth = CELL - 4;
+  ctx.beginPath();
+  ctx.moveTo(pathWaypoints[0].x, pathWaypoints[0].y);
+  for (let i = 1; i < pathWaypoints.length; i++) {
+    ctx.lineTo(pathWaypoints[i].x, pathWaypoints[i].y);
+  }
+  ctx.stroke();
+
+  // Dashed center line
+  ctx.setLineDash([8, 12]);
+  ctx.strokeStyle = '#333366';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pathWaypoints[0].x, pathWaypoints[0].y);
+  for (let i = 1; i < pathWaypoints.length; i++) {
+    ctx.lineTo(pathWaypoints[i].x, pathWaypoints[i].y);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function drawBloon(b) {
+  ctx.save();
+  ctx.translate(b.x, b.y);
+
+  const isFrozen = b.frozen > 0;
+  const def = BLOON_TYPES[b.type];
+  let color = def.color;
+  if (b.type === 'rainbow') color = `hsl(${b.rainbowHue},100%,60%)`;
+
+  if (b.isMoab) {
+    // MOAB: large blimp shape
+    const w = 38, h = 22;
+
+    // Glow
+    ctx.shadowColor = def.glow;
+    ctx.shadowBlur = 15;
+
+    // Body
+    ctx.fillStyle = isFrozen ? '#88ccff' : color;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, w, h, 0, 0, Math.PI*2);
+    ctx.fill();
+
+    // Stripe
+    ctx.fillStyle = isFrozen ? '#aaddff' : '#3366cc';
+    ctx.fillRect(-w+8, -4, (w-8)*2, 8);
+
+    // Fins
+    ctx.fillStyle = '#1a3366';
+    ctx.beginPath();
+    ctx.moveTo(w-5, -h+2);
+    ctx.lineTo(w+10, -h-8);
+    ctx.lineTo(w+10, -h+10);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(w-5, h-2);
+    ctx.lineTo(w+10, h+8);
+    ctx.lineTo(w+10, h-10);
+    ctx.closePath();
+    ctx.fill();
+
+    // Cockpit window
+    ctx.fillStyle = '#aaddff';
+    ctx.beginPath();
+    ctx.ellipse(-w+14, 0, 6, 5, 0, 0, Math.PI*2);
+    ctx.fill();
+
+    // HP bar
+    ctx.shadowBlur = 0;
+    const barW = 50, barH = 5;
+    const hpPct = b.currentHp / b.maxHp;
+    ctx.fillStyle = '#000';
+    ctx.fillRect(-barW/2, -h-12, barW, barH);
+    ctx.fillStyle = hpPct > 0.5 ? '#44cc44' : hpPct > 0.25 ? '#cccc44' : '#cc4444';
+    ctx.fillRect(-barW/2, -h-12, barW * hpPct, barH);
+    ctx.strokeStyle = '#666';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(-barW/2, -h-12, barW, barH);
+
+    // Label
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 8px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('MOAB', 0, 4);
+
+    ctx.shadowBlur = 0;
+  } else {
+    // Regular bloon: balloon shape
+    const r = def.radius;
+
+    // Glow
+    ctx.shadowColor = isFrozen ? '#88ddff' : (b.type === 'rainbow' ? color : def.glow);
+    ctx.shadowBlur = 12;
+
+    // Main balloon body
+    ctx.fillStyle = isFrozen ? '#88ccff' : color;
+    ctx.beginPath();
+    ctx.ellipse(0, -2, r, r * 1.15, 0, 0, Math.PI*2);
+    ctx.fill();
+
+    // Highlight
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.beginPath();
+    ctx.ellipse(-r*0.25, -r*0.45, r*0.35, r*0.25, -0.3, 0, Math.PI*2);
+    ctx.fill();
+
+    // Knot
+    ctx.shadowBlur = 0;
+    const knotColor = isFrozen ? '#6699bb' : (b.type === 'rainbow' ? color : def.color);
+    ctx.fillStyle = knotColor;
+    ctx.beginPath();
+    ctx.moveTo(-2, r * 1.1 - 2);
+    ctx.lineTo(2, r * 1.1 - 2);
+    ctx.lineTo(0, r * 1.1 + 3);
+    ctx.closePath();
+    ctx.fill();
+
+    // String
+    ctx.strokeStyle = '#666';
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(0, r * 1.1 + 3);
+    ctx.quadraticCurveTo(2, r * 1.1 + 8, -1, r * 1.1 + 14);
+    ctx.stroke();
+
+    // Lead bloon: metallic look
+    if (b.type === 'lead') {
+      ctx.fillStyle = 'rgba(100,120,140,0.4)';
+      ctx.beginPath();
+      ctx.ellipse(0, -2, r, r * 1.15, 0, 0, Math.PI*2);
+      ctx.fill();
+      ctx.strokeStyle = '#8899aa';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.ellipse(0, -2, r, r * 1.15, 0, 0, Math.PI*2);
+      ctx.stroke();
+    }
+
+    // Frozen overlay
+    if (isFrozen) {
+      ctx.strokeStyle = '#aaeeff';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.ellipse(0, -2, r+2, r * 1.15+2, 0, 0, Math.PI*2);
+      ctx.stroke();
+      // Ice crystals
+      ctx.fillStyle = '#ccf';
+      for (let c = 0; c < 3; c++) {
+        const cx = (Math.random()-0.5)*r, cy = (Math.random()-0.5)*r;
+        ctx.fillRect(cx-1, cy-1, 2, 2);
+      }
+    }
+  }
+
+  ctx.restore();
+}
+
+function drawTower(t) {
+  ctx.save();
+  ctx.translate(t.x, t.y);
+
+  const r = 16;
+
+  // Base circle (shadow)
+  ctx.fillStyle = 'rgba(0,0,0,0.3)';
+  ctx.beginPath();
+  ctx.ellipse(0, 4, r, r*0.4, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Body
+  ctx.fillStyle = t.color;
+  ctx.shadowColor = t.accent;
+  ctx.shadowBlur = 8;
+  ctx.beginPath();
+  ctx.arc(0, -4, r-3, 0, Math.PI*2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Face - monkey face
+  // Lighter inner face
+  ctx.fillStyle = t.accent;
+  ctx.beginPath();
+  ctx.ellipse(0, -2, r*0.55, r*0.5, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Eyes
+  ctx.fillStyle = '#fff';
+  ctx.beginPath();
+  ctx.arc(-4, -7, 3, 0, Math.PI*2);
+  ctx.arc(4, -7, 3, 0, Math.PI*2);
+  ctx.fill();
+
+  // Pupils - look toward angle
+  const px = Math.cos(t.angle) * 1.5;
+  const py = Math.sin(t.angle) * 1.5;
+  ctx.fillStyle = '#111';
+  ctx.beginPath();
+  ctx.arc(-4+px, -7+py, 1.5, 0, Math.PI*2);
+  ctx.arc(4+px, -7+py, 1.5, 0, Math.PI*2);
+  ctx.fill();
+
+  // Mouth
+  ctx.strokeStyle = '#333';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(0, -2, 3, 0.1, Math.PI-0.1);
+  ctx.stroke();
+
+  // Type-specific accessories
+  switch(t.id) {
+    case 'dart':
+      // Little dart in hand
+      ctx.strokeStyle = '#ffcc44';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      const da = t.angle;
+      ctx.moveTo(Math.cos(da)*8, -4+Math.sin(da)*8);
+      ctx.lineTo(Math.cos(da)*18, -4+Math.sin(da)*18);
+      ctx.stroke();
+      break;
+    case 'tack':
+      // Spiky ring
+      ctx.strokeStyle = '#ff6622';
+      ctx.lineWidth = 1.5;
+      for (let i = 0; i < 8; i++) {
+        const a = (Math.PI*2/8)*i;
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(a)*10, -4+Math.sin(a)*10);
+        ctx.lineTo(Math.cos(a)*16, -4+Math.sin(a)*16);
+        ctx.stroke();
+      }
+      break;
+    case 'sniper':
+      // Scope/hat
+      ctx.fillStyle = '#445566';
+      ctx.fillRect(-8, -18, 16, 5);
+      ctx.fillRect(-10, -13, 20, 3);
+      // Rifle
+      ctx.strokeStyle = '#556677';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(0, -4);
+      const sa = t.angle;
+      ctx.lineTo(Math.cos(sa)*22, -4+Math.sin(sa)*22);
+      ctx.stroke();
+      break;
+    case 'bomb':
+      // Helmet
+      ctx.fillStyle = '#333';
+      ctx.beginPath();
+      ctx.arc(0, -10, 10, Math.PI, 0);
+      ctx.fill();
+      // Cannon
+      ctx.fillStyle = '#444';
+      const ba = t.angle;
+      ctx.save();
+      ctx.translate(Math.cos(ba)*6, -4+Math.sin(ba)*6);
+      ctx.rotate(ba);
+      ctx.fillRect(0, -4, 14, 8);
+      ctx.restore();
+      break;
+    case 'ice':
+      // Ice crown
+      ctx.fillStyle = '#aaeeff';
+      for (let i = 0; i < 5; i++) {
+        const a = Math.PI + (Math.PI/5)*i - Math.PI*0.4;
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(a)*8, -10+Math.sin(a)*8);
+        ctx.lineTo(Math.cos(a)*14, -10+Math.sin(a)*14);
+        ctx.lineTo(Math.cos(a+0.15)*9, -10+Math.sin(a+0.15)*9);
+        ctx.fill();
+      }
+      break;
+    case 'super':
+      // Cape
+      ctx.fillStyle = '#cc44ff';
+      ctx.beginPath();
+      ctx.moveTo(-8, -2);
+      ctx.quadraticCurveTo(-14, 8, -10, 15);
+      ctx.lineTo(10, 15);
+      ctx.quadraticCurveTo(14, 8, 8, -2);
+      ctx.closePath();
+      ctx.fill();
+      // Mask
+      ctx.fillStyle = '#6622aa';
+      ctx.beginPath();
+      ctx.moveTo(-8, -10);
+      ctx.lineTo(-12, -7);
+      ctx.lineTo(-6, -5);
+      ctx.lineTo(6, -5);
+      ctx.lineTo(12, -7);
+      ctx.lineTo(8, -10);
+      ctx.closePath();
+      ctx.fill();
+      break;
+    case 'ninja':
+      // Mask/bandana
+      ctx.fillStyle = '#223344';
+      ctx.fillRect(-10, -10, 20, 5);
+      // Headband tails
+      ctx.strokeStyle = '#334455';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(8, -8);
+      ctx.quadraticCurveTo(16, -6, 18, -12);
+      ctx.stroke();
+      break;
+    case 'wizard':
+      // Hat
+      ctx.fillStyle = '#5522aa';
+      ctx.beginPath();
+      ctx.moveTo(-9, -10);
+      ctx.lineTo(0, -26);
+      ctx.lineTo(9, -10);
+      ctx.closePath();
+      ctx.fill();
+      // Stars on hat
+      ctx.fillStyle = '#ffdd44';
+      ctx.beginPath();
+      ctx.arc(-2, -17, 1.5, 0, Math.PI*2);
+      ctx.arc(3, -14, 1, 0, Math.PI*2);
+      ctx.fill();
+      // Staff
+      ctx.strokeStyle = '#8855cc';
+      ctx.lineWidth = 2;
+      const wa = t.angle;
+      ctx.beginPath();
+      ctx.moveTo(Math.cos(wa)*6, -4+Math.sin(wa)*6);
+      ctx.lineTo(Math.cos(wa)*20, -4+Math.sin(wa)*20);
+      ctx.stroke();
+      // Staff glow
+      ctx.fillStyle = '#cc88ff';
+      ctx.shadowColor = '#cc88ff';
+      ctx.shadowBlur = 6;
+      ctx.beginPath();
+      ctx.arc(Math.cos(wa)*20, -4+Math.sin(wa)*20, 3, 0, Math.PI*2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      break;
+  }
+
+  ctx.restore();
+}
+
+function drawProjectile(p) {
+  ctx.save();
+
+  // Trail
+  if (p.trail && p.trail.length > 1) {
+    ctx.strokeStyle = p.color;
+    ctx.globalAlpha = 0.3;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(p.trail[0].x, p.trail[0].y);
+    for (let i = 1; i < p.trail.length; i++) {
+      ctx.lineTo(p.trail[i].x, p.trail[i].y);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+
+  ctx.translate(p.x, p.y);
+  ctx.rotate(p.angle || 0);
+
+  ctx.shadowColor = p.color;
+  ctx.shadowBlur = 6;
+
+  if (p.isExplosion) {
+    // Bomb projectile
+    ctx.fillStyle = '#444';
+    ctx.beginPath();
+    ctx.arc(0, 0, p.radius, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = '#ff4422';
+    ctx.beginPath();
+    ctx.moveTo(p.radius, -2);
+    ctx.lineTo(p.radius+4, -5);
+    ctx.lineTo(p.radius+2, 0);
+    ctx.closePath();
+    ctx.fill();
+  } else if (p.type === 'magic') {
+    // Magic orb
+    ctx.fillStyle = '#cc66ff';
+    ctx.beginPath();
+    ctx.arc(0, 0, p.radius, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = '#eeccff';
+    ctx.beginPath();
+    ctx.arc(-1, -1, p.radius*0.4, 0, Math.PI*2);
+    ctx.fill();
+  } else {
+    // Dart/shuriken/tack
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.moveTo(p.radius+2, 0);
+    ctx.lineTo(-p.radius, -2);
+    ctx.lineTo(-p.radius, 2);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  ctx.shadowBlur = 0;
+  ctx.restore();
+}
+
+function drawExplosions() {
+  explosions.forEach(e => {
+    const t = 1 - e.life / e.maxLife;
+    ctx.globalAlpha = 1 - t;
+
+    // Outer ring
+    ctx.strokeStyle = '#ff6622';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(e.x, e.y, e.radius * t, 0, Math.PI*2);
+    ctx.stroke();
+
+    // Inner fill
+    const grad = ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, e.radius * t);
+    grad.addColorStop(0, 'rgba(255,200,50,0.5)');
+    grad.addColorStop(0.5, 'rgba(255,100,30,0.3)');
+    grad.addColorStop(1, 'rgba(255,50,10,0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(e.x, e.y, e.radius * t, 0, Math.PI*2);
+    ctx.fill();
+
+    ctx.globalAlpha = 1;
+  });
+}
+
+function drawParticles() {
+  particles.forEach(p => {
+    const alpha = p.life / p.maxLife;
+
+    if (p.isLine) {
+      // Sniper shot line
+      ctx.strokeStyle = p.color;
+      ctx.globalAlpha = alpha;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(p.tx, p.ty);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      return;
+    }
+
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = p.color;
+    ctx.shadowColor = p.color;
+    ctx.shadowBlur = 4;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.radius * alpha, 0, Math.PI*2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.globalAlpha = 1;
+  });
+}
+
+function drawRangeCircle(x, y, range) {
+  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+  ctx.fillStyle = 'rgba(255,255,255,0.03)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4,4]);
+  ctx.beginPath();
+  ctx.arc(x, y, range, 0, Math.PI*2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function drawPlacementPreview() {
+  if (!selectedTowerType) return;
+  const def = TOWER_DEFS.find(d => d.id === selectedTowerType);
+  if (!def) return;
+
+  const canPlace = !isOnPath(mouseX, mouseY, 26) &&
+    mouseX > 20 && mouseX < canvas.width - 20 &&
+    mouseY > 20 && mouseY < canvas.height - 20 &&
+    !towers.some(t => Math.sqrt((t.x-mouseX)**2+(t.y-mouseY)**2) < 30) &&
+    money >= def.cost;
+
+  ctx.globalAlpha = 0.5;
+  drawRangeCircle(mouseX, mouseY, def.range);
+
+  // Preview tower
+  const tmpTower = {
+    ...def, x: mouseX, y: mouseY, angle: 0,
+    multishot: 1, tackCount: 8
+  };
+  drawTower(tmpTower);
+  ctx.globalAlpha = 1;
+
+  if (!canPlace) {
+    ctx.fillStyle = 'rgba(255,50,50,0.3)';
+    ctx.beginPath();
+    ctx.arc(mouseX, mouseY, 18, 0, Math.PI*2);
+    ctx.fill();
+  }
+}
+
+function drawBackground() {
+  // Dark grid
+  ctx.fillStyle = '#0d0d1a';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Subtle grid
+  ctx.strokeStyle = 'rgba(30,30,60,0.5)';
+  ctx.lineWidth = 0.5;
+  for (let x = 0; x < canvas.width; x += CELL) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+  }
+  for (let y = 0; y < canvas.height; y += CELL) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+  }
+}
+
+function draw() {
+  drawBackground();
+  drawPath();
+
+  // Range of selected/hovered
+  if (selectedPlacedTower) {
+    drawRangeCircle(selectedPlacedTower.x, selectedPlacedTower.y, selectedPlacedTower.range);
+  }
+
+  // Ring of fire effect
+  towers.forEach(t => {
+    if (t.isRingOfFire) {
+      ctx.strokeStyle = 'rgba(255,80,20,0.3)';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(t.x, t.y, t.range, 0, Math.PI*2);
+      ctx.stroke();
+    }
+  });
+
+  // Ice monkey freeze radius
+  towers.forEach(t => {
+    if (t.isFreeze && t.cooldown < 5) {
+      ctx.fillStyle = 'rgba(100,200,255,0.08)';
+      ctx.beginPath();
+      ctx.arc(t.x, t.y, t.range, 0, Math.PI*2);
+      ctx.fill();
+    }
+  });
+
+  // Draw towers
+  towers.forEach(drawTower);
+
+  // Draw bloons (sorted by distance so further bloons are behind)
+  bloons.sort((a,b) => a.dist - b.dist);
+  bloons.forEach(b => { if (b.currentHp > 0) drawBloon(b); });
+
+  // Draw projectiles
+  projectiles.forEach(drawProjectile);
+
+  // Draw effects
+  drawExplosions();
+  drawParticles();
+
+  // Placement preview
+  drawPlacementPreview();
+
+  // Selected tower highlight
+  if (selectedPlacedTower) {
+    ctx.strokeStyle = '#7a7aff';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([3,3]);
+    ctx.beginPath();
+    ctx.arc(selectedPlacedTower.x, selectedPlacedTower.y, 20, 0, Math.PI*2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+}
+
+// ======================== UI ========================
+function updateHUD() {
+  document.getElementById('moneyDisplay').textContent = money;
+  document.getElementById('livesDisplay').textContent = lives;
+  document.getElementById('waveDisplay').textContent = wave;
+  document.getElementById('scoreDisplay').textContent = score;
+  updateTowerButtons();
+}
+
+function buildTowerPanel() {
+  const panel = document.getElementById('towerPanel');
+  panel.innerHTML = '';
+  TOWER_DEFS.forEach(def => {
+    const btn = document.createElement('div');
+    btn.className = 'tower-btn';
+    btn.dataset.id = def.id;
+    btn.innerHTML = `
+      <div class="tower-icon" style="background:${def.color};color:${def.accent};border:2px solid ${def.accent};">${def.emoji}</div>
+      <div class="tower-info">
+        <div class="tower-name">${def.name}</div>
+        <div class="tower-cost">$${def.cost}</div>
+        <div class="tower-desc">${def.desc}</div>
+      </div>
+    `;
+    btn.addEventListener('click', () => {
+      if (money < def.cost) return;
+      selectedPlacedTower = null;
+      hideUpgradePanel();
+      if (selectedTowerType === def.id) {
+        selectedTowerType = null;
+      } else {
+        selectedTowerType = def.id;
+      }
+      updateTowerButtons();
+    });
+    panel.appendChild(btn);
+  });
+}
+
+function updateTowerButtons() {
+  document.querySelectorAll('.tower-btn').forEach(btn => {
+    const def = TOWER_DEFS.find(d => d.id === btn.dataset.id);
+    btn.classList.toggle('selected', selectedTowerType === btn.dataset.id);
+    btn.classList.toggle('too-expensive', money < def.cost);
+  });
+}
+
+function showUpgradePanel(tower) {
+  const panel = document.getElementById('upgradePanel');
+  const title = document.getElementById('upgradeSectionTitle');
+  panel.classList.add('visible');
+  title.style.display = 'block';
+
+  const def = TOWER_DEFS.find(d => d.id === tower.id);
+
+  let html = `<div class="upgrade-header">
+    <span class="upgrade-tower-name">${tower.name}</span>
+    <span style="font-size:11px;color:#888;">Kills: ${tower.kills}</span>
+  </div>`;
+
+  // Upgrade paths
+  for (let path = 0; path < 2; path++) {
+    html += `<div class="upgrade-path"><div class="upgrade-path-title">Path ${path+1} (${tower.upgradeLevels[path]}/3)</div>`;
+    const level = tower.upgradeLevels[path];
+    if (level < 3) {
+      const upg = def.upgrades[path][level];
+      html += `<button class="upgrade-btn" onclick="upgradeTower(${path})">
+        ${upg.name} <span class="cost">$${upg.cost}</span>
+      </button>`;
+    } else {
+      html += `<button class="upgrade-btn maxed">MAXED</button>`;
+    }
+    // Show completed upgrades
+    for (let l = 0; l < level; l++) {
+      html += `<div style="font-size:10px;color:#5a8a5a;padding:2px 4px;">&#10003; ${def.upgrades[path][l].name}</div>`;
+    }
+    html += `</div>`;
+  }
+
+  // Targeting
+  html += `<div style="font-size:11px;color:#888;margin-top:6px;">Targeting:</div>`;
+  html += `<div class="target-select">`;
+  ['first','last','strong','close'].forEach(t => {
+    html += `<button class="target-btn ${tower.target===t?'active':''}" onclick="setTargeting('${t}')">${t[0].toUpperCase()+t.slice(1)}</button>`;
+  });
+  html += `</div>`;
+
+  // Sell
+  const sellValue = Math.floor(tower.totalInvested * 0.7);
+  html += `<button class="sell-btn" onclick="sellTower()">Sell ($${sellValue})</button>`;
+
+  panel.innerHTML = html;
+}
+
+function hideUpgradePanel() {
+  document.getElementById('upgradePanel').classList.remove('visible');
+  document.getElementById('upgradeSectionTitle').style.display = 'none';
+}
+
+window.upgradeTower = function(pathIndex) {
+  if (!selectedPlacedTower) return;
+  const def = TOWER_DEFS.find(d => d.id === selectedPlacedTower.id);
+  const level = selectedPlacedTower.upgradeLevels[pathIndex];
+  if (level >= 3) return;
+
+  const upg = def.upgrades[pathIndex][level];
+  if (money < upg.cost) return;
+
+  money -= upg.cost;
+  selectedPlacedTower.totalInvested += upg.cost;
+  selectedPlacedTower.upgradeLevels[pathIndex]++;
+
+  // Apply effects
+  const fx = upg.effect;
+  if (fx.range) selectedPlacedTower.range += fx.range;
+  if (fx.damage) selectedPlacedTower.damage += fx.damage;
+  if (fx.fireRate) selectedPlacedTower.fireRate = Math.max(2, selectedPlacedTower.fireRate + fx.fireRate);
+  if (fx.pierce) selectedPlacedTower.pierce += fx.pierce;
+  if (fx.multishot) selectedPlacedTower.multishot = (selectedPlacedTower.multishot || 1) + fx.multishot;
+  if (fx.tackCount) selectedPlacedTower.tackCount += fx.tackCount;
+  if (fx.explosionRadius) selectedPlacedTower.explosionRadius += fx.explosionRadius;
+  if (fx.chainCount) selectedPlacedTower.chainCount += fx.chainCount;
+  if (fx.canPopLead) selectedPlacedTower.canPopLead = true;
+  if (fx.canSeeCamo) selectedPlacedTower.canSeeCamo = true;
+  if (fx.seeking) selectedPlacedTower.seeking = true;
+  if (fx.knockback) selectedPlacedTower.knockback = true;
+  if (fx.isRingOfFire) selectedPlacedTower.isRingOfFire = true;
+  if (fx.freezeDuration) selectedPlacedTower.freezeDuration += fx.freezeDuration;
+  if (fx.slowDuration) selectedPlacedTower.slowDuration += fx.slowDuration;
+  if (fx.moabDamage) selectedPlacedTower.moabDamage += fx.moabDamage;
+  if (fx.moabSlow) selectedPlacedTower.moabSlow = true;
+  if (fx.viralFrost) selectedPlacedTower.viralFrost = true;
+  if (fx.fireball) selectedPlacedTower.fireball = true;
+  if (fx.slowNearby) selectedPlacedTower.slowNearby = true;
+
+  playSound('place');
+  showUpgradePanel(selectedPlacedTower);
+  updateHUD();
+};
+
+window.setTargeting = function(t) {
+  if (!selectedPlacedTower) return;
+  selectedPlacedTower.target = t;
+  showUpgradePanel(selectedPlacedTower);
+};
+
+window.sellTower = function() {
+  if (!selectedPlacedTower) return;
+  const sellValue = Math.floor(selectedPlacedTower.totalInvested * 0.7);
+  money += sellValue;
+  towers = towers.filter(t => t !== selectedPlacedTower);
+  selectedPlacedTower = null;
+  hideUpgradePanel();
+  updateHUD();
+};
+
+// ======================== INPUT ========================
+canvas.addEventListener('mousemove', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  mouseX = e.clientX - rect.left;
+  mouseY = e.clientY - rect.top;
+});
+
+canvas.addEventListener('click', (e) => {
+  ensureAudio();
+  const rect = canvas.getBoundingClientRect();
+  const cx = e.clientX - rect.left;
+  const cy = e.clientY - rect.top;
+
+  // Placing a tower?
+  if (selectedTowerType) {
+    const def = TOWER_DEFS.find(d => d.id === selectedTowerType);
+    const canPlace = !isOnPath(cx, cy, 26) &&
+      cx > 20 && cx < canvas.width - 20 &&
+      cy > 20 && cy < canvas.height - 20 &&
+      !towers.some(t => Math.sqrt((t.x-cx)**2+(t.y-cy)**2) < 30) &&
+      money >= def.cost;
+
+    if (canPlace) {
+      money -= def.cost;
+      const tower = createTower(selectedTowerType, cx, cy);
+      towers.push(tower);
+      playSound('place');
+      selectedTowerType = null;
+      updateTowerButtons();
+      updateHUD();
+    }
+    return;
+  }
+
+  // Click on existing tower?
+  const clickedTower = towers.find(t => Math.sqrt((t.x-cx)**2 + (t.y-cy)**2) < 20);
+  if (clickedTower) {
+    selectedPlacedTower = clickedTower;
+    showUpgradePanel(clickedTower);
+  } else {
+    selectedPlacedTower = null;
+    hideUpgradePanel();
+  }
+});
+
+canvas.addEventListener('contextmenu', (e) => {
+  e.preventDefault();
+  selectedTowerType = null;
+  selectedPlacedTower = null;
+  hideUpgradePanel();
+  updateTowerButtons();
+});
+
+// ======================== GAME OVER ========================
+function endGame() {
+  gameOver = true;
+  document.getElementById('finalWave').textContent = wave;
+  document.getElementById('finalScore').textContent = score;
+  document.getElementById('gameOverOverlay').classList.add('visible');
+}
+
+window.restartGame = function() {
+  money = 650; lives = 20; wave = 0; score = 0;
+  gameSpeed = 1; waveActive = false; gameOver = false;
+  selectedTowerType = null; selectedPlacedTower = null;
+  bloons = []; towers = []; projectiles = []; particles = []; explosions = [];
+  waveQueue = []; spawnTimer = 0;
+  document.getElementById('gameOverOverlay').classList.remove('visible');
+  document.getElementById('startWaveBtn').classList.remove('waiting');
+  document.getElementById('startWaveBtn').textContent = 'Start Wave';
+  setSpeed(1);
+  hideUpgradePanel();
+  updateHUD();
+};
+
+// ======================== MAIN LOOP ========================
+function gameLoop() {
+  update();
+  draw();
+  requestAnimationFrame(gameLoop);
+}
+
+buildTowerPanel();
+updateHUD();
+gameLoop();
+</script>
+</body>
+</html>

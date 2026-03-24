@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>VOID WORDLE</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0f;--bg2:#101018;--bg3:#1a1a2e;
+  --text:#e0e0ff;--text-dim:#6a6a8a;
+  --green:#00ff88;--green-bg:#00442e;--green-glow:0 0 18px #00ff8855;
+  --yellow:#ffdd00;--yellow-bg:#443a00;--yellow-glow:0 0 18px #ffdd0055;
+  --gray:#2a2a3a;--gray-text:#555570;
+  --border:#2a2a44;--border-active:#5555aa;
+  --key-bg:#33334a;--key-text:#ccccee;
+  --tile-size:62px;--tile-gap:6px;
+}
+@media(max-width:520px){:root{--tile-size:min(62px, calc((100vw - 60px)/5));--tile-gap:5px}}
+html,body{height:100%;overflow:hidden}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  display:flex;flex-direction:column;align-items:center;
+  -webkit-user-select:none;user-select:none;
+}
+
+/* ---- HEADER ---- */
+header{
+  width:100%;max-width:520px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:6px 12px;border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+header h1{
+  font-size:1.4rem;font-weight:800;letter-spacing:0.15em;
+  background:linear-gradient(135deg,var(--green),var(--yellow));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hdr-icons{display:flex;gap:4px}
+header button{
+  background:none;border:none;color:var(--text-dim);
+  cursor:pointer;padding:6px 8px;border-radius:4px;font-size:1.15rem;
+  transition:color .2s,background .2s;line-height:1;
+}
+header button:hover{color:var(--text);background:var(--bg3)}
+
+/* ---- MODE SWITCH ---- */
+.mode-switch{
+  display:flex;gap:0;margin:4px auto 0;
+  border:1px solid var(--border);border-radius:6px;overflow:hidden;flex-shrink:0;
+}
+.mode-btn{
+  padding:5px 18px;background:transparent;border:none;
+  color:var(--text-dim);font-size:.75rem;font-weight:700;cursor:pointer;
+  transition:background .2s,color .2s;letter-spacing:.06em;
+}
+.mode-btn.active{background:var(--bg3);color:var(--green)}
+
+/* ---- TOAST ---- */
+#toast-box{
+  position:fixed;top:72px;left:50%;transform:translateX(-50%);
+  z-index:1000;display:flex;flex-direction:column;align-items:center;gap:6px;
+}
+.toast{
+  background:#e0e0ff;color:#0a0a0f;padding:10px 22px;border-radius:6px;
+  font-weight:700;font-size:.9rem;animation:toastIn .2s ease;pointer-events:none;
+}
+@keyframes toastIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ---- GAME AREA ---- */
+#game{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:4px 0;width:100%;max-width:520px;
+  min-height:0;
+}
+
+/* ---- BOARD ---- */
+#board{
+  display:grid;grid-template-rows:repeat(6,var(--tile-size));
+  gap:var(--tile-gap);padding:6px 0;
+}
+.row{
+  display:grid;grid-template-columns:repeat(5,var(--tile-size));
+  gap:var(--tile-gap);
+}
+.row.active{filter:drop-shadow(0 0 10px rgba(80,80,200,.25))}
+.tile{
+  width:var(--tile-size);height:var(--tile-size);
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:1.75rem;font-weight:800;text-transform:uppercase;
+  border:2px solid var(--border);border-radius:4px;
+  background:transparent;color:var(--text);
+  transition:border-color .1s;
+}
+.tile.filled{border-color:var(--border-active);animation:pop .12s ease}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+
+/* Flip animation */
+.tile.flip{animation:flipTile .5s ease forwards}
+@keyframes flipTile{
+  0%{transform:rotateX(0)}
+  45%{transform:rotateX(90deg)}
+  55%{transform:rotateX(90deg)}
+  100%{transform:rotateX(0)}
+}
+.tile.correct{background:var(--green-bg);border-color:var(--green);color:var(--green);box-shadow:var(--green-glow)}
+.tile.present{background:var(--yellow-bg);border-color:var(--yellow);color:var(--yellow);box-shadow:var(--yellow-glow)}
+.tile.absent{background:var(--gray);border-color:var(--gray);color:var(--gray-text)}
+
+/* Win bounce */
+.tile.win{animation:winBounce .6s ease}
+@keyframes winBounce{
+  0%,100%{transform:translateY(0)}
+  30%{transform:translateY(-28px)}
+  60%{transform:translateY(-10px)}
+}
+/* Shake row */
+.row.shake{animation:shakeRow .4s ease}
+@keyframes shakeRow{
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-8px)}40%{transform:translateX(8px)}
+  60%{transform:translateX(-5px)}80%{transform:translateX(5px)}
+}
+
+/* ---- KEYBOARD ---- */
+#keyboard{
+  padding:4px 6px 10px;width:100%;max-width:520px;
+  display:flex;flex-direction:column;align-items:center;gap:5px;flex-shrink:0;
+}
+.kb-row{display:flex;gap:5px;justify-content:center;width:100%}
+.key{
+  height:52px;min-width:32px;flex:1;max-width:44px;padding:0;
+  border:none;border-radius:5px;
+  background:var(--key-bg);color:var(--key-text);
+  font-size:.82rem;font-weight:700;text-transform:uppercase;
+  cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
+  transition:background .25s,color .25s,box-shadow .25s,transform .08s;
+  -webkit-tap-highlight-color:transparent;
+}
+.key:active{transform:scale(.93)}
+.key.wide{flex:1.5;max-width:68px;font-size:.72rem}
+.key.correct{background:var(--green-bg);color:var(--green);box-shadow:var(--green-glow)}
+.key.present{background:var(--yellow-bg);color:var(--yellow);box-shadow:var(--yellow-glow)}
+.key.absent{background:#18181f;color:#3a3a4a}
+@media(max-width:420px){
+  .key{height:48px;font-size:.78rem}
+  .key.wide{font-size:.68rem}
+}
+
+/* ---- MODALS ---- */
+.overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.72);
+  display:flex;align-items:center;justify-content:center;
+  z-index:500;opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.overlay.open{opacity:1;pointer-events:auto}
+.modal{
+  background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+  padding:24px 20px;max-width:420px;width:92%;max-height:82vh;overflow-y:auto;
+  position:relative;transform:translateY(16px);transition:transform .25s;
+}
+.overlay.open .modal{transform:translateY(0)}
+.modal h2{font-size:1.1rem;text-align:center;margin-bottom:14px;letter-spacing:.08em}
+.modal .x{
+  position:absolute;top:10px;right:12px;background:none;border:none;
+  color:var(--text-dim);font-size:1.3rem;cursor:pointer;padding:4px;
+}
+.modal .x:hover{color:var(--text)}
+
+/* How to play */
+.how p{font-size:.86rem;color:var(--text-dim);line-height:1.55;margin-bottom:8px}
+.ex-row{display:flex;gap:4px;margin:10px 0}
+.mini{
+  width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;
+  font-size:1.05rem;font-weight:800;border:2px solid var(--border);border-radius:3px;
+  text-transform:uppercase;
+}
+.mini.g{background:var(--green-bg);border-color:var(--green);color:var(--green)}
+.mini.y{background:var(--yellow-bg);border-color:var(--yellow);color:var(--yellow)}
+.mini.x{background:var(--gray);border-color:var(--gray);color:var(--gray-text)}
+
+/* Stats */
+.stats-row{display:flex;justify-content:center;gap:14px;margin-bottom:18px}
+.stat-item{text-align:center}
+.stat-item .n{font-size:1.9rem;font-weight:800;color:var(--green)}
+.stat-item .l{font-size:.68rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em}
+.dist-row{display:flex;align-items:center;gap:6px;margin-bottom:3px;font-size:.82rem}
+.dist-row .gn{width:12px;text-align:right;color:var(--text-dim);font-weight:700}
+.dist-row .bar{
+  height:22px;min-width:22px;display:flex;align-items:center;justify-content:flex-end;
+  padding-right:6px;border-radius:3px;font-size:.78rem;font-weight:700;
+  background:var(--gray);color:var(--text-dim);transition:width .6s ease;
+}
+.dist-row .bar.hl{background:var(--green-bg);color:var(--green)}
+.share-btn{
+  display:block;margin:16px auto 0;padding:12px 34px;
+  background:var(--green-bg);color:var(--green);border:1px solid var(--green);
+  border-radius:8px;font-size:.95rem;font-weight:700;cursor:pointer;letter-spacing:.05em;
+  transition:background .2s,box-shadow .2s;
+}
+.share-btn:hover{background:#005a3a;box-shadow:var(--green-glow)}
+.cd{text-align:center;margin-top:14px;font-size:.83rem;color:var(--text-dim)}
+.cd span{color:var(--text);font-weight:700;font-variant-numeric:tabular-nums}
+
+/* Settings */
+.srow{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 0;border-bottom:1px solid var(--border);
+}
+.srow:last-child{border-bottom:none}
+.stitle{font-size:.92rem;font-weight:600}
+.sdesc{font-size:.72rem;color:var(--text-dim);margin-top:2px}
+.tog{
+  width:44px;height:24px;border-radius:12px;background:var(--gray);
+  cursor:pointer;position:relative;transition:background .3s;border:none;flex-shrink:0;
+}
+.tog.on{background:var(--green-bg);outline:1px solid var(--green)}
+.tog::after{
+  content:'';position:absolute;width:20px;height:20px;border-radius:50%;
+  background:var(--text-dim);top:2px;left:2px;transition:transform .3s,background .3s;
+}
+.tog.on::after{transform:translateX(20px);background:var(--green)}
+</style>
+</head>
+<body>
+
+<header>
+  <button id="btn-help" title="How to Play">?</button>
+  <h1>VOID WORDLE</h1>
+  <div class="hdr-icons">
+    <button id="btn-stats" title="Statistics">&#x1f4ca;</button>
+    <button id="btn-settings" title="Settings">&#x2699;</button>
+  </div>
+</header>
+
+<div class="mode-switch">
+  <button class="mode-btn active" data-mode="daily">DAILY</button>
+  <button class="mode-btn" data-mode="random">RANDOM</button>
+</div>
+
+<div id="toast-box"></div>
+<div id="game"><div id="board"></div></div>
+<div id="keyboard"></div>
+
+<!-- How To Play -->
+<div class="overlay" id="m-help"><div class="modal">
+  <button class="x">&times;</button>
+  <h2>HOW TO PLAY</h2>
+  <div class="how">
+    <p>Guess the word in 6 tries. Each guess must be a valid 5-letter word. Press <strong>Enter</strong> to submit.</p>
+    <p>After each guess the tiles flip to reveal clues.</p>
+    <p style="margin-top:12px"><strong>Examples</strong></p>
+    <div class="ex-row">
+      <div class="mini g">W</div><div class="mini">E</div><div class="mini">A</div><div class="mini">R</div><div class="mini">Y</div>
+    </div>
+    <p><strong style="color:var(--green)">W</strong> is in the word and in the correct spot.</p>
+    <div class="ex-row">
+      <div class="mini">P</div><div class="mini y">I</div><div class="mini">L</div><div class="mini">L</div><div class="mini">S</div>
+    </div>
+    <p><strong style="color:var(--yellow)">I</strong> is in the word but in the wrong spot.</p>
+    <div class="ex-row">
+      <div class="mini">V</div><div class="mini">A</div><div class="mini">G</div><div class="mini x">U</div><div class="mini">E</div>
+    </div>
+    <p><strong style="color:var(--gray-text)">U</strong> is not in the word in any spot.</p>
+    <p style="margin-top:14px">Play <strong>Daily</strong> for a shared puzzle each day, or <strong>Random</strong> for unlimited games!</p>
+  </div>
+</div></div>
+
+<!-- Statistics -->
+<div class="overlay" id="m-stats"><div class="modal">
+  <button class="x">&times;</button>
+  <h2>STATISTICS</h2>
+  <div class="stats-row" id="st-summary"></div>
+  <h2 style="font-size:.9rem;margin-bottom:8px">GUESS DISTRIBUTION</h2>
+  <div id="st-dist"></div>
+  <div id="st-share"></div>
+  <div class="cd" id="st-cd"></div>
+</div></div>
+
+<!-- Settings -->
+<div class="overlay" id="m-settings"><div class="modal">
+  <button class="x">&times;</button>
+  <h2>SETTINGS</h2>
+  <div class="srow">
+    <div><div class="stitle">Hard Mode</div><div class="sdesc">Revealed hints must be used in subsequent guesses</div></div>
+    <button class="tog" id="tog-hard"></button>
+  </div>
+</div></div>
+
+<script>
+// ======================== WORD LISTS ========================
+// ~2300 answer words (all exactly 5 letters)
+const ANSWERS="aback,abase,abate,abbey,abbot,abhor,abide,abled,abode,abort,about,above,abuse,abyss,acorn,acrid,actor,acute,adage,adapt,adept,admin,admit,adobe,adopt,adore,adorn,adult,aegis,afoot,afoul,after,again,agent,agile,aging,aglow,agony,agree,ahead,aider,aisle,alarm,album,alert,algae,alibi,alien,align,allay,alley,allot,allow,alloy,aloft,alone,along,aloof,aloud,alpha,altar,alter,amass,amaze,amber,amble,amend,amine,amino,amiss,amity,among,ample,amply,amuse,angel,anger,angle,angry,angst,anime,ankle,annex,annoy,anvil,aorta,apart,aphid,apple,apply,apron,arena,argue,arise,armor,aroma,arose,array,arrow,arson,artsy,ascot,ashen,aside,asset,atoll,atone,attic,audio,audit,augur,aunty,avail,avert,avian,avoid,await,awake,award,aware,awash,awful,awoke,axial,axiom,azure,bacon,badge,badly,bagel,baggy,baker,balmy,banal,bandy,barge,baron,basic,basil,basin,basis,batch,bathe,baton,bayou,beach,beady,beard,beast,beech,beefy,begin,being,belch,belly,below,bench,berry,berth,beset,bible,biker,bilge,binge,bingo,biome,birch,birth,black,blade,blame,bland,blank,blare,blast,blaze,bleak,bleat,bleed,bleep,blend,bless,blimp,blind,blink,bliss,blitz,bloat,block,bloke,blond,blood,bloom,blown,blues,bluff,blunt,blurb,blurt,blush,board,boast,bobby,bonus,boost,booth,booty,booze,boozy,borne,bosom,bossy,botch,bound,bough,bowel,boxer,brace,braid,brain,brake,brand,brash,brass,brave,bravo,brawl,brawn,bread,break,breed,briar,bribe,brick,bride,brief,brine,bring,brink,briny,brisk,broad,broil,broke,brood,brook,broth,brown,brush,brunt,buddy,budge,buggy,bugle,build,built,bulge,bulky,bully,bunch,bunny,burst,bushy,butch,buyer,cabin,cable,cadet,camel,cameo,canal,candy,canoe,caper,carat,cargo,carol,carry,carve,catch,cater,cause,cedar,chain,chair,chalk,champ,chant,chaos,charm,chart,chase,cheap,cheat,check,cheek,cheer,chess,chest,chick,chief,child,chili,chill,chime,china,chirp,choir,chord,chore,chose,chunk,churn,cigar,cinch,civic,civil,claim,clamp,clang,clank,clash,clasp,class,clean,clear,clerk,click,cliff,climb,cling,cloak,clock,clone,close,cloth,cloud,clout,clown,clubs,cluck,clump,clung,coach,coast,cocoa,colon,color,comet,comic,comma,conch,coral,couch,cough,could,count,coupe,court,cover,covet,crack,craft,cramp,crane,crank,crash,crass,crate,crave,crawl,craze,crazy,creak,cream,crest,crime,crimp,crisp,croak,crock,crone,crony,crook,cross,crowd,crown,crude,cruel,crush,crust,cubic,curry,curse,curve,cycle,cynic,daddy,daily,dairy,daisy,dance,dandy,datum,debug,debut,decal,decay,decor,decoy,decry,defer,deity,delay,delta,delve,demon,demur,denim,dense,depot,depth,derby,deter,detox,deuce,devil,diary,dicey,digit,dimly,diner,dingy,diode,dirge,dirty,disco,ditch,ditto,ditty,diver,dizzy,dodge,dogma,doing,dolly,donor,donut,dopey,doubt,dough,dowdy,dowel,draft,drain,drake,drama,drank,drape,drawl,drawn,dread,dream,dress,dried,drift,drill,drink,drive,droit,droll,drone,drool,droop,drove,drown,drunk,dryer,dryly,duchy,dummy,dunce,dusty,duvet,dwarf,dwell,dwelt,dying,eager,eagle,early,earth,easel,eaten,eater,ebony,edict,eight,elder,elect,elfin,elite,elope,elude,email,ember,emoji,empty,enact,endow,enemy,enjoy,ennui,ensue,enter,entry,envoy,epoch,equal,equip,erase,erode,error,erupt,essay,ether,ethic,evade,event,every,exact,exalt,excel,exert,exile,exist,expat,expel,extol,extra,exude,exult,fable,facet,faith,false,fancy,farce,fatal,fatty,fault,fauna,feast,feign,fella,felon,femur,fence,ferry,fetal,fetch,fetid,fetus,fever,fiber,fibre,field,fiend,fiery,fifth,fifty,fight,filth,final,finch,first,fishy,fixed,fixer,fizzy,fjord,flack,flame,flank,flare,flash,flask,flesh,flick,flier,fling,flint,float,flock,flood,floor,flora,floss,flour,flout,fluid,fluke,flung,flunk,flush,flute,foamy,focal,focus,foggy,folly,force,forge,forgo,forte,forth,forty,forum,found,foyer,frail,frame,frank,fraud,freak,freed,fresh,friar,fried,frill,frisk,front,frost,froze,fruit,frump,fully,fungi,funky,funny,furry,fussy,gamma,gauge,gaunt,gauze,gavel,geeky,genie,genre,ghost,giant,giddy,girth,given,gland,glare,glass,glaze,gleam,glean,glide,glint,gloat,globe,gloom,glory,gloss,glove,glyph,gnash,going,golly,goody,gooey,goose,gorge,gouge,gourd,grace,grade,graft,grain,grand,grant,grape,graph,grasp,grass,grate,grave,gravy,graze,great,greed,green,greet,grief,grill,grime,grind,gripe,groan,groin,groom,grope,gross,group,grout,grove,growl,grown,gruel,gruff,grunt,guard,guava,guess,guest,guide,guild,guilt,guise,gulch,gully,gummy,gusto,gusty,gypsy,habit,hairy,halve,handy,happy,hardy,haste,hasty,hatch,haunt,haven,hazel,heady,heart,heath,heavy,hedge,heist,helix,hello,hence,hilly,hinge,hippo,hitch,hoard,hobby,hoist,homer,honey,honor,horse,hotel,hotly,hound,house,hover,howdy,human,humid,humor,humus,hunch,hunky,hurry,hyena,hyper,icily,icing,ideal,idiom,idiot,image,imbue,impel,imply,inane,inbox,incur,index,inept,inert,infer,inner,input,inter,intro,ionic,irate,ivory,jazzy,jelly,jenny,jewel,jiffy,jimmy,joker,jolly,joust,judge,juice,juicy,jumbo,jumpy,juror,karma,kayak,kebab,khaki,kinky,kiosk,kitty,knack,knead,kneel,knelt,knife,knock,knoll,known,koala,label,labor,laden,ladle,lager,lance,lanky,lapel,lapse,large,larva,latch,later,lathe,latte,laugh,layer,leach,leafy,leaky,leapt,learn,lease,leash,least,leave,ledge,leech,legal,leggy,lemon,lever,libel,light,lilac,limbo,limit,linen,liner,lingo,liver,llama,local,lodge,lofty,logic,login,loopy,loose,lorry,loser,lousy,lover,lowly,loyal,lucid,lucky,lumen,lumpy,lunar,lunch,lunge,lusty,lying,lyric,macaw,macho,macro,madam,madly,magic,magma,major,maker,mambo,mango,manor,maple,march,marry,marsh,mason,match,maxim,maybe,mayor,mealy,media,medic,melee,melon,mercy,merge,merit,merry,metal,meter,micro,midst,might,mimic,mince,miner,minor,minus,mirth,miser,misty,model,modem,mogul,moist,molar,money,month,moody,moose,moral,morph,mossy,motel,motif,motor,motto,moult,mound,mount,mourn,mouse,mousy,mouth,mover,movie,mower,mucus,muddy,mulch,mummy,mural,murky,mushy,music,musty,myrrh,naive,nanny,nasal,nasty,naval,needy,nerve,never,newer,newly,niche,ninny,ninth,noble,nobly,noise,noisy,nomad,noose,north,notch,noted,novel,nudge,nurse,nylon,oaken,occur,ocean,oddly,offal,offer,often,olden,olive,onset,opera,optic,orbit,order,organ,other,ought,ounce,outdo,outer,ovary,ovate,owing,owner,oxide,ozone,paddy,pagan,paint,paler,palsy,panel,panic,pansy,paper,parka,party,pasta,paste,pasty,patch,patio,pause,peach,pearl,pecan,pedal,penal,pence,penny,perch,peril,perky,pesky,pesto,petal,petty,phase,phone,photo,piano,piece,piggy,pilot,pinch,pixel,pixie,pizza,place,plaid,plain,plane,plank,plant,plate,plaza,plead,pleat,plied,plier,pluck,plumb,plume,plump,plunk,plush,poach,point,poise,poker,polar,polka,polyp,pooch,poppy,porch,poser,posit,posse,pouch,pound,power,prank,prawn,press,price,prick,pride,prime,primo,print,prior,prism,privy,prize,probe,prone,prong,proof,prose,proud,prove,prude,prune,psalm,pubic,pudgy,pulse,punch,pupil,puppy,puree,purge,pushy,putty,pygmy,quack,quaff,quail,quake,qualm,quart,quasi,queen,query,quest,queue,quick,quiet,quirk,quota,quote,rabbi,rabid,racer,radar,radii,radio,rainy,raise,rally,ranch,range,rapid,raven,reach,react,ready,realm,rebel,rebut,recap,recur,reedy,refer,regal,reign,relax,relay,relic,remit,renal,renew,repay,repel,reply,rerun,reset,resin,retch,retro,retry,reuse,revel,rider,ridge,rifle,right,rigid,rigor,rinse,ripen,risen,risky,rival,river,rivet,roach,roast,robin,robot,rocky,rogue,rouge,round,rowdy,royal,rugby,ruler,rumba,rumor,rupee,rural,rusty,sadly,saint,salad,sally,salon,salsa,salty,salve,salvo,sandy,saner,sappy,sassy,sauce,saucy,sauna,savor,savvy,scald,scale,scalp,scaly,scamp,scant,scare,scarf,scary,scene,scent,scoff,scold,scone,scoop,scope,score,scorn,scout,scowl,scram,scrap,scrub,seize,sense,sepia,serve,setup,seven,sever,shack,shade,shady,shaft,shake,shaky,shall,shame,shank,shape,shard,share,shark,sharp,shave,shawl,shear,sheen,sheep,sheer,sheet,shelf,shell,shift,shine,shiny,shire,shirt,shock,shore,short,shout,shove,shown,showy,shrub,shrug,shuck,sight,sigma,silly,since,sinew,siren,sissy,sixth,sixty,sized,skate,skier,skimp,skull,skunk,slack,slain,slang,slant,slash,slate,slave,sleek,sleep,sleet,slept,slice,slide,slime,slimy,sling,slink,slope,sloth,slump,slung,slunk,small,smart,smear,smell,smelt,smile,smirk,smite,smith,smock,smoke,smoky,snack,snail,snake,snare,snarl,sneak,sneer,snide,sniff,snore,snort,snout,snowy,sober,solar,solid,solve,sonic,sorry,sound,south,space,spade,spank,spare,spark,spawn,speak,spear,speck,speed,spell,spend,spent,spice,spicy,spied,spike,spill,spine,spite,spoke,spoof,spook,spool,spoon,spore,sport,spout,spray,spree,squad,squat,squid,stack,staff,stage,staid,stain,stair,stake,stale,stalk,stall,stamp,stand,stank,stare,stark,start,stash,state,stave,steak,steal,steam,steel,steep,steer,stern,stick,stiff,still,sting,stink,stint,stock,stoic,stoke,stole,stomp,stone,stony,stood,stool,stoop,store,stork,storm,story,stout,stove,strap,straw,stray,strip,strut,stuck,study,stuff,stump,stung,stunk,stunt,style,sugar,suite,sulky,sunny,super,surge,sushi,swamp,swarm,swear,sweat,sweep,sweet,swell,swept,swift,swill,swine,swing,swipe,swirl,swoon,swoop,sword,swore,sworn,swung,syrup,tabby,table,taboo,tacit,tacky,taffy,taint,taken,taker,talon,tamer,tango,tangy,taper,tapir,tardy,tarot,taste,tasty,taunt,tawny,teach,teary,tease,teddy,teeth,tempo,tenet,tenor,tense,tenth,tepid,terms,terse,theft,their,theme,there,these,thick,thief,thigh,thing,think,third,thorn,those,three,threw,throw,thumb,thump,tiger,tight,tilde,timer,timid,tipsy,tired,titan,title,toast,today,token,tonal,tonic,tooth,topaz,topic,torch,total,totem,touch,tough,towel,tower,toxic,trace,track,trade,trail,train,trait,tramp,trash,trawl,treat,trend,trial,tribe,trick,tripe,trite,troll,troop,trope,trout,truce,truck,truly,trump,trunk,truss,trust,truth,tuber,tulip,tumor,tuner,tunic,turbo,tutor,twang,tweak,tweed,tweet,twice,twine,twist,tying,udder,ulcer,ultra,umbra,uncle,uncut,under,undid,undue,unfit,unify,union,unite,unity,unlit,until,unwed,unzip,upper,upset,urban,usage,usher,using,usual,utter,uvula,vague,valid,valor,value,valve,vapor,vault,vaunt,vegan,venue,verge,verse,vigor,villa,vinyl,viola,viper,viral,virus,visit,visor,vista,vital,vivid,vixen,vocal,vodka,vogue,voice,voter,vouch,vowel,wacky,wafer,wager,wagon,waist,waltz,watch,water,waver,waxen,weary,weave,wedge,weedy,weigh,weird,whale,wheat,wheel,where,which,while,whiff,whine,whiny,whirl,white,whole,whose,widen,wider,widow,width,wield,windy,witch,woman,women,world,worry,worse,worst,worth,would,wound,wrath,wreak,wreck,wrest,wring,wrist,write,wrong,wrote,yacht,yearn,yeast,yield,young,youth,zebra,zesty,zones".split(",");
+
+// Extra valid guesses (~4500 additional accepted words, all exactly 5 letters)
+const EXTRA="aahed,aalii,abaca,abaci,abaft,abamp,abash,abask,abaya,abbes,abeam,abear,abele,abets,abler,ables,abmho,aboil,aboma,aboon,abord,abore,abram,abray,abrim,abris,absey,absit,abuts,abuzz,abyes,abysm,acais,acari,accas,acerb,acers,aceta,ached,aches,achoo,acids,acidy,acing,acini,acked,acmes,acmic,acned,acnes,acock,acold,acred,acres,acted,actin,acyls,addax,added,adder,addio,addle,adeem,adhan,adieu,adios,adits,adlib,admix,adown,adust,advew,adyta,adzed,adzes,aeons,aerie,aeros,afald,afara,afars,afear,affix,afire,aflaj,afore,afrit,agama,agape,agars,agate,agave,agaze,agene,agers,agger,aggie,aggro,aghas,agios,agism,agist,agita,agley,agloo,aglue,agmas,agone,agons,agora,agrin,agued,agues,aheap,ahigh,ahing,ahint,ahold,ahull,aided,aides,ailed,aimed,aimer,ainee,ainga,aioli,aired,airer,airns,airth,airts,aitch,aiver,aiyee,aizle,ajies,ajiva,ajuga,akees,akela,akene,alack,alamo,aland,alane,alang,alans,alant,alary,alate,alcid,alder,aldol,aleck,alecs,alefs,aleft,algal,algas,algid,algin,algor,algum,alias,alifs,alike,aline,alist,alive,aliya,alkos,alkyd,alkyl,almah,almas,almes,almud,almug,alods,aloed,aloes,aloha,alowe,altho,altos,alula,alums,alure,alway,amain,amate,ambit,ambos,ambry,ameba,ameer,amens,ament,amias,amice,amici,amide,amido,amids,amies,amins,amirs,amlas,ammon,ammos,amnio,amoks,amort,amour,amped,amuck,amula,amyls,anana,ancon,andro,anear,anile,animi,anion,anise,annas,annul,anoas,anode,anole,antic,antis,antra,apace,apage,apeak,apeek,apers,apert,aphis,apian,aping,apish,apnea,apode,apods,aport,appal,appro,apres,apses,apsis,apsos,apted,apter,aptly,aquae,aquas,araba,araks,arame,arbor,arced,arcos,arcus,ardeb,ardor,ardri,aread,areae,areal,arear,areas,areca,aredd,arede,arene,arepa,argil,argol,argon,argos,argot,arked,arles,armed,armer,arpen,arses,artis,arums,arval,arvos,ascii,asdic,ashed,ashes,asked,asker,askew,aspen,asper,aspic,assai,assay,atilt,atlas,atman,atoms,atony,aught,aunts,aurae,aural,aurar,auras,aurei,aures,auric,auris,avast,aviso,avows,awing,awned,awner,axile,axils,axing,axion,axite,axled,axles,axman,axmen,axone,axons,ayahs,azide,azido,azine,azlon,azoic,azole,azons,azote,azoth,azuki,azurn,azury,backs,balds,baled,baler,bales,balks,balky,balls,bally,balms,bands,baned,banes,bangs,banks,banns,barbs,bards,bared,barer,bares,barks,barky,barms,barmy,barns,barps,barre,barry,basal,based,baser,bases,basks,bassy,baste,basts,bated,bates,baths,batik,batts,batty,bauds,baulk,bawds,bawdy,bawls,bawns,bayed,beads,beaks,beaky,beams,beamy,beans,beano,bears,beats,beaus,beaut,beaux,bebop,becks,bedew,bedim,beefs,beeps,beers,beery,beets,befit,befog,began,begat,beget,begot,beige,belga,belie,belle,bells,belts,bends,bendy,benes,benne,benni,benny,bents,beret,bergs,berks,berms,beryl,besom,besot,bests,betas,betel,beths,betta,bevel,bezel,bicep,biddy,bidet,bidis,biers,biffy,bifid,bigly,bigot,bijou,biked,bikes,bilbo,biled,biles,bilgy,bilks,bills,billy,bimbo,binds,bines,biont,biota,biped,bipod,birds,birle,birls,biros,birrs,bises,bisks,bison,bitch,biter,bites,bitsy,bitts,bitty,bizes,blabs,blads,blame,blams,blare,blase,blats,blawn,blaws,blays,blear,blebs,bleed,blees,blent,blest,blets,bleys,blini,blips,blite,blobs,blocs,blogs,blond,blore,blown,blows,blowy,blubs,blued,bluer,bluet,bluey,bluid,blume,blurs,blype,boabs,boaks,boars,boats,bobak,bobas,bocks,boded,bodes,bodge,boers,bogey,boggy,bogie,bogus,bohea,boils,bolar,bolas,bolds,boles,bolls,bolts,bolus,bomas,bonds,boned,boner,bones,boney,bongs,bonks,bonne,bonny,bonze,boobs,booby,booed,books,booky,booms,boomy,boons,boors,boots,bored,borer,bores,boric,boron,borts,borty,bortz,bosks,bosky,boson,bosun,bothy,botte,botts,bouge,bouks,boule,bouse,bousy,bouts,bovid,bowed,bower,bowls,boxed,boxes,boyar,boyla,boyos,bozos,brack,bract,brads,braes,brags,brank,brans,braws,brays,bream,brens,brent,breve,brews,brier,bries,brigs,brims,brins,brisk,broad,broch,brock,brome,bronc,brood,broos,brose,bruce,bruin,bruit,brume,brung,buats,bucks,budge,buffo,buffs,buiks,bulbs,bumfs,bumph,bumps,bumpy,bunco,bunds,bungs,bunko,bunks,bunts,buoys,burbs,burds,buret,burgs,burin,burke,burks,burls,burly,burns,burnt,burps,burro,burrs,burry,bursa,busby,bused,buses,busks,busts,busty,butle,butte,butts,butty,butyl,buxom,bylaw,byres,bytes,byway,cabal,cabby,cabot,cacao,cache,cacti,caddy,cadge,cadre,caeca,cafes,caged,cager,cages,cagey,cairn,caked,cakes,cakey,calfs,calif,calks,calls,calms,campy,camps,caned,caner,canes,canid,canna,canny,canon,canso,cants,caped,capes,capon,capos,cards,cared,carer,cares,carks,carle,carls,carns,carny,carom,carps,carts,cased,cases,caste,casts,caulk,caved,caver,caves,cavil,cease,ceded,ceder,cedes,celeb,cells,celts,cents,cered,ceres,chafe,chaff,chaps,chard,chasm,chats,chaws,cheep,chemo,chide,chimp,chink,chino,chins,chips,chits,chive,chivy,choke,chomp,chops,chowl,chows,chuck,chuff,chump,chums,chute,cited,citer,cites,civet,clack,clads,clams,clans,claps,clast,clave,claws,clays,cleat,cleft,clept,clime,cline,clink,clint,clips,clods,clogs,clonk,clops,clots,clove,clubs,clued,clues,clunk,coats,cobbs,cobra,cocas,cocks,cocos,coded,coder,codes,codex,codon,coeds,coifs,coils,coins,coirs,coked,coker,cokes,colas,colds,coled,coles,coley,colic,combo,combs,comer,comes,comfy,comps,compt,condo,coned,cones,coney,conga,conge,congo,conic,conks,conky,conte,conus,cooed,cooer,coofs,cooks,cooky,cools,cooly,coomb,coons,coops,coopt,coots,copal,coped,copen,coper,copes,corgi,cords,cored,corer,cores,corks,corky,corms,corns,cornu,corny,corps,corse,cosec,coset,cosey,coshy,costs,cotan,coups,coved,coven,coves,covin,cowed,cower,cowls,cowps,coyed,coyer,coyly,coypu,cozen,cozes,crabs,crags,crams,craps,craws,credo,creds,creed,creek,creel,creep,creme,crepe,crept,cress,crews,cribs,crick,cried,crier,cries,crits,croak,croft,croon,crops,croup,crows,cruds,cruet,cruft,crumb,crump,crypt,cubed,cuber,cubes,cubit,cuffs,cuing,cukes,culls,cults,cumin,cupel,cupid,cuppa,curbs,curds,curdy,cured,curer,cures,curie,curio,curls,curly,cushy,cusks,cusps,cuter,cutes,cutey,cutis,cymar,cymes,cysts,czars,daces,dados,daffs,daffy,dales,dally,dames,damns,damps,dangs,dared,darer,dares,darks,darns,darts,dated,dater,dates,daubs,dawns,dazed,deals,dealt,deans,death,deary,debar,debit,decks,deeds,deems,deeps,deers,defog,degas,degum,deify,deign,deism,delfs,delft,delts,demob,denes,dents,desks,dewed,dials,diced,dicer,dices,dicks,dicky,dicot,diets,dikes,dills,dilly,dimer,dimes,dimps,dinar,dined,dines,dingo,dings,dinks,dinky,dippy,dirks,dirls,discs,dishy,divan,divas,dived,dives,divot,divvy,djinn,djins,docks,dodos,doers,doffs,doges,doggy,dolce,doled,doles,dolls,dolma,dolor,dolts,domed,domes,donee,dongs,donna,donne,dooms,doors,dopas,doped,doper,dopes,dorks,dorky,dorms,dormy,dorps,dosed,doser,doses,dotal,doted,doter,dotes,dotty,douma,doura,douse,doves,dowel,dower,downs,downy,dowse,dozed,dozen,dozer,dozes,drabs,drags,drams,drape,drays,dress,dried,drier,dries,drily,drips,dross,drugs,drums,drupe,duals,ducal,ducks,ducky,ducts,dudes,duels,duets,duffs,dukes,dulls,dully,dulse,dumbo,dumps,dumpy,dunes,dungs,dungy,dunks,dunno,duped,duper,dupes,duple,dural,dured,dures,duros,durrs,durst,durum,dusks,dusky,dwale,dweeb,dwine,dyads,dyked,dykes,eared,earls,earns,eased,eases,eaves,ebbed,ebons,edema,edged,edger,edges,edify,edits,eerie,eject,eking,elate,elbow,elide,elute,elven,elves,embed,emcee,emend,emirs,emits,emote,ended,ender,endue,envoi,epode,epoxy,exams,exurb,eyers,eyrie,faced,facer,faces,facts,faddy,faded,fades,fagot,fails,faint,fairy,faked,faker,fakes,falls,famed,fames,fangs,fared,fares,farms,fated,fates,fatwa,fauns,favor,fawns,feats,fecal,feces,feeds,feels,feint,feist,felts,femme,fends,fenny,feral,ferns,ferny,feted,fetes,feuds,fewer,ficus,fifes,filar,filch,filed,filer,files,filet,fills,filly,films,filmy,finds,fined,finer,fines,fired,firer,fires,firms,fists,fitly,fixes,flags,flair,flake,flaky,flams,flans,flaps,flats,flaws,flawy,flays,fleas,fleck,flees,fleet,flied,flies,flips,flirt,floes,flogs,flows,fluky,flume,fluor,foals,foams,fogey,foils,foist,folds,folio,folks,folky,fonts,foods,foody,fools,foots,foray,fords,forks,forma,forms,forts,fossa,fouls,fount,fours,fowls,foxed,foxes,franc,frays,freer,frees,frier,fries,frizz,frock,frogs,frond,froth,fryer,fudge,fudgy,fuels,fugal,fugue,fumed,fumer,fumes,funds,funks,furls,furze,furzy,fused,fusee,fusel,fuses,fusty,fuzzy,gable,gaffe,gaffs,gaged,gager,gages,gains,gaits,galas,gales,galls,gamed,gamer,games,gamey,gammy,ganef,gangs,gaped,gaper,gapes,garbs,gases,gasps,gassy,gates,gated,gazer,gazes,gears,geeks,geese,gents,germs,getup,gibed,giber,gibes,gifts,gilds,gills,gilts,gimps,gimpy,girds,girls,girly,girts,gists,gives,glads,gland,glans,glary,gleba,glebe,gleds,gleed,glees,glens,gleys,glims,glitz,gloam,globe,globs,gloms,glops,glost,glout,glows,glued,gluer,glues,gluey,glugs,glums,glung,gluts,gnars,gnats,gnawn,gnaws,goads,goals,goats,goban,godly,goers,gofer,golds,golem,golfs,gombo,gomer,goner,gongs,gonna,goods,goofs,goofy,goons,goops,goopy,gouge,gowds,gowns,grabs,grads,grams,grans,grapy,grays,greed,grees,greys,gribs,grids,grins,griot,grips,grist,grits,groan,groat,grogs,groks,gross,grots,grout,grows,grubs,grues,guans,guars,gudes,guffs,gulag,gular,gules,gulfs,gulls,gulps,gulpy,gumbo,gumps,gunks,gunky,gunny,guppy,gurge,gurus,gusts,gutta,gutsy,guyed,gybed,gybes,gyred,gyres,gyron,gyrus,gyved,gyves,hacks,hadst,hafts,hahas,haiks,hails,hairs,hajes,hajis,hajes,hakus,haled,haler,hales,halls,halos,halts,hames,hammy,hangs,hanks,hared,harem,hares,harks,harms,harps,harpy,harry,harsh,harts,hasps,hated,hater,hates,hauls,hawks,hawse,hayed,hayer,hayey,heads,heals,heaps,heard,hears,heats,heave,hecks,heeds,heels,hefts,hefty,heirs,heist,helio,hemps,hempy,henna,henry,herbs,herds,heres,herns,heros,hertz,hewed,hewer,hexed,hexes,hicks,hided,hider,hides,highs,hiked,hiker,hikes,hills,hilts,hinds,hints,hippo,hippy,hired,hirer,hires,hived,hives,hoagy,hoars,hobos,hocks,hocus,hoggs,hoick,holds,holed,holes,holey,holks,holly,holms,holts,homed,homes,homey,homie,honed,honer,hones,hoods,hooey,hoofs,hooks,hooky,hoops,hoots,hooty,hoped,hoper,hopes,horde,horns,horny,horsy,hosed,hosel,hosen,hoser,hoses,hosts,hours,howes,howff,howfs,howks,howls,hubby,huffs,huffy,huger,hulks,hulky,hulls,humph,humps,humpy,hunks,hunts,hurds,hurls,husks,husky,hussy,hydra,hydro,hyena,hyped,hyper,hypes,hypos,iambi,iambs,icier,icker,icons,ideas,idled,idler,idles,idols,idyll,idyls,igged,iglus,ikats,ikons,ileal,ileum,ileus,iliac,iliad,image,imago,imams,imbed,imide,imids,immix,imped,impis,incog,incus,indie,indol,indow,indri,infos,ingle,inked,inker,inkle,inlay,inlet,inned,inrun,intel,intis,inure,inurn,iodic,iodin,ionic,iotas,irked,iroko,irone,irons,irony,isled,isles,islet,issue,items,ivied,ivies,ivory,ixias,ixora,ixtle,izard,izars,jab,jacks,jades,jager,jaggs,jaggy,jails,jakes,jalap,jambe,jambs,james,janes,janty,japan,japed,japer,japes,jarls,jatos,jauks,jaunt,javas,jawed,jazzy,jeans,jeeps,jeers,jehus,jells,jembe,jenny,jerks,jerky,jerry,jests,jetes,jetty,jibba,jibbs,jibed,jiber,jibes,jiffs,jihad,jilts,jimmy,jimpy,jingo,jinks,jinni,jinns,jived,jiver,jives,jivey,jnana,jocko,jocks,joeys,johns,joins,joint,joist,joked,joker,jokes,jokey,jolts,jolty,jones,joram,jotas,jotty,joual,jouks,joule,jowar,jowed,jowls,jowly,jubes,judge,jugal,juice,juked,jukes,julep,jumps,junco,junks,junky,junta,jupes,jupon,jural,jurat,jurel,jures,juror,justs,jutes,jutty,kabar,kabob,kadis,kafir,kagos,kaiak,kaids,kaifs,kails,kains,kakas,kakis,kalam,kales,kalif,kames,kamik,kanas,kanes,kangs,kanji,kanzu,kapas,kapok,kappa,kaput,karas,karat,karma,karns,karts,katas,kauri,kaury,kavas,kayak,kayos,kazoo,keats,kebab,kecks,kedge,keefs,keeks,keels,keens,keeps,keets,keeve,kefir,keirs,kelep,kelim,kelps,kelpy,kelts,kemps,kempt,kenaf,kendo,kenos,kepis,kerbs,kerfs,kerne,kerns,kerry,ketch,ketol,keyed,khadi,khaki,khans,khats,kheda,khedr,khoum,kicks,kicky,kiddo,sided,sides,sighs,sight,sigil,sigla,signa,signs,siker,sikes,silds,silks,silky,sills,silly,silos,silts,silty,simps,since,sines,singe,sinks,sinus,siped,sipes,sired,siree,siren,sires,sirra,sirup,sisal,sises,sissy,sitar,sited,sites,situp,situs,siver,sixth,sixty,sizar,sized,sizer,sizes,skags,skald,skate,skats,skean,skeed,skeen,skees,skeet,skegs,skein,skell,skelm,skelp,skene,skeps,skews,skids,skied,skier,skies,skiey,skiff,skill,skimp,skims,skins,skint,skips,skirl,skirr,skirt,skite,skits,skive,skoal,skosh,skulk,skull,skunk,slabs,slack,slags,slain,slake,slams,slang,slant,slaps,slash,slate,slats,slaty,slave,slaws,slays,sleds,sleek,sleep,sleet,slept,slews,slice,slick,slide,slier,slily,slime,slims,slimy,sling,slink,slips,slits,slobs,sloes,slogs,sloid,slojd,slope,slops,slosh,sloth,slots,slows,slubs,slued,slues,slugs,slump,slums,slung,slunk,slurb,slurp,slurs,slush,slyly,smack,small,smalt,smarm,smart,smash,smaze,smear,smeek,smell,smelt,smile,smirk,smite,smith,smock,smogs,smoke,smoky,smolt,snack,snafu,snags,snail,snake,snaky,snaps,snare,snark,snarl,snash,snath,sneak,sneap,sneck,sneds,sneer,snick,snide,sniff,snips,snits,snobs,snogs,snood,snook,snool,snoop,snore,snort,snots,snout,snows,snowy,snubs,snugs,soaks,soaps,soapy,soars,sober,socko,socks,sodas,sofas,softa,softs,softy,soggy,soils,solar,soled,solei,soles,solid,solon,solos,solve,somas,sonic,sonly,sonne,sonny,sonsy,sooey,sooks,sooth,soots,sooty,sopor,soppy,soras,sorbs,sords,sorer,sores,sorgo,sorns,sorry,sorts,sorus,soths,sotol,sotto,souks,souls,sound,soups,soupy,sours,souse,south,sowed,sower,space,spade,spado,spaed,spaes,spahi,spail,spain,spait,spake,spale,spall,spams,spang,spank,spans,spare,spark,spars,spasm,spate,spats,spawn,spays,speak,spear,speck,specs,speed,speel,speer,spell,spelt,spend,spent,sperm,spews,spica,spice,spicy,spied,spiel,spier,spies,spike,spiks,spiky,spile,spill,spine,spins,spiny,spire,spirt,spite,spits,spitz,spivs,spoke,spoof,spook,spool,spoon,spoor,spore,sport,spots,spout,spray,spree,sprig,sprit,sprue,sprug,spuds,spued,spues,spume,spumy,spunk,spurn,spurs,spurt,squab,squad,squat,squaw,squid,stabs,stack,staff,stage,stags,stagy,staid,stain,stair,stake,stale,stalk,stall,stamp,stand,stane,stang,stank,stare,stark,stars,start,stash,state,stave,stays,stead,steak,steal,steam,steed,steel,steep,steer,stein,stela,stele,stems,steno,stens,steps,stere,stern,stets,stews,stewy,stich,stick,stied,sties,stiff,stile,still,stilt,stime,stimy,sting,stink,stint,stipe,stirk,stirp,stirs,stoae,stoai,stoas,stoat,stobs,stock,stoep,stogy,stoic,stoke,stole,stoma,stomp,stone,stony,stood,stook,stool,stoop,stope,stops,stopt,store,stork,storm,story,stoss,stots,stoup,stour,stout,stove,stowp,stows,strap,straw,stray,strep,strew,stria,strip,strop,strow,stroy,strut,stubs,stuck,studs,study,stuff,stull,stump,stums,stung,stunk,stuns,stunt,stupa,stupe,stura,styed,styes,style,styli,stymy,suave,subas,sucks,sucre,sudds,sudor,sudsy,suede,suets,suety,sugar,sughs,suing,suite,suits,sulci,sulfa,sulfo,sulks,sulky,sully,sumac,summa,sumos,sumps,sunna,sunns,sunny,sunup,super,supes,supra,sural,suras,surds,sured,surer,sures,surfs,surfy,surge,surgy,surly,surra,sushi,sutra,sutta,swabs,swage,swags,swail,swain,swale,swami,swamp,swams,swang,swank,swans,swaps,sward,sware,swarf,swarm,swart,swash,swath,swats,sways,swear,sweat,sweep,sweet,swell,swelt,swept,swift,swigs,swill,swims,swine,swing,swink,swipe,swirl,swish,swiss,swive,swobs,swoon,swoop,swops,sword,swore,sworn,swots,swoun,swung,sycee,syces,sycon,sykes,sylis,sylph,sylva,synch,syncs,synod,synth,syped,sypes,syrah,syren,syrup,sysop,tabby,taber,tabes,table,taboo,tabor,tabun,taces,tacet,tache,tachs,tacit,tacks,tacky,tacos,tacts,taels,taffy,tafia,tahrs,tails,tains,taint,tajes,taken,taker,takes,talas,taler,tales,talks,talky,talls,tally,talon,taluk,talus,tamal,tamed,tamer,tames,tamis,tammy,tamps,tanga,tangs,tangy,tanka,tanks,tansy,tanto,tapas,taped,taper,tapes,tapir,tapis,tardy,tared,tares,targa,targe,tarns,taroc,tarok,taros,tarot,tarps,tarre,tarry,tarsi,tarts,tarty,taste,tasty,tatar,tater,tates,tatty,taunt,tauon,taupe,tauts,tawed,tawer,tawny,taxed,taxer,taxes,taxis,taxon,teach,teaks,teals,teams,tears,teary,tease,teats,techs,techy,teddy,teels,teens,teeny,teeth,teggs,tegua,teiid,teils,telae,telco,teles,telex,telia,telic,tells,telly,teloi,telos,tempi,tempo,temps,tempt,tench,tends,tenet,tenge,tenia,tenon,tenor,tense,tenth,tents,tenty,tepal,tepas,tepee,tepid,tepoy,terms,terne,terns,terra,terry,terse,tesla,testa,tests,testy,teths,tetra,tetri,tewed,texas,texts,thane,thank,thaws,theca,theft,thein,their,theme,thens,there,therm,these,thesp,theta,thews,thewy,thick,thief,thigh,thill,thine,thing,think,thins,third,thirl,thorn,thoro,thorp,those,thous,three,threw,thrip,throb,threw,throw,thrum,thuds,thugs,thuja,thumb,thump,thane,thunk,thurl,thuya,thyme,thymi,thymy,tiara,tibia,tical,ticks,tidal,tiddy,tided,tides,tiers,tiffs,tiger,tight,tigon,tikes,tikis,tilak,tilde,tiled,tiler,tiles,tills,tilts,timed,timer,times,timid,tinct,tinea,tined,tines,tinge,tings,tinny,tipis,tippy,tipsy,tired,tires,tirls,titan,titer,tithe,title,titre,titty,tizzy,toads,toady,toast,today,todds,toeas,toffs,toffy,tofts,tofus,togas,togae,togue,toile,toils,toits,tokay,toked,token,toker,tokes,tolan,tolar,tolas,toled,toles,tolls,tolyl,toman,tombs,tomes,tonal,tondi,tondo,toned,toner,tones,toney,tongs,tonic,tonne,tonns,tonus,tools,toons,tooth,toots,topaz,toped,topee,toper,topes,tophe,tophi,tophs,topic,topis,topoi,topos,toque,torah,toras,torch,tores,toric,torii,toros,torot,torse,torsi,torsk,torso,torte,torts,torus,total,toted,totem,toter,totes,touch,tough,tours,touse,tousy,touts,towed,towel,tower,towie,towns,towny,toxic,toxin,toyed,toyer,toyon,toyos,trace,track,tract,trade,trail,train,trait,tramp,trams,trans,traps,trash,trass,trave,trawl,trays,tread,treat,treed,trees,treks,trend,tress,treys,triac,triad,trial,tribe,trice,trick,tried,trier,tries,trigs,trike,trill,trime,trims,trine,trios,tripe,trips,trite,troad,trock,trode,troil,troke,troll,tromp,trona,trone,troop,trooz,trope,troth,trots,trout,trove,trows,troys,truce,truck,trued,truer,trues,trugs,trull,truly,trump,trunk,truss,trust,truth,tryst,tsadi,tsars,tsked,tsuba,tsubr,tubae,tubal,tubas,tubby,tubed,tuber,tubes,tucks,tufas,tuffs,tufts,tufty,tulip,tulle,tulpa,tumid,tummy,tumor,tumps,tunas,tuned,tuner,tunes,tungs,tunic,tunny,tupas,tupik,tuque,turbo,turds,turfs,turfy,turns,turps,tuxes,tuyer,twain,twang,twank,twats,tweak,tweed,tweet,twerp,twice,tweed,twigs,twill,twine,twiny,twins,twirl,twirp,twist,twits,tying,tyins,tykes,tyned,tynes,typed,types,typic,typos,tyred,tyres,tzars".split(",");
+
+const ALL_VALID = new Set();
+ANSWERS.forEach(w => ALL_VALID.add(w));
+EXTRA.forEach(w => { if(w.length===5) ALL_VALID.add(w); });
+
+// ======================== GAME STATE ========================
+const WORD_LEN = 5, MAX_ROWS = 6;
+const KB = [
+  ['q','w','e','r','t','y','u','i','o','p'],
+  ['a','s','d','f','g','h','j','k','l'],
+  ['Enter','z','x','c','v','b','n','m','Backspace']
+];
+
+let mode = 'daily';
+let solution = '';
+let row = 0, col = 0;
+let board = [];
+let over = false;
+let hard = false;
+let hints = []; // {letter, status, pos}
+let flipping = false;
+
+// ======================== DATE HELPERS ========================
+const EPOCH = new Date(2024, 0, 1);
+function dayNum(){ const d=new Date(); d.setHours(0,0,0,0); return Math.floor((d-EPOCH)/864e5); }
+function dailyWord(){ return ANSWERS[dayNum() % ANSWERS.length]; }
+function randomWord(){ return ANSWERS[Math.floor(Math.random()*ANSWERS.length)]; }
+
+// ======================== STORAGE ========================
+function ld(k,d){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch{return d;} }
+function sv(k,v){ localStorage.setItem(k,JSON.stringify(v)); }
+function loadStats(){ return ld('vw_stats',{played:0,won:0,streak:0,maxStreak:0,dist:{1:0,2:0,3:0,4:0,5:0,6:0},lastDate:null}); }
+function saveStats(s){ sv('vw_stats',s); }
+
+// ======================== DOM REFS ========================
+const boardEl = document.getElementById('board');
+const kbEl = document.getElementById('keyboard');
+const toastBox = document.getElementById('toast-box');
+
+// ======================== CREATE BOARD ========================
+function createBoard(){
+  boardEl.innerHTML='';
+  board=[];
+  for(let r=0;r<MAX_ROWS;r++){
+    const rEl=document.createElement('div');
+    rEl.className='row'+(r===0?' active':'');
+    const rd=[];
+    for(let c=0;c<WORD_LEN;c++){
+      const t=document.createElement('div');
+      t.className='tile';
+      rEl.appendChild(t);
+      rd.push({letter:'',status:'',el:t});
+    }
+    boardEl.appendChild(rEl);
+    board.push(rd);
+  }
+}
+
+// ======================== CREATE KEYBOARD ========================
+function createKeyboard(){
+  kbEl.innerHTML='';
+  KB.forEach(kr=>{
+    const rEl=document.createElement('div');
+    rEl.className='kb-row';
+    kr.forEach(k=>{
+      const b=document.createElement('button');
+      b.className='key'+(k.length>1?' wide':'');
+      b.dataset.key=k;
+      b.textContent=k==='Backspace'?'\u232B':k==='Enter'?'ENTER':k;
+      b.addEventListener('click',()=>handleKey(k));
+      b.addEventListener('pointerdown',e=>e.preventDefault()); // prevent focus steal
+      rEl.appendChild(b);
+    });
+    kbEl.appendChild(rEl);
+  });
+}
+
+// ======================== TOAST ========================
+function toast(msg,dur=1500){
+  const t=document.createElement('div');
+  t.className='toast'; t.textContent=msg;
+  toastBox.appendChild(t);
+  setTimeout(()=>{t.style.transition='opacity .3s';t.style.opacity='0';setTimeout(()=>t.remove(),300);},dur);
+}
+
+// ======================== MODALS ========================
+document.querySelectorAll('.overlay').forEach(o=>{
+  o.querySelector('.x').addEventListener('click',()=>o.classList.remove('open'));
+  o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');});
+});
+document.getElementById('btn-help').addEventListener('click',()=>document.getElementById('m-help').classList.add('open'));
+document.getElementById('btn-stats').addEventListener('click',()=>{renderStats();document.getElementById('m-stats').classList.add('open');});
+document.getElementById('btn-settings').addEventListener('click',()=>document.getElementById('m-settings').classList.add('open'));
+
+// ======================== SETTINGS ========================
+const togHard = document.getElementById('tog-hard');
+togHard.addEventListener('click',()=>{
+  if(row>0 && !hard){
+    hard=true; togHard.classList.add('on');
+    sv('vw_set',{hardMode:true});
+  } else if(row>0 && hard){
+    toast('Cannot disable hard mode after guessing'); return;
+  } else {
+    hard=!hard; togHard.classList.toggle('on',hard);
+    sv('vw_set',{hardMode:hard});
+  }
+});
+
+// ======================== MODE SWITCH ========================
+document.querySelectorAll('.mode-btn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    if(b.dataset.mode===mode) return;
+    document.querySelectorAll('.mode-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    mode=b.dataset.mode;
+    initGame();
+  });
+});
+
+// ======================== KEYBOARD INPUT ========================
+document.addEventListener('keydown',e=>{
+  if(document.querySelector('.overlay.open')) return;
+  if(e.ctrlKey||e.metaKey||e.altKey) return;
+  if(e.key==='Enter') handleKey('Enter');
+  else if(e.key==='Backspace') handleKey('Backspace');
+  else if(/^[a-zA-Z]$/.test(e.key)) handleKey(e.key.toLowerCase());
+});
+
+function handleKey(k){
+  if(over||flipping) return;
+  if(k==='Enter') submit();
+  else if(k==='Backspace') delChar();
+  else if(/^[a-z]$/.test(k)) addChar(k);
+}
+
+function addChar(ch){
+  if(col>=WORD_LEN) return;
+  const t=board[row][col];
+  t.letter=ch; t.el.textContent=ch; t.el.classList.add('filled');
+  col++;
+}
+function delChar(){
+  if(col<=0) return;
+  col--;
+  const t=board[row][col];
+  t.letter=''; t.el.textContent=''; t.el.classList.remove('filled');
+}
+
+// ======================== EVALUATE ========================
+function evaluate(guess,answer){
+  const res=Array(WORD_LEN).fill('absent');
+  const a=[...answer], g=[...guess];
+  for(let i=0;i<WORD_LEN;i++){
+    if(g[i]===a[i]){ res[i]='correct'; a[i]=null; g[i]=null; }
+  }
+  for(let i=0;i<WORD_LEN;i++){
+    if(!g[i]) continue;
+    const j=a.indexOf(g[i]);
+    if(j!==-1){ res[i]='present'; a[j]=null; }
+  }
+  return res;
+}
+
+// ======================== SUBMIT ========================
+function submit(){
+  if(col<WORD_LEN){ shakeRow(); toast('Not enough letters'); return; }
+  const guess=board[row].map(t=>t.letter).join('');
+  if(!ALL_VALID.has(guess)){ shakeRow(); toast('Not in word list'); return; }
+
+  // Hard mode
+  if(hard && hints.length){
+    for(const h of hints){
+      if(h.status==='correct' && guess[h.pos]!==h.letter){
+        shakeRow(); toast(`Position ${h.pos+1} must be ${h.letter.toUpperCase()}`); return;
+      }
+      if(h.status==='present' && !guess.includes(h.letter)){
+        shakeRow(); toast(`Must contain ${h.letter.toUpperCase()}`); return;
+      }
+    }
+  }
+
+  flipping=true;
+  const statuses=evaluate(guess,solution);
+
+  // Update hints
+  statuses.forEach((s,i)=>{
+    if(s==='correct'||s==='present'){
+      if(!hints.find(h=>h.letter===guess[i]&&h.status===s&&(s==='correct'?h.pos===i:true)))
+        hints.push({letter:guess[i],status:s,pos:i});
+    }
+  });
+
+  // Flip tiles
+  const tiles=board[row];
+  statuses.forEach((st,i)=>{
+    setTimeout(()=>{
+      const t=tiles[i];
+      t.status=st;
+      t.el.classList.add('flip');
+      setTimeout(()=>{
+        t.el.classList.add(st);
+        updateKey(t.letter,st);
+      },240);
+    },i*280);
+  });
+
+  // After flips done
+  const totalTime = WORD_LEN*280+320;
+  setTimeout(()=>{
+    boardEl.children[row].classList.remove('active');
+    row++; col=0; flipping=false;
+
+    const won = guess===solution;
+    if(won){
+      over=true;
+      board[row-1].forEach((t,i)=>setTimeout(()=>t.el.classList.add('win'),i*100));
+      const msgs=['Genius!','Magnificent!','Impressive!','Splendid!','Great!','Phew!'];
+      setTimeout(()=>toast(msgs[row-2]||'Nice!',2000),500);
+      recordStats(true,row-1);
+      saveProgress();
+      setTimeout(()=>{renderStats();document.getElementById('m-stats').classList.add('open');},2400);
+    } else if(row>=MAX_ROWS){
+      over=true;
+      toast(solution.toUpperCase(),4000);
+      recordStats(false);
+      saveProgress();
+      setTimeout(()=>{renderStats();document.getElementById('m-stats').classList.add('open');},2400);
+    } else {
+      boardEl.children[row].classList.add('active');
+      saveProgress();
+    }
+  },totalTime);
+}
+
+function updateKey(letter,status){
+  const pri={absent:0,present:1,correct:2};
+  const k=kbEl.querySelector(`[data-key="${letter}"]`);
+  if(!k) return;
+  const cur=k.dataset.status||'';
+  if(pri[status]>(pri[cur]??-1)){
+    k.classList.remove('correct','present','absent');
+    k.classList.add(status);
+    k.dataset.status=status;
+  }
+}
+
+function shakeRow(){
+  const r=boardEl.children[row];
+  r.classList.add('shake');
+  setTimeout(()=>r.classList.remove('shake'),500);
+}
+
+// ======================== STATS ========================
+function recordStats(won,guessNum){
+  if(mode!=='daily') return;
+  const s=loadStats();
+  const today=new Date().toDateString();
+  if(s.lastDate===today) return;
+  s.played++;
+  if(won){ s.won++; s.streak++; s.maxStreak=Math.max(s.maxStreak,s.streak); s.dist[guessNum]=(s.dist[guessNum]||0)+1; s.lastWin=guessNum; }
+  else { s.streak=0; }
+  s.lastDate=today;
+  saveStats(s);
+}
+
+function renderStats(){
+  const s=loadStats();
+  const pct=s.played?Math.round(100*s.won/s.played):0;
+  document.getElementById('st-summary').innerHTML=
+    `<div class="stat-item"><div class="n">${s.played}</div><div class="l">Played</div></div>`+
+    `<div class="stat-item"><div class="n">${pct}</div><div class="l">Win %</div></div>`+
+    `<div class="stat-item"><div class="n">${s.streak}</div><div class="l">Streak</div></div>`+
+    `<div class="stat-item"><div class="n">${s.maxStreak}</div><div class="l">Max</div></div>`;
+
+  const mx=Math.max(1,...Object.values(s.dist));
+  let h='';
+  for(let i=1;i<=6;i++){
+    const v=s.dist[i]||0;
+    const w=Math.max(8,Math.round(100*v/mx));
+    const hl=over&&row===i?' hl':'';
+    h+=`<div class="dist-row"><div class="gn">${i}</div><div class="bar${hl}" style="width:${w}%">${v}</div></div>`;
+  }
+  document.getElementById('st-dist').innerHTML=h;
+
+  const sh=document.getElementById('st-share');
+  if(over){ sh.innerHTML='<button class="share-btn" id="share-btn">SHARE</button>';
+    document.getElementById('share-btn').addEventListener('click',shareResult);
+  } else sh.innerHTML='';
+
+  const cd=document.getElementById('st-cd');
+  if(mode==='daily'){
+    function tick(){
+      const now=new Date(),tmr=new Date(now);
+      tmr.setDate(tmr.getDate()+1);tmr.setHours(0,0,0,0);
+      const d=tmr-now;
+      const hh=String(Math.floor(d/36e5)).padStart(2,'0');
+      const mm=String(Math.floor((d%36e5)/6e4)).padStart(2,'0');
+      const ss=String(Math.floor((d%6e4)/1e3)).padStart(2,'0');
+      cd.innerHTML=`Next word in <span>${hh}:${mm}:${ss}</span>`;
+    }
+    tick(); if(cd._iv) clearInterval(cd._iv); cd._iv=setInterval(tick,1000);
+  } else cd.innerHTML='';
+}
+
+function shareResult(){
+  const em={correct:'\u{1F7E9}',present:'\u{1F7E8}',absent:'\u2B1B'};
+  let t=`VOID WORDLE ${mode==='daily'?dayNum():'\u221E'} ${over&&row<=MAX_ROWS?row:'X'}/${MAX_ROWS}${hard?'*':''}\n\n`;
+  for(let r=0;r<row;r++) t+=board[r].map(c=>em[c.status]||'\u2B1B').join('')+'\n';
+  navigator.clipboard.writeText(t.trim()).then(()=>toast('Copied to clipboard!')).catch(()=>toast('Copy failed'));
+}
+
+// ======================== DAILY SAVE/RESTORE ========================
+function saveProgress(){
+  if(mode!=='daily') return;
+  const guesses=[];
+  for(let r=0;r<row;r++) guesses.push(board[r].map(t=>t.letter).join(''));
+  sv('vw_daily',{date:new Date().toDateString(),guesses,over,solution});
+}
+
+function restoreProgress(){
+  const d=ld('vw_daily',null);
+  if(!d||d.date!==new Date().toDateString()||d.solution!==solution) return false;
+  d.guesses.forEach((w,r)=>{
+    const st=evaluate(w,solution);
+    for(let c=0;c<WORD_LEN;c++){
+      const t=board[r][c];
+      t.letter=w[c]; t.status=st[c];
+      t.el.textContent=w[c]; t.el.classList.add('filled',st[c]);
+      updateKey(w[c],st[c]);
+      if(st[c]==='correct'||st[c]==='present')
+        hints.push({letter:w[c],status:st[c],pos:c});
+    }
+    boardEl.children[r].classList.remove('active');
+  });
+  row=d.guesses.length; col=0; over=d.over;
+  if(!over&&row<MAX_ROWS) boardEl.children[row].classList.add('active');
+  return true;
+}
+
+// ======================== INIT ========================
+function initGame(){
+  row=0;col=0;over=false;flipping=false;hints=[];
+  solution = mode==='daily' ? dailyWord() : randomWord();
+  createBoard(); createKeyboard();
+  const st=ld('vw_set',{hardMode:false});
+  hard=st.hardMode; togHard.classList.toggle('on',hard);
+  if(mode==='daily') restoreProgress();
+}
+
+// Show help on first visit
+if(!localStorage.getItem('vw_v')){
+  localStorage.setItem('vw_v','1');
+  setTimeout(()=>document.getElementById('m-help').classList.add('open'),400);
+}
+
+initGame();
+</script>
+</body>
+</html>

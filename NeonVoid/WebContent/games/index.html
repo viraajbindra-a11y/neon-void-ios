@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VOID ARCADE — Unblocked Games</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        background: #06060c;
+        color: #fff;
+        font-family: 'Share Tech Mono', 'Courier New', monospace;
+        min-height: 100vh;
+        overflow-x: hidden;
+        scroll-behavior: smooth;
+    }
+    #bg-canvas {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        z-index: 0; pointer-events: none;
+    }
+    body::after {
+        content: '';
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px);
+        pointer-events: none; z-index: 999;
+    }
+    .container {
+        position: relative; z-index: 1;
+        max-width: 1400px; margin: 0 auto; padding: 16px 20px;
+    }
+    header { text-align: center; padding: 24px 0 16px; }
+    .logo {
+        font-family: 'Orbitron', sans-serif;
+        font-size: clamp(36px, 7vw, 72px);
+        font-weight: 900; letter-spacing: 10px;
+        background: linear-gradient(135deg, #00ffcc, #ff0055, #aa00ff, #00ffcc);
+        background-size: 300% 300%;
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        animation: gradientShift 3s ease infinite, logoGlow 2s ease-in-out infinite;
+        filter: drop-shadow(0 0 40px rgba(0,255,204,0.4));
+        text-shadow: none;
+    }
+    @keyframes gradientShift { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+    @keyframes logoGlow {
+        0%, 100% { filter: drop-shadow(0 0 40px rgba(0,255,204,0.4)); }
+        50% { filter: drop-shadow(0 0 60px rgba(0,255,204,0.7)) drop-shadow(0 0 100px rgba(170,0,255,0.3)); }
+    }
+    .subtitle { font-size: clamp(10px, 1.6vw, 14px); color: #555; letter-spacing: 12px; margin-top: 4px; text-transform: uppercase; }
+    .game-count { margin-top: 8px; font-size: 13px; color: #00ffcc; opacity: 0.6; letter-spacing: 3px; }
+    .search-bar { max-width: 520px; margin: 16px auto 20px; position: relative; }
+    .search-bar input {
+        width: 100%; padding: 13px 18px 13px 44px;
+        background: rgba(255,255,255,0.03); border: 1px solid rgba(0,255,204,0.12);
+        border-radius: 14px; color: #fff; font-family: 'Share Tech Mono', monospace;
+        font-size: 14px; outline: none; transition: all 0.3s;
+        backdrop-filter: blur(10px);
+    }
+    .search-bar input:focus { border-color: rgba(0,255,204,0.7); background: rgba(255,255,255,0.06); box-shadow: 0 0 30px rgba(0,255,204,0.2), 0 0 60px rgba(0,255,204,0.1), inset 0 0 15px rgba(0,255,204,0.05); }
+    .search-bar input::placeholder { color: #444; }
+    .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #444; font-size: 16px; }
+    .tags { display: flex; justify-content: center; gap: 7px; flex-wrap: wrap; margin-bottom: 22px; padding: 0 10px; }
+    .tag {
+        padding: 5px 13px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.02); font-size: 11px; color: #666;
+        cursor: pointer; transition: all 0.3s; user-select: none; letter-spacing: 0.5px;
+        backdrop-filter: blur(5px);
+    }
+    .tag:hover { border-color: rgba(0,255,204,0.3); color: #aaa; }
+    .tag.active { border-color: #00ffcc; color: #00ffcc; background: rgba(0,255,204,0.08); box-shadow: 0 0 12px rgba(0,255,204,0.15); }
+    .tag .tag-count { font-size: 9px; opacity: 0.5; margin-left: 4px; }
+    .tag.tag-no-ads { border-color: rgba(0,200,80,0.4); color: #00cc55; }
+    .tag.tag-no-ads:hover { border-color: rgba(0,200,80,0.6); color: #00ff66; }
+    .tag.tag-no-ads.active { border-color: #00ff66; color: #00ff66; background: rgba(0,255,100,0.1); box-shadow: 0 0 12px rgba(0,255,100,0.2); }
+    .games-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 14px;
+    }
+    .game-card {
+        position: relative; background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.05); border-radius: 12px;
+        overflow: hidden; cursor: pointer; transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none; color: inherit; display: block;
+        backdrop-filter: blur(5px);
+    }
+    .game-card:hover {
+        transform: translateY(-5px) scale(1.01);
+        border-color: var(--accent);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 25px color-mix(in srgb, var(--accent) 18%, transparent);
+    }
+    .game-card:hover .card-banner::before {
+        opacity: 1;
+    }
+    .card-banner {
+        height: 100px; background: var(--bg);
+        display: flex; align-items: center; justify-content: center;
+        position: relative; overflow: hidden;
+    }
+    .card-banner::before {
+        content: ''; position: absolute; inset: 0;
+        background: radial-gradient(circle at 50% 80%, color-mix(in srgb, var(--accent) 15%, transparent), transparent 70%);
+        opacity: 0; transition: opacity 0.4s;
+    }
+    .card-banner::after {
+        content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 35px;
+        background: linear-gradient(transparent, rgba(6,6,12,0.95));
+    }
+    .card-icon { font-size: 38px; z-index: 1; filter: drop-shadow(0 0 12px var(--accent)); transition: transform 0.3s; }
+    .game-card:hover .card-icon { transform: scale(1.15); }
+    .card-body { padding: 10px 12px 12px; }
+    .card-title {
+        font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 700;
+        color: var(--accent); margin-bottom: 3px; letter-spacing: 0.5px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .card-desc { font-size: 10px; color: #555; line-height: 1.35; margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .card-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+    .card-tag { padding: 2px 7px; border-radius: 5px; font-size: 9px; background: rgba(255,255,255,0.03); color: #555; border: 1px solid rgba(255,255,255,0.04); }
+    .play-btn {
+        display: inline-block; padding: 4px 14px; border: 1px solid var(--accent);
+        border-radius: 5px; color: var(--accent); font-family: 'Orbitron', sans-serif;
+        font-size: 9px; font-weight: 700; letter-spacing: 2px; transition: all 0.3s; margin-top: 4px;
+    }
+    .game-card:hover .play-btn { background: var(--accent); color: #000; box-shadow: 0 0 15px color-mix(in srgb, var(--accent) 30%, transparent); }
+    .game-card.featured { grid-column: 1 / -1; }
+    .game-card.featured .card-banner { height: 160px; }
+    .game-card.featured .card-icon { font-size: 56px; }
+    .game-card.featured .card-title { font-size: 18px; }
+    .game-card.featured .card-desc { font-size: 12px; -webkit-line-clamp: 3; }
+    .featured-badge {
+        position: absolute; top: 10px; right: 10px; padding: 3px 10px;
+        background: linear-gradient(135deg, #ff0055, #aa00ff); border-radius: 6px;
+        font-size: 9px; font-weight: 700; letter-spacing: 2px; z-index: 2;
+        font-family: 'Orbitron', sans-serif; box-shadow: 0 0 20px rgba(255,0,85,0.4);
+    }
+    .new-badge {
+        position: absolute; top: 8px; left: 8px; padding: 2px 8px;
+        background: linear-gradient(135deg, #00ffcc, #00aa88); border-radius: 4px;
+        font-size: 8px; font-weight: 700; letter-spacing: 1px; z-index: 2; color: #000;
+        font-family: 'Orbitron', sans-serif;
+    }
+    footer { text-align: center; padding: 35px 0 20px; color: #282828; font-size: 11px; letter-spacing: 2px; }
+    .no-results { text-align: center; padding: 60px 20px; color: #333; font-size: 15px; display: none; letter-spacing: 1px; }
+    /* Game overlay - Classroom 6x style */
+    #game-overlay {
+        display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        background: #06060c; z-index: 10000;
+    }
+    .game-page-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 10px 20px; background: rgba(0,0,0,0.7);
+        border-bottom: 1px solid rgba(0,255,204,0.08);
+        backdrop-filter: blur(10px);
+    }
+    .game-page-header .back-btn {
+        padding: 7px 14px; background: rgba(255,255,255,0.04); border: 1px solid #00ffcc;
+        color: #00ffcc; font-family: 'Orbitron', sans-serif; font-size: 10px;
+        cursor: pointer; border-radius: 6px; transition: all 0.2s; letter-spacing: 1px;
+    }
+    .game-page-header .back-btn:hover { background: #00ffcc; color: #000; }
+    .game-page-title {
+        font-family: 'Orbitron', sans-serif; font-size: 16px; font-weight: 700;
+        color: #fff; letter-spacing: 2px;
+    }
+    .game-page-actions { display: flex; gap: 8px; }
+    .game-page-actions button {
+        padding: 7px 16px; border-radius: 6px; font-family: 'Orbitron', sans-serif;
+        font-size: 10px; font-weight: 700; cursor: pointer; transition: all 0.2s; letter-spacing: 1px;
+    }
+    .btn-fullscreen { background: rgba(255,255,255,0.04); border: 1px solid #ff8800; color: #ff8800; }
+    .btn-fullscreen:hover { background: #ff8800; color: #000; }
+    .game-frame-container { width: 100%; height: calc(100vh - 50px); }
+    .game-frame-container iframe { width: 100%; height: 100%; border: none; }
+    #back-top {
+        position: fixed; bottom: 20px; right: 20px; z-index: 5000;
+        width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(0,255,204,0.2);
+        background: rgba(0,0,0,0.6); color: #00ffcc; font-size: 18px;
+        cursor: pointer; display: none; align-items: center; justify-content: center;
+        backdrop-filter: blur(10px); transition: all 0.3s;
+    }
+    #back-top:hover { background: rgba(0,255,204,0.1); border-color: #00ffcc; }
+    @media (max-width: 700px) {
+        .games-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+        .game-card.featured { grid-column: 1 / -1; }
+        .card-banner { height: 80px; }
+        .card-icon { font-size: 30px; }
+        .game-page-title { font-size: 12px; }
+    }
+    .game-card { opacity: 0; animation: fadeUp 0.35s ease forwards; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+    /* Featured card animated gradient border pulse */
+    .game-card.featured {
+        border: none;
+        background: linear-gradient(#06060c, #06060c) padding-box,
+                    linear-gradient(135deg, #00ffcc, #ff0055, #aa00ff, #00ffcc) border-box;
+        border: 2px solid transparent;
+        background-size: 100% 100%, 300% 300%;
+        animation: fadeUp 0.35s ease forwards, featuredBorderPulse 4s ease infinite;
+    }
+    @keyframes featuredBorderPulse {
+        0%, 100% { background-position: 0 0, 0% 50%; }
+        50% { background-position: 0 0, 100% 50%; }
+    }
+    /* Shimmer loading animation on cards */
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+    .game-card .card-banner .shimmer-overlay {
+        position: absolute; inset: 0; overflow: hidden; z-index: 1;
+    }
+    .game-card .card-banner .shimmer-overlay::before {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%);
+        animation: shimmer 2s ease-in-out infinite;
+    }
+    /* NO ADS badge */
+    .no-ads-badge {
+        position: absolute; top: 8px; left: 8px; padding: 2px 8px;
+        background: linear-gradient(135deg, #00cc66, #009944); border-radius: 4px;
+        font-size: 8px; font-weight: 700; letter-spacing: 1px; z-index: 2; color: #fff;
+        font-family: 'Orbitron', sans-serif;
+        box-shadow: 0 0 10px rgba(0,204,102,0.4);
+    }
+    .new-badge ~ .no-ads-badge, .no-ads-badge.shifted {
+        top: 8px; left: auto; right: 8px;
+    }
+    .section-label {
+        grid-column: 1 / -1; font-family: 'Orbitron', sans-serif; font-size: 13px;
+        color: #333; letter-spacing: 4px; padding: 16px 0 4px; border-bottom: 1px solid rgba(255,255,255,0.04);
+        text-transform: uppercase; opacity: 1; animation: none;
+    }
+    /* ========== MASSIVE VISUAL UPGRADE ========== */
+    /* 3D Card tilt on hover */
+    .game-card { perspective: 600px; transform-style: preserve-3d; }
+    .game-card:hover { transform: translateY(-5px) scale(1.01) rotateX(2deg); }
+    /* Favorite heart */
+    .fav-btn { position:absolute; top:8px; right:8px; z-index:5; background:none; border:none; font-size:18px; cursor:pointer; opacity:0.3; transition:all 0.3s; filter:grayscale(1); }
+    .fav-btn:hover, .fav-btn.active { opacity:1; filter:grayscale(0); transform:scale(1.3); }
+    .fav-btn.active { color:#ff0055; text-shadow:0 0 12px rgba(255,0,85,0.6); }
+    .game-card.featured .fav-btn { top:12px; right:auto; left:12px; }
+    /* Random Game button */
+    .random-btn {
+        position:absolute; right:12px; top:50%; transform:translateY(-50%);
+        background:linear-gradient(135deg, #ff0055, #aa00ff); border:none; color:#fff;
+        padding:8px 14px; border-radius:10px; cursor:pointer; font-family:'Orbitron',sans-serif;
+        font-size:10px; font-weight:700; letter-spacing:1px; transition:all 0.3s;
+        display:flex; align-items:center; gap:6px;
+    }
+    .random-btn:hover { transform:translateY(-50%) scale(1.05); box-shadow:0 0 25px rgba(255,0,85,0.4); }
+    .random-btn .dice { display:inline-block; animation:diceRoll 2s ease infinite; }
+    @keyframes diceRoll { 0%,80%,100%{transform:rotate(0deg)} 85%{transform:rotate(15deg)} 90%{transform:rotate(-15deg)} 95%{transform:rotate(10deg)} }
+    /* Sort & View controls */
+    .controls-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; gap:10px; flex-wrap:wrap; }
+    .controls-left, .controls-right { display:flex; align-items:center; gap:8px; }
+    .sort-select {
+        background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08);
+        color:#888; padding:5px 10px; border-radius:8px; font-family:'Share Tech Mono',monospace;
+        font-size:11px; cursor:pointer; outline:none;
+    }
+    .sort-select:focus { border-color:rgba(0,255,204,0.4); }
+    .sort-select option { background:#111; color:#ccc; }
+    .grid-toggle { display:flex; gap:2px; }
+    .grid-toggle button {
+        background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08);
+        color:#555; padding:5px 8px; cursor:pointer; transition:all 0.2s; font-size:12px;
+    }
+    .grid-toggle button:first-child { border-radius:6px 0 0 6px; }
+    .grid-toggle button:last-child { border-radius:0 6px 6px 0; }
+    .grid-toggle button.active { background:rgba(0,255,204,0.1); border-color:rgba(0,255,204,0.3); color:#00ffcc; }
+    /* Grid size variations */
+    .games-grid.grid-sm { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+    .games-grid.grid-md { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+    .games-grid.grid-lg { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+    /* Game of the Day spotlight */
+    .gotd-section {
+        margin-bottom:20px; padding:16px 20px; border-radius:14px; position:relative; overflow:hidden;
+        background:linear-gradient(135deg, rgba(255,0,85,0.08), rgba(170,0,255,0.08), rgba(0,255,204,0.08));
+        border:1px solid rgba(255,255,255,0.06);
+    }
+    .gotd-section::before {
+        content:''; position:absolute; inset:0;
+        background:radial-gradient(circle at 20% 50%, rgba(0,255,204,0.12), transparent 60%),
+                   radial-gradient(circle at 80% 50%, rgba(255,0,85,0.1), transparent 60%);
+        animation:spotlightPulse 4s ease infinite;
+    }
+    @keyframes spotlightPulse {
+        0%,100%{opacity:0.6} 50%{opacity:1}
+    }
+    .gotd-label { font-family:'Orbitron',sans-serif; font-size:10px; color:#ff0055; letter-spacing:4px; margin-bottom:8px; position:relative; }
+    .gotd-content { display:flex; align-items:center; gap:16px; position:relative; }
+    .gotd-icon { font-size:48px; filter:drop-shadow(0 0 20px var(--accent)); }
+    .gotd-info { flex:1; }
+    .gotd-title { font-family:'Orbitron',sans-serif; font-size:20px; font-weight:700; color:#fff; letter-spacing:1px; }
+    .gotd-desc { font-size:12px; color:#777; margin-top:4px; }
+    .gotd-play {
+        padding:10px 24px; background:linear-gradient(135deg,#00ffcc,#00aa88); border:none;
+        border-radius:8px; color:#000; font-family:'Orbitron',sans-serif; font-size:12px;
+        font-weight:700; letter-spacing:2px; cursor:pointer; transition:all 0.3s;
+    }
+    .gotd-play:hover { transform:scale(1.05); box-shadow:0 0 30px rgba(0,255,204,0.4); }
+    /* Recently Played section */
+    .recent-section { margin-bottom:18px; }
+    .recent-label { font-family:'Orbitron',sans-serif; font-size:10px; color:#555; letter-spacing:3px; margin-bottom:8px; }
+    .recent-row { display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; scrollbar-width:thin; scrollbar-color:#222 transparent; }
+    .recent-chip {
+        flex-shrink:0; padding:6px 14px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06);
+        border-radius:8px; cursor:pointer; transition:all 0.2s; font-size:11px; color:#888; white-space:nowrap;
+        display:flex; align-items:center; gap:6px;
+    }
+    .recent-chip:hover { border-color:rgba(0,255,204,0.3); color:#ccc; }
+    .recent-chip .rc-icon { font-size:14px; }
+    /* Stats bar */
+    .stats-bar { display:flex; justify-content:center; gap:30px; padding:20px 0 10px; flex-wrap:wrap; }
+    .stat-item { text-align:center; }
+    .stat-num { font-family:'Orbitron',sans-serif; font-size:22px; font-weight:700; color:#00ffcc; }
+    .stat-label { font-size:9px; color:#444; letter-spacing:2px; margin-top:2px; }
+    /* Scroll reveal */
+    .game-card.reveal-hidden { opacity:0; transform:translateY(20px); }
+    .game-card.reveal-visible { opacity:1; transform:translateY(0); transition:opacity 0.4s, transform 0.4s; }
+    /* Tag glow on hover */
+    .tag:hover { box-shadow:0 0 12px rgba(0,255,204,0.15); }
+    .tag.tag-fav { border-color:rgba(255,0,85,0.4); color:#ff0055; }
+    .tag.tag-fav:hover { border-color:rgba(255,0,85,0.6); color:#ff4488; }
+    .tag.tag-fav.active { border-color:#ff0055; color:#ff0055; background:rgba(255,0,85,0.1); box-shadow:0 0 12px rgba(255,0,85,0.2); }
+    .tag.tag-recent { border-color:rgba(170,0,255,0.4); color:#aa00ff; }
+    .tag.tag-recent:hover { border-color:rgba(170,0,255,0.6); color:#cc44ff; }
+    .tag.tag-recent.active { border-color:#aa00ff; color:#aa00ff; background:rgba(170,0,255,0.1); box-shadow:0 0 12px rgba(170,0,255,0.2); }
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+<div class="container">
+    <header>
+        <div class="logo">VOID ARCADE</div>
+        <div class="subtitle">Unblocked Games</div>
+        <div class="game-count" id="game-count"></div>
+    </header>
+    <div class="search-bar">
+        <span class="search-icon">&#128269;</span>
+        <input type="text" id="search" placeholder="Search 250+ games..." autocomplete="off">
+        <button class="random-btn" id="randomBtn" title="Random Game"><span class="dice">🎲</span> RANDOM</button>
+    </div>
+    <div class="tags" id="tags"></div>
+    <div id="gotd-container"></div>
+    <div id="recent-container"></div>
+    <div class="controls-bar">
+        <div class="controls-left">
+            <select class="sort-select" id="sortSelect">
+                <option value="default">Default Order</option>
+                <option value="az">A → Z</option>
+                <option value="za">Z → A</option>
+                <option value="featured">Featured First</option>
+                <option value="noads">No Ads First</option>
+            </select>
+        </div>
+        <div class="controls-right">
+            <div class="grid-toggle" id="gridToggle">
+                <button data-size="sm" title="Small">▪▪▪</button>
+                <button data-size="md" class="active" title="Medium">▪▪</button>
+                <button data-size="lg" title="Large">▪</button>
+            </div>
+        </div>
+    </div>
+    <div class="games-grid grid-md" id="grid"></div>
+    <div class="no-results" id="no-results">No games found. Try a different search.</div>
+    <footer>
+        VOID ARCADE &copy; 2026 &mdash; Play anywhere, no downloads
+        <div style="margin-top:8px;font-size:10px;color:#444;letter-spacing:1px;">TIP: Use an ad blocker (like uBlock Origin) for the best experience on external games</div>
+    </footer>
+</div>
+<button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#9650;</button>
+<div id="game-overlay">
+    <div class="game-page-header">
+        <button class="back-btn" onclick="closeGame()">&larr; BACK</button>
+        <div class="game-page-title" id="game-page-title"></div>
+        <div class="game-page-actions">
+            <button class="btn-fullscreen" onclick="openFullscreen()">&#9974; NEW TAB</button>
+        </div>
+    </div>
+    <div class="game-frame-container">
+        <iframe id="game-frame" allow="fullscreen; autoplay; clipboard-write; gamepad" allowfullscreen sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-modals allow-orientation-lock allow-popups-to-escape-sandbox" referrerpolicy="no-referrer"></iframe>
+    </div>
+</div>
+<script>
+// ===== PARTICLE BACKGROUND =====
+(function(){
+    const c = document.getElementById('bg-canvas'), ctx = c.getContext('2d');
+    let w, h, particles = [];
+    function resize(){ w = c.width = innerWidth; h = c.height = innerHeight; }
+    resize(); addEventListener('resize', resize);
+    for(let i = 0; i < 60; i++) particles.push({ x: Math.random()*2000, y: Math.random()*2000, r: Math.random()*1.5+0.3, dx: (Math.random()-0.5)*0.3, dy: (Math.random()-0.5)*0.3, a: Math.random()*0.3+0.05 });
+    function draw(){
+        ctx.clearRect(0,0,w,h);
+        particles.forEach(p => {
+            p.x += p.dx; p.y += p.dy;
+            if(p.x < 0) p.x = w; if(p.x > w) p.x = 0;
+            if(p.y < 0) p.y = h; if(p.y > h) p.y = 0;
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+            ctx.fillStyle = `rgba(0,255,204,${p.a})`; ctx.fill();
+        });
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// ===== BACK TO TOP BUTTON =====
+window.addEventListener('scroll', () => {
+    document.getElementById('back-top').style.display = window.scrollY > 600 ? 'flex' : 'none';
+});
+
+const GAMES = [
+    // ===== OUR CUSTOM GAMES =====
+    { title:"NEON VOID", desc:"Space shooter with 15 sectors, co-op multiplayer, drones, bosses, ship customization.", icon:"🚀", href:"../index.html", accent:"#00ffcc", bg:"radial-gradient(ellipse at center,#002a22 0%,#06060c 70%)", tags:["shooter","multiplayer"], featured:true, noAds:true },
+    { title:"VOID SHOOTER", desc:"Retro raycasting FPS. DOOM meets cyberpunk. 3 weapons, 4 enemy types.", icon:"🔫", href:"fps.html", accent:"#ff0055", bg:"radial-gradient(ellipse at center,#2a0011 0%,#06060c 70%)", tags:["shooter"], isNew:true, noAds:true },
+    { title:"1v1.LOL", desc:"Build, shoot, outplay. The real 1v1.lol.", icon:"🏗️", embed:"https://1v1.lol", direct:true, accent:"#ff8800", bg:"radial-gradient(ellipse at center,#2a1800 0%,#06060c 70%)", tags:["shooter","multiplayer"] },
+    { title:"BLOON DEFENSE", desc:"BTD-style tower defense. Monkey towers, bloon layers, MOAB bosses.", icon:"🎈", href:"tower-defense.html", accent:"#aa00ff", bg:"radial-gradient(ellipse at center,#1a0033 0%,#06060c 70%)", tags:["strategy"], isNew:true, noAds:true },
+    { title:"BARRY'S PRISON RUN", desc:"Escape Barry's prison! 15 obby levels with lasers, lava, crushers.", icon:"🏃", href:"obby.html", accent:"#88ff00", bg:"radial-gradient(ellipse at center,#1a2a00 0%,#06060c 70%)", tags:["platformer"], isNew:true, noAds:true },
+
+    // ===== IO GAMES =====
+    { title:"KRUNKER.IO", desc:"Fast-paced first person shooter with classes and maps.", icon:"🎯", embed:"https://krunker.io", accent:"#ff4444", bg:"radial-gradient(ellipse at center,#2a0000 0%,#06060c 70%)", tags:["shooter","io","multiplayer"] },
+    { title:"SHELL SHOCKERS", desc:"Egg-themed FPS multiplayer madness.", icon:"🥚", embed:"https://shellshock.io", accent:"#ffcc00", bg:"radial-gradient(ellipse at center,#2a2200 0%,#06060c 70%)", tags:["shooter","io","multiplayer"] },
+    { title:"EV.IO", desc:"Sci-fi arena FPS with halo-style combat.", icon:"⚡", embed:"https://ev.io", accent:"#00aaff", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["shooter","io","multiplayer"] },
+    { title:"AGAR.IO", desc:"Eat cells, grow bigger, dominate the map.", icon:"🟢", embed:"https://agar.io", accent:"#44ff44", bg:"radial-gradient(ellipse at center,#002a00 0%,#06060c 70%)", tags:["io","multiplayer","arcade"] },
+    { title:"SLITHER.IO", desc:"Snake game multiplayer. Eat orbs, get longer, don't crash.", icon:"🐍", embed:"https://slither.io", accent:"#ff44ff", bg:"radial-gradient(ellipse at center,#2a002a 0%,#06060c 70%)", tags:["io","multiplayer","arcade"] },
+    { title:"DIEP.IO", desc:"Tank shooter with upgrades and evolution.", icon:"🔵", embed:"https://diep.io", accent:"#4488ff", bg:"radial-gradient(ellipse at center,#001133 0%,#06060c 70%)", tags:["io","multiplayer","shooter"] },
+    { title:"PAPER.IO 2", desc:"Claim territory by drawing lines. Don't get cut!", icon:"📄", embed:"https://paper-io.com/2/", accent:"#ff8844", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["io","multiplayer","arcade"] },
+    { title:"SKRIBBL.IO", desc:"Draw and guess words with friends.", icon:"✏️", embed:"https://skribbl.io", accent:"#ffaa00", bg:"radial-gradient(ellipse at center,#2a1a00 0%,#06060c 70%)", tags:["io","multiplayer","puzzle"] },
+    { title:"BONK.IO", desc:"Physics-based multiplayer battle. Push opponents off.", icon:"💥", embed:"https://bonk.io", accent:"#ff6644", bg:"radial-gradient(ellipse at center,#2a0d00 0%,#06060c 70%)", tags:["io","multiplayer","arcade"] },
+    { title:"MOPE.IO", desc:"Eat food, evolve from mouse to dragon.", icon:"🐭", embed:"https://mope.io", accent:"#88cc44", bg:"radial-gradient(ellipse at center,#1a2a00 0%,#06060c 70%)", tags:["io","multiplayer"] },
+    { title:"TERRITORIAL.IO", desc:"Conquer territory in this multiplayer strategy game.", icon:"🗺️", embed:"https://territorial.io", accent:"#44ccaa", bg:"radial-gradient(ellipse at center,#002a1a 0%,#06060c 70%)", tags:["io","multiplayer","strategy"] },
+    { title:"NARROW.ONE", desc:"Medieval archery multiplayer. Capture the flag.", icon:"🏹", embed:"https://narrow.one", accent:"#cc8844", bg:"radial-gradient(ellipse at center,#2a1a00 0%,#06060c 70%)", tags:["io","multiplayer","shooter"] },
+    { title:"VOXIOM.IO", desc:"Minecraft meets battle royale. Mine, build, fight.", icon:"⛏️", embed:"https://voxiom.io", accent:"#44aa88", bg:"radial-gradient(ellipse at center,#002a1a 0%,#06060c 70%)", tags:["io","multiplayer","shooter"] },
+    { title:"BLOXD.IO", desc:"Multiplayer block game with multiple modes.", icon:"🧱", embed:"https://bloxd.io", accent:"#88ff44", bg:"radial-gradient(ellipse at center,#1a2a00 0%,#06060c 70%)", tags:["io","multiplayer"] },
+    { title:"DEFLY.IO", desc:"Fly helicopters, claim territory, shoot enemies.", icon:"🚁", embed:"https://defly.io", accent:"#4488cc", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["io","multiplayer","strategy"] },
+    { title:"DRAWARIA.ONLINE", desc:"Draw and guess with players worldwide.", icon:"🎨", embed:"https://drawaria.online", accent:"#ff88cc", bg:"radial-gradient(ellipse at center,#2a0022 0%,#06060c 70%)", tags:["io","multiplayer","puzzle"] },
+    { title:"LORDZ.IO", desc:"Build an army, conquer castles, rule the map.", icon:"👑", embed:"https://lordz.io", accent:"#ffcc44", bg:"radial-gradient(ellipse at center,#2a2200 0%,#06060c 70%)", tags:["io","multiplayer","strategy"] },
+    { title:"ZOMBS ROYALE", desc:"2D battle royale. Loot, shoot, survive.", icon:"🧟", embed:"https://zombsroyale.io", accent:"#ff4488", bg:"radial-gradient(ellipse at center,#2a0011 0%,#06060c 70%)", tags:["io","multiplayer","shooter"] },
+    { title:"HOLE.IO", desc:"Be a black hole. Eat everything in the city.", icon:"🕳️", embed:"https://hole-io.com", accent:"#8844ff", bg:"radial-gradient(ellipse at center,#110033 0%,#06060c 70%)", tags:["io","multiplayer","arcade"] },
+    { title:"SMASH KARTS", desc:"Kart racing with weapons. Mario Kart vibes.", icon:"🏎️", embed:"https://smashkarts.io", accent:"#ff4444", bg:"radial-gradient(ellipse at center,#2a0000 0%,#06060c 70%)", tags:["io","multiplayer","racing"] },
+    { title:"LITTLEBIGSNAKE.IO", desc:"Grow your snake, collect orbs, fight others.", icon:"🐛", embed:"https://littlebigsnake.com", accent:"#44ff88", bg:"radial-gradient(ellipse at center,#002a11 0%,#06060c 70%)", tags:["io","multiplayer","arcade"] },
+    { title:"STABFISH.IO", desc:"Be a swordfish. Stab other fish.", icon:"🐟", embed:"https://stabfish.io", accent:"#44aaff", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["io","multiplayer","arcade"] },
+    { title:"SUROI.IO", desc:"2D battle royale. Loot weapons, be the last one.", icon:"🎖️", embed:"https://suroi.io", accent:"#ccaa44", bg:"radial-gradient(ellipse at center,#2a2200 0%,#06060c 70%)", tags:["io","multiplayer","shooter"] },
+    { title:"WINGS.IO", desc:"Fly planes, collect powerups, dogfight.", icon:"✈️", embed:"https://wings.io", accent:"#4488ff", bg:"radial-gradient(ellipse at center,#001133 0%,#06060c 70%)", tags:["io","multiplayer","arcade"] },
+    { title:"WORMATE.IO", desc:"Colorful worm game. Eat sweets, grow huge.", icon:"🪱", embed:"https://wormate.io", accent:"#ff88ff", bg:"radial-gradient(ellipse at center,#2a0022 0%,#06060c 70%)", tags:["io","multiplayer","arcade"] },
+    { title:"YOHOHO.IO", desc:"Pirate battle royale. Sword fight on islands.", icon:"🏴‍☠️", embed:"https://yohoho.io", accent:"#cc8844", bg:"radial-gradient(ellipse at center,#2a1a00 0%,#06060c 70%)", tags:["io","multiplayer","arcade"] },
+    { title:"POWERLINE.IO", desc:"Tron-style light trails. Cut off opponents.", icon:"⚡", embed:"https://powerline.io", accent:"#ffcc00", bg:"radial-gradient(ellipse at center,#2a2200 0%,#06060c 70%)", tags:["io","multiplayer","arcade"] },
+    { title:"HEXANAUT.IO", desc:"Claim hexagonal territory. Strategic expansion.", icon:"⬡", embed:"https://hexanaut.io", accent:"#44ccff", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["io","multiplayer","strategy"] },
+    { title:"GATS.IO", desc:"Top-down shooter with classes and abilities.", icon:"🔫", embed:"https://gats.io", accent:"#888844", bg:"radial-gradient(ellipse at center,#1a1a00 0%,#06060c 70%)", tags:["io","multiplayer","shooter"] },
+    { title:"BRUTAL.IO", desc:"Swing a flail, smash opponents, grow bigger.", icon:"⛓️", embed:"https://brutal.io", accent:"#ff4444", bg:"radial-gradient(ellipse at center,#2a0000 0%,#06060c 70%)", tags:["io","multiplayer","arcade"] },
+    { title:"SNOW.IO", desc:"Grow your snowball, knock others off the map.", icon:"☃️", embed:"https://snow-io.com", accent:"#88ccff", bg:"radial-gradient(ellipse at center,#0a1a2a 0%,#06060c 70%)", tags:["io","multiplayer","arcade"] },
+    { title:"FLYORDIE.IO", desc:"Eat, evolve, fly. Food chain multiplayer.", icon:"🦅", embed:"https://flyordie.io", accent:"#88cc44", bg:"radial-gradient(ellipse at center,#1a2a00 0%,#06060c 70%)", tags:["io","multiplayer"] },
+    { title:"SPINZ.IO", desc:"Fidget spinner battle arena. Spin to win.", icon:"🌀", embed:"https://spinz.io", accent:"#ff44ff", bg:"radial-gradient(ellipse at center,#2a002a 0%,#06060c 70%)", tags:["io","multiplayer","arcade"] },
+    { title:"SQUADD.IO", desc:"Top-down team shooter with bases.", icon:"💂", embed:"https://squadd.io", accent:"#44aa88", bg:"radial-gradient(ellipse at center,#002a1a 0%,#06060c 70%)", tags:["io","multiplayer","shooter"] },
+    { title:"TAMING.IO", desc:"Tame pets, build a base, fight players.", icon:"🐺", embed:"https://taming.io", accent:"#cc8844", bg:"radial-gradient(ellipse at center,#2a1a00 0%,#06060c 70%)", tags:["io","multiplayer","strategy"] },
+    { title:"ZOMBS.IO", desc:"Build a base, defend from zombie waves.", icon:"🏚️", embed:"https://zombs.io", accent:"#44cc44", bg:"radial-gradient(ellipse at center,#002a00 0%,#06060c 70%)", tags:["io","multiplayer","strategy"] },
+    { title:"GULPER.IO", desc:"Eat glowing orbs, become the biggest snake.", icon:"🐍", embed:"https://gulper.io", accent:"#44ff88", bg:"radial-gradient(ellipse at center,#002a11 0%,#06060c 70%)", tags:["io","multiplayer","arcade"] },
+
+    // ===== SHOOTER =====
+    { title:"BULLET FORCE", desc:"Multiplayer FPS with custom loadouts.", icon:"💥", embed:"https://bulletforce.io", accent:"#ff4400", bg:"radial-gradient(ellipse at center,#2a0800 0%,#06060c 70%)", tags:["shooter","multiplayer"] },
+    { title:"FORWARD ASSAULT", desc:"Tactical FPS. Counter-Strike style.", icon:"🔫", embed:"https://forwardassault.io", accent:"#888844", bg:"radial-gradient(ellipse at center,#1a1a00 0%,#06060c 70%)", tags:["shooter","multiplayer"] },
+    { title:"WAR BROKERS", desc:"Battle royale and team deathmatch FPS.", icon:"⚔️", embed:"https://warbrokers.io", accent:"#88aa44", bg:"radial-gradient(ellipse at center,#1a2a00 0%,#06060c 70%)", tags:["shooter","multiplayer","io"] },
+    { title:"PIXEL GUN 3D", desc:"Blocky multiplayer shooter with tons of weapons.", icon:"🔫", embed:"https://pixelgun3d.com", accent:"#ff4488", bg:"radial-gradient(ellipse at center,#2a0011 0%,#06060c 70%)", tags:["shooter","multiplayer"] },
+    { title:"COMBAT ONLINE", desc:"Team-based military FPS with multiple maps.", icon:"🎖️", embed:"https://combat-online.io", accent:"#668844", bg:"radial-gradient(ellipse at center,#1a2a00 0%,#06060c 70%)", tags:["shooter","multiplayer"] },
+    { title:"COMBAT RELOADED", desc:"Fast arena shooter with weapon pickups.", icon:"💣", embed:"https://combatreloaded.com", accent:"#ff6644", bg:"radial-gradient(ellipse at center,#2a0d00 0%,#06060c 70%)", tags:["shooter","multiplayer"] },
+    { title:"GUN MAYHEM 2", desc:"Platform shooter. Knock opponents off the stage.", icon:"🔫", embed:"https://gunmayhem2.io", accent:"#ff8844", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["shooter","arcade"] },
+    { title:"STRIKE FORCE HEROES", desc:"Side-scrolling military shooter with classes.", icon:"🪖", embed:"https://strikeforceheroes.io", accent:"#888844", bg:"radial-gradient(ellipse at center,#1a1a00 0%,#06060c 70%)", tags:["shooter","arcade"] },
+    { title:"RAZE", desc:"Sci-fi platforming shooter. Aliens vs Humans.", icon:"👽", embed:"https://raze3.io", accent:"#44aaff", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["shooter","arcade"] },
+    { title:"TIME SHOOTER 3", desc:"Time moves when you move. Tactical FPS.", icon:"⏱️", embed:"https://timeshooter3.github.io", noAds:true, accent:"#4488ff", bg:"radial-gradient(ellipse at center,#001133 0%,#06060c 70%)", tags:["shooter","puzzle"] },
+    { title:"SUPERHOT", desc:"Time moves only when you move. FPS puzzle.", icon:"❤️‍🔥", embed:"https://superhot.io", accent:"#ff4444", bg:"radial-gradient(ellipse at center,#2a0000 0%,#06060c 70%)", tags:["shooter","puzzle"] },
+    { title:"PLAZMA BURST 2", desc:"Side-scrolling sci-fi shooter with time travel.", icon:"⚡", embed:"https://plazmaburst2.io", accent:"#4488cc", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["shooter","arcade"] },
+    { title:"ZOMBOCALYPSE", desc:"Survive endless zombie waves. Collect weapon drops.", icon:"🧟‍♂️", embed:"https://zombocalypse.io", accent:"#88cc44", bg:"radial-gradient(ellipse at center,#1a2a00 0%,#06060c 70%)", tags:["shooter","arcade"] },
+    { title:"DEAD TRIGGER", desc:"FPS zombie survival with weapon upgrades.", icon:"☠️", embed:"https://deadtrigger.io", accent:"#cc4444", bg:"radial-gradient(ellipse at center,#2a0000 0%,#06060c 70%)", tags:["shooter","horror"] },
+    { title:"BLOCKY GUN PAINTBALL", desc:"Colorful blocky FPS paintball arena.", icon:"🎨", embed:"https://blockygunpaintball.io", accent:"#ff88ff", bg:"radial-gradient(ellipse at center,#2a0022 0%,#06060c 70%)", tags:["shooter","multiplayer"] },
+
+    // ===== RACING =====
+    { title:"SLOPE", desc:"Roll a ball down an endless slope. Don't fall off.", icon:"⚫", embed:"https://slope-game.com", accent:"#44ff44", bg:"radial-gradient(ellipse at center,#002a00 0%,#06060c 70%)", tags:["racing","arcade"] },
+    { title:"TUNNEL RUSH", desc:"Dodge obstacles in a psychedelic tunnel.", icon:"🌀", embed:"https://tunnelrush.github.io", noAds:true, accent:"#ff44ff", bg:"radial-gradient(ellipse at center,#2a002a 0%,#06060c 70%)", tags:["racing","arcade"] },
+    { title:"DRIFT HUNTERS", desc:"Realistic 3D drift racing with tuning.", icon:"🚗", embed:"https://drift-hunters.com", accent:"#ff8800", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["racing"] },
+    { title:"MOTO X3M", desc:"Crazy motorbike stunts through obstacle courses.", icon:"🏍️", embed:"https://motox3m.github.io", noAds:true, accent:"#ff4400", bg:"radial-gradient(ellipse at center,#2a0800 0%,#06060c 70%)", tags:["racing","platformer"] },
+    { title:"DEATH RUN 3D", desc:"Run through a deadly tunnel. How far can you go?", icon:"💀", embed:"https://deathrun3d.github.io", noAds:true, accent:"#ff0044", bg:"radial-gradient(ellipse at center,#2a0011 0%,#06060c 70%)", tags:["racing","arcade"] },
+    { title:"SNOW RIDER 3D", desc:"Sled downhill, dodge obstacles, collect gifts.", icon:"🛷", embed:"https://snowrider3d.io", accent:"#88ccff", bg:"radial-gradient(ellipse at center,#0a1a2a 0%,#06060c 70%)", tags:["racing","arcade"] },
+    { title:"EGGY CAR", desc:"Drive uphill with an egg on your car. Don't drop it.", icon:"🥚", embed:"https://eggycar.io", accent:"#ffcc44", bg:"radial-gradient(ellipse at center,#2a2200 0%,#06060c 70%)", tags:["racing","arcade"] },
+    { title:"DRIFT BOSS", desc:"Drift around corners. Don't fall off the edge.", icon:"🏁", embed:"https://driftboss.io", accent:"#ff8844", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["racing","arcade"] },
+    { title:"DRIVE MAD", desc:"Physics-based driving over crazy obstacle tracks.", icon:"🚙", embed:"https://drivemad.io", accent:"#ff6644", bg:"radial-gradient(ellipse at center,#2a0d00 0%,#06060c 70%)", tags:["racing","arcade"] },
+    { title:"HIGHWAY RACER 3D", desc:"Weave through traffic at high speed.", icon:"🛣️", embed:"https://highwayracer3d.io", accent:"#ffaa44", bg:"radial-gradient(ellipse at center,#2a1a00 0%,#06060c 70%)", tags:["racing"] },
+    { title:"CRAZY CARS", desc:"Extreme racing with nitro boosts and crashes.", icon:"💨", embed:"https://crazycars.io", accent:"#ff4488", bg:"radial-gradient(ellipse at center,#2a0011 0%,#06060c 70%)", tags:["racing"] },
+    { title:"MOTO X3M WINTER", desc:"Motorbike stunts on icy winter tracks.", icon:"❄️", embed:"https://motox3m-winter.io", accent:"#88ccff", bg:"radial-gradient(ellipse at center,#0a1a2a 0%,#06060c 70%)", tags:["racing","platformer"] },
+    { title:"BIKE RACE", desc:"Side-scrolling motorbike racing and tricks.", icon:"🏍️", embed:"https://bikerace.io", accent:"#ff8844", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["racing"] },
+    { title:"BURNOUT DRIFT", desc:"Open world drifting with car customization.", icon:"🚗", embed:"https://burnoutdrift.io", accent:"#ff4400", bg:"radial-gradient(ellipse at center,#2a0800 0%,#06060c 70%)", tags:["racing"] },
+    { title:"CITY RIDER", desc:"Ride a motorcycle through busy city streets.", icon:"🏙️", embed:"https://cityrider.io", accent:"#888888", bg:"radial-gradient(ellipse at center,#1a1a1a 0%,#06060c 70%)", tags:["racing"] },
+    { title:"STUNT CAR EXTREME", desc:"Perform insane car stunts on ramp tracks.", icon:"🚘", embed:"https://stuntcarextreme.io", accent:"#ff8800", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["racing","arcade"] },
+
+    // ===== PLATFORMER =====
+    { title:"RUN 3", desc:"Run and jump through space tunnels.", icon:"🌌", embed:"https://run3.io", accent:"#888888", bg:"radial-gradient(ellipse at center,#1a1a1a 0%,#06060c 70%)", tags:["platformer","arcade"] },
+    { title:"GEOMETRY DASH", desc:"Rhythm-based platformer. Jump to the beat.", icon:"🔺", href:"games/geometry-dash.html", noAds:true, accent:"#44ccff", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["platformer","arcade"] },
+    { title:"VEX 7", desc:"Stick figure parkour through deadly courses.", icon:"🤸", embed:"https://vex7.github.io", noAds:true, accent:"#ff8844", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["platformer"] },
+    { title:"FIREBOY & WATERGIRL", desc:"Co-op puzzle platformer. Fire and water temples.", icon:"🔥", embed:"https://fireboyandwatergirl.com", accent:"#ff4400", bg:"radial-gradient(ellipse at center,#2a0800 0%,#06060c 70%)", tags:["platformer","puzzle"] },
+    { title:"CELESTE CLASSIC", desc:"Climb the mountain. Tight platforming.", icon:"🏔️", embed:"https://celesteclassic.github.io", noAds:true, accent:"#88ccff", bg:"radial-gradient(ellipse at center,#0a1a2a 0%,#06060c 70%)", tags:["platformer"] },
+    { title:"DOODLE JUMP", desc:"Jump higher and higher on platforms.", icon:"📱", href:"games/doodle-jump.html", noAds:true, accent:"#88ff44", bg:"radial-gradient(ellipse at center,#1a2a00 0%,#06060c 70%)", tags:["platformer","arcade"] },
+    { title:"GETAWAY SHOOTOUT", desc:"Wacky physics race to the helicopter.", icon:"🚁", embed:"https://getawayshootout.github.io", noAds:true, accent:"#ff8844", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["platformer","multiplayer"] },
+    { title:"CLUSTER RUSH", desc:"Jump between moving trucks. Don't fall.", icon:"🚛", embed:"https://clusterrush.io", accent:"#ffcc44", bg:"radial-gradient(ellipse at center,#2a2200 0%,#06060c 70%)", tags:["platformer","arcade"] },
+    { title:"ONLY UP", desc:"Climb higher and higher. Don't look down.", icon:"⬆️", embed:"https://onlyup.io", accent:"#44ccff", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["platformer"] },
+    { title:"HAPPY WHEELS", desc:"Ragdoll physics obstacle course. Bloody fun.", icon:"🩸", embed:"https://totaljerkface.com/happy_wheels.tjf", direct:true, accent:"#ff4444", bg:"radial-gradient(ellipse at center,#2a0000 0%,#06060c 70%)", tags:["platformer","arcade"] },
+    { title:"STICKMAN HOOK", desc:"Swing through levels like Spider-Man.", icon:"🕷️", embed:"https://stickmanhook.io", accent:"#ff4488", bg:"radial-gradient(ellipse at center,#2a0011 0%,#06060c 70%)", tags:["platformer","arcade"] },
+    { title:"FANCY PANTS ADVENTURE", desc:"Slick stick figure platformer with style.", icon:"👖", embed:"https://fancypants.io", accent:"#ffaa44", bg:"radial-gradient(ellipse at center,#2a1a00 0%,#06060c 70%)", tags:["platformer","arcade"] },
+    { title:"N GAME", desc:"Ninja platformer. Wall jumps, gold, and mines.", icon:"🥷", embed:"https://ngame.io", accent:"#888888", bg:"radial-gradient(ellipse at center,#1a1a1a 0%,#06060c 70%)", tags:["platformer"] },
+    { title:"RAFT WARS", desc:"Turn-based shooting from a raft. Aim and fire.", icon:"🛶", embed:"https://raftwars.io", accent:"#4488cc", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["platformer","arcade"] },
+    { title:"SUPER MARIO 64", desc:"Classic 3D Mario in your browser.", icon:"🍄", embed:"https://supermario64.io", accent:"#ff0000", bg:"radial-gradient(ellipse at center,#2a0000 0%,#06060c 70%)", tags:["platformer"] },
+    { title:"TEMPLE RUN", desc:"Run endlessly through ancient temples.", icon:"🏛️", embed:"https://templerun.io", accent:"#cc8844", bg:"radial-gradient(ellipse at center,#2a1a00 0%,#06060c 70%)", tags:["platformer","arcade"] },
+    { title:"SUBWAY SURFERS", desc:"Run, dodge, and surf through subway tracks.", icon:"🚇", embed:"https://poki.com/en/g/subway-surfers", direct:true, accent:"#ff8844", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["platformer","arcade"] },
+    { title:"CROSSY ROAD", desc:"Cross roads, rivers, and train tracks.", icon:"🐔", embed:"https://crossyroad.io", accent:"#88cc44", bg:"radial-gradient(ellipse at center,#1a2a00 0%,#06060c 70%)", tags:["platformer","arcade"] },
+    { title:"VEX 6", desc:"More stick figure parkour madness.", icon:"🤸‍♂️", embed:"https://vex6.io", accent:"#ff8844", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["platformer"] },
+    { title:"VEX 5", desc:"Classic stick figure obstacle platformer.", icon:"🤸‍♀️", embed:"https://vex5.io", accent:"#ff8844", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["platformer"] },
+
+    // ===== PUZZLE =====
+    { title:"2048", desc:"Slide tiles, combine numbers, reach 2048.", icon:"🔢", embed:"https://gabrielecirulli.github.io/2048/", noAds:true, accent:"#ffaa44", bg:"radial-gradient(ellipse at center,#2a1a00 0%,#06060c 70%)", tags:["puzzle"] },
+    { title:"WORDLE", desc:"Guess the 5-letter word in 6 tries.", icon:"📝", href:"games/wordle.html", noAds:true, accent:"#66aa44", bg:"radial-gradient(ellipse at center,#0a2a00 0%,#06060c 70%)", tags:["puzzle"] },
+    { title:"SUDOKU", desc:"Classic number puzzle. Fill the 9x9 grid.", icon:"🔲", embed:"https://sudoku.com", accent:"#4488cc", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["puzzle"] },
+    { title:"CHESS", desc:"Play chess against AI or online.", icon:"♟️", embed:"https://lichess.org", noAds:true, direct:true, accent:"#ffffff", bg:"radial-gradient(ellipse at center,#1a1a1a 0%,#06060c 70%)", tags:["puzzle","strategy"] },
+    { title:"CHECKERS", desc:"Classic board game. Jump and capture.", icon:"🔴", embed:"https://checkers.online", accent:"#ff4444", bg:"radial-gradient(ellipse at center,#2a0000 0%,#06060c 70%)", tags:["puzzle","strategy"] },
+    { title:"CROSSWORD", desc:"Daily crossword puzzle.", icon:"📰", embed:"https://crosswordsolver.org/play", accent:"#cccccc", bg:"radial-gradient(ellipse at center,#1a1a1a 0%,#06060c 70%)", tags:["puzzle"] },
+    { title:"MAHJONG", desc:"Classic tile matching game.", icon:"🀄", embed:"https://mahjong.com", accent:"#44cc88", bg:"radial-gradient(ellipse at center,#002a11 0%,#06060c 70%)", tags:["puzzle"] },
+    { title:"MINESWEEPER", desc:"Classic minesweeper. Don't click the bombs.", icon:"💣", href:"games/minesweeper.html", noAds:true, accent:"#888888", bg:"radial-gradient(ellipse at center,#1a1a1a 0%,#06060c 70%)", tags:["puzzle"] },
+    { title:"CONNECTIONS", desc:"Group 16 words into 4 categories.", icon:"🔗", embed:"https://connectionsgame.org", accent:"#aa88ff", bg:"radial-gradient(ellipse at center,#1a0033 0%,#06060c 70%)", tags:["puzzle"] },
+    { title:"BLOCK PUZZLE", desc:"Fit blocks together. Clear lines to score.", icon:"🟦", embed:"https://blockpuzzle.io", accent:"#4488ff", bg:"radial-gradient(ellipse at center,#001133 0%,#06060c 70%)", tags:["puzzle","arcade"] },
+    { title:"CUT THE ROPE", desc:"Cut ropes to feed candy to Om Nom.", icon:"✂️", embed:"https://cuttherope.io", accent:"#44cc44", bg:"radial-gradient(ellipse at center,#002a00 0%,#06060c 70%)", tags:["puzzle","arcade"] },
+    { title:"BOB THE ROBBER", desc:"Stealth puzzle game. Sneak, steal, escape.", icon:"🥷", embed:"https://bobtherobber.io", accent:"#444444", bg:"radial-gradient(ellipse at center,#111111 0%,#06060c 70%)", tags:["puzzle","platformer"] },
+    { title:"WORLDS HARDEST GAME", desc:"Navigate a red square through blue dots. Rage.", icon:"🟥", embed:"https://worldshardestgame.co", accent:"#ff0000", bg:"radial-gradient(ellipse at center,#2a0000 0%,#06060c 70%)", tags:["puzzle","arcade"] },
+    { title:"IMPOSSIBLE QUIZ", desc:"Absurd trivia. Nothing is what it seems.", icon:"❓", embed:"https://impossiblequiz.io", accent:"#44ff44", bg:"radial-gradient(ellipse at center,#002a00 0%,#06060c 70%)", tags:["puzzle","arcade"] },
+    { title:"THERE IS NO GAME", desc:"There is no game. Or is there?", icon:"🚫", embed:"https://thereisnogame.io", accent:"#888888", bg:"radial-gradient(ellipse at center,#1a1a1a 0%,#06060c 70%)", tags:["puzzle","arcade"] },
+    { title:"RIDDLE SCHOOL", desc:"Escape school by solving puzzles. Point and click.", icon:"🏫", embed:"https://riddleschool.io", accent:"#4488cc", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["puzzle"] },
+    { title:"WATER SORT", desc:"Sort colored water into matching tubes.", icon:"🧪", embed:"https://watersort.io", accent:"#44aaff", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["puzzle"] },
+    { title:"UNBLOCK ME", desc:"Slide blocks to free the red block.", icon:"🟥", embed:"https://unblockme.io", accent:"#ff4444", bg:"radial-gradient(ellipse at center,#2a0000 0%,#06060c 70%)", tags:["puzzle"] },
+    { title:"FLOW FREE", desc:"Connect matching colors. Fill the board.", icon:"🌈", embed:"https://flowfree.io", accent:"#ff88ff", bg:"radial-gradient(ellipse at center,#2a0022 0%,#06060c 70%)", tags:["puzzle"] },
+    { title:"NONOGRAM", desc:"Logic puzzle. Reveal pixel art with clues.", icon:"🖼️", embed:"https://nonogram.io", accent:"#888888", bg:"radial-gradient(ellipse at center,#1a1a1a 0%,#06060c 70%)", tags:["puzzle"] },
+    { title:"RUSH HOUR", desc:"Slide cars to escape the traffic jam.", icon:"🚗", embed:"https://rushhour.io", accent:"#ff4444", bg:"radial-gradient(ellipse at center,#2a0000 0%,#06060c 70%)", tags:["puzzle"] },
+
+    // ===== ARCADE / CLASSIC =====
+    { title:"PAC-MAN", desc:"The classic. Eat dots, avoid ghosts.", icon:"👻", href:"games/pacman.html", noAds:true, accent:"#ffcc00", bg:"radial-gradient(ellipse at center,#2a2200 0%,#06060c 70%)", tags:["arcade"] },
+    { title:"TETRIS", desc:"Stack blocks, clear lines. The OG.", icon:"🟪", href:"games/tetris.html", noAds:true, accent:"#aa44ff", bg:"radial-gradient(ellipse at center,#1a0033 0%,#06060c 70%)", tags:["arcade","puzzle"] },
+    { title:"SNAKE", desc:"Eat apples, grow longer, don't hit yourself.", icon:"🟩", href:"games/snake.html", noAds:true, accent:"#44ff44", bg:"radial-gradient(ellipse at center,#002a00 0%,#06060c 70%)", tags:["arcade"] },
+    { title:"FLAPPY BIRD", desc:"Tap to fly. Don't hit the pipes.", icon:"🐤", href:"games/flappy.html", noAds:true, accent:"#ffcc44", bg:"radial-gradient(ellipse at center,#2a2200 0%,#06060c 70%)", tags:["arcade"] },
+    { title:"FRUIT NINJA", desc:"Slice fruit, avoid bombs. Classic.", icon:"🍉", embed:"https://fruitninja.io", accent:"#ff4444", bg:"radial-gradient(ellipse at center,#2a0000 0%,#06060c 70%)", tags:["arcade"] },
+    { title:"CHROME DINO", desc:"The offline dinosaur game. Jump over cacti.", icon:"🦕", embed:"https://trex-runner.com", noAds:true, accent:"#888888", bg:"radial-gradient(ellipse at center,#1a1a1a 0%,#06060c 70%)", tags:["arcade"] },
+    { title:"COOKIE CLICKER", desc:"Click cookies. Buy upgrades. Click more.", icon:"🍪", embed:"https://orteil.dashnet.org/cookieclicker/", noAds:true, accent:"#cc8844", bg:"radial-gradient(ellipse at center,#2a1a00 0%,#06060c 70%)", tags:["arcade","idle"] },
+    { title:"SPACE INVADERS", desc:"Shoot waves of alien invaders.", icon:"👾", href:"games/space-invaders.html", noAds:true, accent:"#44ff44", bg:"radial-gradient(ellipse at center,#002a00 0%,#06060c 70%)", tags:["arcade","shooter"] },
+    { title:"ASTEROIDS", desc:"Destroy asteroids and UFOs in space.", icon:"☄️", href:"games/asteroids.html", noAds:true, accent:"#ffffff", bg:"radial-gradient(ellipse at center,#1a1a1a 0%,#06060c 70%)", tags:["arcade","shooter"] },
+    { title:"BREAKOUT", desc:"Bounce the ball, break the bricks.", icon:"🧱", href:"games/breakout.html", noAds:true, accent:"#ff4488", bg:"radial-gradient(ellipse at center,#2a0011 0%,#06060c 70%)", tags:["arcade"] },
+    { title:"PONG", desc:"The original video game. Two paddles, one ball.", icon:"🏓", href:"games/pong.html", noAds:true, accent:"#ffffff", bg:"radial-gradient(ellipse at center,#111111 0%,#06060c 70%)", tags:["arcade","sports"] },
+    { title:"DUCK HUNT", desc:"Shoot the ducks! Classic NES game.", icon:"🦆", embed:"https://duckhunt.io", accent:"#88cc44", bg:"radial-gradient(ellipse at center,#1a2a00 0%,#06060c 70%)", tags:["arcade","shooter"] },
+    { title:"TINY FISHING", desc:"Cast your line, catch fish, upgrade.", icon:"🎣", embed:"https://tinyfishing.io", accent:"#4488cc", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["arcade","idle"] },
+    { title:"IDLE BREAKOUT", desc:"Idle game meets breakout. Auto-break bricks.", icon:"💎", embed:"https://idlebreakout.io", accent:"#44ccff", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["arcade","idle"] },
+    { title:"GOOGLE SNAKE", desc:"The enhanced Google Snake game.", icon:"🐍", embed:"https://googlesnake.com", accent:"#44cc44", bg:"radial-gradient(ellipse at center,#002a00 0%,#06060c 70%)", tags:["arcade"] },
+    { title:"ELECTRIC MAN 2", desc:"Stick figure fighting with slow-mo combos.", icon:"⚡", embed:"https://electricman2.io", accent:"#4488ff", bg:"radial-gradient(ellipse at center,#001133 0%,#06060c 70%)", tags:["arcade","fighting"] },
+    { title:"LEARN TO FLY", desc:"Penguin tries to fly. Upgrade and launch.", icon:"🐧", embed:"https://learntofly.io", accent:"#4488cc", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["arcade"] },
+    { title:"BURRITO BISON", desc:"Launch a bison through gummy bears.", icon:"🌯", embed:"https://burritobison.io", accent:"#ff4444", bg:"radial-gradient(ellipse at center,#2a0000 0%,#06060c 70%)", tags:["arcade"] },
+    { title:"COLOR SWITCH", desc:"Guide ball through matching color gates.", icon:"🌈", embed:"https://colorswitch.io", accent:"#ff44ff", bg:"radial-gradient(ellipse at center,#2a002a 0%,#06060c 70%)", tags:["arcade"] },
+    { title:"HELIX JUMP", desc:"Bounce ball down the helix tower.", icon:"🔴", embed:"https://helixjump.io", accent:"#ff4488", bg:"radial-gradient(ellipse at center,#2a0011 0%,#06060c 70%)", tags:["arcade"] },
+    { title:"STACK", desc:"Stack blocks as high as you can.", icon:"📦", embed:"https://stack-game.io", accent:"#ff8844", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["arcade"] },
+    { title:"TANK TROUBLE", desc:"Maze tank battle. Ricochet shots.", icon:"🔫", embed:"https://tanktrouble.io", accent:"#888844", bg:"radial-gradient(ellipse at center,#1a1a00 0%,#06060c 70%)", tags:["arcade","multiplayer","shooter"] },
+    { title:"DUCK LIFE", desc:"Train your duck to race. Run, swim, fly.", icon:"🐥", embed:"https://ducklife.io", accent:"#ffcc44", bg:"radial-gradient(ellipse at center,#2a2200 0%,#06060c 70%)", tags:["arcade","sports"] },
+    { title:"DUCK LIFE 2", desc:"Train harder, race faster, become champion.", icon:"🏆", embed:"https://ducklife2.io", accent:"#ffaa44", bg:"radial-gradient(ellipse at center,#2a1a00 0%,#06060c 70%)", tags:["arcade","sports"] },
+    { title:"DUCK LIFE 3", desc:"Evolution edition. Evolve your racing duck.", icon:"🧬", embed:"https://ducklife3.io", accent:"#44cc88", bg:"radial-gradient(ellipse at center,#002a11 0%,#06060c 70%)", tags:["arcade","sports"] },
+    { title:"DUCK LIFE 4", desc:"World championship duck racing.", icon:"🌍", embed:"https://ducklife4.io", accent:"#4488cc", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["arcade","sports"] },
+    { title:"FROGGER", desc:"Help the frog cross the road and river.", icon:"🐸", embed:"https://frogger.io", accent:"#44cc44", bg:"radial-gradient(ellipse at center,#002a00 0%,#06060c 70%)", tags:["arcade"] },
+    { title:"GALAGA", desc:"Classic space shooter. Waves of alien bugs.", icon:"🛸", embed:"https://galaga.io", accent:"#44aaff", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["arcade","shooter"] },
+    { title:"BUBBLE SHOOTER", desc:"Match 3 bubbles to pop them.", icon:"🫧", embed:"https://bubbleshooter.io", accent:"#44ccff", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["arcade","puzzle"] },
+    { title:"ZUMA", desc:"Match colored balls before they reach the end.", icon:"🔮", embed:"https://zuma.io", accent:"#44cc88", bg:"radial-gradient(ellipse at center,#002a11 0%,#06060c 70%)", tags:["arcade","puzzle"] },
+    { title:"JETPACK JOYRIDE", desc:"Fly a jetpack through obstacles. Collect coins.", icon:"🚀", embed:"https://jetpackjoyride.io", accent:"#ffcc44", bg:"radial-gradient(ellipse at center,#2a2200 0%,#06060c 70%)", tags:["arcade","platformer"] },
+    { title:"SUPER HEXAGON", desc:"Survive the spinning hexagon as long as you can.", icon:"⬡", embed:"https://superhexagon.io", accent:"#ff44ff", bg:"radial-gradient(ellipse at center,#2a002a 0%,#06060c 70%)", tags:["arcade"] },
+
+    // ===== SPORTS =====
+    { title:"RETRO BOWL", desc:"Retro-style American football management.", icon:"🏈", embed:"https://poki.com/en/g/retro-bowl", direct:true, accent:"#cc4400", bg:"radial-gradient(ellipse at center,#2a0800 0%,#06060c 70%)", tags:["sports","arcade"] },
+    { title:"BASKETBALL STARS", desc:"1v1 basketball. Shoot, dribble, dunk.", icon:"🏀", embed:"https://basketballstars.io", accent:"#ff8844", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["sports","multiplayer"] },
+    { title:"SOCCER RANDOM", desc:"Wacky physics soccer with random rules.", icon:"⚽", embed:"https://soccerrandom.github.io", noAds:true, accent:"#44cc44", bg:"radial-gradient(ellipse at center,#002a00 0%,#06060c 70%)", tags:["sports","arcade"] },
+    { title:"STICK CRICKET", desc:"Smash sixes in this cricket game.", icon:"🏏", embed:"https://stickcricket.io", accent:"#44aa44", bg:"radial-gradient(ellipse at center,#002a00 0%,#06060c 70%)", tags:["sports"] },
+    { title:"TABLE TENNIS", desc:"Ping pong against AI opponents.", icon:"🏓", embed:"https://tabletennisx.com", accent:"#ff4444", bg:"radial-gradient(ellipse at center,#2a0000 0%,#06060c 70%)", tags:["sports"] },
+    { title:"8 BALL POOL", desc:"Classic billiards. Sink all your balls.", icon:"🎱", embed:"https://8ballpool.io", accent:"#44aa44", bg:"radial-gradient(ellipse at center,#002a00 0%,#06060c 70%)", tags:["sports","multiplayer"] },
+    { title:"BASKET RANDOM", desc:"Wacky basketball with random physics.", icon:"🏀", embed:"https://basketrandom.github.io", noAds:true, accent:"#ff8844", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["sports","arcade"] },
+    { title:"BOXING RANDOM", desc:"Ragdoll boxing with random physics.", icon:"🥊", embed:"https://boxingrandom.github.io", noAds:true, accent:"#ff4444", bg:"radial-gradient(ellipse at center,#2a0000 0%,#06060c 70%)", tags:["sports","fighting"] },
+    { title:"ARCHERY WORLD TOUR", desc:"Travel the world, hit bullseyes.", icon:"🎯", embed:"https://archeryworldtour.io", accent:"#cc8844", bg:"radial-gradient(ellipse at center,#2a1a00 0%,#06060c 70%)", tags:["sports"] },
+    { title:"PENALTY KICK ONLINE", desc:"Score penalty kicks against the keeper.", icon:"⚽", embed:"https://penaltykickonline.io", accent:"#44cc44", bg:"radial-gradient(ellipse at center,#002a00 0%,#06060c 70%)", tags:["sports","multiplayer"] },
+    { title:"HEAD SOCCER", desc:"Big head soccer. Powershots and goals.", icon:"⚽", embed:"https://headsoccer.io", accent:"#44aa88", bg:"radial-gradient(ellipse at center,#002a1a 0%,#06060c 70%)", tags:["sports","arcade"] },
+    { title:"TENNIS LEGENDS", desc:"Arcade tennis with legends of the sport.", icon:"🎾", embed:"https://tennislegends.io", accent:"#88cc44", bg:"radial-gradient(ellipse at center,#1a2a00 0%,#06060c 70%)", tags:["sports"] },
+    { title:"GOLF ORBIT", desc:"Hit the golf ball as far as possible.", icon:"⛳", embed:"https://golforbit.io", accent:"#44cc44", bg:"radial-gradient(ellipse at center,#002a00 0%,#06060c 70%)", tags:["sports","arcade"] },
+    { title:"BASEBALL 9", desc:"Quick pick-up baseball with team management.", icon:"⚾", embed:"https://baseball9.io", accent:"#ff4444", bg:"radial-gradient(ellipse at center,#2a0000 0%,#06060c 70%)", tags:["sports"] },
+    { title:"VOLLEYBALL", desc:"2D volleyball. Spike, set, serve.", icon:"🏐", embed:"https://volleyballgame.io", accent:"#ffaa44", bg:"radial-gradient(ellipse at center,#2a1a00 0%,#06060c 70%)", tags:["sports","arcade"] },
+    { title:"BOWLING", desc:"Classic bowling. Aim for the strike.", icon:"🎳", embed:"https://bowling.io", accent:"#ff8844", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["sports"] },
+
+    // ===== STRATEGY =====
+    { title:"MINECRAFT CLASSIC", desc:"The original Minecraft in your browser.", icon:"⛏️", embed:"https://classic.minecraft.net", noAds:true, accent:"#88cc44", bg:"radial-gradient(ellipse at center,#1a2a00 0%,#06060c 70%)", tags:["strategy","multiplayer"] },
+    { title:"EAGLERCRAFT", desc:"Minecraft 1.5.2 in your browser. Full game.", icon:"🟫", embed:"https://eaglercraft.com", accent:"#88aa44", bg:"radial-gradient(ellipse at center,#1a2a00 0%,#06060c 70%)", tags:["strategy","multiplayer"] },
+    { title:"CLASH ROYALE", desc:"Card-based real-time strategy battles.", icon:"🃏", embed:"https://clashroyale.io", accent:"#4488ff", bg:"radial-gradient(ellipse at center,#001133 0%,#06060c 70%)", tags:["strategy","multiplayer"] },
+    { title:"KINGDOM RUSH", desc:"Epic fantasy tower defense with heroes.", icon:"🏰", embed:"https://kingdomrush.io", accent:"#cc8844", bg:"radial-gradient(ellipse at center,#2a1a00 0%,#06060c 70%)", tags:["strategy"] },
+    { title:"PLANTS VS ZOMBIES", desc:"Defend your lawn from zombie hordes.", icon:"🌻", embed:"https://plantsvszombies.io", accent:"#44cc44", bg:"radial-gradient(ellipse at center,#002a00 0%,#06060c 70%)", tags:["strategy"] },
+    { title:"CIVILIZATION WAR", desc:"Build your empire, train armies, conquer.", icon:"⚔️", embed:"https://civilizationwar.com", accent:"#cc8844", bg:"radial-gradient(ellipse at center,#2a1a00 0%,#06060c 70%)", tags:["strategy"] },
+    { title:"BLOONS TD 5", desc:"The classic Bloons Tower Defense.", icon:"🎈", embed:"https://btd5.io", accent:"#ff8844", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["strategy"] },
+    { title:"AGE OF WAR", desc:"Build armies through the ages.", icon:"⚔️", embed:"https://ageofwar.io", accent:"#cc8844", bg:"radial-gradient(ellipse at center,#2a1a00 0%,#06060c 70%)", tags:["strategy"] },
+    { title:"PAPER MINECRAFT", desc:"2D Minecraft. Mine, craft, survive.", icon:"📜", embed:"https://paperminecraft.io", accent:"#88cc44", bg:"radial-gradient(ellipse at center,#1a2a00 0%,#06060c 70%)", tags:["strategy","arcade"] },
+    { title:"JACKSMITH", desc:"Forge weapons for warriors. Crafting game.", icon:"⚒️", embed:"https://jacksmith.io", accent:"#cc8844", bg:"radial-gradient(ellipse at center,#2a1a00 0%,#06060c 70%)", tags:["strategy","arcade"] },
+    { title:"HEX EMPIRE", desc:"Turn-based hex territory conquest.", icon:"⬡", embed:"https://hexempire.io", accent:"#4488cc", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["strategy"] },
+    { title:"CREEPER WORLD", desc:"Defend against fluid-like alien creep.", icon:"🌊", embed:"https://creeperworld.io", accent:"#4488ff", bg:"radial-gradient(ellipse at center,#001133 0%,#06060c 70%)", tags:["strategy"] },
+    { title:"INCURSION", desc:"Fantasy tower defense with unique towers.", icon:"🗡️", embed:"https://incursion.io", accent:"#aa8844", bg:"radial-gradient(ellipse at center,#2a1a00 0%,#06060c 70%)", tags:["strategy"] },
+    { title:"GEMCRAFT", desc:"Gem-based tower defense with crafting.", icon:"💎", embed:"https://gemcraft.io", accent:"#aa44ff", bg:"radial-gradient(ellipse at center,#1a0033 0%,#06060c 70%)", tags:["strategy"] },
+    { title:"TOWER MADNESS", desc:"Defend against alien invaders with towers.", icon:"👽", embed:"https://towermadness.io", accent:"#44ccaa", bg:"radial-gradient(ellipse at center,#002a1a 0%,#06060c 70%)", tags:["strategy"] },
+
+    // ===== MULTIPLAYER =====
+    { title:"AMONG US", desc:"Find the impostor. Emergency meeting!", icon:"🔴", embed:"https://amongus.io", accent:"#ff0000", bg:"radial-gradient(ellipse at center,#2a0000 0%,#06060c 70%)", tags:["multiplayer","strategy"] },
+    { title:"FALL GUYS", desc:"Obstacle course battle royale.", icon:"🫘", embed:"https://fallguys.io", accent:"#ff88cc", bg:"radial-gradient(ellipse at center,#2a0022 0%,#06060c 70%)", tags:["multiplayer","arcade"] },
+    { title:"STUMBLE GUYS", desc:"Multiplayer party knockout.", icon:"🤪", embed:"https://stumbleguys.io", accent:"#44ccff", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["multiplayer","arcade"] },
+    { title:"STICK FIGHT", desc:"Stick figure battle arena.", icon:"🥊", embed:"https://stickfight.io", accent:"#ff8844", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["multiplayer","fighting"] },
+
+    // ===== FIGHTING =====
+    { title:"STREET FIGHTER 2", desc:"Classic arcade fighting game.", icon:"🥋", embed:"https://streetfighter2.io", accent:"#ff4400", bg:"radial-gradient(ellipse at center,#2a0800 0%,#06060c 70%)", tags:["fighting","arcade"] },
+    { title:"MORTAL KOMBAT", desc:"Brutal fighting game. Finish them!", icon:"☠️", embed:"https://mortalkombat.io", accent:"#ff0000", bg:"radial-gradient(ellipse at center,#2a0000 0%,#06060c 70%)", tags:["fighting","arcade"] },
+    { title:"SUPER SMASH FLASH 2", desc:"Smash Bros fan game with tons of characters.", icon:"💫", embed:"https://supersmashflash2.io", accent:"#ff8844", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["fighting","multiplayer"] },
+    { title:"SHADOW FIGHT 2", desc:"Martial arts fighting with shadow warriors.", icon:"🥷", embed:"https://shadowfight2.io", accent:"#222244", bg:"radial-gradient(ellipse at center,#0a0a1a 0%,#06060c 70%)", tags:["fighting"] },
+    { title:"STICKMAN WARRIORS", desc:"Stick figure combo fighting.", icon:"⚔️", embed:"https://stickmanwarriors.io", accent:"#ff4444", bg:"radial-gradient(ellipse at center,#2a0000 0%,#06060c 70%)", tags:["fighting","arcade"] },
+    { title:"DRAGON BALL Z DEVOLUTION", desc:"DBZ fighting with pixel art style.", icon:"🐉", embed:"https://dbzdevolution.io", accent:"#ff8800", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["fighting","arcade"] },
+    { title:"NARUTO FIGHTING CR", desc:"Naruto characters battle it out.", icon:"🌀", embed:"https://narutofighting.io", accent:"#ff8844", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["fighting","arcade"] },
+    { title:"COMBAT TOURNAMENT", desc:"Stick figure combat tournament.", icon:"🏟️", embed:"https://combattournament.io", accent:"#cc4444", bg:"radial-gradient(ellipse at center,#2a0000 0%,#06060c 70%)", tags:["fighting","arcade"] },
+
+    // ===== HORROR =====
+    { title:"FNAF 1", desc:"Survive five nights at Freddy's. Watch the cameras.", icon:"🐻", embed:"https://fnaf1.io", accent:"#440000", bg:"radial-gradient(ellipse at center,#1a0000 0%,#06060c 70%)", tags:["horror","puzzle"] },
+    { title:"FNAF 2", desc:"More animatronics. More terror. No doors.", icon:"🐰", embed:"https://fnaf2.io", accent:"#440000", bg:"radial-gradient(ellipse at center,#1a0000 0%,#06060c 70%)", tags:["horror","puzzle"] },
+    { title:"FNAF 3", desc:"Springtrap is hunting you.", icon:"🐻‍❄️", embed:"https://fnaf3.io", accent:"#440000", bg:"radial-gradient(ellipse at center,#1a0000 0%,#06060c 70%)", tags:["horror","puzzle"] },
+    { title:"FNAF 4", desc:"Nightmares come alive in your bedroom.", icon:"🧸", embed:"https://fnaf4.io", accent:"#440000", bg:"radial-gradient(ellipse at center,#1a0000 0%,#06060c 70%)", tags:["horror","puzzle"] },
+    { title:"GRANNY", desc:"Escape Granny's house. Horror puzzle.", icon:"👵", embed:"https://granny.io", accent:"#444444", bg:"radial-gradient(ellipse at center,#111111 0%,#06060c 70%)", tags:["horror","puzzle"] },
+    { title:"BALDI'S BASICS", desc:"Collect notebooks, avoid Baldi. Educational horror.", icon:"📚", embed:"https://baldisbasics.io", accent:"#44cc44", bg:"radial-gradient(ellipse at center,#002a00 0%,#06060c 70%)", tags:["horror","arcade"] },
+    { title:"SCARY MAZE", desc:"Navigate the maze. Don't touch the walls.", icon:"😱", embed:"https://scarymaze.io", accent:"#444444", bg:"radial-gradient(ellipse at center,#111111 0%,#06060c 70%)", tags:["horror","arcade"] },
+    { title:"POPPY PLAYTIME", desc:"Escape the toy factory. Horror puzzle.", icon:"🧸", embed:"https://poppyplaytime.io", accent:"#4444ff", bg:"radial-gradient(ellipse at center,#000033 0%,#06060c 70%)", tags:["horror","puzzle"] },
+    { title:"BACKROOMS", desc:"Escape the infinite yellow rooms.", icon:"🚪", embed:"https://backrooms.io", accent:"#ccaa44", bg:"radial-gradient(ellipse at center,#2a2200 0%,#06060c 70%)", tags:["horror"] },
+    { title:"THE HOUSE", desc:"Explore a haunted house. Point and click horror.", icon:"🏚️", embed:"https://thehouse.io", accent:"#333333", bg:"radial-gradient(ellipse at center,#0a0a0a 0%,#06060c 70%)", tags:["horror","puzzle"] },
+
+    // ===== IDLE / CLICKER =====
+    { title:"BITLIFE", desc:"Life simulator. Make choices, live your life.", icon:"👤", embed:"https://bitlife.io", accent:"#44cc88", bg:"radial-gradient(ellipse at center,#002a11 0%,#06060c 70%)", tags:["idle","arcade"] },
+    { title:"MONKEY MART", desc:"Run a supermarket as a monkey.", icon:"🐒", embed:"https://poki.com/en/g/monkey-mart", direct:true, accent:"#ffaa44", bg:"radial-gradient(ellipse at center,#2a1a00 0%,#06060c 70%)", tags:["idle","arcade"] },
+    { title:"PAPA'S FREEZERIA", desc:"Make frozen treats. Time management.", icon:"🍦", embed:"https://papasfreezeria.io", accent:"#88ccff", bg:"radial-gradient(ellipse at center,#0a1a2a 0%,#06060c 70%)", tags:["idle","arcade"] },
+    { title:"PAPA'S PIZZERIA", desc:"Run a pizza shop. Take orders, bake, serve.", icon:"🍕", embed:"https://papaspizzeria.io", accent:"#ff8844", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["idle","arcade"] },
+    { title:"PAPA'S BURGERIA", desc:"Burger restaurant management.", icon:"🍔", embed:"https://papasburgeria.io", accent:"#cc8844", bg:"radial-gradient(ellipse at center,#2a1a00 0%,#06060c 70%)", tags:["idle","arcade"] },
+    { title:"PAPA'S SUSHIRIA", desc:"Sushi restaurant. Roll, top, serve.", icon:"🍣", embed:"https://papassushiria.io", accent:"#ff4444", bg:"radial-gradient(ellipse at center,#2a0000 0%,#06060c 70%)", tags:["idle","arcade"] },
+    { title:"PAPA'S WINGERIA", desc:"Chicken wings restaurant sim.", icon:"🍗", embed:"https://papaswingeria.io", accent:"#ff8844", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["idle","arcade"] },
+    { title:"PAPA'S DONUTERIA", desc:"Donut shop. Fry, fill, top.", icon:"🍩", embed:"https://papasdonuteria.io", accent:"#ff88cc", bg:"radial-gradient(ellipse at center,#2a0022 0%,#06060c 70%)", tags:["idle","arcade"] },
+    { title:"LEARN TO FLY IDLE", desc:"Idle version. Launch penguins automatically.", icon:"🐧", embed:"https://learntoflyidle.io", accent:"#4488cc", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["idle"] },
+    { title:"ADVENTURE CAPITALIST", desc:"Click your way to billions.", icon:"💰", embed:"https://adventurecapitalist.io", accent:"#44cc44", bg:"radial-gradient(ellipse at center,#002a00 0%,#06060c 70%)", tags:["idle"] },
+    { title:"REALM GRINDER", desc:"Fantasy idle kingdom management.", icon:"👑", embed:"https://realmgrinder.io", accent:"#ffcc44", bg:"radial-gradient(ellipse at center,#2a2200 0%,#06060c 70%)", tags:["idle","strategy"] },
+    { title:"CLICKER HEROES", desc:"Click monsters, hire heroes, go idle.", icon:"⚔️", embed:"https://clickerheroes.io", accent:"#ff8844", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["idle"] },
+    { title:"INSANIQUARIUM", desc:"Feed fish, collect coins, fight aliens.", icon:"🐠", embed:"https://insaniquarium.io", accent:"#44aaff", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["idle","arcade"] },
+
+    // ===== MUSIC / RHYTHM =====
+    { title:"FRIDAY NIGHT FUNKIN", desc:"Rhythm battle game. Hit the notes.", icon:"🎤", embed:"https://www.newgrounds.com/portal/view/770371", direct:true, accent:"#44ccff", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["music","arcade"] },
+    { title:"FNF VS WHITTY", desc:"Friday Night Funkin mod. Battle Whitty.", icon:"💣", embed:"https://fnfvswhitty.io", accent:"#ff4444", bg:"radial-gradient(ellipse at center,#2a0000 0%,#06060c 70%)", tags:["music","arcade"] },
+    { title:"FNF VS TRICKY", desc:"FNF mod. Clown madness.", icon:"🤡", embed:"https://fnfvstricky.io", accent:"#44cc44", bg:"radial-gradient(ellipse at center,#002a00 0%,#06060c 70%)", tags:["music","arcade"] },
+    { title:"INCREDIBOX", desc:"Create music by arranging beatbox sounds.", icon:"🎵", embed:"https://incredibox.com/demo/", noAds:true, accent:"#ff8844", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["music"] },
+    { title:"OSU", desc:"Rhythm game. Click circles to the beat.", icon:"🎯", embed:"https://osu.ppy.sh", accent:"#ff88cc", bg:"radial-gradient(ellipse at center,#2a0022 0%,#06060c 70%)", tags:["music","arcade"] },
+    { title:"SPRUNKI", desc:"Musical mixing game. Create beats with characters.", icon:"🎶", embed:"https://sprunki.io", accent:"#ff44ff", bg:"radial-gradient(ellipse at center,#2a002a 0%,#06060c 70%)", tags:["music"] },
+
+    // ===== SIMULATION =====
+    { title:"FLIGHT SIMULATOR", desc:"Fly planes in a browser flight sim.", icon:"✈️", embed:"https://flightsimulator.io", accent:"#4488cc", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["simulation"] },
+    { title:"SIM TAXI", desc:"Drive a taxi around the city. Pick up fares.", icon:"🚕", embed:"https://simtaxi.io", accent:"#ffcc44", bg:"radial-gradient(ellipse at center,#2a2200 0%,#06060c 70%)", tags:["simulation","racing"] },
+    { title:"FARMING SIMULATOR", desc:"Grow crops, raise animals, manage a farm.", icon:"🌾", embed:"https://farmingsimulator.io", accent:"#88cc44", bg:"radial-gradient(ellipse at center,#1a2a00 0%,#06060c 70%)", tags:["simulation","idle"] },
+    { title:"CITY BUILDER", desc:"Build and manage your own city.", icon:"🏙️", embed:"https://citybuilder.io", accent:"#4488cc", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["simulation","strategy"] },
+    { title:"SURGERY SIMULATOR", desc:"Perform surgery. Steady hands required.", icon:"🏥", embed:"https://surgerysimulator.io", accent:"#ff4444", bg:"radial-gradient(ellipse at center,#2a0000 0%,#06060c 70%)", tags:["simulation","arcade"] },
+    { title:"TRUCK SIMULATOR", desc:"Drive trucks across the country.", icon:"🚛", embed:"https://trucksimulator.io", accent:"#888844", bg:"radial-gradient(ellipse at center,#1a1a00 0%,#06060c 70%)", tags:["simulation","racing"] },
+
+    // ===== MORE GAMES =====
+    { title:"ROCKET LEAGUE 2D", desc:"Car soccer in 2D. Boost, flip, score.", icon:"🚀", embed:"https://rocketleague2d.io", accent:"#4488ff", bg:"radial-gradient(ellipse at center,#001133 0%,#06060c 70%)", tags:["sports","multiplayer"] },
+    { title:"GEOMETRY DASH SUBZERO", desc:"Frozen rhythm platformer levels.", icon:"❄️", embed:"https://geometrydashsubzero.io", accent:"#44ccff", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["platformer","music"] },
+    { title:"GEOMETRY DASH MELTDOWN", desc:"Fiery rhythm platformer.", icon:"🔥", embed:"https://geometrydashmeltdown.io", accent:"#ff4400", bg:"radial-gradient(ellipse at center,#2a0800 0%,#06060c 70%)", tags:["platformer","music"] },
+    { title:"GEOMETRY DASH WORLD", desc:"World tour rhythm platformer.", icon:"🌍", embed:"https://geometrydashworld.io", accent:"#44cc88", bg:"radial-gradient(ellipse at center,#002a11 0%,#06060c 70%)", tags:["platformer","music"] },
+    { title:"PIANO TILES", desc:"Tap the black tiles to play piano.", icon:"🎹", embed:"https://pianotiles.io", accent:"#ffffff", bg:"radial-gradient(ellipse at center,#1a1a1a 0%,#06060c 70%)", tags:["music","arcade"] },
+    { title:"TRAP ADVENTURE 2", desc:"The world's hardest platformer. Every step is a trap.", icon:"⚠️", embed:"https://trapadventure2.io", accent:"#ff0000", bg:"radial-gradient(ellipse at center,#2a0000 0%,#06060c 70%)", tags:["platformer","arcade"] },
+    { title:"GETTING OVER IT", desc:"Climb a mountain with a hammer. Rage game.", icon:"🔨", embed:"https://gettingoverit.io", accent:"#cc8844", bg:"radial-gradient(ellipse at center,#2a1a00 0%,#06060c 70%)", tags:["platformer"] },
+    { title:"ESCAPING THE PRISON", desc:"Henry Stickmin's first escape. Choose your path.", icon:"🏃", embed:"https://escapingtheprison.io", accent:"#888888", bg:"radial-gradient(ellipse at center,#1a1a1a 0%,#06060c 70%)", tags:["puzzle","arcade"] },
+    { title:"FLEEING THE COMPLEX", desc:"Escape the wall. Multiple endings.", icon:"🧱", embed:"https://fleeingthecomplex.io", accent:"#888888", bg:"radial-gradient(ellipse at center,#1a1a1a 0%,#06060c 70%)", tags:["puzzle","arcade"] },
+    { title:"STEALING THE DIAMOND", desc:"Heist gone wrong. Choose wisely.", icon:"💎", embed:"https://stealingthediamond.io", accent:"#44ccff", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["puzzle","arcade"] },
+    { title:"BLOONS TD 4", desc:"Classic balloon tower defense.", icon:"🎈", embed:"https://btd4.io", accent:"#ff8844", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["strategy"] },
+    { title:"BLOONS TD 3", desc:"OG Bloons Tower Defense.", icon:"🎈", embed:"https://btd3.io", accent:"#ff8844", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["strategy"] },
+    { title:"DEFEND THE TOWER", desc:"Medieval tower defense. Archers and catapults.", icon:"🏰", embed:"https://defendthetower.io", accent:"#cc8844", bg:"radial-gradient(ellipse at center,#2a1a00 0%,#06060c 70%)", tags:["strategy"] },
+    { title:"INFECTONATOR", desc:"Spread the zombie virus across the world.", icon:"🧟", embed:"https://infectonator.io", accent:"#88cc44", bg:"radial-gradient(ellipse at center,#1a2a00 0%,#06060c 70%)", tags:["strategy","arcade"] },
+    { title:"HEAD BASKETBALL", desc:"Big head basketball with superpowers.", icon:"🏀", embed:"https://headbasketball.io", accent:"#ff8844", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["sports","arcade"] },
+    { title:"MINI GOLF", desc:"Mini golf through creative courses.", icon:"⛳", embed:"https://minigolf.io", accent:"#44cc44", bg:"radial-gradient(ellipse at center,#002a00 0%,#06060c 70%)", tags:["sports"] },
+    { title:"SKATE HOOLIGANS", desc:"Skateboard through city streets. Avoid cops.", icon:"🛹", embed:"https://skatehooligans.io", accent:"#ff8844", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["racing","arcade"] },
+    { title:"MAD GEAR", desc:"Extreme off-road racing with stunts.", icon:"🏎️", embed:"https://madgear.io", accent:"#ff4400", bg:"radial-gradient(ellipse at center,#2a0800 0%,#06060c 70%)", tags:["racing"] },
+    { title:"DEMOLITION DERBY", desc:"Crash and destroy other cars to survive.", icon:"💥", embed:"https://demolitionderby.io", accent:"#ff4444", bg:"radial-gradient(ellipse at center,#2a0000 0%,#06060c 70%)", tags:["racing","arcade"] },
+    { title:"AQUAPARK.IO", desc:"Water slide racing. Push others off.", icon:"🌊", embed:"https://aquapark.io", accent:"#44ccff", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["io","multiplayer","racing"] },
+    { title:"TOMB OF THE MASK", desc:"Navigate mazes at high speed. Retro style.", icon:"💀", embed:"https://tombofthemask.io", accent:"#ffcc44", bg:"radial-gradient(ellipse at center,#2a2200 0%,#06060c 70%)", tags:["arcade","platformer"] },
+    { title:"GRAVITY GUY", desc:"Flip gravity to avoid obstacles.", icon:"🔄", embed:"https://gravityguy.io", accent:"#4488ff", bg:"radial-gradient(ellipse at center,#001133 0%,#06060c 70%)", tags:["platformer","arcade"] },
+    { title:"PIXEL WARFARE", desc:"Blocky multiplayer FPS combat.", icon:"🔫", embed:"https://pixelwarfare.io", accent:"#ff4444", bg:"radial-gradient(ellipse at center,#2a0000 0%,#06060c 70%)", tags:["shooter","multiplayer"] },
+    { title:"SWORDS AND SANDALS", desc:"Gladiator arena combat RPG.", icon:"⚔️", embed:"https://swordsandsandals.io", accent:"#cc8844", bg:"radial-gradient(ellipse at center,#2a1a00 0%,#06060c 70%)", tags:["fighting","strategy"] },
+    { title:"RETRO BOWL COLLEGE", desc:"College football edition of Retro Bowl.", icon:"🏈", embed:"https://retrobowlcollege.io", accent:"#cc4400", bg:"radial-gradient(ellipse at center,#2a0800 0%,#06060c 70%)", tags:["sports","arcade"] },
+    { title:"1010!", desc:"Fit blocks on a 10x10 grid. Tetris-like.", icon:"🟩", embed:"https://1010game.io", accent:"#44cc44", bg:"radial-gradient(ellipse at center,#002a00 0%,#06060c 70%)", tags:["puzzle"] },
+    { title:"MERGE BLOCKS", desc:"Merge numbered blocks together.", icon:"🔢", embed:"https://mergeblocks.io", accent:"#ffaa44", bg:"radial-gradient(ellipse at center,#2a1a00 0%,#06060c 70%)", tags:["puzzle"] },
+    { title:"CANDY CRUSH", desc:"Match 3 candies to clear the board.", icon:"🍬", embed:"https://candycrush.io", accent:"#ff44ff", bg:"radial-gradient(ellipse at center,#2a002a 0%,#06060c 70%)", tags:["puzzle","arcade"] },
+    { title:"BEJEWELED", desc:"Classic gem matching puzzle.", icon:"💎", embed:"https://bejeweled.io", accent:"#44ccff", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["puzzle","arcade"] },
+    { title:"FEEDING FRENZY", desc:"Eat smaller fish, avoid bigger ones.", icon:"🐟", embed:"https://feedingfrenzy.io", accent:"#4488cc", bg:"radial-gradient(ellipse at center,#001a2a 0%,#06060c 70%)", tags:["arcade"] },
+    { title:"BIKE RACE PRO", desc:"Multiplayer bike racing with tricks.", icon:"🚲", embed:"https://bikeracepro.io", accent:"#ff8844", bg:"radial-gradient(ellipse at center,#2a1500 0%,#06060c 70%)", tags:["racing","multiplayer"] },
+];
+
+// ===== TAG CONFIG =====
+const TAG_ORDER = ['all','favorites','recent','no-ads','shooter','io','strategy','platformer','puzzle','racing','arcade','sports','multiplayer','fighting','horror','idle','music','simulation'];
+const TAG_LABELS = { all:'All', favorites:'Favorites ❤️', recent:'Recent 🕐', 'no-ads':'No Ads ✅', shooter:'Shooter', io:'IO Games', strategy:'Strategy', platformer:'Platformer', puzzle:'Puzzle', racing:'Racing', arcade:'Arcade', sports:'Sports', multiplayer:'Multiplayer', fighting:'Fighting', horror:'Horror', idle:'Idle', music:'Music', simulation:'Simulation' };
+
+const grid = document.getElementById('grid');
+const search = document.getElementById('search');
+const noResults = document.getElementById('no-results');
+const countEl = document.getElementById('game-count');
+const overlay = document.getElementById('game-overlay');
+const gameFrame = document.getElementById('game-frame');
+const tagsEl = document.getElementById('tags');
+let activeTag = 'all';
+let currentGameUrl = '';
+let currentSort = 'default';
+let currentGridSize = 'md';
+
+// ===== FAVORITES SYSTEM =====
+let favorites = JSON.parse(localStorage.getItem('va_favorites') || '[]');
+function toggleFavorite(title, e) {
+    e.stopPropagation(); e.preventDefault();
+    const idx = favorites.indexOf(title);
+    if (idx >= 0) favorites.splice(idx, 1); else favorites.push(title);
+    localStorage.setItem('va_favorites', JSON.stringify(favorites));
+    buildTags();
+    renderGames(search.value.toLowerCase(), activeTag);
+}
+
+// ===== RECENTLY PLAYED =====
+let recentlyPlayed = JSON.parse(localStorage.getItem('va_recent') || '[]');
+function addRecent(title) {
+    recentlyPlayed = recentlyPlayed.filter(t => t !== title);
+    recentlyPlayed.unshift(title);
+    if (recentlyPlayed.length > 10) recentlyPlayed.pop();
+    localStorage.setItem('va_recent', JSON.stringify(recentlyPlayed));
+    renderRecent();
+}
+function renderRecent() {
+    const el = document.getElementById('recent-container');
+    if (!recentlyPlayed.length) { el.innerHTML = ''; return; }
+    const chips = recentlyPlayed.map(t => {
+        const g = GAMES.find(g => g.title === t);
+        if (!g) return '';
+        return `<div class="recent-chip" onclick="playGame(GAMES.find(g=>g.title==='${t.replace(/'/g,"\\'")}'))"><span class="rc-icon">${g.icon}</span>${g.title}</div>`;
+    }).join('');
+    el.innerHTML = `<div class="recent-section"><div class="recent-label">RECENTLY PLAYED</div><div class="recent-row">${chips}</div></div>`;
+}
+
+// ===== GAME OF THE DAY =====
+function renderGOTD() {
+    const dayIndex = Math.floor(Date.now() / 86400000) % GAMES.length;
+    const g = GAMES[dayIndex];
+    const el = document.getElementById('gotd-container');
+    el.innerHTML = `<div class="gotd-section" style="--accent:${g.accent}">
+        <div class="gotd-label">⭐ GAME OF THE DAY</div>
+        <div class="gotd-content">
+            <div class="gotd-icon">${g.icon}</div>
+            <div class="gotd-info"><div class="gotd-title">${g.title}</div><div class="gotd-desc">${g.desc}</div></div>
+            <button class="gotd-play" onclick="playGame(GAMES[${dayIndex}])">PLAY NOW</button>
+        </div>
+    </div>`;
+}
+function playGame(g) {
+    if (!g) return;
+    addRecent(g.title);
+    if (g.href) window.location.href = g.href;
+    else if (g.embed && g.direct) window.open(g.embed, '_blank');
+    else if (g.embed) openGame(g.embed, g.title);
+}
+
+// Build tags with counts
+function buildTags() {
+    const counts = {};
+    GAMES.forEach(g => (g.tags||[]).forEach(t => counts[t] = (counts[t]||0)+1));
+    counts['no-ads'] = GAMES.filter(g => g.noAds).length;
+    counts['favorites'] = favorites.length;
+    counts['recent'] = recentlyPlayed.length;
+    tagsEl.innerHTML = TAG_ORDER.map(t => {
+        const label = TAG_LABELS[t] || t;
+        const count = t === 'all' ? GAMES.length : (counts[t]||0);
+        const cls = t==='all'?' active':'';
+        const special = t==='no-ads'?' tag-no-ads': t==='favorites'?' tag-fav': t==='recent'?' tag-recent':'';
+        if ((t==='favorites' && !favorites.length) || (t==='recent' && !recentlyPlayed.length)) return '';
+        return `<span class="tag${cls}${special}" data-tag="${t}">${label}<span class="tag-count">${count}</span></span>`;
+    }).join('');
+}
+renderGOTD();
+renderRecent();
+buildTags();
+
+function openGame(url, title) {
+    currentGameUrl = url;
+    gameFrame.src = url;
+    document.getElementById('game-page-title').textContent = title || '';
+    overlay.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+function closeGame() {
+    overlay.style.display = 'none';
+    gameFrame.src = '';
+    currentGameUrl = '';
+    document.body.style.overflow = '';
+}
+function openFullscreen() {
+    if (currentGameUrl) window.open(currentGameUrl, '_blank');
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeGame(); });
+
+function sortGames(arr) {
+    if (currentSort === 'az') return [...arr].sort((a,b) => a.title.localeCompare(b.title));
+    if (currentSort === 'za') return [...arr].sort((a,b) => b.title.localeCompare(a.title));
+    if (currentSort === 'featured') return [...arr].sort((a,b) => (b.featured?1:0)-(a.featured?1:0) || (b.noAds?1:0)-(a.noAds?1:0));
+    if (currentSort === 'noads') return [...arr].sort((a,b) => (b.noAds?1:0)-(a.noAds?1:0));
+    return arr;
+}
+
+function renderGames(filter = '', tag = 'all') {
+    grid.innerHTML = '';
+    let filtered = GAMES.filter(g => {
+        const matchSearch = !filter || g.title.toLowerCase().includes(filter) || g.desc.toLowerCase().includes(filter) || (g.tags && g.tags.some(t => t.includes(filter)));
+        let matchTag = true;
+        if (tag === 'no-ads') matchTag = g.noAds;
+        else if (tag === 'favorites') matchTag = favorites.includes(g.title);
+        else if (tag === 'recent') matchTag = recentlyPlayed.includes(g.title);
+        else if (tag !== 'all') matchTag = g.tags && g.tags.includes(tag);
+        return matchSearch && matchTag;
+    });
+    filtered = sortGames(filtered);
+    noResults.style.display = filtered.length === 0 ? 'block' : 'none';
+    countEl.textContent = filtered.length + ' GAME' + (filtered.length !== 1 ? 'S' : '') + ' AVAILABLE';
+
+    filtered.forEach((g, i) => {
+        const card = document.createElement(g.embed ? 'div' : 'a');
+        if (g.href) { card.href = g.href; card.onclick = () => addRecent(g.title); }
+        card.className = 'game-card' + (g.featured ? ' featured' : '');
+        card.style.setProperty('--accent', g.accent);
+        card.style.setProperty('--bg', g.bg);
+        card.style.animationDelay = Math.min(i * 0.015, 0.4) + 's';
+        if (g.embed && g.direct) card.onclick = () => { addRecent(g.title); window.open(g.embed, '_blank'); };
+        else if (g.embed) card.onclick = () => { addRecent(g.title); openGame(g.embed, g.title); };
+
+        const isFav = favorites.includes(g.title);
+        card.innerHTML = `
+            <div class="card-banner" style="background:${g.bg}">
+                <div class="shimmer-overlay"></div>
+                ${g.featured ? '<span class="featured-badge">FEATURED</span>' : ''}
+                ${g.isNew ? '<span class="new-badge">NEW</span>' : ''}
+                ${g.noAds ? `<span class="no-ads-badge${g.isNew ? ' shifted' : ''}">NO ADS</span>` : ''}
+                <span class="card-icon">${g.icon}</span>
+            </div>
+            <button class="fav-btn${isFav?' active':''}" onclick="toggleFavorite('${g.title.replace(/'/g,"\\'")}', event)">${isFav?'❤️':'🤍'}</button>
+            <div class="card-body">
+                <div class="card-title">${g.title}</div>
+                <div class="card-desc">${g.desc}</div>
+                <div class="card-tags">${(g.tags||[]).map(t => `<span class="card-tag">${t}</span>`).join('')}</div>
+                <span class="play-btn">PLAY</span>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+// ===== EVENT LISTENERS =====
+search.addEventListener('input', e => renderGames(e.target.value.toLowerCase(), activeTag));
+tagsEl.addEventListener('click', e => {
+    if (e.target.closest('.tag')) {
+        const tag = e.target.closest('.tag');
+        tagsEl.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+        tag.classList.add('active');
+        activeTag = tag.dataset.tag;
+        renderGames(search.value.toLowerCase(), activeTag);
+        window.scrollTo({ top: document.getElementById('grid').offsetTop - 80, behavior: 'smooth' });
+    }
+});
+
+// Sort select
+document.getElementById('sortSelect').addEventListener('change', e => {
+    currentSort = e.target.value;
+    renderGames(search.value.toLowerCase(), activeTag);
+});
+
+// Grid size toggle
+document.getElementById('gridToggle').addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    document.querySelectorAll('.grid-toggle button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentGridSize = btn.dataset.size;
+    grid.className = 'games-grid grid-' + currentGridSize;
+});
+
+// Random game button
+document.getElementById('randomBtn').addEventListener('click', () => {
+    const g = GAMES[Math.floor(Math.random() * GAMES.length)];
+    playGame(g);
+});
+
+// Keyboard shortcut: / to focus search
+document.addEventListener('keydown', e => {
+    if (e.key === '/' && document.activeElement !== search) { e.preventDefault(); search.focus(); }
+});
+
+// Animated game count on load
+(function animateCount() {
+    let target = GAMES.length, current = 0;
+    const el = countEl;
+    function step() {
+        current += Math.ceil((target - current) / 8);
+        if (current >= target) { current = target; el.textContent = current + ' GAMES AVAILABLE'; return; }
+        el.textContent = current + ' GAMES AVAILABLE';
+        requestAnimationFrame(step);
+    }
+    step();
+})();
+
+// Stats footer
+(function renderStats() {
+    const noAdsCount = GAMES.filter(g => g.noAds).length;
+    const categories = new Set(); GAMES.forEach(g => (g.tags||[]).forEach(t => categories.add(t)));
+    const footer = document.querySelector('footer');
+    footer.innerHTML = `
+        <div class="stats-bar">
+            <div class="stat-item"><div class="stat-num">${GAMES.length}</div><div class="stat-label">TOTAL GAMES</div></div>
+            <div class="stat-item"><div class="stat-num">${noAdsCount}</div><div class="stat-label">AD-FREE</div></div>
+            <div class="stat-item"><div class="stat-num">${categories.size}</div><div class="stat-label">CATEGORIES</div></div>
+        </div>
+        <div style="margin-top:12px;">VOID ARCADE &copy; 2026</div>
+        <div style="margin-top:6px;font-size:10px;color:#333;letter-spacing:1px;">TIP: Press / to search &bull; Use uBlock Origin for external games</div>
+    `;
+})();
+
+renderGames();
+</script>
+</body>
+</html>
