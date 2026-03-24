@@ -27,8 +27,16 @@ targets:
           - WebContent/**
     resources:
       - path: NeonVoid/WebContent
+        buildPhase: resources
         type: folder
       - path: NeonVoid/Assets.xcassets
+    postCompileScripts:
+      - script: |
+          if [ ! -d "$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/WebContent" ]; then
+            cp -R "$SRCROOT/NeonVoid/WebContent" "$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/WebContent"
+            echo "Copied WebContent to app bundle"
+          fi
+        name: Copy WebContent Fallback
     info:
       path: NeonVoid/Info.plist
       properties:

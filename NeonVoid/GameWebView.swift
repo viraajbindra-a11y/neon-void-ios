@@ -34,10 +34,21 @@ struct GameWebView: UIViewRepresentable {
         webView.allowsBackForwardNavigationGestures = false
         webView.navigationDelegate = context.coordinator
 
-        // Load bundled HTML
-        if let webContentURL = Bundle.main.url(forResource: "WebContent", withExtension: nil),
-           let indexURL = Bundle.main.url(forResource: "index", withExtension: "html", subdirectory: "WebContent") {
+        // Load bundled HTML - try multiple paths
+        if let indexURL = Bundle.main.url(forResource: "index", withExtension: "html", subdirectory: "WebContent") {
+            let accessURL = indexURL.deletingLastPathComponent()
+            webView.loadFileURL(indexURL, allowingReadAccessTo: accessURL)
+        } else if let webContentURL = Bundle.main.url(forResource: "WebContent", withExtension: nil) {
+            let indexURL = webContentURL.appendingPathComponent("index.html")
             webView.loadFileURL(indexURL, allowingReadAccessTo: webContentURL)
+        } else {
+            // Debug: list what's in the bundle
+            let bundlePath = Bundle.main.bundlePath
+            let fm = FileManager.default
+            if let items = try? fm.contentsOfDirectory(atPath: bundlePath) {
+                print("NEONVOID: Bundle contents: \(items)")
+            }
+            webView.loadHTMLString("<html><body style='background:#06060c;color:#ff0055;font-family:monospace;display:flex;align-items:center;justify-content:center;height:100vh;margin:0'><h1>WebContent not found in bundle</h1></body></html>", baseURL: nil)
         }
 
         context.coordinator.webView = webView
@@ -111,30 +122,22 @@ class WebViewCoordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler
 
     // Navigation policy: local files allowed, external URLs open in Safari
     func webView(_ webView: WKWebView,
-                 decidePolicyFor navigationAction: WKNavigationAction,
-                 decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+                 decidePolicyFor navigationAction: WKNavigationAction) async -> WKNavigationActionPolicy {
         guard let url = navigationAction.request.url else {
-            decisionHandler(.cancel)
-            return
+            return .cancel
         }
 
         if url.isFileURL {
-            decisionHandler(.allow)
-            // Toggle scroll based on page type
-            let path = url.lastPathComponent
-            let isScrollablePage = path.contains("arcade") || path == "index.html" && url.pathComponents.contains("games")
-            webView.scrollView.isScrollEnabled = isScrollablePage
+            return .allow
         } else if url.scheme == "https" || url.scheme == "http" {
-            // External navigation → open in Safari
             if navigationAction.targetFrame?.isMainFrame == true {
-                UIApplication.shared.open(url)
-                decisionHandler(.cancel)
+                await UIApplication.shared.open(url)
+                return .cancel
             } else {
-                // Allow subframe loads (APIs, etc.)
-                decisionHandler(.allow)
+                return .allow
             }
         } else {
-            decisionHandler(.cancel)
+            return .cancel
         }
     }
 

@@ -133,6 +133,7 @@
 			buildConfigurationList = F3E983760F7675C74A42B8B3 /* Build configuration list for PBXNativeTarget "NeonVoid" */;
 			buildPhases = (
 				221ADDACF027CE09616A0CD6 /* Sources */,
+				A88CCD45C07ADE2AF5EFAC0D /* Copy WebContent Fallback */,
 				D0118B9A5801BC642BDA3B94 /* Resources */,
 			);
 			buildRules = (
@@ -197,6 +198,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A88CCD45C07ADE2AF5EFAC0D /* Copy WebContent Fallback */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy WebContent Fallback";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ ! -d \"$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/WebContent\" ]; then\n  cp -R \"$SRCROOT/NeonVoid/WebContent\" \"$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/WebContent\"\n  echo \"Copied WebContent to app bundle\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		20561E4847BEA58562E379EA /* Sources */ = {
