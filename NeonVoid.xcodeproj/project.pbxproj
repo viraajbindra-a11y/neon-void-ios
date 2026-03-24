@@ -1,0 +1,532 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3102EFF0D22470CEF24D93F3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 365DE885873CAAD38308133E /* Assets.xcassets */; };
+		43C9CEACBB90B7507F46A525 /* TVGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAD9F0DE78E0243297222F4 /* TVGameView.swift */; };
+		91479769083CA9B510B2AAAA /* NeonVoidTVApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3672338C6489A73CC725F1DA /* NeonVoidTVApp.swift */; };
+		9812D65CBBCB4EC8CC280345 /* GameWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D7424E85DF708472F288A14 /* GameWebView.swift */; };
+		AE41F424D20F83886913BF6A /* NeonVoidApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37FC684FC76AE0C791115A1A /* NeonVoidApp.swift */; };
+		C50C7CF924588FA980C21FA5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7D311B775D57B3627CB9A3 /* ContentView.swift */; };
+		D29F07ED47A780BAA07E9E33 /* ShipOrnamentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02DC9076C245DABD3CE9E9B4 /* ShipOrnamentView.swift */; };
+		D7EBAAFCD3A8EB244F89D1DD /* NeonVoidVisionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 907566FC25BA10C70AE6A272 /* NeonVoidVisionApp.swift */; };
+		E9681F6E8A48F087CD7986DF /* GameWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D7424E85DF708472F288A14 /* GameWebView.swift */; };
+		EA8BFE603A8FDFF0996B7E7E /* GameWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF17A4D43F514DBAB7C9DE3B /* GameWindowView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		02DC9076C245DABD3CE9E9B4 /* ShipOrnamentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShipOrnamentView.swift; sourceTree = "<group>"; };
+		0C1ED58928CE4CF264BE01FE /* NeonVoidVision.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = NeonVoidVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0F372C09B730C0B8C15C792E /* NeonVoid.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = NeonVoid.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D7424E85DF708472F288A14 /* GameWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameWebView.swift; sourceTree = "<group>"; };
+		365DE885873CAAD38308133E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		3672338C6489A73CC725F1DA /* NeonVoidTVApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonVoidTVApp.swift; sourceTree = "<group>"; };
+		37FC684FC76AE0C791115A1A /* NeonVoidApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonVoidApp.swift; sourceTree = "<group>"; };
+		3B7D311B775D57B3627CB9A3 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		59FD2CA70BD746F6ABCDEBF6 /* NeonVoidTV.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = NeonVoidTV.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8CB2F8C96A304E67D9CC5E7C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		907566FC25BA10C70AE6A272 /* NeonVoidVisionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonVoidVisionApp.swift; sourceTree = "<group>"; };
+		943EAE020DE12AC0F0FD85EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		CF0CDD1FBDACFAE6CD375DA4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		CF17A4D43F514DBAB7C9DE3B /* GameWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameWindowView.swift; sourceTree = "<group>"; };
+		EBAD9F0DE78E0243297222F4 /* TVGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVGameView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0A50462F1E5E366F37DA0A85 = {
+			isa = PBXGroup;
+			children = (
+				1F6506D2C3E4E7365DBC903E /* NeonVoid */,
+				1B35096590BA8E1C2FA49B2D /* NeonVoidTV */,
+				3A920016B0EA7EB5FFBEAC79 /* NeonVoidVision */,
+				1185946E40C944622F3DF85B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1185946E40C944622F3DF85B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0F372C09B730C0B8C15C792E /* NeonVoid.app */,
+				59FD2CA70BD746F6ABCDEBF6 /* NeonVoidTV.app */,
+				0C1ED58928CE4CF264BE01FE /* NeonVoidVision.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1B35096590BA8E1C2FA49B2D /* NeonVoidTV */ = {
+			isa = PBXGroup;
+			children = (
+				8CB2F8C96A304E67D9CC5E7C /* Info.plist */,
+				3672338C6489A73CC725F1DA /* NeonVoidTVApp.swift */,
+				EBAD9F0DE78E0243297222F4 /* TVGameView.swift */,
+			);
+			path = NeonVoidTV;
+			sourceTree = "<group>";
+		};
+		1F6506D2C3E4E7365DBC903E /* NeonVoid */ = {
+			isa = PBXGroup;
+			children = (
+				365DE885873CAAD38308133E /* Assets.xcassets */,
+				3B7D311B775D57B3627CB9A3 /* ContentView.swift */,
+				1D7424E85DF708472F288A14 /* GameWebView.swift */,
+				943EAE020DE12AC0F0FD85EF /* Info.plist */,
+				37FC684FC76AE0C791115A1A /* NeonVoidApp.swift */,
+			);
+			path = NeonVoid;
+			sourceTree = "<group>";
+		};
+		3A920016B0EA7EB5FFBEAC79 /* NeonVoidVision */ = {
+			isa = PBXGroup;
+			children = (
+				CF17A4D43F514DBAB7C9DE3B /* GameWindowView.swift */,
+				CF0CDD1FBDACFAE6CD375DA4 /* Info.plist */,
+				907566FC25BA10C70AE6A272 /* NeonVoidVisionApp.swift */,
+				02DC9076C245DABD3CE9E9B4 /* ShipOrnamentView.swift */,
+			);
+			path = NeonVoidVision;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		292658DFE4A7237FB9017ABC /* NeonVoidVision */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 91867366AA3B4C6120BF4731 /* Build configuration list for PBXNativeTarget "NeonVoidVision" */;
+			buildPhases = (
+				20561E4847BEA58562E379EA /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NeonVoidVision;
+			packageProductDependencies = (
+			);
+			productName = NeonVoidVision;
+			productReference = 0C1ED58928CE4CF264BE01FE /* NeonVoidVision.app */;
+			productType = "com.apple.product-type.application";
+		};
+		5F105721C7D1987C8D80B6DF /* NeonVoidTV */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BAF688AD24F48FC9DBD2A568 /* Build configuration list for PBXNativeTarget "NeonVoidTV" */;
+			buildPhases = (
+				CF1929A0A921DCB35CFC65F8 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NeonVoidTV;
+			packageProductDependencies = (
+			);
+			productName = NeonVoidTV;
+			productReference = 59FD2CA70BD746F6ABCDEBF6 /* NeonVoidTV.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E1ACE5989423437B7B660C48 /* NeonVoid */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F3E983760F7675C74A42B8B3 /* Build configuration list for PBXNativeTarget "NeonVoid" */;
+			buildPhases = (
+				221ADDACF027CE09616A0CD6 /* Sources */,
+				D0118B9A5801BC642BDA3B94 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NeonVoid;
+			packageProductDependencies = (
+			);
+			productName = NeonVoid;
+			productReference = 0F372C09B730C0B8C15C792E /* NeonVoid.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DE9DAFADA7AC66BD7280C211 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					292658DFE4A7237FB9017ABC = {
+						ProvisioningStyle = Automatic;
+					};
+					5F105721C7D1987C8D80B6DF = {
+						ProvisioningStyle = Automatic;
+					};
+					E1ACE5989423437B7B660C48 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 79FB4D013EFCF56268B61877 /* Build configuration list for PBXProject "NeonVoid" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 0A50462F1E5E366F37DA0A85;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 1185946E40C944622F3DF85B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E1ACE5989423437B7B660C48 /* NeonVoid */,
+				5F105721C7D1987C8D80B6DF /* NeonVoidTV */,
+				292658DFE4A7237FB9017ABC /* NeonVoidVision */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D0118B9A5801BC642BDA3B94 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3102EFF0D22470CEF24D93F3 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		20561E4847BEA58562E379EA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9812D65CBBCB4EC8CC280345 /* GameWebView.swift in Sources */,
+				EA8BFE603A8FDFF0996B7E7E /* GameWindowView.swift in Sources */,
+				D7EBAAFCD3A8EB244F89D1DD /* NeonVoidVisionApp.swift in Sources */,
+				D29F07ED47A780BAA07E9E33 /* ShipOrnamentView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		221ADDACF027CE09616A0CD6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C50C7CF924588FA980C21FA5 /* ContentView.swift in Sources */,
+				E9681F6E8A48F087CD7986DF /* GameWebView.swift in Sources */,
+				AE41F424D20F83886913BF6A /* NeonVoidApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF1929A0A921DCB35CFC65F8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				91479769083CA9B510B2AAAA /* NeonVoidTVApp.swift in Sources */,
+				43C9CEACBB90B7507F46A525 /* TVGameView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		553E8CC99F4446C94A2E5FAA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = NeonVoidTV/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.neonvoid.tv;
+				PRODUCT_NAME = NeonVoidTV;
+				SDKROOT = appletvos;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 3;
+			};
+			name = Debug;
+		};
+		5DECCF862AA344B942ACE51E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 18.0;
+				XROS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Release;
+		};
+		8684DF5C0EC579FE3CCEE4A7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = NeonVoid/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.neonvoid.arcade;
+				PRODUCT_NAME = NeonVoid;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		8BEE06E2674296FC429590B8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 18.0;
+				XROS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Debug;
+		};
+		9CAC494993090CC40AE71B82 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = NeonVoid/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.neonvoid.arcade;
+				PRODUCT_NAME = NeonVoid;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D83486461D395BF99E7E2D4A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = NeonVoidVision/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.neonvoid.vision;
+				PRODUCT_NAME = NeonVoidVision;
+				SDKROOT = xros;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 7;
+			};
+			name = Debug;
+		};
+		F1E0EF5660FF0EA36C6345EC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = NeonVoidTV/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.neonvoid.tv;
+				PRODUCT_NAME = NeonVoidTV;
+				SDKROOT = appletvos;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 3;
+			};
+			name = Release;
+		};
+		F6D430983AA6162561B26119 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = NeonVoidVision/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.neonvoid.vision;
+				PRODUCT_NAME = NeonVoidVision;
+				SDKROOT = xros;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 7;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		79FB4D013EFCF56268B61877 /* Build configuration list for PBXProject "NeonVoid" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8BEE06E2674296FC429590B8 /* Debug */,
+				5DECCF862AA344B942ACE51E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		91867366AA3B4C6120BF4731 /* Build configuration list for PBXNativeTarget "NeonVoidVision" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D83486461D395BF99E7E2D4A /* Debug */,
+				F6D430983AA6162561B26119 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		BAF688AD24F48FC9DBD2A568 /* Build configuration list for PBXNativeTarget "NeonVoidTV" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				553E8CC99F4446C94A2E5FAA /* Debug */,
+				F1E0EF5660FF0EA36C6345EC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		F3E983760F7675C74A42B8B3 /* Build configuration list for PBXNativeTarget "NeonVoid" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9CAC494993090CC40AE71B82 /* Debug */,
+				8684DF5C0EC579FE3CCEE4A7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = DE9DAFADA7AC66BD7280C211 /* Project object */;
+}

@@ -2,19 +2,18 @@ name: NeonVoid
 options:
   bundleIdPrefix: com.neonvoid
   deploymentTarget:
-    iOS: "16.0"
-    visionOS: "1.0"
-    tvOS: "17.0"
-  xcodeVersion: "15.0"
+    iOS: "18.0"
+    visionOS: "2.0"
+    tvOS: "18.0"
+  xcodeVersion: "16.0"
 
 settings:
   base:
-    SWIFT_VERSION: "5.9"
+    SWIFT_VERSION: "6.0"
     TARGETED_DEVICE_FAMILY: "1,2"
     SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: YES
     SUPPORTS_MACCATALYST: YES
-    DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER: YES
-    INFOPLIST_KEY_UILaunchStoryboardName: LaunchScreen
+    INFOPLIST_KEY_UILaunchScreen_Generation: YES
     INFOPLIST_KEY_UIStatusBarHidden: YES
     INFOPLIST_KEY_UISupportedInterfaceOrientations: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortraitUpsideDown"
 
@@ -30,9 +29,13 @@ targets:
       - path: NeonVoid/WebContent
         type: folder
       - path: NeonVoid/Assets.xcassets
-      - path: NeonVoid/LaunchScreen.storyboard
     info:
       path: NeonVoid/Info.plist
+      properties:
+        UILaunchScreen:
+          UIColorName: ""
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.neonvoid.arcade
@@ -40,6 +43,7 @@ targets:
         MARKETING_VERSION: "1.0.0"
         CURRENT_PROJECT_VERSION: 1
         CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_IDENTITY: "Apple Development"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
 
   NeonVoidVision:
@@ -60,7 +64,7 @@ targets:
         CURRENT_PROJECT_VERSION: 1
         CODE_SIGN_STYLE: Automatic
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-        SWIFT_VERSION: "5.9"
+        SWIFT_VERSION: "6.0"
 
   NeonVoidTV:
     type: application
@@ -80,4 +84,4 @@ targets:
         MARKETING_VERSION: "1.0.0"
         CURRENT_PROJECT_VERSION: 1
         CODE_SIGN_STYLE: Automatic
-        SWIFT_VERSION: "5.9"
+        SWIFT_VERSION: "6.0"
