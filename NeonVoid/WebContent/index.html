@@ -12117,7 +12117,7 @@ function claimBPTierReward(tier,premium){
 }
 function openBattlePass(){
   var ol=document.createElement('div');
-  ol.id='bp-overlay';ol.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:9999;overflow-y:auto;color:#fff;font-family:monospace;padding:20px;';
+  ol.id='bp-overlay';ol.style.cssText='position:fixed;inset:0;background:#06060c;z-index:99999;overflow-y:auto;color:#fff;font-family:monospace;padding:20px;';
   var pct=bpData.tier<BP_TIERS.length?Math.round(bpData.xp/BP_TIERS[bpData.tier].xp*100):100;
   var html='<h2 style="color:#ffe04b;text-align:center">BATTLE PASS \u2014 TIER '+bpData.tier+'/'+BP_TIERS.length+'</h2>';
   html+='<div style="text-align:center;margin-bottom:10px">XP: '+bpData.xp+(bpData.tier<BP_TIERS.length?' / '+BP_TIERS[bpData.tier].xp:'')+'</div>';
@@ -12143,7 +12143,7 @@ function checkTitleUnlocks(){
   if(pl>=1)unlockTitle('Veteran');if(pl>=3)unlockTitle('Ace');if(pl>=5)unlockTitle('Legend');
 }
 function openTitleSelector(){
-  var ol=document.createElement('div');ol.id='title-overlay';ol.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:9999;color:#fff;font-family:monospace;padding:40px;';
+  var ol=document.createElement('div');ol.id='title-overlay';ol.style.cssText='position:fixed;inset:0;background:#06060c;z-index:99999;color:#fff;font-family:monospace;padding:40px;';
   var html='<h2 style="color:#c8a0ff;text-align:center">PLAYER TITLES</h2><div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center">';
   for(var i=0;i<PLAYER_TITLES.length;i++){var t=PLAYER_TITLES[i];var owned=unlockedTitles.includes(t);var eq=equippedTitle===t;html+='<button onclick="if('+owned+'){equipTitle(\''+t+'\');document.getElementById(\'title-overlay\').remove();}" style="padding:8px 18px;background:'+(eq?'#c8a0ff':owned?'#333':'#111')+';color:'+(owned?'#fff':'#555')+';border:1px solid '+(eq?'#c8a0ff':owned?'#666':'#333')+';cursor:'+(owned?'pointer':'default')+'">'+t+(eq?' *':'')+'</button>';}
   html+='</div><div style="text-align:center;margin-top:20px"><button onclick="document.getElementById(\'title-overlay\').remove()" style="background:#555;color:#fff;border:none;padding:8px 24px;cursor:pointer">CLOSE</button></div>';
@@ -12159,7 +12159,7 @@ function addPersonalBest(score,mode,wave){
   localStorage.setItem('neonVoidPersonalBests',JSON.stringify(personalBests));
 }
 function openPersonalLeaderboard(){
-  var ol=document.createElement('div');ol.id='lb-overlay';ol.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:9999;color:#fff;font-family:monospace;padding:40px;overflow-y:auto;';
+  var ol=document.createElement('div');ol.id='lb-overlay';ol.style.cssText='position:fixed;inset:0;background:#06060c;z-index:99999;color:#fff;font-family:monospace;padding:40px;overflow-y:auto;';
   var html='<h2 style="color:#00ff88;text-align:center">PERSONAL BESTS</h2><table style="width:100%;border-collapse:collapse"><tr><th>#</th><th>Score</th><th>Mode</th><th>Wave</th><th>Date</th></tr>';
   for(var i=0;i<personalBests.length;i++){var b=personalBests[i];html+='<tr style="background:'+(i===0?'rgba(0,255,136,0.1)':'')+'"><td style="padding:4px;text-align:center">'+(i+1)+'</td><td style="padding:4px;text-align:center">'+b.score+'</td><td style="padding:4px;text-align:center">'+b.mode+'</td><td style="padding:4px;text-align:center">'+b.wave+'</td><td style="padding:4px;text-align:center">'+b.date+'</td></tr>';}
   if(!personalBests.length)html+='<tr><td colspan="5" style="text-align:center;padding:20px;color:#555">No runs recorded yet.</td></tr>';
@@ -12173,7 +12173,7 @@ function saveClan(){localStorage.setItem('neonVoidClan',JSON.stringify(clanData)
 function createClan(name){if(!name||name.length<2){alert('Clan name too short');return;}clanData={name:name,tag:name.substring(0,4).toUpperCase(),members:[typeof currentUsername!=='undefined'?currentUsername:'You'],leader:typeof currentUsername!=='undefined'?currentUsername:'You',xp:0};saveClan();alert('Clan ['+clanData.tag+'] created!');}
 function leaveClan(){clanData=null;localStorage.removeItem('neonVoidClan');alert('Left clan.');}
 function openClanMenu(){
-  var ol=document.createElement('div');ol.id='clan-overlay';ol.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:9999;color:#fff;font-family:monospace;padding:40px;';
+  var ol=document.createElement('div');ol.id='clan-overlay';ol.style.cssText='position:fixed;inset:0;background:#06060c;z-index:99999;color:#fff;font-family:monospace;padding:40px;';
   var html='<h2 style="color:#ff9900;text-align:center">CLAN SYSTEM</h2>';
   if(clanData){html+='<div style="text-align:center;margin-bottom:20px"><span style="font-size:24px;color:#ff9900">['+clanData.tag+'] '+clanData.name+'</span><br>Members: '+clanData.members.join(', ')+'<br>Clan XP: '+clanData.xp+'</div><div style="text-align:center"><button onclick="leaveClan();document.getElementById(\'clan-overlay\').remove()" style="background:#c00;color:#fff;border:none;padding:8px 18px;cursor:pointer">LEAVE CLAN</button></div>';}
   else{html+='<div style="text-align:center;margin:20px"><input id="clan-name-input" placeholder="Clan Name" style="padding:8px;font-size:16px;background:#222;color:#fff;border:1px solid #555"><br><br><button onclick="createClan(document.getElementById(\'clan-name-input\').value);document.getElementById(\'clan-overlay\').remove();openClanMenu();" style="background:#ff9900;color:#000;border:none;padding:8px 24px;cursor:pointer;font-weight:bold">CREATE CLAN</button></div>';}
@@ -12185,7 +12185,7 @@ function openClanMenu(){
 var mentorData=JSON.parse(localStorage.getItem('neonVoidMentor')||'{"mentor":null,"mentee":null}');
 function getMentorXPBoost(){return mentorData.mentee?0.15:0;}
 function openMentorPanel(){
-  var ol=document.createElement('div');ol.id='mentor-overlay';ol.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:9999;color:#fff;font-family:monospace;padding:40px;';
+  var ol=document.createElement('div');ol.id='mentor-overlay';ol.style.cssText='position:fixed;inset:0;background:#06060c;z-index:99999;color:#fff;font-family:monospace;padding:40px;';
   var html='<h2 style="color:#80ffcc;text-align:center">MENTOR SYSTEM</h2><div style="text-align:center;margin:20px"><p>Pair with a lower-level player in multiplayer to earn +15% XP.</p><p>Current mentee: '+(mentorData.mentee||'None')+'</p></div>';
   html+='<div style="text-align:center"><button onclick="document.getElementById(\'mentor-overlay\').remove()" style="background:#555;color:#fff;border:none;padding:8px 24px;cursor:pointer">CLOSE</button></div>';
   ol.innerHTML=html;document.body.appendChild(ol);
@@ -12217,7 +12217,7 @@ function addMasteryKill(type){
 function getMasteryLevel(type){var k=masteryData[type]||0;for(var i=MASTERY_LEVELS.length-1;i>=0;i--)if(k>=MASTERY_LEVELS[i])return i;return 0;}
 function getMasteryBonus(type){return MASTERY_BONUS[getMasteryLevel(type)]||0;}
 function openMasteryPanel(){
-  var ol=document.createElement('div');ol.id='mastery-overlay';ol.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:9999;color:#fff;font-family:monospace;padding:40px;overflow-y:auto;';
+  var ol=document.createElement('div');ol.id='mastery-overlay';ol.style.cssText='position:fixed;inset:0;background:#06060c;z-index:99999;color:#fff;font-family:monospace;padding:40px;overflow-y:auto;';
   var html='<h2 style="color:#ffaa00;text-align:center">MASTERY LEVELS</h2><table style="width:100%;border-collapse:collapse"><tr><th>Type</th><th>Kills</th><th>Level</th><th>Bonus</th></tr>';
   var types=Object.keys(masteryData);for(var i=0;i<types.length;i++){var t=types[i];var lv=getMasteryLevel(t);html+='<tr><td style="padding:6px">'+t.charAt(0).toUpperCase()+t.slice(1)+'</td><td style="padding:6px;text-align:center">'+masteryData[t]+'</td><td style="padding:6px;text-align:center">'+lv+'</td><td style="padding:6px;text-align:center;color:#ffaa00">+'+(getMasteryBonus(t)*100).toFixed(0)+'%</td></tr>';}
   html+='</table><div style="text-align:center;margin-top:20px"><button onclick="document.getElementById(\'mastery-overlay\').remove()" style="background:#555;color:#fff;border:none;padding:8px 24px;cursor:pointer">CLOSE</button></div>';
@@ -12243,7 +12243,7 @@ function tryBlueprintDrop(){
 }
 function applyBlueprints(statsObj){for(var i=0;i<blueprints.length;i++)if(BLUEPRINTS[blueprints[i]])BLUEPRINTS[blueprints[i]].apply(statsObj);}
 function openBlueprintsPanel(){
-  var ol=document.createElement('div');ol.id='blueprints-overlay';ol.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:9999;color:#fff;font-family:monospace;padding:40px;overflow-y:auto;';
+  var ol=document.createElement('div');ol.id='blueprints-overlay';ol.style.cssText='position:fixed;inset:0;background:#06060c;z-index:99999;color:#fff;font-family:monospace;padding:40px;overflow-y:auto;';
   var keys=Object.keys(BLUEPRINTS);var html='<h2 style="color:#44ffdd;text-align:center">BLUEPRINTS</h2><div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center">';
   for(var i=0;i<keys.length;i++){var k=keys[i];var owned=blueprints.includes(k);html+='<div style="background:'+(owned?'#001a18':'#111')+';border:1px solid '+(owned?'#44ffdd':'#333')+';padding:14px;min-width:140px;text-align:center"><div style="color:'+(owned?'#44ffdd':'#555')+';font-weight:bold">'+k+'</div><div style="color:#aaa;font-size:12px;margin-top:6px">'+BLUEPRINTS[k].desc+'</div>'+(owned?'<div style="color:#44ffdd;font-size:11px;margin-top:4px">OWNED</div>':'')+'</div>';}
   html+='</div>';if(!blueprints.length)html+='<p style="color:#555;text-align:center;margin-top:16px">No blueprints yet. Kill enemies for drops!</p>';
@@ -12296,7 +12296,7 @@ function checkContracts(type,amount){
   if(done.length)saveContracts();
 }
 function openContracts(){
-  var ol=document.createElement('div');ol.id='contracts-overlay';ol.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:9999;color:#fff;font-family:monospace;padding:40px;overflow-y:auto;';
+  var ol=document.createElement('div');ol.id='contracts-overlay';ol.style.cssText='position:fixed;inset:0;background:#06060c;z-index:99999;color:#fff;font-family:monospace;padding:40px;overflow-y:auto;';
   var html='<h2 style="color:#44ff88;text-align:center">CONTRACTS</h2><h3 style="color:#aaa">Active ('+contractData.active.length+'/3)</h3>';
   for(var i=0;i<contractData.active.length;i++){var id=contractData.active[i];var c=null;for(var j=0;j<CONTRACTS.length;j++)if(CONTRACTS[j].id===id){c=CONTRACTS[j];break;}if(!c)continue;var prog=contractData.progress[id]||0;var pct=Math.min(100,Math.round(prog/c.target*100));html+='<div style="background:#112211;border:1px solid #44ff88;padding:10px;margin-bottom:8px"><b>'+c.name+'</b> +'+c.reward+' coins<br><div style="background:#333;height:10px;border-radius:5px;margin-top:6px"><div style="background:#44ff88;height:10px;border-radius:5px;width:'+pct+'%"></div></div><small>'+prog+'/'+c.target+'</small></div>';}
   html+='<h3 style="color:#aaa;margin-top:16px">Available</h3>';
@@ -12309,7 +12309,7 @@ function openContracts(){
 var rebirthCount=parseInt(localStorage.getItem('neonVoidRebirths')||'0');
 var REBIRTH_BONUSES=[{threshold:1,bonus:'+5% all damage permanently'},{threshold:2,bonus:'+10% coin gain permanently'},{threshold:3,bonus:'+15% XP gain permanently'},{threshold:5,bonus:'Unlock Rebirth ship skin'}];
 function openRebirth(){
-  var ol=document.createElement('div');ol.id='rebirth-overlay';ol.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:9999;color:#fff;font-family:monospace;padding:40px;';
+  var ol=document.createElement('div');ol.id='rebirth-overlay';ol.style.cssText='position:fixed;inset:0;background:#06060c;z-index:99999;color:#fff;font-family:monospace;padding:40px;';
   var html='<h2 style="color:#ff6622;text-align:center">REBIRTH</h2><p style="text-align:center;color:#aaa">Rebirths: <b style="color:#ff6622">'+rebirthCount+'</b></p><p style="text-align:center">Resets coins, upgrades, level. Grants permanent bonuses.</p><div style="margin:16px 0">';
   for(var i=0;i<REBIRTH_BONUSES.length;i++){var rb=REBIRTH_BONUSES[i];var done=rebirthCount>=rb.threshold;html+='<div style="padding:6px;color:'+(done?'#ff6622':'#555')+'">'+rb.threshold+'x: '+rb.bonus+(done?' (done)':'')+'</div>';}
   html+='</div><div style="text-align:center"><button onclick="doRebirth()" style="background:#ff6622;color:#000;border:none;padding:10px 28px;cursor:pointer;font-weight:bold;font-size:16px">REBIRTH</button></div>';
@@ -12338,7 +12338,7 @@ function buyGemItem(id){
   alert('Purchased: '+item.name);
 }
 function openGemShop(){
-  var ol=document.createElement('div');ol.id='gemshop-overlay';ol.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:9999;color:#fff;font-family:monospace;padding:40px;overflow-y:auto;';
+  var ol=document.createElement('div');ol.id='gemshop-overlay';ol.style.cssText='position:fixed;inset:0;background:#06060c;z-index:99999;color:#fff;font-family:monospace;padding:40px;overflow-y:auto;';
   var html='<h2 style="color:#88eeff;text-align:center">GEM SHOP</h2><p style="text-align:center">Gems: <b style="color:#88eeff" id="gem-count-display">'+gemCount+'</b></p><div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center">';
   for(var i=0;i<GEM_SHOP_ITEMS.length;i++){var it=GEM_SHOP_ITEMS[i];html+='<div style="background:#001a22;border:1px solid #88eeff;padding:14px;min-width:140px;text-align:center"><div style="color:#88eeff;font-weight:bold">'+it.name+'</div><div style="color:#44ddff;margin:8px 0">'+it.cost+' gems</div><button onclick="buyGemItem(\''+it.id+'\');document.getElementById(\'gemshop-overlay\').remove();openGemShop();" style="background:#88eeff;color:#000;border:none;padding:5px 12px;cursor:pointer">BUY</button></div>';}
   html+='</div><div style="text-align:center;margin-top:24px"><button onclick="document.getElementById(\'gemshop-overlay\').remove()" style="background:#555;color:#fff;border:none;padding:8px 24px;cursor:pointer">CLOSE</button></div>';
@@ -12366,7 +12366,7 @@ function acceptTrade(id){
   cachedTrades=cachedTrades.filter(function(x){return x.id!==id;});localStorage.setItem('neonVoidTradeOffers',JSON.stringify(cachedTrades));alert('Trade accepted!');
 }
 function openTradePost(){
-  var ol=document.createElement('div');ol.id='trade-overlay';ol.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:9999;color:#fff;font-family:monospace;padding:40px;';
+  var ol=document.createElement('div');ol.id='trade-overlay';ol.style.cssText='position:fixed;inset:0;background:#06060c;z-index:99999;color:#fff;font-family:monospace;padding:40px;';
   var offers=getTradeOffers();var html='<h2 style="color:#ffcc44;text-align:center">TRADE POST</h2><p style="text-align:center;color:#aaa">Daily offers</p><div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">';
   for(var i=0;i<offers.length;i++){var of=offers[i];html+='<div style="background:#1a1400;border:1px solid #ffcc44;padding:16px;min-width:160px;text-align:center"><div style="color:#aaa">Give: <b style="color:#ff8888">'+of.give+'</b></div><div style="margin:8px 0">-&gt;</div><div style="color:#aaa">Get: <b style="color:#88ff88">'+of.get+'</b></div><br><button onclick="acceptTrade(\''+of.id+'\');document.getElementById(\'trade-overlay\').remove();openTradePost();" style="background:#ffcc44;color:#000;border:none;padding:6px 14px;cursor:pointer">TRADE</button></div>';}
   if(!offers.length)html+='<p style="color:#555;text-align:center;width:100%">No offers today.</p>';
@@ -12441,7 +12441,7 @@ function drawBGTheme(){
   else if(bgTheme==='winter'){ctx.save();ctx.fillStyle='rgba(180,220,255,0.03)';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.restore();}
 }
 function openBGThemePicker(){
-  var ol=document.createElement('div');ol.id='bgtheme-overlay';ol.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:9999;color:#fff;font-family:monospace;padding:40px;';
+  var ol=document.createElement('div');ol.id='bgtheme-overlay';ol.style.cssText='position:fixed;inset:0;background:#06060c;z-index:99999;color:#fff;font-family:monospace;padding:40px;';
   var themes=[{id:'default',name:'Default'},{id:'asteroid_field',name:'Asteroid Field'},{id:'neon_city',name:'Neon City'},{id:'halloween',name:'Halloween'},{id:'winter',name:'Winter Void'}];
   var html='<h2 style="color:#aaddff;text-align:center">BACKGROUND THEMES</h2><div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center">';
   for(var i=0;i<themes.length;i++){var t=themes[i];var sel=bgTheme===t.id;html+='<button onclick="bgTheme=\''+t.id+'\';localStorage.setItem(\'neonVoidBGTheme\',\''+t.id+'\');document.getElementById(\'bgtheme-overlay\').remove();" style="padding:10px 20px;background:'+(sel?'#aaddff':'#222')+';color:'+(sel?'#000':'#fff')+';border:1px solid '+(sel?'#aaddff':'#444')+';cursor:pointer">'+t.name+'</button>';}
@@ -12484,7 +12484,7 @@ function stopReplay(){_replayPlaying=false;if(_replayTimer){clearInterval(_repla
 // ---- FEATURE 82: SHIP GLOW COLORS ----
 var shipGlowColor=localStorage.getItem('neonVoidGlowColor')||'#00ffff';
 function openGlowColorPicker(){
-  var ol=document.createElement('div');ol.id='glow-overlay';ol.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:9999;color:#fff;font-family:monospace;padding:40px;';
+  var ol=document.createElement('div');ol.id='glow-overlay';ol.style.cssText='position:fixed;inset:0;background:#06060c;z-index:99999;color:#fff;font-family:monospace;padding:40px;';
   var presets=['#00ffff','#ff00ff','#00ff88','#ffd700','#ff6600','#ff0088','#88eeff','#ffffff','rainbow'];
   var html='<h2 style="color:#00ffff;text-align:center">SHIP GLOW COLOR</h2><div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center">';
   for(var i=0;i<presets.length;i++){var p=presets[i];var isR=p==='rainbow';var sel=shipGlowColor===p;html+='<button onclick="setGlowColor(\''+p+'\');document.getElementById(\'glow-overlay\').remove();" style="width:60px;height:60px;background:'+(isR?'linear-gradient(90deg,red,orange,yellow,green,blue,violet)':p)+';border:3px solid '+(sel?'#fff':'transparent')+';cursor:pointer;border-radius:50%;font-size:10px;color:#000">'+(isR?'RBW':'')+'</button>';}
@@ -12568,7 +12568,7 @@ window.openVIPPanelFn = function(){
   var t = getVIPTier();
   var ol = document.createElement('div');
   ol.id = 'vip-overlay';
-  ol.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:9999;color:#fff;font-family:monospace;padding:40px;';
+  ol.style.cssText = 'position:fixed;inset:0;background:#06060c;z-index:99999;color:#fff;font-family:monospace;padding:40px;';
   var html = '<h2 style="color:#ffd700;text-align:center">VIP STATUS</h2>';
   html += '<p style="text-align:center">Lifetime Coins Earned: <b style="color:#ffd700">' + lifetimeCoins + '</b></p>';
   if(t){ html += '<p style="text-align:center">Your Tier: <b style="color:' + t.color + '">' + t.name + '</b> (+' + (t.coinBonus*100).toFixed(0) + '% coins)</p>'; }
@@ -12585,7 +12585,7 @@ window.openPrestigePanel = function(){
 window.openAchievementsPanel = function(){
   if(typeof openAchievementsScreen==='function'){ openAchievementsScreen(); return; }
   if(typeof ACHIEVEMENTS!=='undefined'){
-    var ol=document.createElement('div');ol.id='ach-overlay';ol.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:9999;color:#fff;font-family:monospace;padding:40px;overflow-y:auto;';
+    var ol=document.createElement('div');ol.id='ach-overlay';ol.style.cssText='position:fixed;inset:0;background:#06060c;z-index:99999;color:#fff;font-family:monospace;padding:40px;overflow-y:auto;';
     var html='<h2 style="color:#ffcc00;text-align:center">ACHIEVEMENTS</h2><div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center">';
     for(var i=0;i<ACHIEVEMENTS.length;i++){var a=ACHIEVEMENTS[i];html+='<div style="background:'+(a.unlocked?'#111800':'#0a0a0a')+';border:1px solid '+(a.unlocked?'#ffcc00':'#333')+';padding:10px;min-width:160px;max-width:200px;text-align:center"><div style="color:'+(a.unlocked?'#ffcc00':'#555')+';font-weight:bold;font-size:13px">'+(a.unlocked?'[X] ':'')+a.name+'</div><div style="color:#aaa;font-size:11px;margin-top:4px">'+a.desc+'</div></div>';}
     html+='</div><div style="text-align:center;margin-top:20px"><button onclick="document.getElementById(\'ach-overlay\').remove()" style="background:#555;color:#fff;border:none;padding:8px 24px;cursor:pointer">CLOSE</button></div>';
