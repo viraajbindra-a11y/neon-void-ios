@@ -11786,6 +11786,9 @@ if(mp.grappleHook){let gh=mp.grappleHook;mx.strokeStyle=COLORS.neon;mx.lineWidth
     }
     </script>
     <script>
+(function(){
+"use strict";
+
     // Tutorial stage - separate script to avoid scope issues
     window.needsTutorial = function() { return !localStorage.getItem('neonVoidTutorialDone'); };
     window.startTutorialStage = function() {
@@ -12550,6 +12553,9 @@ window.openBattlePass = typeof openBattlePass==='function'?openBattlePass:functi
 window.openAchievements = typeof openAchievementsPanel==='function'?openAchievementsPanel:function(){alert('Achievements coming soon');};
 window.openPrestige = typeof openPrestigePanel==='function'?openPrestigePanel:function(){alert('Prestige coming soon');};
 window.openLeaderboardsPanel = openPersonalLeaderboard;
+window.openPersonalLeaderboard = openPersonalLeaderboard;
+window.openLeaderboards = openPersonalLeaderboard;
+window.playBootCinematic = playBootCinematic;
 window.openBountyBoard = (typeof openBountyBoard === 'function') ? openBountyBoard : function(){ alert('Bounties coming soon'); };
 window.openVIPPanelFn = function(){
   var t = getVIPTier();
@@ -12587,14 +12593,14 @@ window.openAchievementsPanel = function(){
 (function(){
   // Hook killEnemy
   var _ok=typeof killEnemy==='function'?killEnemy:null;
-  if(_ok)killEnemy=function(e){
+  if(_ok)window.killEnemy=function(e){
     _ok(e);
     try{addMasteryKill(e&&e.type?e.type:'fighter');tryBlueprintDrop();if(appSettings.graphics!=='low')applyKillEffect(e);if(appSettings.graphics!=='low')playDrumHit();checkContracts('kills',1);if(typeof state!=='undefined'&&appSettings.graphics!=='low')checkComboAnnouncement(state.combo||0);}catch(_){}
   };
 
   // Hook addXp
   var _ox=typeof addXp==='function'?addXp:null;
-  if(_ox)addXp=function(amt){
+  if(_ox)window.addXp=function(amt){
     var boost=1+getMentorXPBoost();
     if(window._bmXP2x){boost*=2;window._bmXP2x=false;}
     var final=Math.round(amt*boost);
@@ -12604,7 +12610,7 @@ window.openAchievementsPanel = function(){
 
   // Hook saveRunCoins
   var _osc=typeof saveRunCoins==='function'?saveRunCoins:null;
-  if(_osc)saveRunCoins=function(){
+  if(_osc)window.saveRunCoins=function(){
     try{var bonus=getVIPCoinBonus();if(bonus>0&&typeof state!=='undefined'&&state.coins){var extra=Math.round(state.coins*bonus);state.coins+=extra;typeof spawnText==='function'&&spawnText('VIP +'+extra,canvas.width/2,50,{color:'#ffd700',size:16,life:120});}}catch(_){}
     if(window._bmCoins2x&&typeof state!=='undefined'&&state.coins){state.coins=Math.round(state.coins*2);window._bmCoins2x=false;}
     _osc();
@@ -12660,6 +12666,8 @@ document.addEventListener('keydown',function(ev){
   if(ev.key==='Tab'){ev.preventDefault();triggerEmote('wave');}
 });
 
-    </script>
+    
+})();
+</script>
 </body>
 </html>
