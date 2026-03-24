@@ -28,7 +28,7 @@
 		3672338C6489A73CC725F1DA /* NeonVoidTVApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonVoidTVApp.swift; sourceTree = "<group>"; };
 		37FC684FC76AE0C791115A1A /* NeonVoidApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonVoidApp.swift; sourceTree = "<group>"; };
 		3B7D311B775D57B3627CB9A3 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		59FD2CA70BD746F6ABCDEBF6 /* NeonVoidTV.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = NeonVoidTV.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		59FD2CA70BD746F6ABCDEBF6 /* NeonVoidTV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NeonVoidTV.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8CB2F8C96A304E67D9CC5E7C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		907566FC25BA10C70AE6A272 /* NeonVoidVisionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonVoidVisionApp.swift; sourceTree = "<group>"; };
 		943EAE020DE12AC0F0FD85EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -259,6 +259,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = NeonVoidTV/Info.plist;
@@ -473,6 +474,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = NeonVoidTV/Info.plist;
