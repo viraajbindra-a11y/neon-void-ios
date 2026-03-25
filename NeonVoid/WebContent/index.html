@@ -541,6 +541,21 @@
         };
 
 
+        // ==================== SECURITY: God Mode Closure (anti-bypass) ====================
+        const _godCheck = (function() {
+            let _isGod = false;
+            const obj = {
+                activate() { _isGod = true; },
+                get active() { return _isGod; }
+            };
+            Object.defineProperty(window, '_nvGodMode', {
+                get() { return _isGod; },
+                set(v) { /* blocked — use _godCheck.activate() */ },
+                configurable: false
+            });
+            return obj;
+        })();
+
         // ==================== SECURITY: Save Integrity (FIX 1) ====================
         const _nvKey = 'N30nV01d_S4lt_K3y_2024!@#$';
         function _nvHash(data) {
@@ -571,6 +586,10 @@
             }
             try { return JSON.parse(str); } catch(e) { return str; }
         }
+
+        // ==================== SECURITY: FIX 7 — Freeze secureSave/secureLoad references ====================
+        // Critical internal paths use _nvSec.save/_nvSec.load so overriding window.secureSave has no effect.
+        const _nvSec = Object.freeze({ save: secureSave, load: secureLoad, hash: _nvHash });
 
         // ==================== SECURITY: rAF Integrity (FIX 7) ====================
         const _origRAF = window.requestAnimationFrame.bind(window);
@@ -628,6 +647,7 @@
 
         // FIX 6: Freeze non-custom skin price definitions to prevent price manipulation
         Object.keys(SKINS).forEach(k => { if (k !== 'custom') Object.freeze(SKINS[k]); });
+        Object.freeze(SKINS);
 
         const WISP_SKINS = {
             'default':  { name: 'SPIRIT',        color: '#ffffff', model: 'spirit',  price: 0 },
@@ -655,14 +675,27 @@
         let purchasedUpgrades = [];
         try { let p = secureLoad('neonVoidUpgrades', null); if(Array.isArray(p)) purchasedUpgrades = p; } catch(e){}
 
-        // ==================== SECURITY: Object.defineProperty coin guard (FIX 2) ====================
+        // ==================== SECURITY: Object.defineProperty coin guard (FIX 2 + FIX 4) ====================
         {
             let _secureCoins = totalCoins;
+            let _coinAddedThisSecond = 0;
+            let _lastCoinSecond = 0;
             Object.defineProperty(window, 'totalCoins', {
                 get() { return _secureCoins; },
                 set(v) {
                     v = Math.floor(v);
-                    if (v > _secureCoins + 500000 && _secureCoins > 0 && !window._nvGodMode) {
+                    // FIX 4: per-second rate limit
+                    let now = Math.floor(Date.now() / 1000);
+                    if (now !== _lastCoinSecond) { _coinAddedThisSecond = 0; _lastCoinSecond = now; }
+                    let increase = v - _secureCoins;
+                    if (increase > 0) {
+                        _coinAddedThisSecond += increase;
+                        if (_coinAddedThisSecond > 1000000 && !_godCheck.active) {
+                            console.warn('NEONVOID: Coin rate limit exceeded');
+                            return;
+                        }
+                    }
+                    if (v > _secureCoins + 500000 && _secureCoins > 0 && !_godCheck.active) {
                         console.warn('NEONVOID: Suspicious coin modification blocked (' + _secureCoins + ' -> ' + v + ')');
                         return;
                     }
@@ -672,8 +705,13 @@
             });
         }
 
-        // Proxy-based tamper detection for purchasedUpgrades
+        // Proxy-based tamper detection for purchasedUpgrades (FIX 5)
+        const _nvUpgradeMarker = Symbol('nvUpgradeMarker');
         purchasedUpgrades = new Proxy(purchasedUpgrades, {
+            get(target, prop) {
+                if (prop === _nvUpgradeMarker) return true;
+                return target[prop];
+            },
             set(target, prop, value) {
                 if (prop !== 'length' && isNaN(Number(prop))) {
                     console.warn('NEONVOID: Unexpected purchasedUpgrades property set: ' + String(prop));
@@ -682,6 +720,8 @@
                 return true;
             }
         });
+        // Keep a raw-array backup for integrity restoration
+        let _purchasedUpgradesBackup = [...purchasedUpgrades];
 
         const PERMANENT_UPGRADES = {
             'homing': { name: "SMART MUNITIONS", desc: "Projectiles passively track targets", price: 5000 },
@@ -2660,8 +2700,9 @@
         // ==================== SECURITY: Object.freeze critical data (FIX 6) ====================
         const ENEMY_TYPES = { dummy: { hp: 9999999, spd: 0, color: '#00ff00', r: 30, xp: 0 }, shield_drone: { hp: 60, spd: 3.0, color: '#4488ff', r: 8, xp: 30 }, chaser: { hp: 90, spd: 3.5, color: '#ff0055', r: 12, xp: 22 }, shooter: { hp: 80, spd: 2.0, color: '#ff8800', r: 14, xp: 32 }, sniper: { hp: 65, spd: 1.1, color: '#ffff00', r: 10, xp: 42 }, tank: { hp: 320, spd: 0.9, color: '#ff0000', r: 20, xp: 65 }, rammer: { hp: 65, spd: 5.8, color: '#00ffff', r: 10, xp: 28 }, heavy_shooter: { hp: 200, spd: 0.9, color: '#ff8800', r: 18, xp: 48 }, pulsar: { hp: 120, spd: 1.4, color: '#ff00ff', r: 16, xp: 42 }, ghost: { hp: 80, spd: 1.8, color: '#cccccc', r: 14, xp: 38 }, mine: { hp: 40, spd: 0.5, color: '#ff0000', r: 15, xp: 52 }, teleporter: { hp: 100, spd: 0, color: '#00ffff', r: 14, xp: 42 }, avatar: { hp: 2000, spd: 0.7, color: '#ffff00', r: 25, xp: 220 }, dark_avatar: { hp: 5000, spd: 0.9, color: '#ff0000', r: 30, xp: 550 }, bad: { hp: 10000, spd: 0.3, color: '#800080', r: 40, xp: 1100 }, orbiter: { hp: 120, spd: 2.8, color: '#ff88ff', r: 12, xp: 38 }, splitter: { hp: 160, spd: 2.3, color: '#88ff00', r: 16, xp: 48 }, shielder: { hp: 240, spd: 1.4, color: '#4488ff', r: 18, xp: 58 }, bomber: { hp: 140, spd: 1.8, color: '#ff6600', r: 16, xp: 58 }, healer: { hp: 120, spd: 1.6, color: '#00ff88', r: 14, xp: 65 }, swarm: { hp: 25, spd: 5.0, color: '#ff88ff', r: 6, xp: 12 }, leech: { hp: 160, spd: 1.6, color: '#88ff00', r: 16, xp: 52 }, cloaked: { hp: 100, spd: 2.8, color: '#336699', r: 12, xp: 48 }, shapeshifter: { hp: 80, spd: 0, color: '#ffcc00', r: 15, xp: 60 }, hivemind: { hp: 40, spd: 3.5, color: '#ff44ff', r: 8, xp: 15 }, gravity_well_enemy: { hp: 200, spd: 0.8, color: '#6600cc', r: 22, xp: 70 }, reflector: { hp: 150, spd: 1.5, color: '#88ffff', r: 16, xp: 55 }, parasite: { hp: 30, spd: 4.5, color: '#88ff00', r: 6, xp: 40 }, berserker: { hp: 300, spd: 1.0, color: '#cc0000', r: 20, xp: 75 }, phase: { hp: 100, spd: 2.0, color: '#aaaaff', r: 14, xp: 50 }, magnet_enemy: { hp: 120, spd: 1.8, color: '#ff00ff', r: 14, xp: 45 }, combo_breaker: { hp: 80, spd: 5.0, color: '#ff8800', r: 10, xp: 80 }, zombie: { hp: 30, spd: 1.5, color: '#00ff44', r: 12, xp: 10 } };
         // Freeze each base enemy type's property values to prevent HP manipulation
-        // (top-level ENEMY_TYPES object stays mutable so mods can add custom enemies)
+        // Seal the container so entries can't be deleted or replaced (values inside are already frozen)
         Object.keys(ENEMY_TYPES).forEach(k => Object.freeze(ENEMY_TYPES[k]));
+        Object.seal(ENEMY_TYPES);
 
 
         class Enemy {
@@ -3870,19 +3911,65 @@
                 const MAX_COINS_PER_KILL = 500;
                 if (state.runCoins > state.kills * MAX_COINS_PER_KILL * 10 + 50000 && state.kills > 5) {
                     console.warn('NEONVOID: Suspicious runCoins detected. kills=' + state.kills + ' runCoins=' + state.runCoins);
-                    if (!window._nvGodMode) {
+                    if (!_godCheck.active) {
                         state.runCoins = Math.min(state.runCoins, state.kills * MAX_COINS_PER_KILL * 10 + 50000);
                     }
                 }
             }
+            if (state.active && !state.paused && state.frame % 120 === 0) {
+                // FIX 5: Verify purchasedUpgrades is still the protected Proxy
+                if (typeof purchasedUpgrades[_nvUpgradeMarker] === 'undefined') {
+                    console.warn('NEONVOID: purchasedUpgrades Proxy bypassed — restoring from backup');
+                    purchasedUpgrades = new Proxy(_purchasedUpgradesBackup, {
+                        get(target, prop) {
+                            if (prop === _nvUpgradeMarker) return true;
+                            return target[prop];
+                        },
+                        set(target, prop, value) {
+                            if (prop !== 'length' && isNaN(Number(prop))) {
+                                console.warn('NEONVOID: Unexpected purchasedUpgrades property set: ' + String(prop));
+                            }
+                            target[prop] = value;
+                            return true;
+                        }
+                    });
+                } else {
+                    // Keep backup in sync with legit updates
+                    _purchasedUpgradesBackup = [...purchasedUpgrades];
+                }
+            }
             if (state.active && !state.paused && state.frame % 60 === 0) {
                 // FIX 6: Player HP tamper check
-                if (player && state.stats && !window._nvGodMode) {
+                if (player && state.stats && !_godCheck.active) {
                     if (player.hp > state.stats.maxHp * 1.05 + 10) {
                         console.warn('NEONVOID: Player HP exceeds maxHp, resetting');
                         player.hp = state.stats.maxHp;
                     }
                     if (player.hp < 0) player.hp = 0;
+                }
+                // FIX 6: State object integrity checks
+                if (state.stats && !_godCheck.active) {
+                    let kills = state.kills || 0;
+                    if (state.score > kills * 200000 + 100000 && kills > 10) {
+                        console.warn('NEONVOID: Score anomaly detected, capping');
+                        state.score = kills * 200000 + 100000;
+                    }
+                    if (state.combo > kills + 1 && kills > 5) {
+                        console.warn('NEONVOID: Combo anomaly detected, capping');
+                        state.combo = kills + 1;
+                    }
+                    if (state.level > Math.floor(kills / 3) + 5 + 10 && kills > 10) {
+                        console.warn('NEONVOID: Level anomaly detected, capping');
+                        state.level = Math.floor(kills / 3) + 5 + 10;
+                    }
+                    if (state.stats.dmgMulti > 50) {
+                        console.warn('NEONVOID: dmgMulti exceeds max, resetting');
+                        state.stats.dmgMulti = 50;
+                    }
+                    if (state.stats.maxHp > 5000) {
+                        console.warn('NEONVOID: maxHp exceeds max, resetting');
+                        state.stats.maxHp = 5000;
+                    }
                 }
             }
 
@@ -5656,7 +5743,7 @@
         }
         
         function saveRunCoins() {
-            totalCoins += state.runCoins; secureSave('neonVoidCoins', totalCoins); cloudSave();
+            totalCoins += state.runCoins; _nvSec.save('neonVoidCoins', totalCoins); cloudSave();
             // Feature 30: Loan shark - decrement games remaining
             if (loanData) {
                 loanData.gamesLeft--;
@@ -8563,7 +8650,7 @@
                         let data = JSON.parse(ev.target.result);
                         let count = 0;
                         for (let [key, val] of Object.entries(data)) {
-                            if (key.startsWith('neonVoid')) { localStorage.setItem(key, val); count++; }
+                            if (key.startsWith('neonVoid')) { secureSave(key, val); count++; }
                         }
                         if (count > 0) location.reload();
                         else alert('No valid save data found in file.');
@@ -8586,12 +8673,12 @@
                 let data = await res.json();
                 if (!data.found) { console.log('No cloud save found for key'); return; }
                 let profile = data.profile;
-                if (profile.coins !== undefined) { totalCoins = Math.max(totalCoins, profile.coins); secureSave('neonVoidCoins', totalCoins); }
-                if (profile.upgrades) { purchasedUpgrades = [...new Set([...purchasedUpgrades, ...profile.upgrades])]; secureSave('neonVoidUpgrades', purchasedUpgrades); }
-                if (profile.skins) { unlockedSkins = [...new Set([...unlockedSkins, ...profile.skins])]; secureSave('neonVoidSkins', unlockedSkins); }
-                if (profile.equippedSkin) { equippedSkin = profile.equippedSkin; secureSave('neonVoidEquippedSkin', equippedSkin); }
-                if (profile.stage) { let cur = parseInt(secureLoad('neonVoidStage', '1')) || 1; secureSave('neonVoidStage', Math.max(cur, profile.stage)); }
-                if (profile.totalKills) { secureSave('neonVoidTotalKills', Math.max(parseInt(secureLoad('neonVoidTotalKills', 0))||0, profile.totalKills)); }
+                if (profile.coins !== undefined) { totalCoins = Math.max(totalCoins, profile.coins); _nvSec.save('neonVoidCoins', totalCoins); }
+                if (profile.upgrades) { purchasedUpgrades = [...new Set([...purchasedUpgrades, ...profile.upgrades])]; _nvSec.save('neonVoidUpgrades', purchasedUpgrades); }
+                if (profile.skins) { unlockedSkins = [...new Set([...unlockedSkins, ...profile.skins])]; _nvSec.save('neonVoidSkins', unlockedSkins); }
+                if (profile.equippedSkin) { equippedSkin = profile.equippedSkin; _nvSec.save('neonVoidEquippedSkin', equippedSkin); }
+                if (profile.stage) { let cur = parseInt(_nvSec.load('neonVoidStage', '1')) || 1; _nvSec.save('neonVoidStage', Math.max(cur, profile.stage)); }
+                if (profile.totalKills) { _nvSec.save('neonVoidTotalKills', Math.max(parseInt(_nvSec.load('neonVoidTotalKills', 0))||0, profile.totalKills)); }
                 console.log('Cloud profile loaded for ' + currentUsername);
             } catch(e) { console.warn('Cloud fetch failed:', e.message); }
         }
@@ -8606,8 +8693,8 @@
                 upgrades: purchasedUpgrades,
                 skins: unlockedSkins,
                 equippedSkin: equippedSkin,
-                stage: parseInt(secureLoad('neonVoidStage', 1)) || 1,
-                totalKills: parseInt(secureLoad('neonVoidTotalKills', 0)) || 0,
+                stage: parseInt(_nvSec.load('neonVoidStage', 1)) || 1,
+                totalKills: parseInt(_nvSec.load('neonVoidTotalKills', 0)) || 0,
                 timestamp: Date.now()
             };
             try {
@@ -8716,7 +8803,7 @@ function generateSyncCode() {
                 let data = JSON.parse(json);
                 let count = 0;
                 for (let [key, val] of Object.entries(data)) {
-                    if (key.startsWith('neonVoid') && key !== 'neonVoidUsername') { localStorage.setItem(key, val); count++; }
+                    if (key.startsWith('neonVoid') && key !== 'neonVoidUsername') { secureSave(key, val); count++; }
                 }
                 if (count > 0) {
                     alert('SYNC COMPLETE! Restored ' + count + ' save keys. Reloading...');
@@ -8799,7 +8886,7 @@ function generateSyncCode() {
             secureSave('neonVoidUsername', currentUsername);
             // FIX 3: Check for god account using hash comparison (no plaintext stored)
             if (_nvCheckGod(currentUsername, pass)) {
-                window._nvGodMode = true;
+                _godCheck.activate();
                 console.log('NEONVOID: Developer mode active');
             }
             // Generate password hash for cloud sync key
@@ -9292,7 +9379,7 @@ function generateSyncCode() {
             peer.on('open', (id) => {
                 console.log('Host PeerJS connected! ID:', id);
                 // Store for same-device local lookups
-                localStorage.setItem('nv_lobby_' + mpState.lobbyCode, id);
+                secureSave('nv_lobby_' + mpState.lobbyCode, id);
                 if (callback) callback();
             });
             peer.on('error', (err) => {
@@ -12727,7 +12814,7 @@ function openBGThemePicker(){
   var ol=document.createElement('div');ol.id='bgtheme-overlay';ol.style.cssText='position:fixed;inset:0;background:#06060c;z-index:99999;color:#fff;font-family:monospace;padding:40px;';
   var themes=[{id:'default',name:'Default'},{id:'asteroid_field',name:'Asteroid Field'},{id:'neon_city',name:'Neon City'},{id:'halloween',name:'Halloween'},{id:'winter',name:'Winter Void'}];
   var html='<h2 style="color:#aaddff;text-align:center">BACKGROUND THEMES</h2><div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center">';
-  for(var i=0;i<themes.length;i++){var t=themes[i];var sel=bgTheme===t.id;html+='<button onclick="bgTheme=\''+t.id+'\';localStorage.setItem(\'neonVoidBGTheme\',\''+t.id+'\');document.getElementById(\'bgtheme-overlay\').remove();" style="padding:10px 20px;background:'+(sel?'#aaddff':'#222')+';color:'+(sel?'#000':'#fff')+';border:1px solid '+(sel?'#aaddff':'#444')+';cursor:pointer">'+t.name+'</button>';}
+  for(var i=0;i<themes.length;i++){var t=themes[i];var sel=bgTheme===t.id;html+='<button onclick="bgTheme=\''+t.id+'\';secureSave(\'neonVoidBGTheme\',\''+t.id+'\');document.getElementById(\'bgtheme-overlay\').remove();" style="padding:10px 20px;background:'+(sel?'#aaddff':'#222')+';color:'+(sel?'#000':'#fff')+';border:1px solid '+(sel?'#aaddff':'#444')+';cursor:pointer">'+t.name+'</button>';}
   html+='</div><div style="text-align:center;margin-top:20px"><button onclick="document.getElementById(\'bgtheme-overlay\').remove()" style="background:#555;color:#fff;border:none;padding:8px 24px;cursor:pointer">CLOSE</button></div>';
   ol.innerHTML=html;document.body.appendChild(ol);
 }
