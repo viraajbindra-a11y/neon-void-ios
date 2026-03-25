@@ -11838,10 +11838,10 @@ if(mp.grappleHook){let gh=mp.grappleHook;mx.strokeStyle=COLORS.neon;mx.lineWidth
 
         const STEPS = [
             { msg: 'WELCOME, PILOT', sub: 'Your training simulation begins now.', duration: 120 },
-            { msg: 'MOVE YOUR SHIP', sub: isMob ? 'Touch left side to move' : 'Use WASD or Arrow Keys', check: () => Math.hypot(ship.vx, ship.vy) > 2, need: 90 },
+            { msg: 'MOVE YOUR SHIP', sub: isMob ? 'Drag left side like a joystick' : 'Use WASD or Arrow Keys', check: () => Math.hypot(ship.vx, ship.vy) > 2, need: 90 },
             { msg: 'YOUR GUNS AUTO-FIRE', sub: 'Enemies will appear. Your ship shoots the nearest one.', duration: 120, spawn: 'enemy' },
             { msg: 'DESTROY THE DRONE', sub: 'Move close and let auto-aim do the work', check: () => kills >= 1, need: 1 },
-            { msg: 'GREAT! NOW TRY DASHING', sub: isMob ? 'Tap right side to dash' : 'Press SHIFT or Right-Click', spawn: 'ring', check: () => dashed, need: 1 },
+            { msg: 'GREAT! NOW TRY DASHING', sub: isMob ? 'Double-tap right side to dash' : 'Press SHIFT or Right-Click', spawn: 'ring', check: () => dashed, need: 1 },
             { msg: 'GRAB THE POWER-UP', sub: 'Fly into the glowing orb', spawn: 'pickup', check: () => collected, need: 1 },
             { msg: 'COMBAT WAVE', sub: 'Eliminate all drones! Chain kills for combos.', spawn: 'wave', check: () => kills >= 7, need: 1 },
             { msg: 'TRAINING COMPLETE!', sub: 'You are ready for Sector 1. Good luck, pilot.', duration: 150 }
@@ -11905,7 +11905,7 @@ if(mp.grappleHook){let gh=mp.grappleHook;mx.strokeStyle=COLORS.neon;mx.lineWidth
                 spawnDone[step] = true;
                 if (s.spawn === 'enemy') { let a = Math.random()*Math.PI*2; enemies.push({ x: ship.x+Math.cos(a)*250, y: ship.y+Math.sin(a)*250, hp: 15, r: 14, vx: 0, vy: 0 }); }
                 if (s.spawn === 'ring') { for (let i = 0; i < 6; i++) { let a = (i/6)*Math.PI*2; enemies.push({ x: ship.x+Math.cos(a)*200, y: ship.y+Math.sin(a)*200, hp: 10, r: 12, vx: 0, vy: 0 }); } }
-                if (s.spawn === 'pickup') { pickups.push({ x: ship.x+150, y: ship.y-120, r: 10 }); }
+                if (s.spawn === 'pickup') { let px=Math.min(W-40,Math.max(40,ship.x+80)),py=Math.min(H-40,Math.max(40,ship.y-80)); pickups.push({ x: px, y: py, r: 14 }); }
                 if (s.spawn === 'wave') { for (let i = 0; i < 6; i++) { let a = Math.random()*Math.PI*2, d = 200+Math.random()*150; enemies.push({ x: ship.x+Math.cos(a)*d, y: ship.y+Math.sin(a)*d, hp: 12, r: 12, vx: 0, vy: 0 }); } }
             }
 
@@ -12009,6 +12009,34 @@ if(mp.grappleHook){let gh=mp.grappleHook;mx.strokeStyle=COLORS.neon;mx.lineWidth
                 ctx.strokeStyle = 'rgba(0,255,204,0.15)'; ctx.lineWidth = 1; ctx.setLineDash([4,6]);
                 ctx.beginPath(); ctx.moveTo(ship.x, ship.y); ctx.lineTo(nearest.x, nearest.y); ctx.stroke();
                 ctx.setLineDash([]);
+            }
+
+            // Virtual joystick visual (mobile)
+            if (isMob && touchJoy) {
+                ctx.globalAlpha = 0.3; ctx.strokeStyle = '#00ffcc'; ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.arc(touchJoy.sx, touchJoy.sy, 50, 0, Math.PI*2); ctx.stroke();
+                ctx.globalAlpha = 0.5; ctx.fillStyle = '#00ffcc';
+                let jdx = touchJoy.cx - touchJoy.sx, jdy = touchJoy.cy - touchJoy.sy;
+                let jdist = Math.min(40, Math.hypot(jdx, jdy));
+                let ja = Math.atan2(jdy, jdx);
+                ctx.beginPath(); ctx.arc(touchJoy.sx + Math.cos(ja)*jdist, touchJoy.sy + Math.sin(ja)*jdist, 15, 0, Math.PI*2); ctx.fill();
+                ctx.globalAlpha = 1;
+            } else if (isMob && !touchJoy && STEPS[step] && STEPS[step].msg.includes('MOVE')) {
+                // Show joystick hint when not touching
+                ctx.globalAlpha = 0.15; ctx.strokeStyle = '#00ffcc'; ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.arc(W*0.25, H*0.6, 50, 0, Math.PI*2); ctx.stroke();
+                ctx.fillStyle = '#00ffcc'; ctx.font = '11px monospace'; ctx.textAlign = 'center';
+                ctx.fillText('DRAG HERE', W*0.25, H*0.6+4);
+                ctx.globalAlpha = 1;
+            }
+
+            // Dash hint for mobile
+            if (isMob && STEPS[step] && STEPS[step].msg.includes('DASH')) {
+                ctx.globalAlpha = 0.15 + Math.sin(frame*0.08)*0.1; ctx.strokeStyle = '#ffcc00'; ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.arc(W*0.75, H*0.6, 50, 0, Math.PI*2); ctx.stroke();
+                ctx.fillStyle = '#ffcc00'; ctx.font = '11px monospace'; ctx.textAlign = 'center';
+                ctx.fillText('TAP HERE', W*0.75, H*0.6+4);
+                ctx.globalAlpha = 1;
             }
 
             // Tutorial step highlight
