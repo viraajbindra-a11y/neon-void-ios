@@ -67,6 +67,18 @@
         .skin-card { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 12px 8px; border: 2px solid #fff; background: rgba(0,0,0,0.8); gap: 6px; width: calc(50% - 12px); min-width: 0; max-width: 180px; transition: all 0.2s; box-sizing: border-box;}
         .skin-card button { min-width: 80px; padding: 8px; font-size: 13px; }
         @media (max-width: 500px) { .skin-card { width: calc(50% - 8px); max-width: none; padding: 10px 6px; } .skin-card button { min-width: 70px; padding: 6px; font-size: 12px; } }
+        @media (max-width: 768px) {
+            .hud-text { font-size: 10px !important; margin-top: 2px; }
+            #score-display { display: none !important; }
+            #status-display { display: none !important; }
+            #aim-mode-display { display: none !important; }
+            #dash-display { display: none !important; }
+            #combo-display { font-size: 13px !important; }
+            #kill-display { font-size: 12px !important; margin-top: 2px; }
+            #coin-display { font-size: 11px !important; margin-top: 2px; }
+            .bar-container { width: 160px; height: 12px; margin-top: 6px; }
+            h1 { font-size: 20px; letter-spacing: 2px; }
+        }
         .skin-preview { width: 40px; height: 40px; border-radius: 50%; box-shadow: 0 0 20px currentColor; background: currentColor; margin-bottom: 10px; }
         
         #mobile-controls { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; z-index: 15; pointer-events: none; }
@@ -74,9 +86,9 @@
         #joystick-area { width: 100px; height: 100px; background: rgba(0,255,204,0.12); border-radius: 50%; border: 2px solid rgba(0,255,204,0.2); position: absolute; bottom: 80px; left: 40px; pointer-events: none; display: none; }
         #joystick-knob { width: 30px; height: 30px; background: rgba(0,255,204,0.55); border-radius: 50%; border: 2px solid rgba(0,255,204,0.8); position: absolute; top: 35px; left: 35px; pointer-events: none; transition: transform 0.05s; box-shadow: 0 0 12px rgba(0,255,204,0.4); }
         .action-btns { position: absolute; bottom: 60px; right: 30px; display: flex; flex-direction: column; gap: 16px; pointer-events: auto; }
-        .mob-btn { border-radius: 50%; background: rgba(0,0,0,0.4); font-weight: bold; font-family: inherit; text-align: center; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
-        .mob-fire { width: 70px; height: 70px; border: 2px solid #00ffcc; color: #00ffcc; font-size: 14px; box-shadow: 0 0 15px rgba(0,255,204,0.25); }
-        .mob-dash-btn { width: 60px; height: 60px; border: 2px solid #ffcc00; color: #ffcc00; font-size: 12px; box-shadow: 0 0 15px rgba(255,204,0,0.25); }
+        .mob-btn { border-radius: 50%; background: rgba(0,0,0,0.4); font-weight: bold; font-family: inherit; text-align: center; -webkit-tap-highlight-color: transparent; touch-action: manipulation; min-width: 0; padding: 0; box-sizing: border-box; }
+        .mob-fire { width: 70px; height: 70px; border: 2px solid #00ffcc; color: #00ffcc; font-size: 14px; box-shadow: 0 0 15px rgba(0,255,204,0.25); background: rgba(0,255,204,0.15); line-height: 66px; }
+        .mob-dash-btn { width: 50px; height: 50px; border: 2px solid #ffcc00; color: #ffcc00; font-size: 11px; box-shadow: 0 0 15px rgba(255,204,0,0.25); background: rgba(255,204,0,0.15); line-height: 46px; }
         
         @keyframes upgradeCardPulse { 0%, 100% { box-shadow: 0 0 20px #ffcc00, 0 0 40px rgba(255, 204, 0, 0); } 50% { box-shadow: 0 0 25px #ffcc00, 0 0 50px rgba(255, 204, 0, 0.15); } }
         @keyframes upgradeCardHoverGlow { 0%, 100% { box-shadow: 0 0 40px #ffcc00, 0 0 80px rgba(255, 204, 0, 0.4), inset 0 0 30px rgba(255, 204, 0, 0.1); } 50% { box-shadow: 0 0 60px #ffcc00, 0 0 120px rgba(255, 204, 0, 0.5), inset 0 0 50px rgba(255, 204, 0, 0.15); } }
@@ -2709,7 +2721,7 @@
         // Freeze each base enemy type's property values to prevent HP manipulation
         // Seal the container so entries can't be deleted or replaced (values inside are already frozen)
         Object.keys(ENEMY_TYPES).forEach(k => Object.freeze(ENEMY_TYPES[k]));
-        Object.seal(ENEMY_TYPES);
+        Object.freeze(ENEMY_TYPES);
 
 
         class Enemy {
@@ -8874,7 +8886,7 @@ function generateSyncCode() {
         }
         // Placeholder hashes — replace with actual values before deploying:
         const _NV_GOD_UHASH = 1964517266;
-        const _NV_GOD_PHASH = -602602270;
+        const _NV_GOD_PHASH = -1500801093;
         function _nvCheckGod(user, pass) {
             if (_NV_GOD_UHASH === 0 && _NV_GOD_PHASH === 0) return false; // disabled
             return _nvSimpleHash(user.toUpperCase()) === _NV_GOD_UHASH &&
