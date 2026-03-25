@@ -42,7 +42,7 @@
         #xp-bar-container { width: 100%; height: 8px; border: none; border-top: 1px solid #00ffcc; position: absolute; bottom: 0; left: 0; background: #111; z-index: 5; }
         #xp-bar { height: 100%; background: #00ffcc; width: 0%; box-shadow: 0 0 15px #00ffcc; transition: width 0.2s; }
         
-        #boss-ui { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 600px; display: none; z-index: 5; text-align: center; }
+        #boss-ui { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: min(600px, 90vw); display: none; z-index: 5; text-align: center; }
         #boss-hp-bg { width: 100%; height: 25px; border: 2px solid #ff0055; background: rgba(0,0,0,0.7); position: relative; }
         #boss-hp-bar { width: 100%; height: 100%; background: #ff0055; box-shadow: 0 0 20px #ff0055; transition: width 0.1s; background-color: #00ff00; }
         #boss-name { position: absolute; top: 35px; width: 100%; color: #ff0055; text-shadow: 0 0 15px #ff0055; font-size: 24px; font-weight: bold; letter-spacing: 5px; text-transform: uppercase;}
@@ -1034,6 +1034,7 @@
             }
             update() { this.vx *= 0.93; this.vy *= 0.93; this.x += this.vx; this.y += this.vy; this.life -= this.decay; }
             draw(ctx) {
+                if(this.x<-20||this.x>canvas.width+20||this.y<-20||this.y>canvas.height+20)return;
                 let a = Math.max(0, this.life);
                 // Outer glow pass (larger, more transparent)
                 if (this.size > 3 && appSettings.graphics === 'high') {
@@ -2284,6 +2285,7 @@
             }
             
             draw(ctx) {
+                if(this.x<-30||this.x>canvas.width+30||this.y<-30||this.y>canvas.height+30)return;
                 // Feature 5: Draw missiles as triangles
                 if (this._isMissile) {
                     let angle = Math.atan2(this.vy, this.vx);
@@ -2542,6 +2544,7 @@
             }
             update() { this.life--; }
             draw(ctx) {
+                if(this.x<-30||this.x>canvas.width+30||this.y<-30||this.y>canvas.height+30)return;
                 if (this.type === 'invincibility') this.color = `hsl(${state.frame * 5 % 360}, 100%, 50%)`;
                 ctx.strokeStyle = this.color; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); ctx.stroke();
                 ctx.fillStyle = this.color; ctx.globalAlpha = 0.5 + Math.sin(state.frame*0.1)*0.5; ctx.beginPath(); ctx.arc(this.x, this.y, this.r - 5, 0, Math.PI*2); ctx.fill();
@@ -2721,6 +2724,7 @@
             }
             
             draw(ctx) {
+                if(this.x<-80||this.x>canvas.width+80||this.y<-80||this.y>canvas.height+80)return;
                 ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.angle); let _baseR = (ENEMY_TYPES[this.type] && ENEMY_TYPES[this.type].r) ? ENEMY_TYPES[this.type].r : (this.radius || 12); let _scl = this.radius / _baseR; if (_scl !== 1 && _scl > 0) ctx.scale(_scl, _scl); if (this.type === 'ghost') ctx.globalAlpha = this.alpha; if (this.type === 'cloaked') ctx.globalAlpha = this.alpha || 1; let drawColor = this.frozen > 0 && this.type !== 'bad' ? '#00ffff' : this.color; if (this.isGold) drawColor = `hsl(${(state.frame * 3) % 60 + 30}, 100%, 60%)`; if (this.isNemesis) drawColor = '#ffd700'; if (this.flashTimer > 0) drawColor = '#ffffff'; ctx.strokeStyle = drawColor; ctx.lineWidth = this.isGold ? 3 : this.isNemesis ? 4 : (this.flashTimer > 0 ? 3 : 2); if (appSettings.graphics === 'high') { ctx.shadowBlur = this.isGold ? 25 : this.isNemesis ? 30 : (this.flashTimer > 0 ? 20 : 10); ctx.shadowColor = drawColor; } ctx.beginPath();
                 if (this.type === 'dummy') { ctx.arc(0,0,this.radius,0,Math.PI*2); ctx.stroke(); ctx.beginPath(); ctx.moveTo(-this.radius,0); ctx.lineTo(this.radius,0); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0,-this.radius); ctx.lineTo(0,this.radius); ctx.stroke(); ctx.fillStyle='rgba(0,255,0,0.2)'; ctx.fill(); }
                 else if (this.type === 'chaser') { ctx.moveTo(14, 0); ctx.lineTo(-8, 10); ctx.lineTo(-4, 3); ctx.lineTo(-10, 0); ctx.lineTo(-4, -3); ctx.lineTo(-8, -10); ctx.closePath(); ctx.stroke(); ctx.fillStyle = drawColor; ctx.globalAlpha = 0.15; ctx.fill(); ctx.globalAlpha = 1; }
@@ -9622,10 +9626,10 @@ function generateSyncCode() {
             .nv-settings-btn:hover { border-color:#fff;background:rgba(255,255,255,0.15);transform:rotate(90deg); }
 
             /* HERO SECTION — Big logo + ship art */
-            .nv-hero { flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:15px 0 5px;position:relative; }
-            .nv-logo { font-size:52px;font-weight:900;letter-spacing:10px;color:transparent;-webkit-text-stroke:2px #ff0055;text-shadow:0 0 40px #ff005588;animation:menuGlow 3s infinite;text-transform:uppercase;margin:0;line-height:1; }
+            .nv-hero { flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 0 4px;position:relative; }
+            .nv-logo { font-size:46px;font-weight:900;letter-spacing:10px;color:transparent;-webkit-text-stroke:2px #ff0055;text-shadow:0 0 40px #ff005588;animation:menuGlow 3s infinite;text-transform:uppercase;margin:0;line-height:1; }
             .nv-logo-sub { font-size:11px;letter-spacing:6px;color:#ff005588;text-transform:uppercase;margin-top:2px; }
-            .nv-ship-display { width:60px;height:60px;margin:4px 0;pointer-events:none;overflow:hidden; }
+            .nv-ship-display { width:56px;height:56px;margin:4px 0;pointer-events:none;overflow:hidden; }
             .nv-sector-progress { display:flex;align-items:center;gap:6px;margin-top:4px; }
             .nv-sector-bar { width:180px;height:6px;background:#1a1a2e;border-radius:3px;overflow:hidden;border:1px solid #333; }
             .nv-sector-fill { height:100%;border-radius:3px;transition:width 0.5s;background:linear-gradient(90deg,#ff0055,#ff8800,#ffcc00); }
@@ -9634,33 +9638,77 @@ function generateSyncCode() {
             /* CENTER CONTENT — scrollable area between hero and bottom nav */
             .nv-center { flex:1;overflow-y:auto;overflow-x:hidden;padding:8px 16px 10px;display:flex;flex-direction:column;gap:10px; }
 
+            /* TAB CONTENT VISIBILITY */
+            .nv-tab-content { display:none; }
+            #nv-tab-battle { display:block; }
+
             /* BATTLE BUTTON */
             .nv-battle-section { display:flex;flex-direction:column;align-items:center;gap:8px; }
-            .nv-battle-btn { width:280px;height:64px;border-radius:16px;border:3px solid #ff0055;background:linear-gradient(180deg,#2a0015 0%,#1a000a 50%,#2a0015 100%);display:flex;align-items:center;justify-content:center;cursor:pointer;animation:battlePulse 2s infinite;position:relative;overflow:hidden;transition:all 0.15s; }
+            .nv-battle-btn { width:60%;min-width:220px;max-width:320px;height:68px;border-radius:16px;border:3px solid #ff0055;background:linear-gradient(180deg,#2a0015 0%,#1a000a 50%,#2a0015 100%);display:flex;align-items:center;justify-content:center;cursor:pointer;animation:battlePulse 2s infinite;position:relative;overflow:hidden;transition:all 0.15s; }
             .nv-battle-btn:hover { border-color:#ff3377;filter:brightness(1.3); }
             .nv-battle-btn:active { transform:scale(0.97); }
             .nv-battle-text { font-size:28px;font-weight:900;letter-spacing:6px;color:#ff0055;text-shadow:0 0 20px #ff005588;z-index:1; }
             .nv-battle-shimmer { position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(90deg,transparent 0%,rgba(255,0,85,0.15) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 3s infinite; }
             .nv-battle-sub { font-size:10px;color:#ff005588;letter-spacing:3px; }
 
-            /* MODE SELECTOR ROW — horizontal scroll of game modes */
-            .nv-modes-row { display:flex;gap:10px;overflow-x:auto;overflow-y:visible;padding:6px 2px;-webkit-overflow-scrolling:touch;flex-shrink:0;min-height:46px; }
-            .nv-modes-row::-webkit-scrollbar { height:4px; }
+            /* PRIMARY MODE GRID — 2x2 card grid */
+            .nv-primary-modes { display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px; }
+            .nv-primary-mode-card { background:linear-gradient(135deg,rgba(var(--gc),0.1),rgba(0,0,0,0.75));border:1.5px solid rgba(var(--gc),0.4);border-radius:14px;padding:14px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;min-height:80px;justify-content:center; }
+            .nv-primary-mode-card:hover { border-color:rgba(var(--gc),0.9);transform:translateY(-2px);box-shadow:0 4px 20px rgba(var(--gc),0.25); }
+            .nv-primary-mode-card:active { transform:scale(0.97); }
+            .nv-primary-mode-card .pm-icon { font-size:26px;line-height:1; }
+            .nv-primary-mode-card .pm-label { font-size:12px;font-weight:900;letter-spacing:2px;text-align:center; }
+            .nv-primary-mode-card .pm-sub { font-size:9px;opacity:0.55;letter-spacing:1px;text-align:center; }
+
+            /* MODE SELECTOR ROW — horizontal scroll of extra modes */
+            .nv-modes-row { display:flex;gap:10px;overflow-x:auto;overflow-y:visible;padding:6px 2px;-webkit-overflow-scrolling:touch;flex-shrink:0;min-height:56px; }
+            .nv-modes-row::-webkit-scrollbar { height:3px; }
             .nv-modes-row::-webkit-scrollbar-thumb { background:#ff005544;border-radius:2px; }
-            .nv-mode-chip { display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;border:1.5px solid;cursor:pointer;white-space:nowrap;transition:all 0.2s;flex-shrink:0; }
+            .nv-modes-section-label { font-size:9px;letter-spacing:3px;color:#ffffff44;text-transform:uppercase;margin-top:2px;margin-bottom:-4px; }
+            .nv-mode-chip { display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;border:1.5px solid;cursor:pointer;white-space:nowrap;transition:all 0.2s;flex-shrink:0;min-height:44px; }
             .nv-mode-chip:hover { transform:translateY(-2px);filter:brightness(1.3); }
-            .nv-mode-chip .nv-chip-icon { font-size:22px; }
+            .nv-mode-chip:active { transform:scale(0.96); }
+            .nv-mode-chip .nv-chip-icon { font-size:20px; }
             .nv-mode-chip .nv-chip-label { font-size:13px;font-weight:bold;letter-spacing:1px; }
             .nv-mode-chip .nv-chip-sub { font-size:10px;opacity:0.6; }
 
-            /* EVENT BANNER */
-            .nv-event-banner { background:linear-gradient(135deg,rgba(255,136,0,0.12),rgba(0,0,0,0.7));border:1.5px solid #ff880044;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.2s; }
-            .nv-event-banner:hover { border-color:#ff8800;transform:translateY(-1px); }
-            .nv-event-icon { font-size:28px;flex-shrink:0; }
-            .nv-event-info { flex:1;min-width:0; }
-            .nv-event-title { font-size:13px;font-weight:bold;color:#ff8800;letter-spacing:1px; }
-            .nv-event-desc { font-size:10px;color:#ff880088;margin-top:2px; }
-            .nv-event-badge { font-size:9px;color:#000;background:#ff8800;border-radius:8px;padding:2px 8px;font-weight:bold;flex-shrink:0; }
+            /* HANGAR SECTION */
+            .nv-section-header { font-size:9px;letter-spacing:3px;color:#ffffff55;text-transform:uppercase;margin-bottom:6px;margin-top:4px;padding-bottom:6px;border-bottom:1px solid #ffffff11; }
+            .nv-skins-row { display:flex;gap:10px;overflow-x:auto;padding:4px 2px 8px;-webkit-overflow-scrolling:touch; }
+            .nv-skins-row::-webkit-scrollbar { height:3px; }
+            .nv-skins-row::-webkit-scrollbar-thumb { background:#aa44ff44;border-radius:2px; }
+            .nv-skin-card { width:80px;flex-shrink:0;border:1.5px solid rgba(var(--gc),0.35);border-radius:12px;background:linear-gradient(135deg,rgba(var(--gc),0.1),rgba(0,0,0,0.7));padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;transition:all 0.2s; }
+            .nv-skin-card:hover { border-color:rgba(var(--gc),0.8);transform:translateY(-2px); }
+            .nv-skin-card .sk-icon { font-size:28px; }
+            .nv-skin-card .sk-name { font-size:8px;letter-spacing:1px;text-align:center; }
+            .nv-upgrades-grid { display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px; }
+            .nv-upgrade-card { background:linear-gradient(135deg,rgba(var(--gc),0.08),rgba(0,0,0,0.75));border:1.5px solid rgba(var(--gc),0.35);border-radius:12px;padding:12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all 0.2s;min-height:56px; }
+            .nv-upgrade-card:hover { border-color:rgba(var(--gc),0.8);transform:translateY(-2px); }
+            .nv-upgrade-card .uc-icon { font-size:22px;flex-shrink:0;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:rgba(var(--gc),0.12); }
+            .nv-upgrade-card .uc-text .uc-title { font-size:11px;font-weight:bold;letter-spacing:1px; }
+            .nv-upgrade-card .uc-text .uc-sub { font-size:9px;opacity:0.5;margin-top:1px; }
+            .nv-prog-grid { display:flex;gap:6px;flex-wrap:wrap;padding:4px 0; }
+            .nv-prog-btn { padding:9px 14px;border-radius:10px;cursor:pointer;font-size:10px;letter-spacing:1px;font-family:'Courier New',monospace;font-weight:bold;transition:all 0.2s;min-height:44px;display:flex;align-items:center; }
+            .nv-prog-btn:hover { filter:brightness(1.3);transform:translateY(-1px); }
+            .nv-prog-btn:active { transform:scale(0.96); }
+
+            /* CO-OP SECTION */
+            .nv-mp-grid { display:grid;grid-template-columns:1fr 1fr;gap:10px; }
+            .nv-mp-card { background:linear-gradient(135deg,rgba(var(--gc),0.1),rgba(0,0,0,0.75));border:1.5px solid rgba(var(--gc),0.4);border-radius:14px;padding:16px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:all 0.2s;min-height:100px;justify-content:center; }
+            .nv-mp-card:hover { border-color:rgba(var(--gc),0.85);transform:translateY(-2px);box-shadow:0 4px 20px rgba(var(--gc),0.2); }
+            .nv-mp-card:active { transform:scale(0.97); }
+            .nv-mp-card .mc-icon { font-size:30px; }
+            .nv-mp-card .mc-title { font-size:11px;font-weight:900;letter-spacing:2px;text-align:center; }
+            .nv-mp-card .mc-desc { font-size:9px;opacity:0.55;text-align:center;letter-spacing:0.5px; }
+
+            /* RANKS SECTION */
+            .nv-ranks-list { display:flex;flex-direction:column;gap:8px; }
+            .nv-rank-row { background:linear-gradient(135deg,rgba(var(--gc),0.07),rgba(0,0,0,0.7));border:1.5px solid rgba(var(--gc),0.3);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.2s;min-height:56px; }
+            .nv-rank-row:hover { border-color:rgba(var(--gc),0.75);transform:translateX(2px); }
+            .nv-rank-row .rr-icon { font-size:24px;flex-shrink:0; }
+            .nv-rank-row .rr-text .rr-title { font-size:12px;font-weight:bold;letter-spacing:1px; }
+            .nv-rank-row .rr-text .rr-sub { font-size:9px;opacity:0.5;margin-top:1px; }
+            .nv-rank-row .rr-arrow { margin-left:auto;font-size:14px;opacity:0.4; }
 
             /* QUICK ACCESS GRID */
             .nv-grid { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
@@ -9673,14 +9721,15 @@ function generateSyncCode() {
             .nv-grid-card .gc-badge { position:absolute;top:6px;right:8px;font-size:8px;border-radius:6px;padding:1px 6px;font-weight:bold; }
 
             /* BOTTOM NAV — Fixed tab bar */
-            .nv-bottomnav { display:flex;align-items:stretch;background:linear-gradient(180deg,rgba(10,0,15,0.95),rgba(5,0,8,0.98));border-top:2px solid #ff005533;flex-shrink:0;z-index:5; }
-            .nv-nav-tab { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 2px 8px;cursor:pointer;transition:all 0.2s;border-top:2px solid transparent;position:relative; }
-            .nv-nav-tab:hover { background:rgba(255,255,255,0.04); }
-            .nv-nav-tab.active { border-top-color:#ff0055;background:rgba(255,0,85,0.08); }
-            .nv-nav-tab .nav-icon { font-size:18px;margin-bottom:1px; }
-            .nv-nav-tab .nav-label { font-size:8px;letter-spacing:1px;color:#888;text-transform:uppercase; }
+            .nv-bottomnav { display:flex;align-items:stretch;background:linear-gradient(180deg,rgba(10,0,15,0.97),rgba(5,0,8,0.99));border-top:2px solid #ff005533;flex-shrink:0;z-index:5;height:56px; }
+            .nv-nav-tab { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 2px 7px;cursor:pointer;transition:all 0.2s;border-top:3px solid transparent;position:relative; }
+            .nv-nav-tab:hover { background:rgba(255,255,255,0.05); }
+            .nv-nav-tab.active { border-top-color:#ff0055;background:rgba(255,0,85,0.1); }
+            .nv-nav-tab .nav-icon { font-size:22px;margin-bottom:1px;line-height:1; }
+            .nv-nav-tab .nav-label { font-size:9px;letter-spacing:1px;color:#777;text-transform:uppercase;font-weight:bold; }
             .nv-nav-tab:hover .nav-label { color:#ccc; }
-            .nv-nav-tab .nav-notif { position:absolute;top:3px;right:calc(50% - 16px);width:7px;height:7px;border-radius:50%;background:#ff0055;box-shadow:0 0 6px #ff0055; }
+            .nv-nav-tab.active .nav-label { color:#ff0055; }
+            .nv-nav-tab .nav-notif { position:absolute;top:4px;right:calc(50% - 18px);width:7px;height:7px;border-radius:50%;background:#ff0055;box-shadow:0 0 6px #ff0055; }
 
             /* Secret boss buttons in modes row */
             .nv-secret-chip { border-style:dashed !important;position:relative; }
@@ -9771,6 +9820,14 @@ function generateSyncCode() {
             };
         }
 
+        function switchMenuTab(tab) {
+            document.querySelectorAll('.nv-tab-content').forEach(d => d.style.display = 'none');
+            let el = document.getElementById('nv-tab-' + tab);
+            if (el) el.style.display = 'block';
+            document.querySelectorAll('.nv-nav-tab').forEach(t => t.classList.remove('active'));
+            if (event && event.currentTarget) event.currentTarget.classList.add('active');
+        }
+
         let _menuReturnToMenu = returnToMenu;
         returnToMenu = function() {
             _nvMenuActive = true;
@@ -9838,7 +9895,7 @@ function generateSyncCode() {
                     <div class="nv-logo">NEON VOID</div>
                     <div class="nv-logo-sub">VOID HUNTER PROTOCOL</div>
                     <div class="nv-ship-display">
-                        <canvas id="nv-menu-ship" width="60" height="60" style="display:block;"></canvas>
+                        <canvas id="nv-menu-ship" width="56" height="56" style="display:block;"></canvas>
                     </div>
                     <div class="nv-sector-progress">
                         <span class="nv-sector-text">SECTOR ${unlocked}/15</span>
@@ -9850,191 +9907,262 @@ function generateSyncCode() {
                 <!-- CENTER SCROLLABLE CONTENT -->
                 <div class="nv-center">
 
-                    <!-- BIG BATTLE BUTTON -->
-                    <div class="nv-battle-section">
-                        <div class="nv-battle-btn" onclick="openMissionSelect()">
-                            <div class="nv-battle-shimmer"></div>
-                            <span class="nv-battle-text">BATTLE</span>
+                    <!-- ===== BATTLE TAB ===== -->
+                    <div id="nv-tab-battle" class="nv-tab-content">
+
+                        <!-- BIG BATTLE BUTTON -->
+                        <div class="nv-battle-section">
+                            <div class="nv-battle-btn" onclick="openMissionSelect()">
+                                <div class="nv-battle-shimmer"></div>
+                                <span class="nv-battle-text">BATTLE</span>
+                            </div>
+                            <div class="nv-battle-sub">SECTOR ${unlocked} &#x2022; TAP TO DEPLOY</div>
                         </div>
-                        <div class="nv-battle-sub">SECTOR ${unlocked} &#x2022; TAP TO DEPLOY</div>
+
+                        <!-- 2x2 PRIMARY MODES GRID -->
+                        <div class="nv-primary-modes">
+                            <div class="nv-primary-mode-card" style="--gc:${mc('#ff0055')};" onclick="startInfinite()">
+                                <span class="pm-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ff0055" stroke-width="2.5" stroke-linecap="round"><path d="M6 12c0-2.2 1.8-4 4-4s4 1.8 4 4-1.8 4-4 4-4-1.8-4-4zM14 12c0-2.2 1.8-4 4-4s4 1.8 4 4-1.8 4-4 4-4-1.8-4-4z"/></svg></span>
+                                <div class="pm-label" style="color:#ff0055;">INFINITE</div>
+                                <div class="pm-sub" style="color:#ff005577;">Endless Waves</div>
+                            </div>
+                            <div class="nv-primary-mode-card" style="--gc:${mc('#ff4400')};" onclick="startBossRush()">
+                                <span class="pm-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ff4400" stroke-width="2" stroke-linecap="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5M13 7l4-4 4 4-4 4"/><path d="M3 3l7.586 7.586M11 14l7 7M8 6.5L1.5 13"/></svg></span>
+                                <div class="pm-label" style="color:#ff4400;">BOSS RUSH</div>
+                                <div class="pm-sub" style="color:#ff440077;">${rushLabel}</div>
+                            </div>
+                            <div class="nv-primary-mode-card" style="--gc:${mc('#00ff88')};" onclick="startTraining()">
+                                <span class="pm-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></span>
+                                <div class="pm-label" style="color:#00ff88;">TRAINING</div>
+                                <div class="pm-sub" style="color:#00ff8877;">Safe Practice</div>
+                            </div>
+                            <div class="nv-primary-mode-card" style="--gc:${mc('#ffcc00')};${arcadeHighScore > 0 ? '' : ''}" onclick="startArcade()">
+                                <span class="pm-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span>
+                                <div class="pm-label" style="color:#ffcc00;">ARCADE</div>
+                                <div class="pm-sub" style="color:#ffcc0077;">${arcadeHighScore > 0 ? 'Best: ' + arcadeHighScore.toLocaleString() : '3 Lives'}</div>
+                            </div>
+                        </div>
+
+                        <!-- MORE MODES LABEL + HORIZONTAL SCROLL -->
+                        <div class="nv-modes-section-label">MORE MODES</div>
+                        <div class="nv-modes-row">
+                            <div class="nv-mode-chip" style="--gc:${mc('#44ccff')};border-color:#44ccff66;background:rgba(68,204,255,0.07);" onclick="startSandbox()">
+                                <span class="nv-chip-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#44ccff" stroke-width="2" stroke-linecap="round"><path d="M12 3l9 4.5v9L12 21l-9-4.5v-9L12 3z"/><path d="M12 12l9-4.5M12 12v9M12 12L3 7.5"/></svg></span>
+                                <div><div class="nv-chip-label" style="color:#44ccff;">SANDBOX</div><div class="nv-chip-sub" style="color:#44ccff77;">God Mode</div></div>
+                            </div>
+                            ${parseInt(localStorage.getItem('neonVoidStage')||'1') >= 16 ? `<div class="nv-mode-chip" style="--gc:${mc('#00ff88')};border-color:#00ff8866;background:rgba(0,255,136,0.08);animation:pulse 1.5s infinite;" onclick="startCrashedAdventure()">
+                                <span class="nv-chip-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                                <div><div class="nv-chip-label" style="color:#00ff88;">CRASHED</div><div class="nv-chip-sub" style="color:#00ff8877;">Adventure</div></div>
+                            </div>` : ''}
+                            <div class="nv-mode-chip" style="--gc:${mc('#ffd700')};border-color:#ffd70066;background:rgba(255,215,0,0.07);" onclick="startSpeedrun()">
+                                <span class="nv-chip-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
+                                <div><div class="nv-chip-label" style="color:#ffd700;">SPEEDRUN</div><div class="nv-chip-sub" style="color:#ffd70077;">Timer</div></div>
+                            </div>
+                            <div class="nv-mode-chip" style="--gc:${mc('#cc44ff')};border-color:#cc44ff66;background:rgba(204,68,255,0.07);" onclick="startMirror()">
+                                <span class="nv-chip-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cc44ff" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M3 9l4 3-4 3M21 9l-4 3 4 3"/></svg></span>
+                                <div><div class="nv-chip-label" style="color:#cc44ff;">MIRROR</div><div class="nv-chip-sub" style="color:#cc44ff77;">Reversed</div></div>
+                            </div>
+                            <div class="nv-mode-chip" style="--gc:${mc('#ff8800')};border-color:#ff880066;background:rgba(255,136,0,0.07);" onclick="startChaos()">
+                                <span class="nv-chip-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff8800" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></span>
+                                <div><div class="nv-chip-label" style="color:#ff8800;">CHAOS</div><div class="nv-chip-sub" style="color:#ff880077;">Modifiers</div></div>
+                            </div>
+                            <div class="nv-mode-chip" style="--gc:${mc('#ff0055')};border-color:#ff005566;background:rgba(255,0,85,0.07);" onclick="startOneHit()">
+                                <span class="nv-chip-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff0055" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></span>
+                                <div><div class="nv-chip-label" style="color:#ff0055;">ONE HIT</div><div class="nv-chip-sub" style="color:#ff005577;">1 HP</div></div>
+                            </div>
+                            <div class="nv-mode-chip" style="--gc:${mc('#ff4400')};border-color:#ff440066;background:rgba(255,68,0,0.07);" onclick="startBulletHell()">
+                                <span class="nv-chip-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff4400" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg></span>
+                                <div><div class="nv-chip-label" style="color:#ff4400;">BULLET HELL</div><div class="nv-chip-sub" style="color:#ff440077;">10x Fire</div></div>
+                            </div>
+                            <div class="nv-mode-chip" style="--gc:${mc('#00ff88')};border-color:#00ff8866;background:rgba(0,255,136,0.07);" onclick="startPacifist()">
+                                <span class="nv-chip-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M4.22 4.22l15.56 15.56"/></svg></span>
+                                <div><div class="nv-chip-label" style="color:#00ff88;">PACIFIST</div><div class="nv-chip-sub" style="color:#00ff8877;">No Guns</div></div>
+                            </div>
+                            <div class="nv-mode-chip" style="--gc:${mc('#ffd700')};border-color:#ffd70066;background:rgba(255,215,0,0.07);" onclick="startTournament()">
+                                <span class="nv-chip-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2" stroke-linecap="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V22M14 14.66V22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></span>
+                                <div><div class="nv-chip-label" style="color:#ffd700;">TOURNAMENT</div><div class="nv-chip-sub" style="color:#ffd70077;">AI Bracket</div></div>
+                            </div>
+                            <div class="nv-mode-chip" style="--gc:${mc('#44ff88')};border-color:#44ff8866;background:rgba(68,255,136,0.07);" onclick="startSurvivalArena()">
+                                <span class="nv-chip-icon">⚔</span>
+                                <div><div class="nv-chip-label" style="color:#44ff88;">SURVIVAL</div><div class="nv-chip-sub" style="color:#44ff8877;">Arena</div></div>
+                            </div>
+                            <div class="nv-mode-chip" style="--gc:${mc('#44ccff')};border-color:#44ccff66;background:rgba(68,204,255,0.07);" onclick="startRaceMode()">
+                                <span class="nv-chip-icon">🏁</span>
+                                <div><div class="nv-chip-label" style="color:#44ccff;">RACE</div><div class="nv-chip-sub" style="color:#44ccff77;">Checkpoints</div></div>
+                            </div>
+                            <div class="nv-mode-chip" style="--gc:${mc('#88ff44')};border-color:#88ff4466;background:rgba(136,255,68,0.07);" onclick="startEscort()">
+                                <span class="nv-chip-icon">🚀</span>
+                                <div><div class="nv-chip-label" style="color:#88ff44;">ESCORT</div><div class="nv-chip-sub" style="color:#88ff4477;">Protect Cargo</div></div>
+                            </div>
+                            <div class="nv-mode-chip" style="--gc:${mc('#ff8844')};border-color:#ff884466;background:rgba(255,136,68,0.07);" onclick="startHordeDefense()">
+                                <span class="nv-chip-icon">🏰</span>
+                                <div><div class="nv-chip-label" style="color:#ff8844;">HORDE</div><div class="nv-chip-sub" style="color:#ff884477;">Tower Defense</div></div>
+                            </div>
+                            <div class="nv-mode-chip" style="--gc:${mc('#aa44ff')};border-color:#aa44ff66;background:rgba(170,68,255,0.07);" onclick="startRoguelike()">
+                                <span class="nv-chip-icon">🎲</span>
+                                <div><div class="nv-chip-label" style="color:#aa44ff;">ROGUELIKE</div><div class="nv-chip-sub" style="color:#aa44ff77;">10 Floors</div></div>
+                            </div>
+                            <div class="nv-mode-chip" style="--gc:${mc('#88ffcc')};border-color:#88ffcc66;background:rgba(136,255,204,0.07);" onclick="openLevelEditor()">
+                                <span class="nv-chip-icon">🔧</span>
+                                <div><div class="nv-chip-label" style="color:#88ffcc;">EDITOR</div><div class="nv-chip-sub" style="color:#88ffcc77;">Level Design</div></div>
+                            </div>
+                            ${secretChip}${paradoxChip}
+                        </div>
+
                     </div>
 
-                    <!-- GAME MODES HORIZONTAL SCROLL -->
-                    <div class="nv-modes-row">
-                        <div class="nv-mode-chip" style="--gc:${mc('#ff0055')};border-color:#ff005566;background:rgba(255,0,85,0.06);" onclick="startInfinite()">
-                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff0055" stroke-width="2.5" stroke-linecap="round"><path d="M6 12c0-2.2 1.8-4 4-4s4 1.8 4 4-1.8 4-4 4-4-1.8-4-4zM14 12c0-2.2 1.8-4 4-4s4 1.8 4 4-1.8 4-4 4-4-1.8-4-4z"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#ff0055;">INFINITE</div><div class="nv-chip-sub" style="color:#ff005588;">Endless</div></div>
+                    <!-- ===== HANGAR TAB ===== -->
+                    <div id="nv-tab-hangar" class="nv-tab-content">
+
+                        <!-- SKINS SECTION -->
+                        <div class="nv-section-header">SKINS</div>
+                        <div class="nv-skins-row">
+                            <div class="nv-skin-card" style="--gc:${mc('#ff0055')};" onclick="openShop()">
+                                <span class="sk-icon">🚀</span>
+                                <span class="sk-name" style="color:#ff0055;">DEFAULT</span>
+                            </div>
+                            <div class="nv-skin-card" style="--gc:${mc('#00ffcc')};" onclick="openShop()">
+                                <span class="sk-icon">✨</span>
+                                <span class="sk-name" style="color:#00ffcc;">PHANTOM</span>
+                            </div>
+                            <div class="nv-skin-card" style="--gc:${mc('#ffcc00')};" onclick="openShop()">
+                                <span class="sk-icon">⚡</span>
+                                <span class="sk-name" style="color:#ffcc00;">STORM</span>
+                            </div>
+                            <div class="nv-skin-card" style="--gc:${mc('#aa44ff')};" onclick="openShop()">
+                                <span class="sk-icon">🌀</span>
+                                <span class="sk-name" style="color:#aa44ff;">VOID</span>
+                            </div>
+                            <div class="nv-skin-card" style="--gc:${mc('#44ccff')};border-style:dashed;" onclick="openShop()">
+                                <span class="sk-icon">➕</span>
+                                <span class="sk-name" style="color:#44ccff;">MORE</span>
+                            </div>
                         </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#ff4400')};border-color:#ff440066;background:rgba(255,68,0,0.06);" onclick="startBossRush()">
-                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff4400" stroke-width="2" stroke-linecap="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5M13 7l4-4 4 4-4 4"/><path d="M3 3l7.586 7.586M11 14l7 7M8 6.5L1.5 13"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#ff4400;">BOSS RUSH</div><div class="nv-chip-sub" style="color:#ff440088;">${rushLabel}</div></div>
+
+                        <!-- UPGRADES SECTION -->
+                        <div class="nv-section-header" style="margin-top:10px;">UPGRADES</div>
+                        <div class="nv-upgrades-grid">
+                            <div class="nv-upgrade-card" style="--gc:${mc('#ff0055')};" onclick="openShop()">
+                                <div class="uc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff0055" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg></div>
+                                <div class="uc-text"><div class="uc-title" style="color:#ff0055;">FIREPOWER</div><div class="uc-sub">Weapon mods</div></div>
+                            </div>
+                            <div class="nv-upgrade-card" style="--gc:${mc('#00ffcc')};" onclick="openShop()">
+                                <div class="uc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00ffcc" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+                                <div class="uc-text"><div class="uc-title" style="color:#00ffcc;">SHIELDS</div><div class="uc-sub">Defense mods</div></div>
+                            </div>
+                            <div class="nv-upgrade-card" style="--gc:${mc('#ffcc00')};" onclick="openShop()">
+                                <div class="uc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round"><path d="M12 2L4 14h6l-2 8 10-12h-6l2-8z"/></svg></div>
+                                <div class="uc-text"><div class="uc-title" style="color:#ffcc00;">ENGINES</div><div class="uc-sub">Speed mods</div></div>
+                            </div>
+                            <div class="nv-upgrade-card" style="--gc:${mc('#aa44ff')};" onclick="openShop()">
+                                <div class="uc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aa44ff" stroke-width="2" stroke-linecap="round"><path d="M12 3l9 4.5v9L12 21l-9-4.5v-9L12 3z"/></svg></div>
+                                <div class="uc-text"><div class="uc-title" style="color:#aa44ff;">SYSTEMS</div><div class="uc-sub">Special mods</div></div>
+                            </div>
                         </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#00ff88')};border-color:#00ff8866;background:rgba(0,255,136,0.06);" onclick="startTraining()">
-                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#00ff88;">TRAINING</div><div class="nv-chip-sub" style="color:#00ff8888;">Practice</div></div>
+
+                        <!-- PROGRESSION SECTION -->
+                        <div class="nv-section-header" style="margin-top:10px;">PROGRESSION</div>
+                        <div class="nv-prog-grid">
+                            <div class="nv-prog-btn" style="border:1px solid #ffd70044;color:#ffd700;background:rgba(255,215,0,0.07);" onclick="openBattlePass()">BATTLE PASS</div>
+                            <div class="nv-prog-btn" style="border:1px solid #ff880044;color:#ff8800;background:rgba(255,136,0,0.07);" onclick="openMastery()">MASTERY</div>
+                            <div class="nv-prog-btn" style="border:1px solid #44ff8844;color:#44ff88;background:rgba(68,255,136,0.07);" onclick="openBlueprints()">BLUEPRINTS</div>
+                            <div class="nv-prog-btn" style="border:1px solid #ff445544;color:#ff4455;background:rgba(255,68,85,0.07);" onclick="openContracts()">CONTRACTS</div>
+                            <div class="nv-prog-btn" style="border:1px solid #aa44ff44;color:#aa44ff;background:rgba(170,68,255,0.07);" onclick="openBlackMarket()">BLACK MARKET</div>
+                            <div class="nv-prog-btn" style="border:1px solid #00ffcc44;color:#00ffcc;background:rgba(0,255,204,0.07);" onclick="openGemShop()">GEM SHOP</div>
+                            <div class="nv-prog-btn" style="border:1px solid #ffcc0044;color:#ffcc00;background:rgba(255,204,0,0.07);" onclick="openTradePost()">TRADE POST</div>
+                            <div class="nv-prog-btn" style="border:1px solid #ff005544;color:#ff0055;background:rgba(255,0,85,0.07);" onclick="openBounties()">BOUNTIES</div>
+                            <div class="nv-prog-btn" style="border:1px solid #4488ff44;color:#4488ff;background:rgba(68,136,255,0.07);" onclick="openRebirth()">REBIRTH</div>
                         </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#00ccff')};border-color:#00ccff66;background:rgba(0,204,255,0.06);" onclick="openMultiplayer()">
-                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00ccff" stroke-width="2" stroke-linecap="round"><path d="M16 3.13a4 4 0 0 1 0 7.75M21 21v-2a4 4 0 0 0-3-3.87M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#00ccff;">CO-OP</div><div class="nv-chip-sub" style="color:#00ccff88;">Multiplayer</div></div>
-                        </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#ffcc00')};border-color:#ffcc0066;background:rgba(255,204,0,0.06);animation:pulse 2s infinite;" onclick="startArcade()">
-                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#ffcc00;">ARCADE</div><div class="nv-chip-sub" style="color:#ffcc0088;">${arcadeHighScore > 0 ? 'Best: ' + arcadeHighScore.toLocaleString() : '3 Lives'}</div></div>
-                        </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#44ccff')};border-color:#44ccff66;background:rgba(68,204,255,0.06);" onclick="startSandbox()">
-                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#44ccff" stroke-width="2" stroke-linecap="round"><path d="M12 3l9 4.5v9L12 21l-9-4.5v-9L12 3z"/><path d="M12 12l9-4.5M12 12v9M12 12L3 7.5"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#44ccff;">SANDBOX</div><div class="nv-chip-sub" style="color:#44ccff88;">God Mode</div></div>
-                        </div>
-                        ${parseInt(localStorage.getItem('neonVoidStage')||'1') >= 16 ? `<div class="nv-mode-chip" style="--gc:\${mc('#00ff88')};border-color:#00ff8866;background:rgba(0,255,136,0.08);animation:pulse 1.5s infinite;" onclick="startCrashedAdventure()">
-                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#00ff88;">CRASHED</div><div class="nv-chip-sub" style="color:#00ff8888;">Crashed Adventure</div></div>
-                        </div>` : ''}
-                        
-                        <div class="nv-mode-chip" style="--gc:${mc('#ffd700')};border-color:#ffd70066;background:rgba(255,215,0,0.06);" onclick="startSpeedrun()">
-                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#ffd700;">SPEEDRUN</div><div class="nv-chip-sub" style="color:#ffd70088;">Timer</div></div>
-                        </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#cc44ff')};border-color:#cc44ff66;background:rgba(204,68,255,0.06);" onclick="startMirror()" title="Everything is horizontally flipped - controls are reversed!">
-                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#cc44ff" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M3 9l4 3-4 3M21 9l-4 3 4 3"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#cc44ff;">MIRROR</div><div class="nv-chip-sub" style="color:#cc44ff88;">Controls Reversed!</div></div>
-                        </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#ff8800')};border-color:#ff880066;background:rgba(255,136,0,0.06);" onclick="startChaos()">
-                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff8800" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#ff8800;">CHAOS</div><div class="nv-chip-sub" style="color:#ff880088;">Modifiers</div></div>
-                        </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#ff0055')};border-color:#ff005566;background:rgba(255,0,85,0.06);" onclick="startOneHit()">
-                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff0055" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#ff0055;">ONE HIT</div><div class="nv-chip-sub" style="color:#ff005588;">1 HP</div></div>
-                        </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#ff4400')};border-color:#ff440066;background:rgba(255,68,0,0.06);" onclick="startBulletHell()">
-                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff4400" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#ff4400;">BULLET HELL</div><div class="nv-chip-sub" style="color:#ff440088;">10x Fire</div></div>
-                        </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#00ff88')};border-color:#00ff8866;background:rgba(0,255,136,0.06);" onclick="startPacifist()">
-                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M4.22 4.22l15.56 15.56"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#00ff88;">PACIFIST</div><div class="nv-chip-sub" style="color:#00ff8888;">No Guns</div></div>
-                        </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#ffd700')};border-color:#ffd70066;background:rgba(255,215,0,0.06);" onclick="startTournament()">
-                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2" stroke-linecap="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V22M14 14.66V22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#ffd700;">TOURNAMENT</div><div class="nv-chip-sub" style="color:#ffd70088;">AI Bracket</div></div>
-                        </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#44ff88')};border-color:#44ff8866;background:rgba(68,255,136,0.06);" onclick="startSurvivalArena()">
-                            <span class="nv-chip-icon">⚔</span>
-                            <div><div class="nv-chip-label" style="color:#44ff88;">SURVIVAL</div><div class="nv-chip-sub" style="color:#44ff8888;">Arena</div></div>
-                        </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#44ccff')};border-color:#44ccff66;background:rgba(68,204,255,0.06);" onclick="startRaceMode()">
-                            <span class="nv-chip-icon">🏁</span>
-                            <div><div class="nv-chip-label" style="color:#44ccff;">RACE</div><div class="nv-chip-sub" style="color:#44ccff88;">Checkpoints</div></div>
-                        </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#88ff44')};border-color:#88ff4466;background:rgba(136,255,68,0.06);" onclick="startEscort()">
-                            <span class="nv-chip-icon">🚀</span>
-                            <div><div class="nv-chip-label" style="color:#88ff44;">ESCORT</div><div class="nv-chip-sub" style="color:#88ff4488;">Protect Cargo</div></div>
-                        </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#ff8844')};border-color:#ff884466;background:rgba(255,136,68,0.06);" onclick="startHordeDefense()">
-                            <span class="nv-chip-icon">🏰</span>
-                            <div><div class="nv-chip-label" style="color:#ff8844;">HORDE</div><div class="nv-chip-sub" style="color:#ff884488;">Tower Defense</div></div>
-                        </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#ffaa00')};border-color:#ffaa0066;background:rgba(255,170,0,0.06);" onclick="startTagTeam()">
-                            <span class="nv-chip-icon">🤝</span>
-                            <div><div class="nv-chip-label" style="color:#ffaa00;">TAG TEAM</div><div class="nv-chip-sub" style="color:#ffaa0088;">Co-op Swap</div></div>
-                        </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#ff2244')};border-color:#ff224466;background:rgba(255,34,68,0.06);" onclick="startInfection()">
-                            <span class="nv-chip-icon">🦠</span>
-                            <div><div class="nv-chip-label" style="color:#ff2244;">INFECTION</div><div class="nv-chip-sub" style="color:#ff224488;">Co-op Tag</div></div>
-                        </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#aa44ff')};border-color:#aa44ff66;background:rgba(170,68,255,0.06);" onclick="startRoguelike()">
-                            <span class="nv-chip-icon">🎲</span>
-                            <div><div class="nv-chip-label" style="color:#aa44ff;">ROGUELIKE</div><div class="nv-chip-sub" style="color:#aa44ff88;">10 Floors</div></div>
-                        </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#ff4488')};border-color:#ff448866;background:rgba(255,68,136,0.06);" onclick="startPvP()">
-                            <span class="nv-chip-icon">⚡</span>
-                            <div><div class="nv-chip-label" style="color:#ff4488;">1v1 PVP</div><div class="nv-chip-sub" style="color:#ff448888;">Duel</div></div>
-                        </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#4488ff')};border-color:#4488ff66;background:rgba(68,136,255,0.06);" onclick="startCaptureTheFlag()">
-                            <span class="nv-chip-icon">🚩</span>
-                            <div><div class="nv-chip-label" style="color:#4488ff;">CTF</div><div class="nv-chip-sub" style="color:#4488ff88;">Capture Flag</div></div>
-                        </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#88ffcc')};border-color:#88ffcc66;background:rgba(136,255,204,0.06);" onclick="openLevelEditor()">
-                            <span class="nv-chip-icon">🔧</span>
-                            <div><div class="nv-chip-label" style="color:#88ffcc;">EDITOR</div><div class="nv-chip-sub" style="color:#88ffcc88;">Level Design</div></div>
-                        </div>
-                        ${secretChip}${paradoxChip}
+                        <div style="height:16px;"></div>
+
                     </div>
 
-                    <!-- QUICK ACCESS GRID -->
-                    <div class="nv-grid">
-                        <div class="nv-grid-card" style="--gc:${mc('#ffcc00')};" onclick="openShop()">
-                            <div class="gc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
-                            <div class="gc-text"><div class="gc-title" style="color:#ffcc00;">HANGAR</div><div class="gc-sub">Black Market</div></div>
+                    <!-- ===== CO-OP TAB ===== -->
+                    <div id="nv-tab-coop" class="nv-tab-content">
+
+                        <div style="font-size:11px;letter-spacing:4px;color:#00ccff;font-weight:bold;text-align:center;padding:8px 0 12px;">MULTIPLAYER</div>
+                        <div class="nv-mp-grid">
+                            <div class="nv-mp-card" style="--gc:${mc('#00ccff')};" onclick="openMultiplayer()">
+                                <span class="mc-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#00ccff" stroke-width="2" stroke-linecap="round"><path d="M16 3.13a4 4 0 0 1 0 7.75M21 21v-2a4 4 0 0 0-3-3.87M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg></span>
+                                <div class="mc-title" style="color:#00ccff;">CO-OP</div>
+                                <div class="mc-desc" style="color:#00ccff77;">Team up online</div>
+                            </div>
+                            <div class="nv-mp-card" style="--gc:${mc('#ff4488')};" onclick="startPvP()">
+                                <span class="mc-icon">⚡</span>
+                                <div class="mc-title" style="color:#ff4488;">1v1 PvP</div>
+                                <div class="mc-desc" style="color:#ff448877;">Pilot duel</div>
+                            </div>
+                            <div class="nv-mp-card" style="--gc:${mc('#4488ff')};" onclick="startCaptureTheFlag()">
+                                <span class="mc-icon">🚩</span>
+                                <div class="mc-title" style="color:#4488ff;">CTF</div>
+                                <div class="mc-desc" style="color:#4488ff77;">Capture the flag</div>
+                            </div>
+                            <div class="nv-mp-card" style="--gc:${mc('#ff2244')};" onclick="startInfection()">
+                                <span class="mc-icon">🦠</span>
+                                <div class="mc-title" style="color:#ff2244;">INFECTION</div>
+                                <div class="mc-desc" style="color:#ff224477;">Co-op tag mode</div>
+                            </div>
+                            <div class="nv-mp-card" style="--gc:${mc('#ffaa00')};" onclick="startTagTeam()">
+                                <span class="mc-icon">🤝</span>
+                                <div class="mc-title" style="color:#ffaa00;">TAG TEAM</div>
+                                <div class="mc-desc" style="color:#ffaa0077;">Co-op swap</div>
+                            </div>
+                            <div class="nv-mp-card" style="--gc:${mc('#ffd700')};" onclick="startTournament()">
+                                <span class="mc-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2" stroke-linecap="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V22M14 14.66V22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></span>
+                                <div class="mc-title" style="color:#ffd700;">TOURNAMENT</div>
+                                <div class="mc-desc" style="color:#ffd70077;">AI bracket</div>
+                            </div>
                         </div>
-                        <div class="nv-grid-card" style="--gc:${mc('#ff88ff')};" onclick="openLeaderboard()">
-                            <div class="gc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff88ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V22M14 14.66V22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></div>
-                            <div class="gc-text"><div class="gc-title" style="color:#ff88ff;">RANKS</div><div class="gc-sub">Leaderboards</div></div>
-                        </div>
+                        <div style="height:16px;"></div>
+
                     </div>
-                    <div style="margin-top:8px;padding:0 4px;">
-                        <div onclick="let p=this.nextElementSibling;p.style.display=p.style.display==='none'?'flex':'none';this.querySelector('span').textContent=p.style.display==='none'?'+':'-'" style="font-size:10px;letter-spacing:3px;color:#ffffff66;margin-bottom:6px;cursor:pointer;display:flex;align-items:center;gap:6px;padding:8px 0;border-bottom:1px solid #ffffff11;">PROGRESSION <span style="color:#00ffcc;font-size:14px;">+</span></div>
-                        <div style="display:none;gap:6px;flex-wrap:wrap;padding-top:8px;">
-                            <div style="padding:6px 12px;border:1px solid #ffd70044;border-radius:8px;cursor:pointer;font-size:10px;color:#ffd700;letter-spacing:1px;" onclick="openBattlePass()">BATTLE PASS</div>
-                            <div style="padding:6px 12px;border:1px solid #ff880044;border-radius:8px;cursor:pointer;font-size:10px;color:#ff8800;letter-spacing:1px;" onclick="openMastery()">MASTERY</div>
-                            <div style="padding:6px 12px;border:1px solid #44ff8844;border-radius:8px;cursor:pointer;font-size:10px;color:#44ff88;letter-spacing:1px;" onclick="openBlueprints()">BLUEPRINTS</div>
-                            <div style="padding:6px 12px;border:1px solid #ff445544;border-radius:8px;cursor:pointer;font-size:10px;color:#ff4455;letter-spacing:1px;" onclick="openContracts()">CONTRACTS</div>
-                            <div style="padding:6px 12px;border:1px solid #aa44ff44;border-radius:8px;cursor:pointer;font-size:10px;color:#aa44ff;letter-spacing:1px;" onclick="openBlackMarket()">BLACK MARKET</div>
-                            <div style="padding:6px 12px;border:1px solid #00ffcc44;border-radius:8px;cursor:pointer;font-size:10px;color:#00ffcc;letter-spacing:1px;" onclick="openGemShop()">GEM SHOP</div>
-                            <div style="padding:6px 12px;border:1px solid #ffcc0044;border-radius:8px;cursor:pointer;font-size:10px;color:#ffcc00;letter-spacing:1px;" onclick="openTradePost()">TRADE POST</div>
-                            <div style="padding:6px 12px;border:1px solid #ff005544;border-radius:8px;cursor:pointer;font-size:10px;color:#ff0055;letter-spacing:1px;" onclick="openBounties()">BOUNTIES</div>
-                            <div style="padding:6px 12px;border:1px solid #4488ff44;border-radius:8px;cursor:pointer;font-size:10px;color:#4488ff;letter-spacing:1px;" onclick="openRebirth()">REBIRTH</div>
-                            <div style="padding:6px 12px;border:1px solid #ffd70044;border-radius:8px;cursor:pointer;font-size:10px;color:#ffd700;letter-spacing:1px;" onclick="openVIPPanel()">VIP</div>
-                            <div style="padding:6px 12px;border:1px solid #ffffff44;border-radius:8px;cursor:pointer;font-size:10px;color:#ffffff;letter-spacing:1px;" onclick="openAchievements()">ACHIEVEMENTS</div>
-                            <div style="padding:6px 12px;border:1px solid #00ffcc44;border-radius:8px;cursor:pointer;font-size:10px;color:#00ffcc;letter-spacing:1px;" onclick="openClan()">CLAN</div>
-                            <div style="padding:6px 12px;border:1px solid #ff88ff44;border-radius:8px;cursor:pointer;font-size:10px;color:#ff88ff;letter-spacing:1px;" onclick="openPrestige()">PRESTIGE</div>
-                            <div style="padding:6px 12px;border:1px solid #ffd70044;border-radius:8px;cursor:pointer;font-size:10px;color:#ffd700;letter-spacing:1px;" onclick="openVIPPanel()">VIP</div>
-                        </div>
-                    </div>
-                    <div style="height:80px;"></div>
 
-                    <!-- ANIMATED INFO PANEL -->
-                    <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px;">
+                    <!-- ===== RANKS TAB ===== -->
+                    <div id="nv-tab-ranks" class="nv-tab-content">
 
-                        <!-- Animated ship showcase -->
-                        <div style="position:relative;border:1.5px solid rgba(0,255,204,0.2);border-radius:10px;background:linear-gradient(180deg,rgba(0,255,204,0.03) 0%,rgba(0,0,0,0.6) 100%);padding:8px 12px;overflow:hidden;">
-                            <canvas id="menu-ship-anim" style="width:100%;height:60px;display:block;border-radius:6px;"></canvas>
-                            <div style="position:absolute;bottom:6px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:flex-end;pointer-events:none;">
-                                <div>
-                                    <div style="font-size:7px;color:#00ffcc88;letter-spacing:2px;">PILOT</div>
-                                    <div style="font-size:11px;color:#00ffcc;font-weight:bold;text-shadow:0 0 10px #00ffcc;">${currentUsername}</div>
-                                </div>
-                                <div style="text-align:right;">
-                                    <div style="font-size:7px;color:#ff005588;letter-spacing:2px;">THREAT</div>
-                                    <div style="font-size:11px;color:#ff0055;font-weight:bold;text-shadow:0 0 10px #ff0055;">${unlocked >= 15 ? 'VOID WALKER' : unlocked >= 10 ? 'ELITE' : unlocked >= 5 ? 'VETERAN' : 'ROOKIE'}</div>
-                                </div>
+                        <div class="nv-section-header">LEADERBOARDS</div>
+                        <div class="nv-ranks-list">
+                            <div class="nv-rank-row" style="--gc:${mc('#ff0055')};" onclick="openLeaderboard()">
+                                <span class="rr-icon">∞</span>
+                                <div class="rr-text"><div class="rr-title" style="color:#ff0055;">INFINITE MODE</div><div class="rr-sub">Top endless pilots</div></div>
+                                <span class="rr-arrow" style="color:#ff0055;">›</span>
+                            </div>
+                            <div class="nv-rank-row" style="--gc:${mc('#ff4400')};" onclick="openLeaderboard()">
+                                <span class="rr-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff4400" stroke-width="2" stroke-linecap="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5M13 7l4-4 4 4-4 4"/></svg></span>
+                                <div class="rr-text"><div class="rr-title" style="color:#ff4400;">BOSS RUSH</div><div class="rr-sub">Fastest clears</div></div>
+                                <span class="rr-arrow" style="color:#ff4400;">›</span>
+                            </div>
+                            <div class="nv-rank-row" style="--gc:${mc('#44ff88')};" onclick="openLeaderboard()">
+                                <span class="rr-icon">⚔</span>
+                                <div class="rr-text"><div class="rr-title" style="color:#44ff88;">SURVIVAL</div><div class="rr-sub">Longest survivors</div></div>
+                                <span class="rr-arrow" style="color:#44ff88;">›</span>
                             </div>
                         </div>
 
-                        <!-- Tip carousel with typing effect -->
-                        <div id="menu-tip-box" style="border:1px solid rgba(255,136,0,0.2);border-radius:10px;background:rgba(255,136,0,0.04);padding:12px 16px;display:flex;align-items:center;gap:10px;">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff8800" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-                            <div style="flex:1;">
-                                <div style="font-size:9px;color:#ff880088;letter-spacing:2px;margin-bottom:2px;">INTEL BRIEF</div>
-                                <div id="menu-tip-text" style="font-size:12px;color:#ff8800cc;min-height:16px;font-family:monospace;"></div>
+                        <div class="nv-section-header" style="margin-top:12px;">PROFILE</div>
+                        <div class="nv-ranks-list">
+                            <div class="nv-rank-row" style="--gc:${mc('#ffffff')};" onclick="openAchievements()">
+                                <span class="rr-icon">🏆</span>
+                                <div class="rr-text"><div class="rr-title" style="color:#ffffff;">ACHIEVEMENTS</div><div class="rr-sub">Track your milestones</div></div>
+                                <span class="rr-arrow">›</span>
+                            </div>
+                            <div class="nv-rank-row" style="--gc:${mc('#00ffcc')};" onclick="openClan()">
+                                <span class="rr-icon">🛸</span>
+                                <div class="rr-text"><div class="rr-title" style="color:#00ffcc;">CLAN</div><div class="rr-sub">Join a squadron</div></div>
+                                <span class="rr-arrow" style="color:#00ffcc;">›</span>
+                            </div>
+                            <div class="nv-rank-row" style="--gc:${mc('#ffd700')};" onclick="openVIPPanel()">
+                                <span class="rr-icon">💎</span>
+                                <div class="rr-text"><div class="rr-title" style="color:#ffd700;">VIP STATUS</div><div class="rr-sub">${unlocked >= 10 ? 'Elite rank active' : 'Unlock at Sector 10'}</div></div>
+                                <span class="rr-arrow" style="color:#ffd700;">›</span>
+                            </div>
+                            <div class="nv-rank-row" style="--gc:${mc('#ff88ff')};" onclick="openPrestige()">
+                                <span class="rr-icon">🌟</span>
+                                <div class="rr-text"><div class="rr-title" style="color:#ff88ff;">PRESTIGE</div><div class="rr-sub">Reset for glory</div></div>
+                                <span class="rr-arrow" style="color:#ff88ff;">›</span>
                             </div>
                         </div>
-
-                        <!-- Quick stats row -->
-                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
-                            <div style="border:1px solid rgba(255,204,0,0.15);border-radius:10px;background:rgba(255,204,0,0.04);padding:10px;text-align:center;">
-                                <div style="font-size:9px;color:#ffcc0088;letter-spacing:1px;">SECTORS</div>
-                                <div style="font-size:20px;color:#ffcc00;font-weight:bold;text-shadow:0 0 10px #ffcc0044;">${unlocked}/15</div>
-                            </div>
-                            <div style="border:1px solid rgba(0,255,204,0.15);border-radius:10px;background:rgba(0,255,204,0.04);padding:10px;text-align:center;">
-                                <div style="font-size:9px;color:#00ffcc88;letter-spacing:1px;">CREDITS</div>
-                                <div style="font-size:20px;color:#00ffcc;font-weight:bold;text-shadow:0 0 10px #00ffcc44;">${totalCoins >= 1000000 ? (totalCoins/1000000).toFixed(1)+'M' : totalCoins >= 1000 ? (totalCoins/1000).toFixed(0)+'K' : totalCoins}</div>
-                            </div>
-                            <div style="border:1px solid rgba(170,0,255,0.15);border-radius:10px;background:rgba(170,0,255,0.04);padding:10px;text-align:center;">
-                                <div style="font-size:9px;color:#aa00ff88;letter-spacing:1px;">UPGRADES</div>
-                                <div style="font-size:20px;color:#aa00ff;font-weight:bold;text-shadow:0 0 10px #aa00ff44;">${purchasedUpgrades.length}</div>
-                            </div>
-                        </div>
+                        <div style="height:16px;"></div>
 
                     </div>
 
@@ -10042,20 +10170,20 @@ function generateSyncCode() {
 
                 <!-- BOTTOM NAVIGATION BAR -->
                 <div class="nv-bottomnav">
-                    <div class="nv-nav-tab active" onclick="openMissionSelect()">
-                        <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff0055" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L4 14h6l-2 8 10-12h-6l2-8z"/></svg></span>
+                    <div class="nv-nav-tab active" onclick="switchMenuTab('battle')">
+                        <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L4 14h6l-2 8 10-12h-6l2-8z"/></svg></span>
                         <span class="nav-label">BATTLE</span>
                     </div>
-                    <div class="nv-nav-tab" onclick="openShop()">
-                        <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
+                    <div class="nv-nav-tab" onclick="switchMenuTab('hangar')">
+                        <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
                         <span class="nav-label">HANGAR</span>
                     </div>
-                    <div class="nv-nav-tab" onclick="openMultiplayer()">
-                        <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00ccff" stroke-width="2" stroke-linecap="round"><path d="M16 3.13a4 4 0 0 1 0 7.75M21 21v-2a4 4 0 0 0-3-3.87M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg></span>
+                    <div class="nv-nav-tab" onclick="switchMenuTab('coop')">
+                        <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 3.13a4 4 0 0 1 0 7.75M21 21v-2a4 4 0 0 0-3-3.87M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg></span>
                         <span class="nav-label">CO-OP</span>
                     </div>
-                    <div class="nv-nav-tab" onclick="openLeaderboard()">
-                        <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff88ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V22M14 14.66V22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></span>
+                    <div class="nv-nav-tab" onclick="switchMenuTab('ranks')">
+                        <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V22M14 14.66V22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></span>
                         <span class="nav-label">RANKS</span>
                     </div>
                 </div>
@@ -10115,9 +10243,9 @@ function generateSyncCode() {
                 }
             } catch(e) {}
 
-            // ---- Animated ship showcase on #menu-ship-anim ----
-            try {
-                let shipAnimCanvas = document.getElementById('menu-ship-anim');
+            // ---- Animated ship showcase removed (tab-based layout) ----
+            try { if (false) {
+                let shipAnimCanvas = null;
                 if (shipAnimCanvas) {
                     let sac = shipAnimCanvas.getContext('2d');
 
@@ -10375,11 +10503,11 @@ function generateSyncCode() {
                         menuShipRAF = null;
                     };
                 }
-            } catch(e) { console.log('Ship anim error:', e); }
+            }} catch(e) { console.log('Ship anim error:', e); }
 
-            // ---- Tip carousel with typing effect ----
-            try {
-                let tipEl = document.getElementById('menu-tip-text');
+            // ---- Tip carousel removed (tab-based layout) ----
+            try { if (false) {
+                let tipEl = null;
                 if (tipEl) {
                     const TIPS = [
                         'Dash through enemy bullets for a close-call XP bonus',
@@ -10430,7 +10558,7 @@ function generateSyncCode() {
                         tipInterval = null;
                     };
                 }
-            } catch(e) { console.log('Tip anim error:', e); }
+            }} catch(e) { console.log('Tip anim error:', e); }
 
             document.getElementById('mobile-controls').style.display = 'none';
         };
