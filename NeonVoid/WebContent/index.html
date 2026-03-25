@@ -64,8 +64,9 @@
         .win-theme button:hover { background: #00ff00; color: black; }
         .grid-button { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100px; min-width: 150px; }
         
-        .skin-card { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; border: 2px solid #fff; background: rgba(0,0,0,0.8); gap: 10px; width: 200px; transition: all 0.2s;}
-        .skin-card button { min-width: 100px; padding: 10px; font-size: 16px; }
+        .skin-card { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 12px 8px; border: 2px solid #fff; background: rgba(0,0,0,0.8); gap: 6px; width: calc(50% - 12px); min-width: 0; max-width: 180px; transition: all 0.2s; box-sizing: border-box;}
+        .skin-card button { min-width: 80px; padding: 8px; font-size: 13px; }
+        @media (max-width: 500px) { .skin-card { width: calc(50% - 8px); max-width: none; padding: 10px 6px; } .skin-card button { min-width: 70px; padding: 6px; font-size: 12px; } }
         .skin-preview { width: 40px; height: 40px; border-radius: 50%; box-shadow: 0 0 20px currentColor; background: currentColor; margin-bottom: 10px; }
         
         #mobile-controls { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; z-index: 15; pointer-events: none; }
@@ -258,7 +259,7 @@
         </script>
         <div style="font-size:20px;color:#00ffcc55;letter-spacing:12px;margin-bottom:8px;animation:fadeIn 1s ease;">WELCOME TO</div>
         <div class="title-text" style="-webkit-text-stroke: 3px #ff0055; text-shadow: 0 0 50px #ff0055, 0 0 100px #ff005580; font-size:90px; animation:titlePulse 3s ease-in-out infinite;">NEON VOID</div>
-        <style>@keyframes titlePulse { 0%,100% { text-shadow: 0 0 50px #ff0055, 0 0 100px #ff005580; } 50% { text-shadow: 0 0 80px #ff0055, 0 0 150px #ff005580, 0 0 200px #ff005540; } } @keyframes fadeIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }</style>
+        <style>@keyframes titlePulse { 0%,100% { text-shadow: 0 0 15px #ff005544, 0 0 30px #ff005522; } 50% { text-shadow: 0 0 25px #ff005555, 0 0 50px #ff005530; } } @keyframes fadeIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }</style>
         <div class="subtitle-text" style="color:#888;font-size:16px;letter-spacing:4px;margin-top:5px;">THE ULTIMATE SPACE SHOOTER</div>
         <div style="width:60px;height:2px;background:linear-gradient(90deg,transparent,#00ffcc,transparent);margin:20px auto;"></div>
         <div class="subtitle-text" style="color:#00ffcc;font-size:14px;letter-spacing:6px;">SELECT CALLSIGN</div>
@@ -8866,8 +8867,8 @@ function generateSyncCode() {
             return h;
         }
         // Placeholder hashes — replace with actual values before deploying:
-        const _NV_GOD_UHASH = 0; // _nvSimpleHash('YOURADMINNAME'.toUpperCase())
-        const _NV_GOD_PHASH = 0; // _nvSimpleHash('yourpassword')
+        const _NV_GOD_UHASH = 1964517266;
+        const _NV_GOD_PHASH = -602602270;
         function _nvCheckGod(user, pass) {
             if (_NV_GOD_UHASH === 0 && _NV_GOD_PHASH === 0) return false; // disabled
             return _nvSimpleHash(user.toUpperCase()) === _NV_GOD_UHASH &&
