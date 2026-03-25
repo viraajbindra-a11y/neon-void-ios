@@ -403,12 +403,12 @@
             <button id="btn-toggle-hardcore" onclick="toggleHardcore()" style="width:100%; border-color:#ff0000; color:#ff0000; box-shadow: 0 0 20px #ff0000;">NIGHTMARE MODE: OFF</button>
             <button id="btn-toggle-3d" onclick="toggle3D(!appSettings.render3D)" style="width:100%; border-color:#00ccff; color:#00ccff; box-shadow: 0 0 20px #00ccff;">3D MODE: OFF</button>
             <button onclick="logoutUser()" style="width:100%; border-color:#ffcc00; color:#ffcc00; margin-top: 30px;">CHANGE CALLSIGN</button>
-            <button onclick="generateSyncCode()" style="width:100%; border-color:#00ffcc; color:#00ffcc; margin-top: 30px; box-shadow: 0 0 15px #00ffcc;">📋 GENERATE SYNC CODE</button>
-            <button onclick="importSyncCode()" style="width:100%; border-color:#00ffcc; color:#00ffcc; box-shadow: 0 0 15px #00ffcc;">📥 IMPORT SYNC CODE</button>
+            <button onclick="generateSyncCode()" style="width:100%; border-color:#00ffcc; color:#00ffcc; margin-top: 30px; box-shadow: 0 0 15px #00ffcc;">☰ GENERATE SYNC CODE</button>
+            <button onclick="importSyncCode()" style="width:100%; border-color:#00ffcc; color:#00ffcc; box-shadow: 0 0 15px #00ffcc;">↓ IMPORT SYNC CODE</button>
             <div style="color:#666; font-size:11px; margin-top:5px;">Copy the code on one device, paste on another to sync progress</div>
             <button onclick="exportSave()" style="width:100%; border-color:#00ff88; color:#00ff88; margin-top: 20px;">EXPORT SAVE FILE</button>
             <button onclick="importSave()" style="width:100%; border-color:#00ff88; color:#00ff88;">IMPORT SAVE FILE</button>
-            <button onclick="resetSaveData()" style="width:100%; border-color:#ff0000; color:#ff0000; margin-top: 10px;">⚠️ WIPE SAVE DATA ⚠️</button><div style="margin-top:30px;width:100%;border-top:1px solid #333;padding-top:20px;"><div style="color:#00ffcc;font-size:14px;font-weight:bold;text-align:center;margin-bottom:12px;letter-spacing:3px;">ACCESSIBILITY</div><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:10px;"><button onclick="setCBMode('none')" id="cb-none" style="border-color:#555;color:#555;padding:5px 10px;font-size:11px;">NORMAL</button><button onclick="setCBMode('protanopia')" id="cb-prot" style="border-color:#555;color:#555;padding:5px 10px;font-size:11px;">PROTANOPIA</button><button onclick="setCBMode('deuteranopia')" id="cb-deut" style="border-color:#555;color:#555;padding:5px 10px;font-size:11px;">DEUTERANOPIA</button><button onclick="setCBMode('tritanopia')" id="cb-trit" style="border-color:#555;color:#555;padding:5px 10px;font-size:11px;">TRITANOPIA</button></div><label style="color:#aaa;font-size:12px;display:block;margin-bottom:4px;">AUTO-AIM: <span id="autoaim-val">0</span>%</label><input type="range" min="0" max="100" value="0" id="autoaim-slider" oninput="setAutoAim(this.value)" style="width:100%;margin-bottom:10px;"><label style="color:#aaa;font-size:12px;display:block;margin-bottom:4px;">SCREEN SHAKE: <span id="shake-val">100</span>%</label><input type="range" min="0" max="100" value="100" id="shake-slider" oninput="setShakeIntensity(this.value)" style="width:100%;margin-bottom:10px;"><button onclick="toggleOneHandMode()" id="btn-onehand" style="width:100%;border-color:#888;color:#888;font-size:12px;margin-bottom:0;">ONE-HAND MODE: OFF</button></div><div style="margin-top:16px;width:100%;border-top:1px solid #333;padding-top:16px;"><div style="color:#ffcc00;font-size:14px;font-weight:bold;text-align:center;margin-bottom:10px;letter-spacing:3px;">KEYBINDS</div><div id="keybind-list" style="width:100%;"></div><button onclick="resetKeybinds()" style="width:100%;border-color:#888;color:#888;margin-top:8px;font-size:12px;">RESET KEYBINDS</button></div><div style="margin-top:16px;width:100%;border-top:1px solid #333;padding-top:16px;"><button onclick="togglePerfMode()" id="btn-perfmode" style="width:100%;border-color:#ff8800;color:#ff8800;">PERFORMANCE MODE: OFF</button><div style="color:#666;font-size:11px;text-align:center;margin-top:4px;">Strips all effects for max FPS on low-end devices</div></div><div style="margin-top:16px;width:100%;border-top:1px solid #333;padding-top:16px;"><div style="color:#ff00ff;font-size:14px;font-weight:bold;text-align:center;margin-bottom:10px;letter-spacing:3px;">MODS</div><textarea id="mod-json" placeholder='{"enemies":[{...}],"rooms":[{...}]}' style="width:100%;height:70px;background:#0a0a12;color:#ff00ff;border:1px solid #440044;padding:8px;font-family:monospace;font-size:11px;box-sizing:border-box;resize:vertical;"></textarea><div style="display:flex;gap:8px;margin-top:8px;"><button onclick="loadMod()" style="flex:1;border-color:#ff00ff;color:#ff00ff;font-size:12px;">LOAD MOD</button><button onclick="clearMod()" style="flex:1;border-color:#888;color:#888;font-size:12px;">CLEAR MODS</button></div><div id="mod-status" style="color:#888;font-size:11px;text-align:center;margin-top:4px;"></div></div>
+            <button onclick="resetSaveData()" style="width:100%; border-color:#ff0000; color:#ff0000; margin-top: 10px;">⚠ WIPE SAVE DATA ⚠</button><div style="margin-top:30px;width:100%;border-top:1px solid #333;padding-top:20px;"><div style="color:#00ffcc;font-size:14px;font-weight:bold;text-align:center;margin-bottom:12px;letter-spacing:3px;">ACCESSIBILITY</div><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:10px;"><button onclick="setCBMode('none')" id="cb-none" style="border-color:#555;color:#555;padding:5px 10px;font-size:11px;">NORMAL</button><button onclick="setCBMode('protanopia')" id="cb-prot" style="border-color:#555;color:#555;padding:5px 10px;font-size:11px;">PROTANOPIA</button><button onclick="setCBMode('deuteranopia')" id="cb-deut" style="border-color:#555;color:#555;padding:5px 10px;font-size:11px;">DEUTERANOPIA</button><button onclick="setCBMode('tritanopia')" id="cb-trit" style="border-color:#555;color:#555;padding:5px 10px;font-size:11px;">TRITANOPIA</button></div><label style="color:#aaa;font-size:12px;display:block;margin-bottom:4px;">AUTO-AIM: <span id="autoaim-val">0</span>%</label><input type="range" min="0" max="100" value="0" id="autoaim-slider" oninput="setAutoAim(this.value)" style="width:100%;margin-bottom:10px;"><label style="color:#aaa;font-size:12px;display:block;margin-bottom:4px;">SCREEN SHAKE: <span id="shake-val">100</span>%</label><input type="range" min="0" max="100" value="100" id="shake-slider" oninput="setShakeIntensity(this.value)" style="width:100%;margin-bottom:10px;"><button onclick="toggleOneHandMode()" id="btn-onehand" style="width:100%;border-color:#888;color:#888;font-size:12px;margin-bottom:0;">ONE-HAND MODE: OFF</button></div><div style="margin-top:16px;width:100%;border-top:1px solid #333;padding-top:16px;"><div style="color:#ffcc00;font-size:14px;font-weight:bold;text-align:center;margin-bottom:10px;letter-spacing:3px;">KEYBINDS</div><div id="keybind-list" style="width:100%;"></div><button onclick="resetKeybinds()" style="width:100%;border-color:#888;color:#888;margin-top:8px;font-size:12px;">RESET KEYBINDS</button></div><div style="margin-top:16px;width:100%;border-top:1px solid #333;padding-top:16px;"><button onclick="togglePerfMode()" id="btn-perfmode" style="width:100%;border-color:#ff8800;color:#ff8800;">PERFORMANCE MODE: OFF</button><div style="color:#666;font-size:11px;text-align:center;margin-top:4px;">Strips all effects for max FPS on low-end devices</div></div><div style="margin-top:16px;width:100%;border-top:1px solid #333;padding-top:16px;"><div style="color:#ff00ff;font-size:14px;font-weight:bold;text-align:center;margin-bottom:10px;letter-spacing:3px;">MODS</div><textarea id="mod-json" placeholder='{"enemies":[{...}],"rooms":[{...}]}' style="width:100%;height:70px;background:#0a0a12;color:#ff00ff;border:1px solid #440044;padding:8px;font-family:monospace;font-size:11px;box-sizing:border-box;resize:vertical;"></textarea><div style="display:flex;gap:8px;margin-top:8px;"><button onclick="loadMod()" style="flex:1;border-color:#ff00ff;color:#ff00ff;font-size:12px;">LOAD MOD</button><button onclick="clearMod()" style="flex:1;border-color:#888;color:#888;font-size:12px;">CLEAR MODS</button></div><div id="mod-status" style="color:#888;font-size:11px;text-align:center;margin-top:4px;"></div></div>
             <button onclick="returnToMenu()" style="border-color: #fff; color: #fff; margin-top: 10px; margin-bottom: 40px;">BACK TO MENU</button>
         </div>
         </div>
@@ -3822,7 +3822,7 @@
             if (state.frame % 30 === 0) checkScoreEggs();
             checkIdle();
             if (appSettings.autoFire && state.active && !state.paused) mouse.down = true;
-            if (state.frame % 3 === 0) { ui.score.innerText = `SCORE: ${Math.floor(state.score)}`; ui.combo.innerText = `COMBO x${state.combo.toFixed(1)}`; ui.lvl.innerText = state.mode === 'training' ? (trainingMode === 'aim' ? 'AIM TRAINER' : trainingMode === 'manual' ? 'MANUAL AIM' : trainingMode === 'boss_practice' ? 'BOSS PRACTICE' : 'FREE PRACTICE') : state.mode === 'boss_rush' ? `BOSS ${Math.min(state.bossesDefeated + 1, 15)}/15 | ${Math.floor(state.frame/3600)}:${(Math.floor(state.frame/60)%60).toString().padStart(2,'0')}` : state.mode === 'sandbox' ? 'SANDBOX' : state.mode === 'arcade' ? `WAVE ${state.level} | ${'❤'.repeat(arcadeLives)}` : `LVL: ${state.level}`; ui.coins.innerText = `COINS: ${totalCoins + state.runCoins}`; }
+            if (state.frame % 3 === 0) { ui.score.innerText = `SCORE: ${Math.floor(state.score)}`; ui.combo.innerText = `COMBO x${state.combo.toFixed(1)}`; ui.lvl.innerText = state.mode === 'training' ? (trainingMode === 'aim' ? 'AIM TRAINER' : trainingMode === 'manual' ? 'MANUAL AIM' : trainingMode === 'boss_practice' ? 'BOSS PRACTICE' : 'FREE PRACTICE') : state.mode === 'boss_rush' ? `BOSS ${Math.min(state.bossesDefeated + 1, 15)}/15 | ${Math.floor(state.frame/3600)}:${(Math.floor(state.frame/60)%60).toString().padStart(2,'0')}` : state.mode === 'sandbox' ? 'SANDBOX' : state.mode === 'arcade' ? `WAVE ${state.level} | ${'♥'.repeat(arcadeLives)}` : `LVL: ${state.level}`; ui.coins.innerText = `COINS: ${totalCoins + state.runCoins}`; }
             ui.hp.style.width = `${Math.max(0, (player.hp/state.stats.maxHp)*100)}%`; ui.shield.style.width = `${Math.min(100, player.shield)}%`; ui.xp.style.width = `${(state.xp / state.xpNeeded)*100}%`;
             if (appSettings.render3D && is3DActive) update3D();
             drawTutorialHighlight(ctx);
@@ -5130,17 +5130,17 @@
             let el = document.getElementById('flip-result');
             let spinning = 0;
             let interval = setInterval(() => {
-                el.innerText = Math.random() > 0.5 ? '🪙' : '💀';
+                el.innerText = Math.random() > 0.5 ? '¤' : '☠';
                 spinning++;
                 if (spinning > 12) {
                     clearInterval(interval);
                     let win = Math.random() < 0.48; // Slight house edge
                     if (win) {
                         totalCoins += bet * 2;
-                        el.innerHTML = '🪙 <span style="color:#00ff88;font-size:18px;">+' + bet.toLocaleString() + '!</span>';
+                        el.innerHTML = '¤ <span style="color:#00ff88;font-size:18px;">+' + bet.toLocaleString() + '!</span>';
                         playSound('powerup');
                     } else {
-                        el.innerHTML = '💀 <span style="color:#ff0055;font-size:18px;">-' + bet.toLocaleString() + '</span>';
+                        el.innerHTML = '☠ <span style="color:#ff0055;font-size:18px;">-' + bet.toLocaleString() + '</span>';
                         playSound('hit');
                     }
                     secureSave('neonVoidCoins', totalCoins);
@@ -5153,7 +5153,7 @@
         function spinSlots(bet) {
             if (totalCoins < bet) { document.getElementById('slot-result').innerHTML = '<span style="color:#ff0055;">NOT ENOUGH COINS</span>'; return; }
             totalCoins -= bet;
-            let symbols = ['💎','🔥','⚡','💰','🎯','☠️','🌟','🍀'];
+            let symbols = ['◆','✶','⚡','¤','◎','☠','★','✤'];
             let reels = document.querySelectorAll('.slot-reel');
             let results = [0, 0, 0];
             let spins = [0, 0, 0];
@@ -5172,10 +5172,10 @@
                     let el = document.getElementById('slot-result');
                     if (s0 === s1 && s1 === s2) {
                         // JACKPOT - all 3 match
-                        let multi = s0 === 3 ? 50 : 20; // 💰 = 50x, others = 20x
+                        let multi = s0 === 3 ? 50 : 20; // ¤ = 50x, others = 20x
                         let win = bet * multi;
                         totalCoins += win;
-                        el.innerHTML = '🎰 JACKPOT! +' + win.toLocaleString() + ' (' + multi + 'x)';
+                        el.innerHTML = '⊞ JACKPOT! +' + win.toLocaleString() + ' (' + multi + 'x)';
                         el.style.color = '#ffcc00';
                         playSound('powerup'); playSound('powerup');
                         // Shake effect
@@ -5185,11 +5185,11 @@
                         // 2 match - small win
                         let win = Math.floor(bet * 1.5);
                         totalCoins += win;
-                        el.innerHTML = '✨ 2 MATCH! +' + win.toLocaleString();
+                        el.innerHTML = '✦ 2 MATCH! +' + win.toLocaleString();
                         el.style.color = '#00ffcc';
                         playSound('powerup');
                     } else {
-                        el.innerHTML = '💀 NO MATCH -' + bet.toLocaleString();
+                        el.innerHTML = '☠ NO MATCH -' + bet.toLocaleString();
                         el.style.color = '#ff0055';
                         playSound('hit');
                     }
@@ -5208,7 +5208,7 @@
                 if (id === 'custom' && savedSkinData) { previewHTML = `<img src="${savedSkinData}" style="width: 40px; height: 40px; margin-bottom: 10px; image-rendering: pixelated; box-shadow: 0 0 20px ${skin.color}; border: 1px solid ${skin.color};">`; } else if (id === 'custom') { previewHTML = `<div class="skin-preview" style="color: #555; border: 1px dashed #fff; text-align:center; line-height:40px; font-size:10px;">EMPTY</div>`; } else { previewHTML = `<div class="skin-preview" style="color: ${skin.color}; text-shadow: 0 0 10px ${skin.color};"></div>`; }
                 card.innerHTML = `${previewHTML}<div style="color: ${skin.color}; font-weight: bold; text-align: center;">${skin.name}</div>`; let btn = document.createElement('button'); btn.style.borderColor = skin.color; btn.style.color = skin.color;
                 if (isEquipped) { btn.innerText = "EQUIPPED"; btn.style.background = skin.color; btn.style.color = '#000'; } else if (isUnlocked) { btn.innerText = "EQUIP"; btn.onclick = () => { equippedSkin = id; secureSave('neonVoidEquippedSkin', id); playSound('powerup'); renderShop(); }; } else { let costText = skin.price >= 1000000 ? (skin.price/1000000) + 'M' : (skin.price >= 1000 ? (skin.price/1000) + 'K' : skin.price); btn.innerText = `BUY: ${costText}`; if (totalCoins >= skin.price) { btn.onclick = () => { totalCoins -= skin.price; unlockedSkins.push(id); secureSave('neonVoidCoins', totalCoins); secureSave('neonVoidSkins', unlockedSkins); playSound('buy'); cloudSave(); renderShop(); }; } else { btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed'; } }
-                if (id === 'custom') { let editBtn = document.createElement('button'); editBtn.innerText = "✏️ EDIT"; editBtn.style.marginTop = "5px"; editBtn.style.borderColor = "#fff"; editBtn.style.color = "#fff"; editBtn.onclick = () => { openDrawScreen(); }; card.appendChild(btn); card.appendChild(editBtn); } else { card.appendChild(btn); } grid.appendChild(card);
+                if (id === 'custom') { let editBtn = document.createElement('button'); editBtn.innerText = "✏ EDIT"; editBtn.style.marginTop = "5px"; editBtn.style.borderColor = "#fff"; editBtn.style.color = "#fff"; editBtn.onclick = () => { openDrawScreen(); }; card.appendChild(btn); card.appendChild(editBtn); } else { card.appendChild(btn); } grid.appendChild(card);
             }
             const upGrid = document.getElementById('upgrade-grid'); upGrid.innerHTML = '';
             for (const [id, upg] of Object.entries(PERMANENT_UPGRADES)) {
@@ -5227,7 +5227,7 @@
                     for (const [id, skin] of Object.entries(WISP_SKINS)) {
                         let card = document.createElement('div'); card.className = 'skin-card'; card.style.borderColor = skin.color;
                         let isUnlocked = unlockedWispSkins.includes(id); let isEquipped = equippedWispSkin === id;
-                        let modelIcons = { spirit: '✦', robot: '⚙', wolf: '🐺', frog: '🐸', bat: '🦇', parrot: '🦜', cat: '🐱', dragon: '🐉' };
+                        let modelIcons = { spirit: '✦', robot: '⚙', wolf: '⊛', frog: '⊛', bat: '⊛', parrot: '⊛', cat: '⊛', dragon: '⊛' };
                         let icon = modelIcons[skin.model] || '✦';
                         card.innerHTML = `<div style="width:36px;height:36px;border-radius:50%;background:radial-gradient(circle,${skin.color}44,${skin.color}11);border:2px solid ${skin.color};box-shadow:0 0 15px ${skin.color};margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:18px;">${icon}</div><div style="color:${skin.color};font-weight:bold;text-align:center;font-size:12px;">${skin.name}</div>`;
                         let btn = document.createElement('button'); btn.style.borderColor = skin.color; btn.style.color = skin.color;
@@ -5279,7 +5279,7 @@
                 },
                 DEFENSE: {
                     color: '#44aaff',
-                    icon: '🛡',
+                    icon: '◇',
                     tiers: [
                         { id: 'sk_def_1', name: 'Nano Hull',     desc: '+80 max HP',          price: 80000, stat: 'maxHp', val: 80 },
                         { id: 'sk_def_2', name: 'Phase Barrier', desc: '+30 max shield',       price: 160000, stat: 'maxShield', val: 30 },
@@ -5334,7 +5334,7 @@
                         if (isPurchased) {
                             btn.innerText = '✓ LEARNED'; btn.style.background = path.color; btn.style.color = '#000'; btn.disabled = true;
                         } else if (!prevPurchased) {
-                            btn.innerText = '🔒 LOCKED'; btn.style.opacity = '0.4'; btn.disabled = true;
+                            btn.innerText = '⊘ LOCKED'; btn.style.opacity = '0.4'; btn.disabled = true;
                         } else if (!canAfford) {
                             btn.innerText = `${costText} - NEED MORE`; btn.style.opacity = '0.5'; btn.disabled = true;
                         } else {
@@ -5537,17 +5537,17 @@
                     <div style="font-size:12px;color:#555;letter-spacing:4px;margin-bottom:30px;">SELECT A DRILL</div>
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;">
                         <div onclick="launchTraining('aim')" style="cursor:pointer;padding:22px 16px;border:1px solid rgba(255,204,0,0.3);border-radius:12px;background:rgba(255,204,0,0.04);transition:all 0.3s;" onmouseenter="this.style.borderColor='#ffcc00';this.style.background='rgba(255,204,0,0.1)'" onmouseleave="this.style.borderColor='rgba(255,204,0,0.3)';this.style.background='rgba(255,204,0,0.04)'">
-                            <div style="font-size:32px;margin-bottom:8px;">🎯</div>
+                            <div style="font-size:32px;margin-bottom:8px;">◎</div>
                             <div style="font-family:Orbitron,sans-serif;font-size:14px;color:#ffcc00;letter-spacing:2px;">AIM TRAINER</div>
                             <div style="font-size:11px;color:#666;margin-top:6px;line-height:1.4;">Targets appear and vanish.<br>Track accuracy & reaction time.<br>Forces manual mouse aim.</div>
                         </div>
                         <div onclick="launchTraining('manual')" style="cursor:pointer;padding:22px 16px;border:1px solid rgba(255,136,0,0.3);border-radius:12px;background:rgba(255,136,0,0.04);transition:all 0.3s;" onmouseenter="this.style.borderColor='#ff8800';this.style.background='rgba(255,136,0,0.1)'" onmouseleave="this.style.borderColor='rgba(255,136,0,0.3)';this.style.background='rgba(255,136,0,0.04)'">
-                            <div style="font-size:32px;margin-bottom:8px;">🖱️</div>
+                            <div style="font-size:32px;margin-bottom:8px;">⊕</div>
                             <div style="font-family:Orbitron,sans-serif;font-size:14px;color:#ff8800;letter-spacing:2px;">MANUAL AIM</div>
                             <div style="font-size:11px;color:#666;margin-top:6px;line-height:1.4;">Moving enemies, no auto-aim.<br>Practice tracking & leading shots.<br>Invincible, infinite ammo.</div>
                         </div>
                         <div onclick="launchTraining('boss_practice')" style="cursor:pointer;padding:22px 16px;border:1px solid rgba(255,0,85,0.3);border-radius:12px;background:rgba(255,0,85,0.04);transition:all 0.3s;" onmouseenter="this.style.borderColor='#ff0055';this.style.background='rgba(255,0,85,0.1)'" onmouseleave="this.style.borderColor='rgba(255,0,85,0.3)';this.style.background='rgba(255,0,85,0.04)'">
-                            <div style="font-size:32px;margin-bottom:8px;">👹</div>
+                            <div style="font-size:32px;margin-bottom:8px;">☠</div>
                             <div style="font-family:Orbitron,sans-serif;font-size:14px;color:#ff0055;letter-spacing:2px;">BOSS PRACTICE</div>
                             <div style="font-size:11px;color:#666;margin-top:6px;line-height:1.4;">Fight any boss, learn patterns.<br>You're invincible — focus on dodging.<br>Boss HP resets on death.</div>
                             <select id="boss-select" onclick="event.stopPropagation()" style="margin-top:10px;padding:6px 10px;background:#111;border:1px solid rgba(255,0,85,0.3);color:#ff0055;font-family:'Share Tech Mono',monospace;font-size:11px;border-radius:6px;cursor:pointer;width:100%;">
@@ -5555,7 +5555,7 @@
                             </select>
                         </div>
                         <div onclick="launchTraining('dummies')" style="cursor:pointer;padding:22px 16px;border:1px solid rgba(0,255,136,0.3);border-radius:12px;background:rgba(0,255,136,0.04);transition:all 0.3s;" onmouseenter="this.style.borderColor='#00ff88';this.style.background='rgba(0,255,136,0.1)'" onmouseleave="this.style.borderColor='rgba(0,255,136,0.3)';this.style.background='rgba(0,255,136,0.04)'">
-                            <div style="font-size:32px;margin-bottom:8px;">🎪</div>
+                            <div style="font-size:32px;margin-bottom:8px;">◈</div>
                             <div style="font-family:Orbitron,sans-serif;font-size:14px;color:#00ff88;letter-spacing:2px;">FREE PRACTICE</div>
                             <div style="font-size:11px;color:#666;margin-top:6px;line-height:1.4;">Classic training dummies.<br>Test weapons and upgrades.<br>No pressure, just vibes.</div>
                         </div>
@@ -5902,10 +5902,10 @@
         // Pad to 50
         for (let i = ACHIEVEMENTS.length; i < 50; i++) { ACHIEVEMENTS.push({id:`ach_${i}`,name:`Challenge ${i}`,desc:`Hidden achievement`,condition:()=>false}); }
         function getAchievementCount() { return ACHIEVEMENTS.filter(a=>secureLoad('neonVoidAch_'+a.id,'') === '1').length; }
-        function checkAchievements() { ACHIEVEMENTS.forEach(a=>{ if(secureLoad('neonVoidAch_'+a.id, '')!=='1' && a.condition && a.condition()){ secureSave('neonVoidAch_'+a.id, '1'); if(state.active) spawnText(canvas.width/2, 150, '🏆 '+a.name.toUpperCase(), '#ffd700', 20); else setTimeout(()=>alert(`ACHIEVEMENT UNLOCKED: ${a.name}\n${a.desc}`),500); } }); }
+        function checkAchievements() { ACHIEVEMENTS.forEach(a=>{ if(secureLoad('neonVoidAch_'+a.id, '')!=='1' && a.condition && a.condition()){ secureSave('neonVoidAch_'+a.id, '1'); if(state.active) spawnText(canvas.width/2, 150, '♛ '+a.name.toUpperCase(), '#ffd700', 20); else setTimeout(()=>alert(`ACHIEVEMENT UNLOCKED: ${a.name}\n${a.desc}`),500); } }); }
         function openAchievements() {
             let d = document.createElement('div'); d.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;background:rgba(6,6,12,0.97);overflow-y:auto;font-family:monospace;padding:20px;box-sizing:border-box;';
-            let rows = ACHIEVEMENTS.map(a=>{ let done=secureLoad('neonVoidAch_'+a.id,'')==='1'; return `<div style="display:flex;align-items:center;padding:10px;border:1px solid ${done?'#ffd700':'#222'};border-radius:6px;margin-bottom:6px;background:${done?'rgba(255,215,0,0.05)':'rgba(255,255,255,0.02)'}"><span style="font-size:20px;margin-right:10px;">${done?'🏆':'🔒'}</span><div><div style="color:${done?'#ffd700':'#555'};font-weight:bold;">${a.name}</div><div style="color:#666;font-size:11px;">${a.desc}</div></div></div>`; }).join('');
+            let rows = ACHIEVEMENTS.map(a=>{ let done=secureLoad('neonVoidAch_'+a.id,'')==='1'; return `<div style="display:flex;align-items:center;padding:10px;border:1px solid ${done?'#ffd700':'#222'};border-radius:6px;margin-bottom:6px;background:${done?'rgba(255,215,0,0.05)':'rgba(255,255,255,0.02)'}"><span style="font-size:20px;margin-right:10px;">${done?'♛':'⊘'}</span><div><div style="color:${done?'#ffd700':'#555'};font-weight:bold;">${a.name}</div><div style="color:#666;font-size:11px;">${a.desc}</div></div></div>`; }).join('');
             d.innerHTML = `<div style="max-width:600px;margin:0 auto;"><div style="color:#ffd700;font-size:24px;font-weight:bold;text-align:center;margin-bottom:20px;">ACHIEVEMENTS (${getAchievementCount()}/50)</div>${rows}<button onclick="this.closest('[style]').remove()" style="display:block;margin:20px auto;padding:12px 30px;background:none;color:#888;border:1px solid #555;cursor:pointer;font-family:monospace;font-size:16px;border-radius:4px;">CLOSE</button></div>`;
             d.querySelector('button').onclick = () => d.remove(); document.body.appendChild(d);
         }
@@ -5936,10 +5936,10 @@
         // ==================== FEATURE 28: VOID SLOTS ====================
         function openVoidSlots() {
             let d = document.createElement('div'); d.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:99999;background:rgba(6,6,12,0.97);border:2px solid #aa00ff;border-radius:12px;padding:30px;font-family:monospace;color:#fff;text-align:center;min-width:380px;';
-            let symbols = ['💀','⭐','💎','7️⃣','🔥','❄️'];
+            let symbols = ['☠','★','◆','7⃣','✶','✻'];
             let reels = [0,1,2]; let spinning = false;
             d.id = 'void-slots-overlay';
-            d.innerHTML = `<div style="font-size:22px;color:#aa00ff;font-weight:bold;margin-bottom:15px;">VOID SLOTS</div><div style="font-size:12px;color:#888;margin-bottom:15px;">Cost: 5,000 coins per spin</div><div id="slots-display" style="font-size:48px;letter-spacing:20px;margin:20px 0;background:rgba(170,0,255,0.1);padding:15px;border-radius:8px;border:1px solid #aa00ff;">⭐ 💎 💀</div><div id="slots-result" style="min-height:40px;font-size:16px;color:#ffcc00;margin-bottom:15px;"></div><div style="font-size:11px;color:#555;margin-bottom:15px;">3x 💀 = Random Skin | 3x ⭐ = 50K Coins | 3x 💎 = Upgrade Discount | 3x 7️⃣ = JACKPOT 500K</div><button id="spin-btn" style="padding:12px 30px;font-size:16px;font-weight:bold;background:linear-gradient(135deg,#aa00ff,#ff00aa);color:#fff;border:none;cursor:pointer;border-radius:4px;margin-right:10px;" onclick="spinSlots()">SPIN (5K)</button><button onclick="document.getElementById('void-slots-overlay').remove()" style="padding:12px 20px;background:none;color:#888;border:1px solid #555;cursor:pointer;border-radius:4px;">CLOSE</button>`;
+            d.innerHTML = `<div style="font-size:22px;color:#aa00ff;font-weight:bold;margin-bottom:15px;">VOID SLOTS</div><div style="font-size:12px;color:#888;margin-bottom:15px;">Cost: 5,000 coins per spin</div><div id="slots-display" style="font-size:48px;letter-spacing:20px;margin:20px 0;background:rgba(170,0,255,0.1);padding:15px;border-radius:8px;border:1px solid #aa00ff;">★ ◆ ☠</div><div id="slots-result" style="min-height:40px;font-size:16px;color:#ffcc00;margin-bottom:15px;"></div><div style="font-size:11px;color:#555;margin-bottom:15px;">3x ☠ = Random Skin | 3x ★ = 50K Coins | 3x ◆ = Upgrade Discount | 3x 7⃣ = JACKPOT 500K</div><button id="spin-btn" style="padding:12px 30px;font-size:16px;font-weight:bold;background:linear-gradient(135deg,#aa00ff,#ff00aa);color:#fff;border:none;cursor:pointer;border-radius:4px;margin-right:10px;" onclick="spinSlots()">SPIN (5K)</button><button onclick="document.getElementById('void-slots-overlay').remove()" style="padding:12px 20px;background:none;color:#888;border:1px solid #555;cursor:pointer;border-radius:4px;">CLOSE</button>`;
             document.body.appendChild(d);
             window.spinSlots = function() {
                 if (totalCoins < 5000) { d.querySelector('#slots-result').innerText = 'NOT ENOUGH COINS!'; d.querySelector('#slots-result').style.color='#ff0055'; return; }
@@ -9794,7 +9794,7 @@ function generateSyncCode() {
 
             let html = '<strong style="font-size:24px; color:#ffcc00;">SURVIVAL RANKINGS</strong><br><br>';
             mpState.raceResults.forEach((r, i) => {
-                let medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '#' + (i+1);
+                let medal = i === 0 ? '①' : i === 1 ? '②' : i === 2 ? '③' : '#' + (i+1);
                 let mins = Math.floor(r.time / 60);
                 let secs = r.time % 60;
                 html += `<span style="color:${r.color}; font-size:20px;">${medal} ${r.name} - ${mins}m ${secs}s</span><br>`;
@@ -10423,12 +10423,12 @@ function generateSyncCode() {
                     </div>
                     <div class="cr-topbar-right">
                         <div class="cr-resource" onclick="openShop()" style="cursor:pointer;">
-                            <span class="cr-resource-icon">🪙</span>
+                            <span class="cr-resource-icon">¤</span>
                             <span>${coinStr}</span>
                             <span class="cr-resource-plus">+</span>
                         </div>
                         <div class="cr-resource cr-gem-res" onclick="openGemShop ? openGemShop() : openShop()" style="cursor:pointer;">
-                            <span class="cr-resource-icon">💎</span>
+                            <span class="cr-resource-icon">◆</span>
                             <span>${gemStr}</span>
                             <span class="cr-resource-plus">+</span>
                         </div>
@@ -10437,7 +10437,7 @@ function generateSyncCode() {
 
                 <!-- PASS BANNER -->
                 <div class="cr-pass-banner" onclick="openBattlePass ? openBattlePass() : null">
-                    <span class="cr-pass-banner-icon">⭐</span>
+                    <span class="cr-pass-banner-icon">★</span>
                     <span class="cr-pass-banner-label">BATTLE PASS — SEASON ${Math.max(1, Math.floor(unlocked/3)+1)}</span>
                     <div class="cr-pass-bar-wrap">
                         <div class="cr-pass-bar-fill" style="width:${passPct}%"></div>
@@ -10477,22 +10477,22 @@ function generateSyncCode() {
                 <div class="cr-reward-row">
                     <div class="cr-reward-slot" style="border-color:#ff880066;background:linear-gradient(180deg,rgba(255,136,0,0.07),rgba(0,0,0,0.7));" onclick="openDailyChallenge ? openDailyChallenge() : null">
                         ${dcDone ? '<div class="cr-reward-ready-pip"></div>' : ''}
-                        <div class="cr-reward-icon">🎯</div>
+                        <div class="cr-reward-icon">◎</div>
                         <div class="cr-reward-label" style="color:#ff8800;">DAILY</div>
                         <div class="cr-reward-timer" style="color:#ff8800;">${dcDone ? 'CLAIMED' : dcInfo.name.substring(0,8)}</div>
                     </div>
                     <div class="cr-reward-slot" style="border-color:#ff448866;background:linear-gradient(180deg,rgba(255,68,136,0.07),rgba(0,0,0,0.7));" onclick="openBountyBoard ? openBountyBoard() : null">
-                        <div class="cr-reward-icon">💰</div>
+                        <div class="cr-reward-icon">¤</div>
                         <div class="cr-reward-label" style="color:#ff4488;">BOUNTY</div>
                         <div class="cr-reward-timer" style="color:#ff4488;">3 ACTIVE</div>
                     </div>
                     <div class="cr-reward-slot" style="border-color:#aa88ff66;background:linear-gradient(180deg,rgba(170,136,255,0.07),rgba(0,0,0,0.7));" onclick="openAchievements ? openAchievements() : null">
-                        <div class="cr-reward-icon">🏆</div>
+                        <div class="cr-reward-icon">♛</div>
                         <div class="cr-reward-label" style="color:#aa88ff;">ACHIEVE</div>
                         <div class="cr-reward-timer" style="color:#aa88ff;">${achCount}/50</div>
                     </div>
                     <div class="cr-reward-slot" style="border-color:#ffe04b66;background:linear-gradient(180deg,rgba(255,224,75,0.07),rgba(0,0,0,0.7));" onclick="openBattlePass ? openBattlePass() : null">
-                        <div class="cr-reward-icon">⭐</div>
+                        <div class="cr-reward-icon">★</div>
                         <div class="cr-reward-label" style="color:#ffe04b;">BP TIER</div>
                         <div class="cr-reward-timer" style="color:#ffe04b;">LV ${passLevel}</div>
                     </div>
@@ -10501,23 +10501,23 @@ function generateSyncCode() {
                 <!-- BOTTOM TAB BAR -->
                 <div class="cr-bottomnav">
                     <div class="cr-tab cr-active" id="cr-tab-battle" onclick="_nvCrTabSwitch('battle')">
-                        <span class="cr-tab-icon">⚔️</span>
+                        <span class="cr-tab-icon">⚔</span>
                         <span class="cr-tab-label">Battle</span>
                     </div>
                     <div class="cr-tab" id="cr-tab-hangar" onclick="_nvCrTabSwitch('hangar')">
-                        <span class="cr-tab-icon">🔧</span>
+                        <span class="cr-tab-icon">⚙</span>
                         <span class="cr-tab-label">Hangar</span>
                     </div>
                     <div class="cr-tab" id="cr-tab-coop" onclick="_nvCrTabSwitch('coop')">
-                        <span class="cr-tab-icon">👥</span>
+                        <span class="cr-tab-icon">⁂</span>
                         <span class="cr-tab-label">Co-op</span>
                     </div>
                     <div class="cr-tab" id="cr-tab-ranks" onclick="_nvCrTabSwitch('ranks')">
-                        <span class="cr-tab-icon">🏆</span>
+                        <span class="cr-tab-icon">♛</span>
                         <span class="cr-tab-label">Ranks</span>
                     </div>
                     <div class="cr-tab" id="cr-tab-more" onclick="_nvCrTabSwitch('more')">
-                        <span class="cr-tab-icon">⚙️</span>
+                        <span class="cr-tab-icon">⚙</span>
                         <span class="cr-tab-label">More</span>
                     </div>
                 </div>
@@ -10714,40 +10714,40 @@ function generateSyncCode() {
                 <div style="font-size:10px;letter-spacing:3px;color:#888;margin-bottom:12px;text-align:center;">MORE OPTIONS</div>
                 <div class="cr-more-grid">
                     <div class="cr-more-item" onclick="openSettings();document.getElementById('cr-more-overlay').remove()">
-                        <span class="cr-more-icon">⚙️</span><span class="cr-more-label">Settings</span>
+                        <span class="cr-more-icon">⚙</span><span class="cr-more-label">Settings</span>
                     </div>
                     <div class="cr-more-item" onclick="openAchievements ? openAchievements() : null;document.getElementById('cr-more-overlay').remove()">
-                        <span class="cr-more-icon">🏆</span><span class="cr-more-label">Achievements</span>
+                        <span class="cr-more-icon">♛</span><span class="cr-more-label">Achievements</span>
                     </div>
                     <div class="cr-more-item" onclick="openClan ? openClan() : null;document.getElementById('cr-more-overlay').remove()">
-                        <span class="cr-more-icon">👥</span><span class="cr-more-label">Clan</span>
+                        <span class="cr-more-icon">⁂</span><span class="cr-more-label">Clan</span>
                     </div>
                     <div class="cr-more-item" onclick="openPrestige ? openPrestige() : openPrestigePanel ? openPrestigePanel() : null;document.getElementById('cr-more-overlay').remove()">
-                        <span class="cr-more-icon">🌟</span><span class="cr-more-label">Prestige</span>
+                        <span class="cr-more-icon">★</span><span class="cr-more-label">Prestige</span>
                     </div>
                     <div class="cr-more-item" onclick="openPhotoMode ? openPhotoMode() : null;document.getElementById('cr-more-overlay').remove()">
-                        <span class="cr-more-icon">📸</span><span class="cr-more-label">Photo Mode</span>
+                        <span class="cr-more-icon">□</span><span class="cr-more-label">Photo Mode</span>
                     </div>
                     <div class="cr-more-item" onclick="openMastery ? openMastery() : null;document.getElementById('cr-more-overlay').remove()">
-                        <span class="cr-more-icon">🎯</span><span class="cr-more-label">Mastery</span>
+                        <span class="cr-more-icon">◎</span><span class="cr-more-label">Mastery</span>
                     </div>
                     <div class="cr-more-item" onclick="openBlueprints ? openBlueprints() : null;document.getElementById('cr-more-overlay').remove()">
-                        <span class="cr-more-icon">📜</span><span class="cr-more-label">Blueprints</span>
+                        <span class="cr-more-icon">☰</span><span class="cr-more-label">Blueprints</span>
                     </div>
                     <div class="cr-more-item" onclick="openContracts ? openContracts() : null;document.getElementById('cr-more-overlay').remove()">
-                        <span class="cr-more-icon">📋</span><span class="cr-more-label">Contracts</span>
+                        <span class="cr-more-icon">☰</span><span class="cr-more-label">Contracts</span>
                     </div>
                     <div class="cr-more-item" onclick="openVIPPanel ? openVIPPanel() : null;document.getElementById('cr-more-overlay').remove()">
-                        <span class="cr-more-icon">👑</span><span class="cr-more-label">VIP</span>
+                        <span class="cr-more-icon">♔</span><span class="cr-more-label">VIP</span>
                     </div>
                     <div class="cr-more-item" onclick="openTradePost ? openTradePost() : null;document.getElementById('cr-more-overlay').remove()">
-                        <span class="cr-more-icon">🔄</span><span class="cr-more-label">Trade Post</span>
+                        <span class="cr-more-icon">↻</span><span class="cr-more-label">Trade Post</span>
                     </div>
                     <div class="cr-more-item" onclick="openRebirth ? openRebirth() : null;document.getElementById('cr-more-overlay').remove()">
-                        <span class="cr-more-icon">♻️</span><span class="cr-more-label">Rebirth</span>
+                        <span class="cr-more-icon">♻</span><span class="cr-more-label">Rebirth</span>
                     </div>
                     <div class="cr-more-item" onclick="openBlackMarket ? openBlackMarket() : null;document.getElementById('cr-more-overlay').remove()">
-                        <span class="cr-more-icon">🏪</span><span class="cr-more-label">Black Mkt</span>
+                        <span class="cr-more-icon">⊟</span><span class="cr-more-label">Black Mkt</span>
                     </div>
                 </div>
                 <div style="text-align:center;margin-top:12px;">
@@ -10765,26 +10765,26 @@ function generateSyncCode() {
             if (existing) { existing.remove(); return; }
 
             let modes = [
-                { icon: '🗺️', name: 'MISSION', desc: '15 Sectors', color: '#00ffcc', fn: 'openMissionSelect()' },
-                { icon: '♾️', name: 'INFINITE', desc: 'Endless', color: '#ff0055', fn: 'startInfinite()' },
-                { icon: '💀', name: 'BOSS RUSH', desc: 'All 15 Bosses', color: '#ff4400', fn: 'startBossRush()' },
-                { icon: '🕹️', name: 'ARCADE', desc: '3 Lives', color: '#ffcc00', fn: 'startArcade()' },
-                { icon: '🏖️', name: 'SANDBOX', desc: 'God Mode', color: '#44ccff', fn: 'startSandbox()' },
-                { icon: '🎯', name: 'TRAINING', desc: 'Practice', color: '#00ff88', fn: 'startTraining()' },
-                { icon: '🤝', name: 'CO-OP', desc: 'Multiplayer', color: '#00ccff', fn: 'openMultiplayer()' },
+                { icon: '⊞', name: 'MISSION', desc: '15 Sectors', color: '#00ffcc', fn: 'openMissionSelect()' },
+                { icon: '∞', name: 'INFINITE', desc: 'Endless', color: '#ff0055', fn: 'startInfinite()' },
+                { icon: '☠', name: 'BOSS RUSH', desc: 'All 15 Bosses', color: '#ff4400', fn: 'startBossRush()' },
+                { icon: '⊕', name: 'ARCADE', desc: '3 Lives', color: '#ffcc00', fn: 'startArcade()' },
+                { icon: '☼', name: 'SANDBOX', desc: 'God Mode', color: '#44ccff', fn: 'startSandbox()' },
+                { icon: '◎', name: 'TRAINING', desc: 'Practice', color: '#00ff88', fn: 'startTraining()' },
+                { icon: '⊕', name: 'CO-OP', desc: 'Multiplayer', color: '#00ccff', fn: 'openMultiplayer()' },
                 { icon: '⚡', name: '1v1 PVP', desc: 'Duel', color: '#ff4488', fn: 'startPvP()' },
-                { icon: '🚩', name: 'CTF', desc: 'Capture Flag', color: '#4488ff', fn: 'startCaptureTheFlag()' },
-                { icon: '🎲', name: 'ROGUELIKE', desc: '10 Floors', color: '#aa44ff', fn: 'startRoguelike()' },
-                { icon: '🛡️', name: 'HORDE', desc: 'Tower Defense', color: '#ff8844', fn: 'startHordeDefense()' },
-                { icon: '🕐', name: 'SPEEDRUN', desc: 'Sector Timer', color: '#ffd700', fn: 'startSpeedrun()' },
-                { icon: '🔀', name: 'MIRROR', desc: 'Reversed', color: '#cc44ff', fn: 'startMirror()' },
-                { icon: '🌀', name: 'CHAOS', desc: 'Modifiers', color: '#ff8800', fn: 'startChaos()' },
-                { icon: '💥', name: 'BULLET HELL', desc: '10x Fire', color: '#ff4400', fn: 'startBulletHell()' },
-                { icon: '🕊️', name: 'PACIFIST', desc: 'No Guns', color: '#00ff88', fn: 'startPacifist()' },
-                { icon: '🏁', name: 'RACE', desc: 'Checkpoints', color: '#44ccff', fn: 'startRaceMode()' },
-                { icon: '🚀', name: 'ESCORT', desc: 'Protect Cargo', color: '#88ff44', fn: 'startEscort()' },
-                { icon: '🛸', name: 'INFECTION', desc: 'Last Healthy', color: '#ff2244', fn: 'startInfection()' },
-                { icon: '🔧', name: 'EDITOR', desc: 'Level Design', color: '#88ffcc', fn: 'openLevelEditor()' },
+                { icon: '⚑', name: 'CTF', desc: 'Capture Flag', color: '#4488ff', fn: 'startCaptureTheFlag()' },
+                { icon: '⊞', name: 'ROGUELIKE', desc: '10 Floors', color: '#aa44ff', fn: 'startRoguelike()' },
+                { icon: '◇', name: 'HORDE', desc: 'Tower Defense', color: '#ff8844', fn: 'startHordeDefense()' },
+                { icon: '◷', name: 'SPEEDRUN', desc: 'Sector Timer', color: '#ffd700', fn: 'startSpeedrun()' },
+                { icon: '⇄', name: 'MIRROR', desc: 'Reversed', color: '#cc44ff', fn: 'startMirror()' },
+                { icon: '◉', name: 'CHAOS', desc: 'Modifiers', color: '#ff8800', fn: 'startChaos()' },
+                { icon: '✸', name: 'BULLET HELL', desc: '10x Fire', color: '#ff4400', fn: 'startBulletHell()' },
+                { icon: '♠', name: 'PACIFIST', desc: 'No Guns', color: '#00ff88', fn: 'startPacifist()' },
+                { icon: '⚑', name: 'RACE', desc: 'Checkpoints', color: '#44ccff', fn: 'startRaceMode()' },
+                { icon: '▲', name: 'ESCORT', desc: 'Protect Cargo', color: '#88ff44', fn: 'startEscort()' },
+                { icon: '△', name: 'INFECTION', desc: 'Last Healthy', color: '#ff2244', fn: 'startInfection()' },
+                { icon: '⚙', name: 'EDITOR', desc: 'Level Design', color: '#88ffcc', fn: 'openLevelEditor()' },
             ];
 
             let overlay = document.createElement('div');
@@ -10978,27 +10978,27 @@ function generateSyncCode() {
                             <div><div class="nv-chip-label" style="color:#44ff88;">SURVIVAL</div><div class="nv-chip-sub" style="color:#44ff8888;">Arena</div></div>
                         </div>
                         <div class="nv-mode-chip" style="--gc:${mc('#44ccff')};border-color:#44ccff66;background:rgba(68,204,255,0.06);" onclick="startRaceMode()">
-                            <span class="nv-chip-icon">🏁</span>
+                            <span class="nv-chip-icon">⚑</span>
                             <div><div class="nv-chip-label" style="color:#44ccff;">RACE</div><div class="nv-chip-sub" style="color:#44ccff88;">Checkpoints</div></div>
                         </div>
                         <div class="nv-mode-chip" style="--gc:${mc('#88ff44')};border-color:#88ff4466;background:rgba(136,255,68,0.06);" onclick="startEscort()">
-                            <span class="nv-chip-icon">🚀</span>
+                            <span class="nv-chip-icon">▲</span>
                             <div><div class="nv-chip-label" style="color:#88ff44;">ESCORT</div><div class="nv-chip-sub" style="color:#88ff4488;">Protect Cargo</div></div>
                         </div>
                         <div class="nv-mode-chip" style="--gc:${mc('#ff8844')};border-color:#ff884466;background:rgba(255,136,68,0.06);" onclick="startHordeDefense()">
-                            <span class="nv-chip-icon">🏰</span>
+                            <span class="nv-chip-icon">⊡</span>
                             <div><div class="nv-chip-label" style="color:#ff8844;">HORDE</div><div class="nv-chip-sub" style="color:#ff884488;">Tower Defense</div></div>
                         </div>
                         <div class="nv-mode-chip" style="--gc:${mc('#ffaa00')};border-color:#ffaa0066;background:rgba(255,170,0,0.06);" onclick="startTagTeam()">
-                            <span class="nv-chip-icon">🤝</span>
+                            <span class="nv-chip-icon">⊕</span>
                             <div><div class="nv-chip-label" style="color:#ffaa00;">TAG TEAM</div><div class="nv-chip-sub" style="color:#ffaa0088;">Co-op Swap</div></div>
                         </div>
                         <div class="nv-mode-chip" style="--gc:${mc('#ff2244')};border-color:#ff224466;background:rgba(255,34,68,0.06);" onclick="startInfection()">
-                            <span class="nv-chip-icon">🦠</span>
+                            <span class="nv-chip-icon">⊛</span>
                             <div><div class="nv-chip-label" style="color:#ff2244;">INFECTION</div><div class="nv-chip-sub" style="color:#ff224488;">Co-op Tag</div></div>
                         </div>
                         <div class="nv-mode-chip" style="--gc:${mc('#aa44ff')};border-color:#aa44ff66;background:rgba(170,68,255,0.06);" onclick="startRoguelike()">
-                            <span class="nv-chip-icon">🎲</span>
+                            <span class="nv-chip-icon">⊞</span>
                             <div><div class="nv-chip-label" style="color:#aa44ff;">ROGUELIKE</div><div class="nv-chip-sub" style="color:#aa44ff88;">10 Floors</div></div>
                         </div>
                         <div class="nv-mode-chip" style="--gc:${mc('#ff4488')};border-color:#ff448866;background:rgba(255,68,136,0.06);" onclick="startPvP()">
@@ -11006,11 +11006,11 @@ function generateSyncCode() {
                             <div><div class="nv-chip-label" style="color:#ff4488;">1v1 PVP</div><div class="nv-chip-sub" style="color:#ff448888;">Duel</div></div>
                         </div>
                         <div class="nv-mode-chip" style="--gc:${mc('#4488ff')};border-color:#4488ff66;background:rgba(68,136,255,0.06);" onclick="startCaptureTheFlag()">
-                            <span class="nv-chip-icon">🚩</span>
+                            <span class="nv-chip-icon">⚑</span>
                             <div><div class="nv-chip-label" style="color:#4488ff;">CTF</div><div class="nv-chip-sub" style="color:#4488ff88;">Capture Flag</div></div>
                         </div>
                         <div class="nv-mode-chip" style="--gc:${mc('#88ffcc')};border-color:#88ffcc66;background:rgba(136,255,204,0.06);" onclick="openLevelEditor()">
-                            <span class="nv-chip-icon">🔧</span>
+                            <span class="nv-chip-icon">⚙</span>
                             <div><div class="nv-chip-label" style="color:#88ffcc;">EDITOR</div><div class="nv-chip-sub" style="color:#88ffcc88;">Level Design</div></div>
                         </div>
                         ${secretChip}${paradoxChip}
@@ -11030,20 +11030,20 @@ function generateSyncCode() {
                     <div style="margin-top:8px;padding:0 4px;">
                         <div style="font-size:9px;letter-spacing:3px;color:#ffffff44;margin-bottom:6px;">PROGRESSION</div>
                         <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                            <div style="padding:6px 12px;border:1px solid #ffd70044;border-radius:8px;cursor:pointer;font-size:10px;color:#ffd700;letter-spacing:1px;" onclick="openBattlePass()">⭐ BATTLE PASS</div>
-                            <div style="padding:6px 12px;border:1px solid #ff880044;border-radius:8px;cursor:pointer;font-size:10px;color:#ff8800;letter-spacing:1px;" onclick="openMastery()">🎯 MASTERY</div>
-                            <div style="padding:6px 12px;border:1px solid #44ff8844;border-radius:8px;cursor:pointer;font-size:10px;color:#44ff88;letter-spacing:1px;" onclick="openBlueprints()">📜 BLUEPRINTS</div>
-                            <div style="padding:6px 12px;border:1px solid #ff445544;border-radius:8px;cursor:pointer;font-size:10px;color:#ff4455;letter-spacing:1px;" onclick="openContracts()">📋 CONTRACTS</div>
-                            <div style="padding:6px 12px;border:1px solid #aa44ff44;border-radius:8px;cursor:pointer;font-size:10px;color:#aa44ff;letter-spacing:1px;" onclick="openBlackMarket()">🏪 BLACK MARKET</div>
-                            <div style="padding:6px 12px;border:1px solid #00ffcc44;border-radius:8px;cursor:pointer;font-size:10px;color:#00ffcc;letter-spacing:1px;" onclick="openGemShop()">💎 GEM SHOP</div>
-                            <div style="padding:6px 12px;border:1px solid #ffcc0044;border-radius:8px;cursor:pointer;font-size:10px;color:#ffcc00;letter-spacing:1px;" onclick="openTradePost()">🔄 TRADE POST</div>
-                            <div style="padding:6px 12px;border:1px solid #ff005544;border-radius:8px;cursor:pointer;font-size:10px;color:#ff0055;letter-spacing:1px;" onclick="openBounties()">🎯 BOUNTIES</div>
-                            <div style="padding:6px 12px;border:1px solid #4488ff44;border-radius:8px;cursor:pointer;font-size:10px;color:#4488ff;letter-spacing:1px;" onclick="openRebirth()">♻️ REBIRTH</div>
-                            <div style="padding:6px 12px;border:1px solid #ffd70044;border-radius:8px;cursor:pointer;font-size:10px;color:#ffd700;letter-spacing:1px;" onclick="openVIPPanel()">👑 VIP</div>
-                            <div style="padding:6px 12px;border:1px solid #ffffff44;border-radius:8px;cursor:pointer;font-size:10px;color:#ffffff;letter-spacing:1px;" onclick="openAchievements()">🏆 ACHIEVEMENTS</div>
-                            <div style="padding:6px 12px;border:1px solid #00ffcc44;border-radius:8px;cursor:pointer;font-size:10px;color:#00ffcc;letter-spacing:1px;" onclick="openClan()">👥 CLAN</div>
-                            <div style="padding:6px 12px;border:1px solid #ff88ff44;border-radius:8px;cursor:pointer;font-size:10px;color:#ff88ff;letter-spacing:1px;" onclick="openPrestige()">🌟 PRESTIGE</div>
-                            <div style="padding:6px 12px;border:1px solid #88ffcc44;border-radius:8px;cursor:pointer;font-size:10px;color:#88ffcc;letter-spacing:1px;" onclick="openPhotoMode()">📸 PHOTO MODE</div>
+                            <div style="padding:6px 12px;border:1px solid #ffd70044;border-radius:8px;cursor:pointer;font-size:10px;color:#ffd700;letter-spacing:1px;" onclick="openBattlePass()">★ BATTLE PASS</div>
+                            <div style="padding:6px 12px;border:1px solid #ff880044;border-radius:8px;cursor:pointer;font-size:10px;color:#ff8800;letter-spacing:1px;" onclick="openMastery()">◎ MASTERY</div>
+                            <div style="padding:6px 12px;border:1px solid #44ff8844;border-radius:8px;cursor:pointer;font-size:10px;color:#44ff88;letter-spacing:1px;" onclick="openBlueprints()">☰ BLUEPRINTS</div>
+                            <div style="padding:6px 12px;border:1px solid #ff445544;border-radius:8px;cursor:pointer;font-size:10px;color:#ff4455;letter-spacing:1px;" onclick="openContracts()">☰ CONTRACTS</div>
+                            <div style="padding:6px 12px;border:1px solid #aa44ff44;border-radius:8px;cursor:pointer;font-size:10px;color:#aa44ff;letter-spacing:1px;" onclick="openBlackMarket()">⊟ BLACK MARKET</div>
+                            <div style="padding:6px 12px;border:1px solid #00ffcc44;border-radius:8px;cursor:pointer;font-size:10px;color:#00ffcc;letter-spacing:1px;" onclick="openGemShop()">◆ GEM SHOP</div>
+                            <div style="padding:6px 12px;border:1px solid #ffcc0044;border-radius:8px;cursor:pointer;font-size:10px;color:#ffcc00;letter-spacing:1px;" onclick="openTradePost()">↻ TRADE POST</div>
+                            <div style="padding:6px 12px;border:1px solid #ff005544;border-radius:8px;cursor:pointer;font-size:10px;color:#ff0055;letter-spacing:1px;" onclick="openBounties()">◎ BOUNTIES</div>
+                            <div style="padding:6px 12px;border:1px solid #4488ff44;border-radius:8px;cursor:pointer;font-size:10px;color:#4488ff;letter-spacing:1px;" onclick="openRebirth()">♻ REBIRTH</div>
+                            <div style="padding:6px 12px;border:1px solid #ffd70044;border-radius:8px;cursor:pointer;font-size:10px;color:#ffd700;letter-spacing:1px;" onclick="openVIPPanel()">♔ VIP</div>
+                            <div style="padding:6px 12px;border:1px solid #ffffff44;border-radius:8px;cursor:pointer;font-size:10px;color:#ffffff;letter-spacing:1px;" onclick="openAchievements()">♛ ACHIEVEMENTS</div>
+                            <div style="padding:6px 12px;border:1px solid #00ffcc44;border-radius:8px;cursor:pointer;font-size:10px;color:#00ffcc;letter-spacing:1px;" onclick="openClan()">⁂ CLAN</div>
+                            <div style="padding:6px 12px;border:1px solid #ff88ff44;border-radius:8px;cursor:pointer;font-size:10px;color:#ff88ff;letter-spacing:1px;" onclick="openPrestige()">★ PRESTIGE</div>
+                            <div style="padding:6px 12px;border:1px solid #88ffcc44;border-radius:8px;cursor:pointer;font-size:10px;color:#88ffcc;letter-spacing:1px;" onclick="openPhotoMode()">□ PHOTO MODE</div>
                         </div>
                     </div>
                     <div style="height:80px;"></div>
