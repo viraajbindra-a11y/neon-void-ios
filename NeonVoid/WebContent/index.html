@@ -5044,6 +5044,7 @@
 
 
         function returnToMenu() {
+            let bnav=document.querySelector('.nv-bottomnav');if(bnav)bnav.style.display='flex';
             document.getElementById('mission-select').classList.add('hidden'); document.getElementById('shop-screen').classList.add('hidden'); document.getElementById('settings-screen').classList.add('hidden'); document.getElementById('pause-screen').classList.add('hidden'); document.getElementById('draw-screen').classList.add('hidden');
             stopMusic(); startMenuBg(); if (appSettings.music) startMenuMusic();
             ui.mainOverlay.classList.remove('hidden'); ui.mainOverlay.classList.remove('win-theme');
@@ -5354,7 +5355,7 @@
             }
         }
 
-        function initGameBase() { let mpb=document.getElementById('mobile-pause-btn'); if(mpb&&(appSettings.mobile||window.innerWidth<=768))mpb.style.display='block'; player = new Player(); activeBoss = null; asteroids = []; exhaustParticles = []; entities = { bullets: [], enemies: [], eBullets: [], particles: [], powerups: [], texts: [], stars: [], trails: [] }; fireTrails = []; weatherTimer = 0; currentWeather = null; victoryPoseTimer = 0; state._rogueWaiting = false; zombieQueue = []; hivemindGroupCounter = 0;
+        function initGameBase() { let bnav=document.querySelector('.nv-bottomnav');if(bnav)bnav.style.display='none'; let mpb=document.getElementById('mobile-pause-btn'); if(mpb&&(appSettings.mobile||window.innerWidth<=768))mpb.style.display='block'; player = new Player(); activeBoss = null; asteroids = []; exhaustParticles = []; entities = { bullets: [], enemies: [], eBullets: [], particles: [], powerups: [], texts: [], stars: [], trails: [] }; fireTrails = []; weatherTimer = 0; currentWeather = null; victoryPoseTimer = 0; state._rogueWaiting = false; zombieQueue = []; hivemindGroupCounter = 0;
             // Feature 48: Load previous ghost run for playback into separate array
             try { let savedGhost = secureLoad('neonVoidGhost', null); if (savedGhost) { ghostPlaybackInputs = Array.isArray(savedGhost) ? savedGhost : JSON.parse(savedGhost); ghostPlayback = true; ghostFrame = 0; } else { ghostPlaybackInputs = []; ghostPlayback = false; } } catch(e) { ghostPlaybackInputs = []; ghostPlayback = false; }
             ghostInputs = [];
@@ -10053,7 +10054,7 @@ function generateSyncCode() {
             .nv-grid-card .gc-badge { position:absolute;top:6px;right:8px;font-size:8px;border-radius:6px;padding:1px 6px;font-weight:bold; }
 
             /* BOTTOM NAV — Fixed tab bar */
-            .nv-bottomnav { display:flex;align-items:stretch;background:linear-gradient(180deg,rgba(10,0,15,0.95),rgba(5,0,8,0.98));border-top:2px solid #ff005533;z-index:50;position:fixed;bottom:0;left:0;right:0;padding-bottom:env(safe-area-inset-bottom,0px); }
+            .nv-bottomnav { display:flex !important;align-items:stretch;background:linear-gradient(180deg,rgba(10,0,15,0.95),rgba(5,0,8,0.98));border-top:2px solid #ff005533;z-index:99999 !important;position:fixed !important;bottom:0 !important;left:0 !important;right:0 !important;padding-bottom:env(safe-area-inset-bottom,0px);min-height:56px; }
             .nv-nav-tab { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 2px 12px;cursor:pointer;transition:all 0.2s;border-top:2px solid transparent;position:relative; }
             .nv-nav-tab:hover { background:rgba(255,255,255,0.04); }
             .nv-nav-tab.active { border-top-color:#ff0055;background:rgba(255,0,85,0.08); }
@@ -11115,6 +11116,14 @@ function generateSyncCode() {
                     </div>
                 </div>
             </div>`;
+
+            // Move bottom nav out of overlay to body (fixes position:fixed inside backdrop-filter)
+            setTimeout(() => {
+                let bnav = document.querySelector('.nv-bottomnav');
+                if (bnav && bnav.parentElement && bnav.closest('.overlay-screen')) {
+                    document.body.appendChild(bnav);
+                }
+            }, 50);
 
             // Draw ship on the mini canvas
             try {
