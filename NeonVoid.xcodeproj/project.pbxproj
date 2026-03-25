@@ -22,7 +22,7 @@
 /* Begin PBXFileReference section */
 		02DC9076C245DABD3CE9E9B4 /* ShipOrnamentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShipOrnamentView.swift; sourceTree = "<group>"; };
 		0C1ED58928CE4CF264BE01FE /* NeonVoidVision.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = NeonVoidVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		0F372C09B730C0B8C15C792E /* NeonVoid.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NeonVoid.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0F372C09B730C0B8C15C792E /* NeonVoid.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = NeonVoid.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D7424E85DF708472F288A14 /* GameWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameWebView.swift; sourceTree = "<group>"; };
 		365DE885873CAAD38308133E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3672338C6489A73CC725F1DA /* NeonVoidTVApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonVoidTVApp.swift; sourceTree = "<group>"; };
@@ -346,7 +346,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = SCJR25STGX;
 				INFOPLIST_FILE = NeonVoid/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -437,7 +436,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = SCJR25STGX;
 				INFOPLIST_FILE = NeonVoid/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
