@@ -10873,6 +10873,11 @@ function generateSyncCode() {
             // Build full menu HTML
             ui.menuBtns.style.maxWidth = '100%';
             ui.menuBtns.style.width = '100%';
+            // Override parent overlay so mobile menu fills screen
+            ui.mainOverlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;overflow:hidden;padding:0;margin:0;display:block;background:#000;z-index:20;';
+            ui.menuBtns.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;max-width:100%;z-index:99999;';
+            // Hide the original inner wrapper (title, desc, old buttons)
+            Array.from(ui.mainOverlay.children).forEach(c => { if (c !== ui.menuBtns) c.style.display = 'none'; });
             ui.menuBtns.innerHTML = `<div class="nv-menu-root">
 
                 <!-- TOP BAR -->
