@@ -5044,7 +5044,7 @@
 
 
         function returnToMenu() {
-            let bnav=document.querySelector('.nv-bottomnav');if(bnav)bnav.style.display='flex';
+            let mroot=document.querySelector('.nv-menu-root');if(mroot)mroot.style.display='flex';
             document.getElementById('mission-select').classList.add('hidden'); document.getElementById('shop-screen').classList.add('hidden'); document.getElementById('settings-screen').classList.add('hidden'); document.getElementById('pause-screen').classList.add('hidden'); document.getElementById('draw-screen').classList.add('hidden');
             stopMusic(); startMenuBg(); if (appSettings.music) startMenuMusic();
             ui.mainOverlay.classList.remove('hidden'); ui.mainOverlay.classList.remove('win-theme');
@@ -5355,7 +5355,7 @@
             }
         }
 
-        function initGameBase() { let bnav=document.querySelector('.nv-bottomnav');if(bnav)bnav.style.display='none'; let mpb=document.getElementById('mobile-pause-btn'); if(mpb&&(appSettings.mobile||window.innerWidth<=768))mpb.style.display='block'; player = new Player(); activeBoss = null; asteroids = []; exhaustParticles = []; entities = { bullets: [], enemies: [], eBullets: [], particles: [], powerups: [], texts: [], stars: [], trails: [] }; fireTrails = []; weatherTimer = 0; currentWeather = null; victoryPoseTimer = 0; state._rogueWaiting = false; zombieQueue = []; hivemindGroupCounter = 0;
+        function initGameBase() { let mroot=document.querySelector('.nv-menu-root');if(mroot)mroot.style.display='none'; let mpb=document.getElementById('mobile-pause-btn'); if(mpb&&(appSettings.mobile||window.innerWidth<=768))mpb.style.display='block'; player = new Player(); activeBoss = null; asteroids = []; exhaustParticles = []; entities = { bullets: [], enemies: [], eBullets: [], particles: [], powerups: [], texts: [], stars: [], trails: [] }; fireTrails = []; weatherTimer = 0; currentWeather = null; victoryPoseTimer = 0; state._rogueWaiting = false; zombieQueue = []; hivemindGroupCounter = 0;
             // Feature 48: Load previous ghost run for playback into separate array
             try { let savedGhost = secureLoad('neonVoidGhost', null); if (savedGhost) { ghostPlaybackInputs = Array.isArray(savedGhost) ? savedGhost : JSON.parse(savedGhost); ghostPlayback = true; ghostFrame = 0; } else { ghostPlaybackInputs = []; ghostPlayback = false; } } catch(e) { ghostPlaybackInputs = []; ghostPlayback = false; }
             ghostInputs = [];
@@ -9989,7 +9989,7 @@ function generateSyncCode() {
             @keyframes rotateSlow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
             @keyframes bannerScroll { 0%{transform:translateX(100%)} 100%{transform:translateX(-100%)} }
 
-            .nv-menu-root { position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;font-family:'Courier New',monospace;padding-bottom:70px; }
+            .nv-menu-root { position:fixed;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;overflow:hidden;font-family:'Courier New',monospace;z-index:99990; }
 
             /* TOP BAR — resource bar */
             .nv-topbar { display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:linear-gradient(180deg,rgba(20,0,30,0.95),rgba(10,0,15,0.9));border-bottom:2px solid #ff005544;z-index:5;flex-shrink:0; }
@@ -10013,7 +10013,7 @@ function generateSyncCode() {
             .nv-sector-text { font-size:10px;color:#888;letter-spacing:1px; }
 
             /* CENTER CONTENT — scrollable area between hero and bottom nav */
-            .nv-center { flex:1;overflow-y:auto;overflow-x:hidden;padding:8px 16px 10px;display:flex;flex-direction:column;gap:10px; }
+            .nv-center { flex:1 1 0;min-height:0;overflow-y:auto;overflow-x:hidden;padding:8px 16px 10px;display:flex;flex-direction:column;gap:10px; }
 
             /* BATTLE BUTTON */
             .nv-battle-section { display:flex;flex-direction:column;align-items:center;gap:8px; }
@@ -10054,7 +10054,7 @@ function generateSyncCode() {
             .nv-grid-card .gc-badge { position:absolute;top:6px;right:8px;font-size:8px;border-radius:6px;padding:1px 6px;font-weight:bold; }
 
             /* BOTTOM NAV — Fixed tab bar */
-            .nv-bottomnav { display:flex !important;align-items:stretch;background:linear-gradient(180deg,rgba(10,0,15,0.95),rgba(5,0,8,0.98));border-top:2px solid #ff005533;z-index:99999 !important;position:fixed !important;bottom:0 !important;left:0 !important;right:0 !important;padding-bottom:env(safe-area-inset-bottom,0px);min-height:56px; }
+            .nv-bottomnav { display:flex;align-items:stretch;background:linear-gradient(180deg,rgba(10,0,15,0.95),rgba(5,0,8,0.98));border-top:2px solid #ff005533;flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0px);min-height:56px; }
             .nv-nav-tab { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 2px 12px;cursor:pointer;transition:all 0.2s;border-top:2px solid transparent;position:relative; }
             .nv-nav-tab:hover { background:rgba(255,255,255,0.04); }
             .nv-nav-tab.active { border-top-color:#ff0055;background:rgba(255,0,85,0.08); }
@@ -11116,14 +11116,6 @@ function generateSyncCode() {
                     </div>
                 </div>
             </div>`;
-
-            // Move bottom nav out of overlay to body (fixes position:fixed inside backdrop-filter)
-            setTimeout(() => {
-                let bnav = document.querySelector('.nv-bottomnav');
-                if (bnav && bnav.parentElement && bnav.closest('.overlay-screen')) {
-                    document.body.appendChild(bnav);
-                }
-            }, 50);
 
             // Draw ship on the mini canvas
             try {
