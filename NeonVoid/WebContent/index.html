@@ -9606,134 +9606,157 @@ function generateSyncCode() {
         menuStyleTag.textContent = `
             @keyframes menuFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
             @keyframes menuGlow { 0%,100%{filter:drop-shadow(0 0 8px #ff005580)} 50%{filter:drop-shadow(0 0 20px #ff0055cc)} }
-            @keyframes battlePulse { 0%,100%{transform:scale(1);box-shadow:0 0 30px #ff005566,inset 0 0 30px #ff005522} 50%{transform:scale(1.03);box-shadow:0 0 50px #ff0055aa,inset 0 0 40px #ff005544} }
+            @keyframes battlePulse { 0%,100%{transform:scale(1);box-shadow:0 0 20px #ff005566,inset 0 0 20px #ff005522} 50%{transform:scale(1.025);box-shadow:0 0 40px #ff0055bb,inset 0 0 30px #ff005544} }
             @keyframes shimmer { 0%{background-position:-200% center} 100%{background-position:200% center} }
             @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
             @keyframes rotateSlow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-            @keyframes bannerScroll { 0%{transform:translateX(100%)} 100%{transform:translateX(-100%)} }
+            @keyframes xpShimmer { 0%{background-position:-200% center} 100%{background-position:200% center} }
+            @keyframes centerGlow { 0%,100%{box-shadow:0 0 30px #ff005533,inset 0 0 40px #00000044} 50%{box-shadow:0 0 60px #ff005555,inset 0 0 40px #00000044} }
+            @keyframes particleDrift { 0%{transform:translateY(0) translateX(0) scale(1);opacity:0.7} 100%{transform:translateY(-40px) translateX(var(--dx,5px)) scale(0);opacity:0} }
+            @keyframes chestGlow { 0%,100%{box-shadow:0 0 8px rgba(var(--gc),0.3)} 50%{box-shadow:0 0 16px rgba(var(--gc),0.6)} }
+            @keyframes tabActivePop { 0%{transform:scale(1)} 40%{transform:scale(1.15)} 100%{transform:scale(1)} }
 
             .nv-menu-root { position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;font-family:'Courier New',monospace; }
 
-            /* TOP BAR — resource bar */
-            .nv-topbar { display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:linear-gradient(180deg,rgba(20,0,30,0.95),rgba(10,0,15,0.9));border-bottom:2px solid #ff005544;z-index:5;flex-shrink:0; }
-            .nv-topbar-left { display:flex;align-items:center;gap:10px; }
-            .nv-topbar-right { display:flex;align-items:center;gap:12px; }
-            .nv-pilot-badge { display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#1a0025,#0a0010);border:1px solid #ff005566;border-radius:20px;padding:4px 14px 4px 6px; }
-            .nv-pilot-avatar { width:28px;height:28px;border-radius:50%;border:2px solid #00ffcc;display:flex;align-items:center;justify-content:center;font-size:14px;background:rgba(0,255,200,0.1); }
-            .nv-pilot-name { color:#00ffcc;font-weight:bold;font-size:13px;letter-spacing:1px; }
-            .nv-resource { display:flex;align-items:center;gap:5px;background:linear-gradient(135deg,rgba(255,204,0,0.1),rgba(0,0,0,0.6));border:1px solid #ffcc0044;border-radius:14px;padding:3px 12px 3px 6px;font-size:13px;color:#ffcc00;font-weight:bold; }
-            .nv-settings-btn { width:32px;height:32px;border-radius:50%;border:1px solid #555;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all 0.2s; }
-            .nv-settings-btn:hover { border-color:#fff;background:rgba(255,255,255,0.15);transform:rotate(90deg); }
+            /* ===== TOP BAR — ultra compact Clash Royale style ===== */
+            .nv-topbar { display:flex;align-items:center;gap:6px;padding:0 8px;height:40px;background:linear-gradient(180deg,rgba(15,0,25,0.98) 0%,rgba(8,0,14,0.95) 100%);border-bottom:1px solid #ff005533;z-index:5;flex-shrink:0; }
+            .nv-level-badge { display:flex;align-items:center;gap:4px;background:linear-gradient(135deg,#1a0030,#0d001a);border:1.5px solid #ff005566;border-radius:10px;padding:2px 8px 2px 5px;flex-shrink:0; }
+            .nv-level-icon { font-size:13px;line-height:1; }
+            .nv-level-num { font-size:12px;font-weight:900;color:#ff0055;letter-spacing:0.5px; }
+            .nv-xp-bar-wrap { flex:1;min-width:60px;max-width:120px;display:flex;flex-direction:column;gap:1px; }
+            .nv-xp-bar { height:7px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;border:1px solid rgba(255,255,255,0.06); }
+            .nv-xp-fill { height:100%;border-radius:4px;background:linear-gradient(90deg,#ff0055,#ff8800,#ffcc00);background-size:200% 100%;animation:xpShimmer 3s linear infinite; }
+            .nv-xp-text { font-size:7px;color:#ffffff44;letter-spacing:0.5px;text-align:right; }
+            .nv-topbar-spacer { flex:1; }
+            .nv-coin-pill { display:flex;align-items:center;gap:4px;background:linear-gradient(135deg,rgba(255,204,0,0.12),rgba(0,0,0,0.7));border:1px solid #ffcc0044;border-radius:10px;padding:3px 10px 3px 5px;font-size:12px;color:#ffcc00;font-weight:900;letter-spacing:0.3px;flex-shrink:0; }
+            .nv-coin-icon { font-size:13px; }
+            .nv-gem-pill { display:flex;align-items:center;gap:4px;background:linear-gradient(135deg,rgba(0,255,204,0.1),rgba(0,0,0,0.7));border:1px solid #00ffcc33;border-radius:10px;padding:3px 10px 3px 5px;font-size:12px;color:#00ffcc;font-weight:900;letter-spacing:0.3px;flex-shrink:0; }
+            .nv-gem-icon { font-size:13px; }
+            .nv-settings-btn { width:30px;height:30px;border-radius:8px;border:1px solid #ffffff22;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;transition:all 0.2s;flex-shrink:0; }
+            .nv-settings-btn:hover { border-color:#ffffff66;background:rgba(255,255,255,0.12);transform:rotate(90deg); }
 
-            /* HERO SECTION — Big logo + ship art */
-            .nv-hero { flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 0 4px;position:relative; }
-            .nv-logo { font-size:46px;font-weight:900;letter-spacing:10px;color:transparent;-webkit-text-stroke:2px #ff0055;text-shadow:0 0 40px #ff005588;animation:menuGlow 3s infinite;text-transform:uppercase;margin:0;line-height:1; }
-            .nv-logo-sub { font-size:11px;letter-spacing:6px;color:#ff005588;text-transform:uppercase;margin-top:2px; }
-            .nv-ship-display { width:56px;height:56px;margin:4px 0;pointer-events:none;overflow:hidden; }
-            .nv-sector-progress { display:flex;align-items:center;gap:6px;margin-top:4px; }
-            .nv-sector-bar { width:180px;height:6px;background:#1a1a2e;border-radius:3px;overflow:hidden;border:1px solid #333; }
-            .nv-sector-fill { height:100%;border-radius:3px;transition:width 0.5s;background:linear-gradient(90deg,#ff0055,#ff8800,#ffcc00); }
-            .nv-sector-text { font-size:10px;color:#888;letter-spacing:1px; }
+            /* ===== PLAYER INFO ROW ===== */
+            .nv-player-row { display:flex;align-items:center;gap:8px;padding:5px 10px;background:linear-gradient(180deg,rgba(8,0,14,0.95),rgba(5,0,10,0.9));border-bottom:1px solid #ffffff0a;flex-shrink:0; }
+            .nv-avatar-btn { width:32px;height:32px;border-radius:50%;border:2px solid #00ffcc66;background:rgba(0,255,204,0.08);display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;flex-shrink:0;transition:border-color 0.2s; }
+            .nv-avatar-btn:hover { border-color:#00ffcc; }
+            .nv-player-info { flex:1;min-width:0; }
+            .nv-player-name { font-size:13px;font-weight:900;color:#ffffff;letter-spacing:1.5px;line-height:1.1; }
+            .nv-player-sub { font-size:9px;color:#ffffff55;letter-spacing:0.5px;margin-top:1px; }
+            .nv-trophy-badge { display:flex;align-items:center;gap:4px;background:linear-gradient(135deg,rgba(255,215,0,0.12),rgba(0,0,0,0.6));border:1px solid #ffd70044;border-radius:10px;padding:3px 10px 3px 5px;flex-shrink:0; }
+            .nv-trophy-icon { font-size:14px; }
+            .nv-trophy-val { font-size:12px;font-weight:900;color:#ffd700;letter-spacing:0.5px; }
+            .nv-rank-chip { font-size:9px;font-weight:bold;color:#ff8800;background:rgba(255,136,0,0.12);border:1px solid #ff880033;border-radius:6px;padding:2px 6px;letter-spacing:0.5px;flex-shrink:0; }
 
-            /* CENTER CONTENT — scrollable area between hero and bottom nav */
-            .nv-center { flex:1;overflow-y:auto;overflow-x:hidden;padding:8px 16px 10px;display:flex;flex-direction:column;gap:10px; }
+            /* ===== CENTERPIECE ===== */
+            .nv-centerpiece { flex:0 0 auto;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;animation:centerGlow 4s ease-in-out infinite; }
+            .nv-centerpiece-canvas { display:block;width:100%;pointer-events:none; }
+            .nv-centerpiece-overlay { position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(0deg,rgba(5,0,10,0.9),transparent);pointer-events:none; }
+
+            /* ===== CHEST SLOTS ROW ===== */
+            .nv-chest-row { display:flex;align-items:stretch;gap:5px;padding:6px 10px;background:rgba(0,0,0,0.4);border-top:1px solid #ffffff0a;border-bottom:1px solid #ffffff0a;flex-shrink:0; }
+            .nv-chest-slot { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:linear-gradient(135deg,rgba(var(--gc),0.08),rgba(0,0,0,0.6));border:1.5px solid rgba(var(--gc),0.3);border-radius:10px;padding:6px 4px;cursor:pointer;transition:all 0.2s;min-height:52px;animation:chestGlow 3s ease-in-out infinite; }
+            .nv-chest-slot:hover { border-color:rgba(var(--gc),0.7);transform:translateY(-2px); }
+            .nv-chest-slot:active { transform:scale(0.95); }
+            .nv-chest-icon { font-size:20px;line-height:1; }
+            .nv-chest-label { font-size:7px;font-weight:bold;letter-spacing:0.5px;text-align:center;text-transform:uppercase; }
+
+            /* CENTER CONTENT — scrollable */
+            .nv-center { flex:1;overflow-y:auto;overflow-x:hidden;padding:8px 10px 6px;display:flex;flex-direction:column;gap:8px; }
 
             /* TAB CONTENT VISIBILITY */
             .nv-tab-content { display:none; }
             #nv-tab-battle { display:block; }
 
-            /* BATTLE BUTTON */
-            .nv-battle-section { display:flex;flex-direction:column;align-items:center;gap:8px; }
-            .nv-battle-btn { width:60%;min-width:220px;max-width:320px;height:68px;border-radius:16px;border:3px solid #ff0055;background:linear-gradient(180deg,#2a0015 0%,#1a000a 50%,#2a0015 100%);display:flex;align-items:center;justify-content:center;cursor:pointer;animation:battlePulse 2s infinite;position:relative;overflow:hidden;transition:all 0.15s; }
-            .nv-battle-btn:hover { border-color:#ff3377;filter:brightness(1.3); }
+            /* ===== BATTLE AREA ===== */
+            .nv-battle-area { display:flex;align-items:center;gap:8px;flex-shrink:0;padding:0 2px; }
+            .nv-side-mode { flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:4px;background:linear-gradient(135deg,rgba(var(--gc),0.1),rgba(0,0,0,0.75));border:1.5px solid rgba(var(--gc),0.4);border-radius:12px;padding:10px 8px;cursor:pointer;transition:all 0.2s;min-width:62px;min-height:68px;justify-content:center; }
+            .nv-side-mode:hover { border-color:rgba(var(--gc),0.85);transform:translateY(-2px); }
+            .nv-side-mode:active { transform:scale(0.95); }
+            .nv-side-mode .sm-icon { font-size:22px;line-height:1; }
+            .nv-side-mode .sm-label { font-size:8px;font-weight:900;letter-spacing:1px;text-align:center;text-transform:uppercase; }
+            .nv-battle-btn { flex:1;height:68px;border-radius:14px;border:3px solid #ff0055;background:linear-gradient(180deg,#3a0020 0%,#1a000a 50%,#3a0020 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;animation:battlePulse 2s infinite;position:relative;overflow:hidden;transition:all 0.15s;gap:2px; }
+            .nv-battle-btn:hover { border-color:#ff5588;filter:brightness(1.2); }
             .nv-battle-btn:active { transform:scale(0.97); }
-            .nv-battle-text { font-size:28px;font-weight:900;letter-spacing:6px;color:#ff0055;text-shadow:0 0 20px #ff005588;z-index:1; }
-            .nv-battle-shimmer { position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(90deg,transparent 0%,rgba(255,0,85,0.15) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 3s infinite; }
-            .nv-battle-sub { font-size:10px;color:#ff005588;letter-spacing:3px; }
+            .nv-battle-text { font-size:26px;font-weight:900;letter-spacing:5px;color:#ff0055;text-shadow:0 0 20px #ff005599;z-index:1;line-height:1; }
+            .nv-battle-sub { font-size:9px;color:#ff005577;letter-spacing:2px;z-index:1; }
+            .nv-battle-shimmer { position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(90deg,transparent 0%,rgba(255,0,85,0.12) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 2.5s infinite; }
 
-            /* PRIMARY MODE GRID — 2x2 card grid */
-            .nv-primary-modes { display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px; }
-            .nv-primary-mode-card { background:linear-gradient(135deg,rgba(var(--gc),0.1),rgba(0,0,0,0.75));border:1.5px solid rgba(var(--gc),0.4);border-radius:14px;padding:14px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;min-height:80px;justify-content:center; }
-            .nv-primary-mode-card:hover { border-color:rgba(var(--gc),0.9);transform:translateY(-2px);box-shadow:0 4px 20px rgba(var(--gc),0.25); }
-            .nv-primary-mode-card:active { transform:scale(0.97); }
-            .nv-primary-mode-card .pm-icon { font-size:26px;line-height:1; }
-            .nv-primary-mode-card .pm-label { font-size:12px;font-weight:900;letter-spacing:2px;text-align:center; }
-            .nv-primary-mode-card .pm-sub { font-size:9px;opacity:0.55;letter-spacing:1px;text-align:center; }
-
-            /* MODE SELECTOR ROW — horizontal scroll of extra modes */
-            .nv-modes-row { display:flex;gap:10px;overflow-x:auto;overflow-y:visible;padding:6px 2px;-webkit-overflow-scrolling:touch;flex-shrink:0;min-height:56px; }
-            .nv-modes-row::-webkit-scrollbar { height:3px; }
-            .nv-modes-row::-webkit-scrollbar-thumb { background:#ff005544;border-radius:2px; }
-            .nv-modes-section-label { font-size:9px;letter-spacing:3px;color:#ffffff44;text-transform:uppercase;margin-top:2px;margin-bottom:-4px; }
-            .nv-mode-chip { display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;border:1.5px solid;cursor:pointer;white-space:nowrap;transition:all 0.2s;flex-shrink:0;min-height:44px; }
+            /* ===== MORE MODES ===== */
+            .nv-modes-section-label { font-size:8px;letter-spacing:3px;color:#ffffff33;text-transform:uppercase;margin-top:2px;margin-bottom:-2px; }
+            .nv-modes-row { display:flex;gap:8px;overflow-x:auto;overflow-y:visible;padding:4px 2px;-webkit-overflow-scrolling:touch;flex-shrink:0;min-height:52px; }
+            .nv-modes-row::-webkit-scrollbar { height:2px; }
+            .nv-modes-row::-webkit-scrollbar-thumb { background:#ff005533;border-radius:2px; }
+            .nv-mode-chip { display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:10px;border:1.5px solid;cursor:pointer;white-space:nowrap;transition:all 0.2s;flex-shrink:0;min-height:40px; }
             .nv-mode-chip:hover { transform:translateY(-2px);filter:brightness(1.3); }
             .nv-mode-chip:active { transform:scale(0.96); }
-            .nv-mode-chip .nv-chip-icon { font-size:20px; }
-            .nv-mode-chip .nv-chip-label { font-size:13px;font-weight:bold;letter-spacing:1px; }
-            .nv-mode-chip .nv-chip-sub { font-size:10px;opacity:0.6; }
+            .nv-mode-chip .nv-chip-icon { font-size:18px; }
+            .nv-mode-chip .nv-chip-label { font-size:12px;font-weight:bold;letter-spacing:1px; }
+            .nv-mode-chip .nv-chip-sub { font-size:9px;opacity:0.6; }
 
             /* HANGAR SECTION */
-            .nv-section-header { font-size:9px;letter-spacing:3px;color:#ffffff55;text-transform:uppercase;margin-bottom:6px;margin-top:4px;padding-bottom:6px;border-bottom:1px solid #ffffff11; }
-            .nv-skins-row { display:flex;gap:10px;overflow-x:auto;padding:4px 2px 8px;-webkit-overflow-scrolling:touch; }
-            .nv-skins-row::-webkit-scrollbar { height:3px; }
-            .nv-skins-row::-webkit-scrollbar-thumb { background:#aa44ff44;border-radius:2px; }
-            .nv-skin-card { width:80px;flex-shrink:0;border:1.5px solid rgba(var(--gc),0.35);border-radius:12px;background:linear-gradient(135deg,rgba(var(--gc),0.1),rgba(0,0,0,0.7));padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;transition:all 0.2s; }
+            .nv-section-header { font-size:8px;letter-spacing:3px;color:#ffffff44;text-transform:uppercase;margin-bottom:5px;margin-top:4px;padding-bottom:5px;border-bottom:1px solid #ffffff0e; }
+            .nv-skins-row { display:flex;gap:9px;overflow-x:auto;padding:3px 2px 7px;-webkit-overflow-scrolling:touch; }
+            .nv-skins-row::-webkit-scrollbar { height:2px; }
+            .nv-skins-row::-webkit-scrollbar-thumb { background:#aa44ff33;border-radius:2px; }
+            .nv-skin-card { width:72px;flex-shrink:0;border:1.5px solid rgba(var(--gc),0.35);border-radius:11px;background:linear-gradient(135deg,rgba(var(--gc),0.1),rgba(0,0,0,0.7));padding:9px 5px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;transition:all 0.2s; }
             .nv-skin-card:hover { border-color:rgba(var(--gc),0.8);transform:translateY(-2px); }
-            .nv-skin-card .sk-icon { font-size:28px; }
-            .nv-skin-card .sk-name { font-size:8px;letter-spacing:1px;text-align:center; }
-            .nv-upgrades-grid { display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px; }
-            .nv-upgrade-card { background:linear-gradient(135deg,rgba(var(--gc),0.08),rgba(0,0,0,0.75));border:1.5px solid rgba(var(--gc),0.35);border-radius:12px;padding:12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all 0.2s;min-height:56px; }
+            .nv-skin-card .sk-icon { font-size:26px; }
+            .nv-skin-card .sk-name { font-size:7px;letter-spacing:1px;text-align:center; }
+            .nv-upgrades-grid { display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:5px; }
+            .nv-upgrade-card { background:linear-gradient(135deg,rgba(var(--gc),0.08),rgba(0,0,0,0.75));border:1.5px solid rgba(var(--gc),0.35);border-radius:11px;padding:10px;display:flex;align-items:center;gap:9px;cursor:pointer;transition:all 0.2s;min-height:52px; }
             .nv-upgrade-card:hover { border-color:rgba(var(--gc),0.8);transform:translateY(-2px); }
-            .nv-upgrade-card .uc-icon { font-size:22px;flex-shrink:0;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:rgba(var(--gc),0.12); }
-            .nv-upgrade-card .uc-text .uc-title { font-size:11px;font-weight:bold;letter-spacing:1px; }
-            .nv-upgrade-card .uc-text .uc-sub { font-size:9px;opacity:0.5;margin-top:1px; }
-            .nv-prog-grid { display:flex;gap:6px;flex-wrap:wrap;padding:4px 0; }
-            .nv-prog-btn { padding:9px 14px;border-radius:10px;cursor:pointer;font-size:10px;letter-spacing:1px;font-family:'Courier New',monospace;font-weight:bold;transition:all 0.2s;min-height:44px;display:flex;align-items:center; }
+            .nv-upgrade-card .uc-icon { font-size:20px;flex-shrink:0;width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:9px;background:rgba(var(--gc),0.12); }
+            .nv-upgrade-card .uc-text .uc-title { font-size:10px;font-weight:bold;letter-spacing:1px; }
+            .nv-upgrade-card .uc-text .uc-sub { font-size:8px;opacity:0.5;margin-top:1px; }
+            .nv-prog-grid { display:flex;gap:5px;flex-wrap:wrap;padding:3px 0; }
+            .nv-prog-btn { padding:8px 12px;border-radius:9px;cursor:pointer;font-size:9px;letter-spacing:1px;font-family:'Courier New',monospace;font-weight:bold;transition:all 0.2s;min-height:40px;display:flex;align-items:center; }
             .nv-prog-btn:hover { filter:brightness(1.3);transform:translateY(-1px); }
             .nv-prog-btn:active { transform:scale(0.96); }
 
             /* CO-OP SECTION */
-            .nv-mp-grid { display:grid;grid-template-columns:1fr 1fr;gap:10px; }
-            .nv-mp-card { background:linear-gradient(135deg,rgba(var(--gc),0.1),rgba(0,0,0,0.75));border:1.5px solid rgba(var(--gc),0.4);border-radius:14px;padding:16px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:all 0.2s;min-height:100px;justify-content:center; }
-            .nv-mp-card:hover { border-color:rgba(var(--gc),0.85);transform:translateY(-2px);box-shadow:0 4px 20px rgba(var(--gc),0.2); }
+            .nv-mp-grid { display:grid;grid-template-columns:1fr 1fr;gap:9px; }
+            .nv-mp-card { background:linear-gradient(135deg,rgba(var(--gc),0.1),rgba(0,0,0,0.75));border:1.5px solid rgba(var(--gc),0.4);border-radius:13px;padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:all 0.2s;min-height:90px;justify-content:center; }
+            .nv-mp-card:hover { border-color:rgba(var(--gc),0.85);transform:translateY(-2px);box-shadow:0 4px 18px rgba(var(--gc),0.2); }
             .nv-mp-card:active { transform:scale(0.97); }
-            .nv-mp-card .mc-icon { font-size:30px; }
-            .nv-mp-card .mc-title { font-size:11px;font-weight:900;letter-spacing:2px;text-align:center; }
-            .nv-mp-card .mc-desc { font-size:9px;opacity:0.55;text-align:center;letter-spacing:0.5px; }
+            .nv-mp-card .mc-icon { font-size:28px; }
+            .nv-mp-card .mc-title { font-size:10px;font-weight:900;letter-spacing:2px;text-align:center; }
+            .nv-mp-card .mc-desc { font-size:8px;opacity:0.55;text-align:center; }
 
             /* RANKS SECTION */
-            .nv-ranks-list { display:flex;flex-direction:column;gap:8px; }
-            .nv-rank-row { background:linear-gradient(135deg,rgba(var(--gc),0.07),rgba(0,0,0,0.7));border:1.5px solid rgba(var(--gc),0.3);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.2s;min-height:56px; }
+            .nv-ranks-list { display:flex;flex-direction:column;gap:7px; }
+            .nv-rank-row { background:linear-gradient(135deg,rgba(var(--gc),0.07),rgba(0,0,0,0.7));border:1.5px solid rgba(var(--gc),0.3);border-radius:11px;padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all 0.2s;min-height:52px; }
             .nv-rank-row:hover { border-color:rgba(var(--gc),0.75);transform:translateX(2px); }
-            .nv-rank-row .rr-icon { font-size:24px;flex-shrink:0; }
-            .nv-rank-row .rr-text .rr-title { font-size:12px;font-weight:bold;letter-spacing:1px; }
-            .nv-rank-row .rr-text .rr-sub { font-size:9px;opacity:0.5;margin-top:1px; }
+            .nv-rank-row .rr-icon { font-size:22px;flex-shrink:0; }
+            .nv-rank-row .rr-text .rr-title { font-size:11px;font-weight:bold;letter-spacing:1px; }
+            .nv-rank-row .rr-text .rr-sub { font-size:8px;opacity:0.5;margin-top:1px; }
             .nv-rank-row .rr-arrow { margin-left:auto;font-size:14px;opacity:0.4; }
 
             /* QUICK ACCESS GRID */
-            .nv-grid { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
-            .nv-grid-card { background:linear-gradient(135deg,rgba(var(--gc),0.08),rgba(0,0,0,0.75));border:1.5px solid rgba(var(--gc),0.4);border-radius:12px;padding:12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden; }
-            .nv-grid-card:hover { border-color:rgba(var(--gc),0.9);transform:translateY(-2px);box-shadow:0 4px 20px rgba(var(--gc),0.2); }
-            .nv-grid-card .gc-icon { font-size:22px;flex-shrink:0;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:rgba(var(--gc),0.12); }
+            .nv-grid { display:grid;grid-template-columns:1fr 1fr;gap:7px; }
+            .nv-grid-card { background:linear-gradient(135deg,rgba(var(--gc),0.08),rgba(0,0,0,0.75));border:1.5px solid rgba(var(--gc),0.4);border-radius:11px;padding:10px;display:flex;align-items:center;gap:9px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden; }
+            .nv-grid-card:hover { border-color:rgba(var(--gc),0.9);transform:translateY(-2px);box-shadow:0 4px 18px rgba(var(--gc),0.2); }
+            .nv-grid-card .gc-icon { font-size:20px;flex-shrink:0;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:9px;background:rgba(var(--gc),0.12); }
             .nv-grid-card .gc-text { flex:1;min-width:0; }
-            .nv-grid-card .gc-title { font-size:12px;font-weight:bold;letter-spacing:1px; }
-            .nv-grid-card .gc-sub { font-size:9px;opacity:0.5;margin-top:1px; }
-            .nv-grid-card .gc-badge { position:absolute;top:6px;right:8px;font-size:8px;border-radius:6px;padding:1px 6px;font-weight:bold; }
+            .nv-grid-card .gc-title { font-size:11px;font-weight:bold;letter-spacing:1px; }
+            .nv-grid-card .gc-sub { font-size:8px;opacity:0.5;margin-top:1px; }
+            .nv-grid-card .gc-badge { position:absolute;top:5px;right:7px;font-size:7px;border-radius:5px;padding:1px 5px;font-weight:bold; }
 
-            /* BOTTOM NAV — Fixed tab bar */
-            .nv-bottomnav { display:flex;align-items:stretch;background:linear-gradient(180deg,rgba(10,0,15,0.97),rgba(5,0,8,0.99));border-top:2px solid #ff005533;flex-shrink:0;z-index:5;height:56px; }
-            .nv-nav-tab { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 2px 7px;cursor:pointer;transition:all 0.2s;border-top:3px solid transparent;position:relative; }
-            .nv-nav-tab:hover { background:rgba(255,255,255,0.05); }
-            .nv-nav-tab.active { border-top-color:#ff0055;background:rgba(255,0,85,0.1); }
-            .nv-nav-tab .nav-icon { font-size:22px;margin-bottom:1px;line-height:1; }
-            .nv-nav-tab .nav-label { font-size:9px;letter-spacing:1px;color:#777;text-transform:uppercase;font-weight:bold; }
-            .nv-nav-tab:hover .nav-label { color:#ccc; }
-            .nv-nav-tab.active .nav-label { color:#ff0055; }
-            .nv-nav-tab .nav-notif { position:absolute;top:4px;right:calc(50% - 18px);width:7px;height:7px;border-radius:50%;background:#ff0055;box-shadow:0 0 6px #ff0055; }
+            /* ===== BOTTOM NAV — chunky Clash Royale style ===== */
+            .nv-bottomnav { display:flex;align-items:stretch;background:linear-gradient(180deg,rgba(8,0,14,0.98),rgba(3,0,6,1));border-top:1px solid #ffffff11;flex-shrink:0;z-index:5;height:62px; }
+            .nv-nav-tab { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 3px 8px;cursor:pointer;transition:all 0.18s;position:relative;gap:3px; }
+            .nv-nav-tab:hover { background:rgba(255,255,255,0.04); }
+            .nv-nav-tab.active { background:rgba(var(--tab-color, 255,0,85),0.14); }
+            .nv-nav-tab.active::before { content:'';position:absolute;top:0;left:20%;right:20%;height:3px;border-radius:0 0 3px 3px;background:rgb(var(--tab-color,255,0,85));box-shadow:0 0 10px rgb(var(--tab-color,255,0,85)); }
+            .nv-nav-tab .nav-icon { font-size:22px;line-height:1;transition:transform 0.18s; }
+            .nv-nav-tab.active .nav-icon { transform:scale(1.15); }
+            .nv-nav-tab .nav-label { font-size:9px;letter-spacing:0.5px;color:#55556a;text-transform:uppercase;font-weight:bold;transition:color 0.18s; }
+            .nv-nav-tab:hover .nav-label { color:#aaa; }
+            .nv-nav-tab.active .nav-label { color:rgb(var(--tab-color,255,0,85)); }
+            .nv-nav-tab .nav-notif { position:absolute;top:6px;right:calc(50% - 16px);width:7px;height:7px;border-radius:50%;background:#ff0055;box-shadow:0 0 6px #ff0055;border:1px solid #0a0010; }
 
             /* Secret boss buttons in modes row */
             .nv-secret-chip { border-style:dashed !important;position:relative; }
-            .nv-secret-chip::after { content:'';position:absolute;inset:0;border-radius:12px;background:linear-gradient(135deg,transparent,rgba(var(--gc),0.1));pointer-events:none; }
+            .nv-secret-chip::after { content:'';position:absolute;inset:0;border-radius:10px;background:linear-gradient(135deg,transparent,rgba(var(--gc),0.08));pointer-events:none; }
         `;
         document.head.appendChild(menuStyleTag);
 
@@ -9825,7 +9848,10 @@ function generateSyncCode() {
             let el = document.getElementById('nv-tab-' + tab);
             if (el) el.style.display = 'block';
             document.querySelectorAll('.nv-nav-tab').forEach(t => t.classList.remove('active'));
-            if (event && event.currentTarget) event.currentTarget.classList.add('active');
+            // Find by data-tab attribute to avoid needing the event
+            let targetTab = document.querySelector('.nv-nav-tab[data-tab="' + tab + '"]');
+            if (targetTab) targetTab.classList.add('active');
+            else if (event && event.currentTarget) event.currentTarget.classList.add('active');
         }
 
         let _menuReturnToMenu = returnToMenu;
@@ -9871,36 +9897,78 @@ function generateSyncCode() {
                 <div><div class="nv-chip-label" style="color:#ff00ff;">SECTOR ???</div></div>
             </div>` : '';
 
+            // Fake XP / level values from progress
+            let pilotLevel = Math.max(1, unlocked + Math.floor(parseInt(localStorage.getItem('neonVoidBossRushBest')||'0')/60));
+            let xpCurrent = (unlocked * 1847 + 3239) % 75000;
+            let xpMax = 75000;
+            let coinsDisplay = totalCoins >= 1000000 ? (totalCoins/1000000).toFixed(1)+'M' : totalCoins >= 1000 ? (totalCoins/1000).toFixed(1)+'K' : totalCoins;
+            let gemCount = parseInt(localStorage.getItem('neonVoidGems')||'0') || Math.max(0, unlocked * 23 - 47);
+            let trophyCount = unlocked * 312 + (parseInt(localStorage.getItem('neonVoidBossRushBest')||'0') * 2);
+            let rankNames = ['BRONZE','SILVER','GOLD','PLATINUM','DIAMOND','MASTER','GRANDMASTER','MYTH'];
+            let rankName = rankNames[Math.min(Math.floor(unlocked / 2), rankNames.length-1)];
+
             // Build full menu HTML
             ui.menuBtns.style.maxWidth = '100%';
             ui.menuBtns.style.width = '100%';
             ui.menuBtns.innerHTML = `<div class="nv-menu-root">
 
-                <!-- TOP BAR -->
+                <!-- TOP BAR: level badge, XP bar, spacer, coins, gems, settings -->
                 <div class="nv-topbar">
-                    <div class="nv-topbar-left">
-                        <div class="nv-pilot-badge" onclick="openAvatarPicker()" style="cursor:pointer;" title="Change Avatar">
-                            <div class="nv-pilot-avatar">${playerAvatar}</div>
-                            <span class="nv-pilot-name">${currentUsername || 'PILOT'}</span>
-                        </div>
+                    <div class="nv-level-badge">
+                        <span class="nv-level-icon">🚀</span>
+                        <span class="nv-level-num">${pilotLevel}</span>
                     </div>
-                    <div class="nv-topbar-right">
-                        <div class="nv-resource"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 12h6"/></svg> ${totalCoins >= 1000000 ? (totalCoins/1000000).toFixed(1)+'M' : totalCoins >= 1000 ? (totalCoins/1000).toFixed(1)+'K' : totalCoins}</div>
-                        <div class="nv-settings-btn" onclick="openSettings()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
+                    <div class="nv-xp-bar-wrap">
+                        <div class="nv-xp-bar"><div class="nv-xp-fill" style="width:${Math.round((xpCurrent/xpMax)*100)}%"></div></div>
+                        <div class="nv-xp-text">${xpCurrent.toLocaleString()}/${xpMax.toLocaleString()}</div>
                     </div>
+                    <div class="nv-topbar-spacer"></div>
+                    <div class="nv-coin-pill">
+                        <span class="nv-coin-icon">💰</span>${coinsDisplay}
+                    </div>
+                    <div class="nv-gem-pill">
+                        <span class="nv-gem-icon">💎</span>${gemCount}
+                    </div>
+                    <div class="nv-settings-btn" onclick="openSettings()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
                 </div>
 
-                <!-- HERO SECTION -->
-                <div class="nv-hero">
-                    <div class="nv-logo">NEON VOID</div>
-                    <div class="nv-logo-sub">VOID HUNTER PROTOCOL</div>
-                    <div class="nv-ship-display">
-                        <canvas id="nv-menu-ship" width="56" height="56" style="display:block;"></canvas>
+                <!-- PLAYER INFO ROW: avatar, name+sector, trophy, rank -->
+                <div class="nv-player-row">
+                    <div class="nv-avatar-btn" onclick="openAvatarPicker()" title="Change Avatar">${playerAvatar}</div>
+                    <div class="nv-player-info">
+                        <div class="nv-player-name">${currentUsername || 'PILOT'}</div>
+                        <div class="nv-player-sub">Sector ${unlocked}/15 &bull; ${sectorPct}% cleared</div>
                     </div>
-                    <div class="nv-sector-progress">
-                        <span class="nv-sector-text">SECTOR ${unlocked}/15</span>
-                        <div class="nv-sector-bar"><div class="nv-sector-fill" style="width:${sectorPct}%"></div></div>
-                        <span class="nv-sector-text">${sectorPct}%</span>
+                    <div class="nv-trophy-badge">
+                        <span class="nv-trophy-icon">🏆</span>
+                        <span class="nv-trophy-val">${trophyCount.toLocaleString()}</span>
+                    </div>
+                    <div class="nv-rank-chip">${rankName}</div>
+                </div>
+
+                <!-- CENTERPIECE: large animated ship canvas -->
+                <div class="nv-centerpiece" style="height:clamp(140px,28vh,220px);background:linear-gradient(180deg,#070010 0%,#0a001a 40%,#06000e 100%);">
+                    <canvas id="nv-centerpiece-canvas" class="nv-centerpiece-canvas" style="height:100%;"></canvas>
+                    <div class="nv-centerpiece-overlay"></div>
+                </div>
+
+                <!-- CHEST SLOTS ROW: 4 quick-access icon cards -->
+                <div class="nv-chest-row">
+                    <div class="nv-chest-slot" style="--gc:255,215,0;" onclick="openBattlePass()">
+                        <span class="nv-chest-icon">🎖</span>
+                        <span class="nv-chest-label" style="color:#ffd700;">PASS</span>
+                    </div>
+                    <div class="nv-chest-slot" style="--gc:255,136,0;" onclick="openContracts()">
+                        <span class="nv-chest-icon">📋</span>
+                        <span class="nv-chest-label" style="color:#ff8800;">DAILY</span>
+                    </div>
+                    <div class="nv-chest-slot" style="--gc:170,68,255;" onclick="openBlackMarket()">
+                        <span class="nv-chest-icon">🛒</span>
+                        <span class="nv-chest-label" style="color:#aa44ff;">MARKET</span>
+                    </div>
+                    <div class="nv-chest-slot" style="--gc:0,204,255;" onclick="openGemShop()">
+                        <span class="nv-chest-icon">⚡</span>
+                        <span class="nv-chest-label" style="color:#00ccff;">EVENTS</span>
                     </div>
                 </div>
 
@@ -9910,42 +9978,34 @@ function generateSyncCode() {
                     <!-- ===== BATTLE TAB ===== -->
                     <div id="nv-tab-battle" class="nv-tab-content">
 
-                        <!-- BIG BATTLE BUTTON -->
-                        <div class="nv-battle-section">
+                        <!-- BATTLE AREA: flanking mode chips + big BATTLE button -->
+                        <div class="nv-battle-area">
+                            <div class="nv-side-mode" style="--gc:${mc('#ff0055')};" onclick="startInfinite()">
+                                <span class="sm-icon">∞</span>
+                                <span class="sm-label" style="color:#ff0055;">INFINITE</span>
+                            </div>
                             <div class="nv-battle-btn" onclick="openMissionSelect()">
                                 <div class="nv-battle-shimmer"></div>
                                 <span class="nv-battle-text">BATTLE</span>
+                                <span class="nv-battle-sub">SECTOR ${unlocked} &bull; DEPLOY</span>
                             </div>
-                            <div class="nv-battle-sub">SECTOR ${unlocked} &#x2022; TAP TO DEPLOY</div>
-                        </div>
-
-                        <!-- 2x2 PRIMARY MODES GRID -->
-                        <div class="nv-primary-modes">
-                            <div class="nv-primary-mode-card" style="--gc:${mc('#ff0055')};" onclick="startInfinite()">
-                                <span class="pm-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ff0055" stroke-width="2.5" stroke-linecap="round"><path d="M6 12c0-2.2 1.8-4 4-4s4 1.8 4 4-1.8 4-4 4-4-1.8-4-4zM14 12c0-2.2 1.8-4 4-4s4 1.8 4 4-1.8 4-4 4-4-1.8-4-4z"/></svg></span>
-                                <div class="pm-label" style="color:#ff0055;">INFINITE</div>
-                                <div class="pm-sub" style="color:#ff005577;">Endless Waves</div>
-                            </div>
-                            <div class="nv-primary-mode-card" style="--gc:${mc('#ff4400')};" onclick="startBossRush()">
-                                <span class="pm-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ff4400" stroke-width="2" stroke-linecap="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5M13 7l4-4 4 4-4 4"/><path d="M3 3l7.586 7.586M11 14l7 7M8 6.5L1.5 13"/></svg></span>
-                                <div class="pm-label" style="color:#ff4400;">BOSS RUSH</div>
-                                <div class="pm-sub" style="color:#ff440077;">${rushLabel}</div>
-                            </div>
-                            <div class="nv-primary-mode-card" style="--gc:${mc('#00ff88')};" onclick="startTraining()">
-                                <span class="pm-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></span>
-                                <div class="pm-label" style="color:#00ff88;">TRAINING</div>
-                                <div class="pm-sub" style="color:#00ff8877;">Safe Practice</div>
-                            </div>
-                            <div class="nv-primary-mode-card" style="--gc:${mc('#ffcc00')};${arcadeHighScore > 0 ? '' : ''}" onclick="startArcade()">
-                                <span class="pm-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span>
-                                <div class="pm-label" style="color:#ffcc00;">ARCADE</div>
-                                <div class="pm-sub" style="color:#ffcc0077;">${arcadeHighScore > 0 ? 'Best: ' + arcadeHighScore.toLocaleString() : '3 Lives'}</div>
+                            <div class="nv-side-mode" style="--gc:${mc('#ff4400')};" onclick="startBossRush()">
+                                <span class="sm-icon">💀</span>
+                                <span class="sm-label" style="color:#ff4400;">BOSS</span>
                             </div>
                         </div>
 
                         <!-- MORE MODES LABEL + HORIZONTAL SCROLL -->
                         <div class="nv-modes-section-label">MORE MODES</div>
                         <div class="nv-modes-row">
+                            <div class="nv-mode-chip" style="--gc:${mc('#00ff88')};border-color:#00ff8866;background:rgba(0,255,136,0.07);" onclick="startTraining()">
+                                <span class="nv-chip-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></span>
+                                <div><div class="nv-chip-label" style="color:#00ff88;">TRAINING</div><div class="nv-chip-sub" style="color:#00ff8877;">Safe Practice</div></div>
+                            </div>
+                            <div class="nv-mode-chip" style="--gc:${mc('#ffcc00')};border-color:#ffcc0066;background:rgba(255,204,0,0.07);" onclick="startArcade()">
+                                <span class="nv-chip-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span>
+                                <div><div class="nv-chip-label" style="color:#ffcc00;">ARCADE</div><div class="nv-chip-sub" style="color:#ffcc0077;">${arcadeHighScore > 0 ? 'Best: ' + arcadeHighScore.toLocaleString() : '3 Lives'}</div></div>
+                            </div>
                             <div class="nv-mode-chip" style="--gc:${mc('#44ccff')};border-color:#44ccff66;background:rgba(68,204,255,0.07);" onclick="startSandbox()">
                                 <span class="nv-chip-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#44ccff" stroke-width="2" stroke-linecap="round"><path d="M12 3l9 4.5v9L12 21l-9-4.5v-9L12 3z"/><path d="M12 12l9-4.5M12 12v9M12 12L3 7.5"/></svg></span>
                                 <div><div class="nv-chip-label" style="color:#44ccff;">SANDBOX</div><div class="nv-chip-sub" style="color:#44ccff77;">God Mode</div></div>
@@ -10168,82 +10228,192 @@ function generateSyncCode() {
 
                 </div>
 
-                <!-- BOTTOM NAVIGATION BAR -->
+                <!-- BOTTOM NAVIGATION BAR — chunky Clash Royale style -->
                 <div class="nv-bottomnav">
-                    <div class="nv-nav-tab active" onclick="switchMenuTab('battle')">
-                        <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L4 14h6l-2 8 10-12h-6l2-8z"/></svg></span>
-                        <span class="nav-label">BATTLE</span>
+                    <div class="nv-nav-tab active" style="--tab-color:255,0,85;" onclick="switchMenuTab('battle')" data-tab="battle">
+                        <span class="nav-icon">⚔️</span>
+                        <span class="nav-label">Battle</span>
                     </div>
-                    <div class="nv-nav-tab" onclick="switchMenuTab('hangar')">
-                        <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
-                        <span class="nav-label">HANGAR</span>
+                    <div class="nv-nav-tab" style="--tab-color:0,204,255;" onclick="switchMenuTab('hangar')" data-tab="hangar">
+                        <span class="nav-icon">🔧</span>
+                        <span class="nav-label">Hangar</span>
                     </div>
-                    <div class="nv-nav-tab" onclick="switchMenuTab('coop')">
-                        <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 3.13a4 4 0 0 1 0 7.75M21 21v-2a4 4 0 0 0-3-3.87M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg></span>
-                        <span class="nav-label">CO-OP</span>
+                    <div class="nv-nav-tab" style="--tab-color:68,255,136;" onclick="switchMenuTab('coop')" data-tab="coop">
+                        <span class="nav-icon">👥</span>
+                        <span class="nav-label">Co-op</span>
                     </div>
-                    <div class="nv-nav-tab" onclick="switchMenuTab('ranks')">
-                        <span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V22M14 14.66V22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></span>
-                        <span class="nav-label">RANKS</span>
+                    <div class="nv-nav-tab" style="--tab-color:255,215,0;" onclick="switchMenuTab('ranks')" data-tab="ranks">
+                        <span class="nav-icon">🏆</span>
+                        <span class="nav-label">Ranks</span>
                     </div>
                 </div>
             </div>`;
 
-            // Draw ship on the mini canvas
+            // ---- Centerpiece animated ship canvas ----
             try {
-                let shipCanvas = document.getElementById('nv-menu-ship');
-                if (shipCanvas) {
-                    let sctx = shipCanvas.getContext('2d');
-                    sctx.clearRect(0,0,60,60);
-                    sctx.save();
-                    sctx.translate(30,30);
-                    sctx.scale(0.75,0.75);
-                    // Engine glow
-                    let eg = sctx.createRadialGradient(0,18,2,0,18,20);
-                    eg.addColorStop(0,'#00ffcc');
-                    eg.addColorStop(0.5,'#00ffcc44');
-                    eg.addColorStop(1,'transparent');
-                    sctx.fillStyle = eg;
-                    sctx.fillRect(-20,8,40,30);
-                    // Shadow
-                    sctx.beginPath();
-                    sctx.moveTo(0,-26);sctx.lineTo(15,12);sctx.lineTo(24,20);sctx.lineTo(9,14);sctx.lineTo(0,22);sctx.lineTo(-9,14);sctx.lineTo(-24,20);sctx.lineTo(-15,12);sctx.closePath();
-                    sctx.fillStyle='rgba(0,0,0,0.3)';sctx.fill();
-                    // Hull
-                    sctx.beginPath();
-                    sctx.moveTo(0,-28);sctx.lineTo(14,10);sctx.lineTo(22,18);sctx.lineTo(8,12);sctx.lineTo(0,20);sctx.lineTo(-8,12);sctx.lineTo(-22,18);sctx.lineTo(-14,10);sctx.closePath();
-                    let sg = sctx.createLinearGradient(0,-28,0,20);
-                    sg.addColorStop(0,'#ff0055');sg.addColorStop(0.5,'#cc0044');sg.addColorStop(1,'#880033');
-                    sctx.fillStyle = sg;sctx.fill();
-                    sctx.strokeStyle = '#ff005566';sctx.lineWidth = 0.8;sctx.stroke();
-                    // Panel lines
-                    sctx.strokeStyle='rgba(255,255,255,0.1)';sctx.lineWidth=0.5;
-                    sctx.beginPath();sctx.moveTo(0,-24);sctx.lineTo(0,18);sctx.stroke();
-                    sctx.beginPath();sctx.moveTo(-4,-2);sctx.lineTo(4,-2);sctx.stroke();
-                    // Wing tips
-                    sctx.fillStyle='#00ffcc88';
-                    sctx.beginPath();sctx.arc(20,16,1.5,0,Math.PI*2);sctx.fill();
-                    sctx.beginPath();sctx.arc(-20,16,1.5,0,Math.PI*2);sctx.fill();
-                    // Engine pods
-                    sctx.fillStyle='#0a0a1e';
-                    sctx.beginPath();sctx.ellipse(8,14,3,5,0,0,Math.PI*2);sctx.fill();
-                    sctx.beginPath();sctx.ellipse(-8,14,3,5,0,0,Math.PI*2);sctx.fill();
-                    sctx.fillStyle='#00ffcc55';
-                    sctx.beginPath();sctx.ellipse(8,17,2,1.5,0,0,Math.PI*2);sctx.fill();
-                    sctx.beginPath();sctx.ellipse(-8,17,2,1.5,0,0,Math.PI*2);sctx.fill();
-                    // Cockpit
-                    sctx.beginPath();sctx.moveTo(0,-18);sctx.lineTo(5,0);sctx.lineTo(0,6);sctx.lineTo(-5,0);sctx.closePath();
-                    let cpg=sctx.createLinearGradient(0,-18,0,6);cpg.addColorStop(0,'#00ffcc55');cpg.addColorStop(0.5,'#00ffcc99');cpg.addColorStop(1,'#00ffcc33');
-                    sctx.fillStyle=cpg;sctx.fill();
-                    sctx.beginPath();sctx.moveTo(0,-14);sctx.lineTo(2.5,-2);sctx.lineTo(0,2);sctx.lineTo(-2.5,-2);sctx.closePath();
-                    sctx.fillStyle='#00ffcccc';sctx.fill();
-                    // Nose highlight
-                    sctx.fillStyle='#ffffff33';sctx.beginPath();sctx.arc(0,-27,1.2,0,Math.PI*2);sctx.fill();
-                    sctx.restore();
-                }
-            } catch(e) {}
+                let cpCanvas = document.getElementById('nv-centerpiece-canvas');
+                if (cpCanvas) {
+                    // Cancel previous animation if any
+                    if (window._cpShipCleanup) { window._cpShipCleanup(); window._cpShipCleanup = null; }
 
-            // ---- Animated ship showcase removed (tab-based layout) ----
+                    let dpr = window.devicePixelRatio || 1;
+                    let cssW = cpCanvas.offsetWidth || cpCanvas.parentElement.offsetWidth || 300;
+                    let cssH = cpCanvas.offsetHeight || cpCanvas.parentElement.offsetHeight || 180;
+                    cpCanvas.width = cssW * dpr;
+                    cpCanvas.height = cssH * dpr;
+                    let sac = cpCanvas.getContext('2d');
+                    sac.scale(dpr, dpr);
+                    let saW = cssW, saH = cssH;
+
+                    // Get current skin color
+                    let skinColor = '#ff0055';
+                    try { skinColor = (SKINS[equippedSkin] || SKINS['default']).color; } catch(e2) {}
+
+                    // Star field
+                    let saStars = [];
+                    let starCount = Math.round(saW * 0.1);
+                    for (let i = 0; i < starCount; i++) saStars.push({ x: Math.random()*saW, y: Math.random()*saH, s: 0.4+Math.random()*1.2, sp: 0.15+Math.random()*0.6, b: Math.random() });
+                    // Debris
+                    let saDebris = [];
+                    for (let i = 0; i < 5; i++) saDebris.push({ x: Math.random()*saW, y: Math.random()*saH, s: 1+Math.random()*2, sp: 0.1+Math.random()*0.3, r: Math.random()*Math.PI*2, rv: (Math.random()-0.5)*0.015, c: [skinColor+'22','#00ffcc22','#ffcc0022','#aa00ff22'][i%4] });
+
+                    // Ship scale to use ~40% of canvas height
+                    let shipScale = (saH * 0.38) / 32;
+                    let shipX = saW * 0.5, shipY = saH * 0.44;
+                    let shipBob = 0, shipFrame = 0;
+                    let saTrail = [];
+                    // Nebula particles that drift upward
+                    let nebula = [];
+                    for (let i = 0; i < 18; i++) nebula.push({ x: Math.random()*saW, y: saH + Math.random()*saH, vx:(Math.random()-0.5)*0.3, vy:-(0.2+Math.random()*0.5), life:Math.random(), maxLife:1, size:1+Math.random()*3, c:[skinColor+'33','#00ffcc22','#ff880022'][Math.floor(Math.random()*3)] });
+
+                    let cpRAF = null;
+                    function drawCenterpiece() {
+                        shipFrame++;
+                        shipBob = Math.sin(shipFrame * 0.025) * 4 * shipScale;
+                        let curX = shipX + Math.sin(shipFrame * 0.012) * 12 * shipScale;
+                        let curY = shipY + shipBob;
+
+                        sac.clearRect(0, 0, saW, saH);
+
+                        // BG gradient
+                        let bgG = sac.createLinearGradient(0, 0, 0, saH);
+                        bgG.addColorStop(0, '#070010');
+                        bgG.addColorStop(0.5, '#0b0018');
+                        bgG.addColorStop(1, '#06000c');
+                        sac.fillStyle = bgG;
+                        sac.fillRect(0, 0, saW, saH);
+
+                        // Nebula particles
+                        for (let n of nebula) {
+                            n.x += n.vx; n.y += n.vy; n.life -= 0.003;
+                            if (n.y < -10 || n.life <= 0) { n.x = Math.random()*saW; n.y = saH + 5; n.life = 0.2 + Math.random()*0.8; }
+                            sac.globalAlpha = Math.min(n.life, 0.4);
+                            sac.fillStyle = n.c;
+                            sac.beginPath(); sac.arc(n.x, n.y, n.size, 0, Math.PI*2); sac.fill();
+                        }
+                        sac.globalAlpha = 1;
+
+                        // Stars
+                        for (let st of saStars) {
+                            st.x -= st.sp;
+                            if (st.x < 0) { st.x = saW; st.y = Math.random()*saH; }
+                            st.b += (Math.random()-0.5)*0.08;
+                            st.b = Math.max(0.3, Math.min(1, st.b));
+                            sac.globalAlpha = st.b * 0.75;
+                            sac.fillStyle = '#ffffff';
+                            sac.beginPath(); sac.arc(st.x, st.y, st.s, 0, Math.PI*2); sac.fill();
+                        }
+                        sac.globalAlpha = 1;
+
+                        // Debris
+                        for (let d of saDebris) {
+                            d.x -= d.sp; d.r += d.rv;
+                            if (d.x < -10) { d.x = saW + 10; d.y = Math.random()*saH; }
+                            sac.save(); sac.translate(d.x, d.y); sac.rotate(d.r);
+                            sac.fillStyle = d.c; sac.fillRect(-d.s/2, -d.s/2, d.s, d.s); sac.restore();
+                        }
+
+                        // Arena glow behind ship
+                        let arenaGlow = sac.createRadialGradient(curX, curY, 4*shipScale, curX, curY, 40*shipScale);
+                        arenaGlow.addColorStop(0, skinColor + '22');
+                        arenaGlow.addColorStop(0.4, skinColor + '11');
+                        arenaGlow.addColorStop(1, 'transparent');
+                        sac.fillStyle = arenaGlow;
+                        sac.beginPath(); sac.arc(curX, curY, 40*shipScale, 0, Math.PI*2); sac.fill();
+
+                        // Engine trail particles
+                        saTrail.push({ x: curX + (Math.random()-0.5)*4*shipScale, y: curY + 10*shipScale + Math.random()*2*shipScale, vx: -0.5-Math.random()*1.5, vy: (Math.random()-0.5)*0.4, life: 1, size: (1.5+Math.random()*2.5)*shipScale });
+                        if (shipFrame % 2 === 0) saTrail.push({ x: curX + (Math.random()-0.5)*2*shipScale, y: curY + 10*shipScale, vx: -1.5-Math.random()*2, vy: (Math.random()-0.5)*0.3, life: 1, size: (1+Math.random()*1.8)*shipScale });
+                        for (let i = saTrail.length-1; i >= 0; i--) {
+                            let t = saTrail[i];
+                            t.x += t.vx; t.y += t.vy; t.life -= 0.028; t.size *= 0.975;
+                            if (t.life <= 0) { saTrail.splice(i, 1); continue; }
+                            sac.globalAlpha = t.life * 0.65;
+                            sac.fillStyle = t.life > 0.5 ? '#00ffcc' : '#00ffcc55';
+                            sac.beginPath(); sac.arc(t.x, t.y, t.size, 0, Math.PI*2); sac.fill();
+                        }
+                        if (saTrail.length > 140) saTrail.splice(0, saTrail.length - 140);
+                        sac.globalAlpha = 1;
+
+                        // Engine glow
+                        let eGlow = sac.createRadialGradient(curX, curY+10*shipScale, 1, curX, curY+10*shipScale, 20*shipScale);
+                        eGlow.addColorStop(0, '#00ffccaa'); eGlow.addColorStop(0.4, '#00ffcc33'); eGlow.addColorStop(1, 'transparent');
+                        sac.fillStyle = eGlow;
+                        sac.fillRect(curX-25*shipScale, curY, 50*shipScale, 30*shipScale);
+
+                        // Ship body
+                        sac.save();
+                        sac.translate(curX, curY);
+                        sac.scale(shipScale, shipScale);
+                        sac.rotate(Math.sin(shipFrame * 0.018) * 0.04);
+                        // Wing shadow
+                        sac.beginPath(); sac.moveTo(0,-14); sac.lineTo(11,6); sac.lineTo(20,14); sac.lineTo(7,10); sac.lineTo(0,16); sac.lineTo(-7,10); sac.lineTo(-20,14); sac.lineTo(-11,6); sac.closePath();
+                        sac.fillStyle = 'rgba(0,0,0,0.4)'; sac.fill();
+                        // Main hull
+                        sac.beginPath(); sac.moveTo(0,-16); sac.lineTo(10,5); sac.lineTo(18,12); sac.lineTo(6,8); sac.lineTo(0,14); sac.lineTo(-6,8); sac.lineTo(-18,12); sac.lineTo(-10,5); sac.closePath();
+                        let sGrad = sac.createLinearGradient(0,-16,0,14);
+                        sGrad.addColorStop(0, skinColor); sGrad.addColorStop(0.4, skinColor); sGrad.addColorStop(1, skinColor+'88');
+                        sac.fillStyle = sGrad; sac.fill();
+                        sac.strokeStyle = skinColor + '88'; sac.lineWidth = 0.8; sac.stroke();
+                        // Panel lines
+                        sac.strokeStyle = 'rgba(255,255,255,0.13)'; sac.lineWidth = 0.5;
+                        sac.beginPath(); sac.moveTo(0,-14); sac.lineTo(0,12); sac.stroke();
+                        sac.beginPath(); sac.moveTo(-3,-4); sac.lineTo(3,-4); sac.stroke();
+                        sac.beginPath(); sac.moveTo(-5,3); sac.lineTo(5,3); sac.stroke();
+                        // Wing stripes
+                        sac.strokeStyle = skinColor+'44'; sac.lineWidth = 0.8;
+                        sac.beginPath(); sac.moveTo(6,4); sac.lineTo(14,10); sac.stroke();
+                        sac.beginPath(); sac.moveTo(-6,4); sac.lineTo(-14,10); sac.stroke();
+                        // Wing tip lights
+                        let wingPulse = 0.5 + Math.sin(shipFrame * 0.08) * 0.5;
+                        sac.fillStyle = 'rgba(0,255,204,' + wingPulse + ')';
+                        sac.beginPath(); sac.arc(16,11,1.5,0,Math.PI*2); sac.fill();
+                        sac.beginPath(); sac.arc(-16,11,1.5,0,Math.PI*2); sac.fill();
+                        // Engine pods
+                        sac.fillStyle = '#0a0a1e';
+                        sac.beginPath(); sac.ellipse(7,12,2.5,4,0,0,Math.PI*2); sac.fill();
+                        sac.beginPath(); sac.ellipse(-7,12,2.5,4,0,0,Math.PI*2); sac.fill();
+                        let epulse = 0.5 + Math.sin(shipFrame * 0.1) * 0.5;
+                        sac.fillStyle = 'rgba(0,255,204,' + (0.4 + epulse*0.6) + ')';
+                        sac.beginPath(); sac.ellipse(7,14.5,1.8,1.3,0,0,Math.PI*2); sac.fill();
+                        sac.beginPath(); sac.ellipse(-7,14.5,1.8,1.3,0,0,Math.PI*2); sac.fill();
+                        // Cockpit
+                        sac.beginPath(); sac.moveTo(0,-18); sac.lineTo(5,0); sac.lineTo(0,6); sac.lineTo(-5,0); sac.closePath();
+                        let cpg = sac.createLinearGradient(0,-18,0,6); cpg.addColorStop(0,'#00ffcc55'); cpg.addColorStop(0.5,'#00ffcc99'); cpg.addColorStop(1,'#00ffcc33');
+                        sac.fillStyle = cpg; sac.fill();
+                        sac.beginPath(); sac.moveTo(0,-14); sac.lineTo(2.5,-2); sac.lineTo(0,2); sac.lineTo(-2.5,-2); sac.closePath();
+                        sac.fillStyle = '#00ffcccc'; sac.fill();
+                        sac.fillStyle = '#ffffff33'; sac.beginPath(); sac.arc(0,-15,1.3,0,Math.PI*2); sac.fill();
+                        sac.restore();
+
+                        cpRAF = requestAnimationFrame(drawCenterpiece);
+                    }
+                    drawCenterpiece();
+                    window._cpShipCleanup = function() { if (cpRAF) cancelAnimationFrame(cpRAF); cpRAF = null; };
+                }
+            } catch(e) { console.log('Centerpiece anim error:', e); }
+
+            // ---- Old animated ship showcase (disabled) ----
             try { if (false) {
                 let shipAnimCanvas = null;
                 if (shipAnimCanvas) {
