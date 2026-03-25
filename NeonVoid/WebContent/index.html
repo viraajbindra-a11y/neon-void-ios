@@ -161,6 +161,390 @@
         #menu-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 19; pointer-events: none; }
         @keyframes deathRing { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(3); opacity: 0; } }
         .death-ring { position: absolute; width: 40px; height: 40px; border-radius: 50%; border: 3px solid; pointer-events: none; z-index: 14; animation: deathRing 0.5s ease-out forwards; }
+
+        /* ===== CLASH ROYALE MOBILE MENU ===== */
+        :root {
+            --cr-bg-deep: #0a0a12;
+            --cr-bg-mid: #111128;
+            --cr-bg-card: #16162a;
+            --cr-pink: #ff0055;
+            --cr-cyan: #00ffcc;
+            --cr-gold: #ffcc00;
+            --cr-purple: #aa00ff;
+            --cr-green: #00ff88;
+            --cr-blue: #00aaff;
+            --cr-orange: #ff8800;
+            --cr-radius: 12px;
+        }
+
+        #cr-menu {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--cr-bg-deep);
+            display: flex; flex-direction: column;
+            z-index: 21; overflow: hidden;
+            font-family: 'Courier New', Courier, monospace;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+            box-sizing: border-box;
+        }
+        #cr-menu.hidden { display: none !important; }
+
+        /* Top Bar */
+        #cr-topbar {
+            height: 50px; flex-shrink: 0;
+            background: linear-gradient(180deg, #1a1a30 0%, #0f0f20 100%);
+            display: flex; align-items: center;
+            padding: 0 12px; gap: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            z-index: 2;
+        }
+        #cr-avatar {
+            width: 34px; height: 34px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--cr-cyan), var(--cr-purple));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; font-weight: 900; color: #000;
+            flex-shrink: 0; border: 2px solid var(--cr-cyan);
+            box-shadow: 0 0 10px rgba(0,255,204,0.4);
+        }
+        #cr-username {
+            font-size: 13px; font-weight: 900; color: #fff;
+            letter-spacing: 1px; text-transform: uppercase;
+            flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        #cr-rank-badge {
+            background: linear-gradient(135deg, var(--cr-gold), #ff8800);
+            color: #000; font-size: 9px; font-weight: 900;
+            padding: 2px 6px; border-radius: 4px;
+            letter-spacing: 1px; flex-shrink: 0;
+        }
+        .cr-resource {
+            display: flex; align-items: center; gap: 4px;
+            background: rgba(0,0,0,0.4); border-radius: 20px;
+            padding: 4px 10px; border: 1px solid rgba(255,255,255,0.1);
+            flex-shrink: 0;
+        }
+        .cr-resource-icon { font-size: 14px; }
+        .cr-resource-val { font-size: 12px; font-weight: 900; letter-spacing: 0.5px; }
+        #cr-coins-val { color: var(--cr-gold); }
+        #cr-gems-val { color: var(--cr-cyan); }
+        #cr-settings-btn {
+            width: 34px; height: 34px; border-radius: 50%;
+            background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; cursor: pointer; flex-shrink: 0;
+            -webkit-tap-highlight-color: transparent;
+            transition: background 0.15s;
+        }
+        #cr-settings-btn:active { background: rgba(255,255,255,0.15); }
+
+        /* Content area (swappable tabs) */
+        #cr-content { flex: 1; overflow: hidden; position: relative; display: flex; flex-direction: column; min-height: 0; }
+        .cr-tab-panel { display: none; flex-direction: column; height: 100%; overflow: hidden; }
+        .cr-tab-panel.cr-active { display: flex; }
+
+        /* BATTLE TAB */
+        #cr-arena {
+            flex: 1; position: relative; overflow: hidden;
+            background: radial-gradient(ellipse at 50% 60%, #1a0a2e 0%, #0a0a12 65%);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 0;
+        }
+        #cr-arena-particles {
+            position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+        }
+        .cr-particle {
+            position: absolute; border-radius: 50%; pointer-events: none;
+            animation: crParticleDrift linear infinite;
+        }
+        @keyframes crParticleDrift {
+            0% { transform: translateY(100%) scale(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-120%) scale(1.5); opacity: 0; }
+        }
+        #cr-ship-stage {
+            position: relative; z-index: 1;
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+        }
+        #cr-ship-canvas {
+            display: block;
+            filter: drop-shadow(0 0 18px var(--cr-cyan)) drop-shadow(0 0 40px rgba(0,255,204,0.3));
+            animation: crShipFloat 3s ease-in-out infinite;
+        }
+        @keyframes crShipFloat {
+            0%, 100% { transform: translateY(0px) rotate(-1deg); }
+            50% { transform: translateY(-10px) rotate(1deg); }
+        }
+        #cr-sector-label {
+            font-size: 11px; color: rgba(0,255,204,0.7); letter-spacing: 3px;
+            text-transform: uppercase; margin-top: 4px;
+        }
+        #cr-sector-progress-wrap {
+            width: 140px; height: 6px; background: rgba(255,255,255,0.1);
+            border-radius: 3px; overflow: hidden; margin-top: 4px;
+        }
+        #cr-sector-progress-bar {
+            height: 100%; background: linear-gradient(90deg, var(--cr-cyan), var(--cr-purple));
+            border-radius: 3px; transition: width 0.5s;
+            box-shadow: 0 0 8px var(--cr-cyan);
+        }
+        .cr-side-float {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            z-index: 2;
+        }
+        #cr-daily-btn { left: 8px; }
+        #cr-events-btn { right: 8px; }
+        .cr-side-float-btn {
+            width: 48px; height: 48px; border-radius: 10px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 2px; cursor: pointer; font-size: 20px;
+            -webkit-tap-highlight-color: transparent;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(0,0,0,0.5);
+            transition: transform 0.15s, box-shadow 0.15s;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+        }
+        .cr-side-float-btn:active { transform: scale(0.93); }
+        .cr-side-float-label {
+            font-size: 8px; color: rgba(255,255,255,0.7); letter-spacing: 1px;
+            text-transform: uppercase; text-align: center;
+        }
+
+        /* Chest Slots */
+        #cr-chest-row {
+            height: 64px; flex-shrink: 0;
+            background: linear-gradient(180deg, rgba(10,10,18,0) 0%, #0d0d1e 100%);
+            display: flex; align-items: center; justify-content: center;
+            gap: 8px; padding: 0 16px;
+        }
+        .cr-chest-slot {
+            width: 52px; height: 52px; border-radius: var(--cr-radius);
+            background: var(--cr-bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 2px; cursor: pointer; position: relative; overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+            transition: transform 0.15s, border-color 0.15s;
+        }
+        .cr-chest-slot:active { transform: scale(0.93); }
+        .cr-chest-slot.cr-chest-ready {
+            border-color: var(--cr-gold); box-shadow: 0 0 10px rgba(255,204,0,0.3);
+            animation: crChestPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes crChestPulse {
+            0%, 100% { box-shadow: 0 0 10px rgba(255,204,0,0.3); }
+            50% { box-shadow: 0 0 20px rgba(255,204,0,0.6); }
+        }
+        .cr-chest-icon { font-size: 22px; line-height: 1; }
+        .cr-chest-lbl { font-size: 7px; color: rgba(255,255,255,0.5); letter-spacing: 0.5px; text-transform: uppercase; }
+        .cr-chest-locked .cr-chest-icon { opacity: 0.35; }
+
+        /* Battle Button */
+        #cr-battle-wrap {
+            flex-shrink: 0; padding: 10px 16px 8px;
+            background: var(--cr-bg-deep);
+        }
+        #cr-battle-btn {
+            width: 100%; padding: 16px 0; border-radius: 16px;
+            background: linear-gradient(135deg, #ff0066 0%, #cc0033 50%, #ff3300 100%);
+            border: none; cursor: pointer; position: relative; overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+            box-shadow: 0 4px 30px rgba(255,0,85,0.5), 0 0 0 2px rgba(255,0,85,0.3);
+            animation: crBattleGlow 2s ease-in-out infinite;
+            transition: transform 0.12s;
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+        }
+        #cr-battle-btn:active { transform: scale(0.97); }
+        @keyframes crBattleGlow {
+            0%, 100% { box-shadow: 0 4px 30px rgba(255,0,85,0.5), 0 0 0 2px rgba(255,0,85,0.3); }
+            50% { box-shadow: 0 4px 50px rgba(255,0,85,0.75), 0 0 0 3px rgba(255,60,0,0.5); }
+        }
+        #cr-battle-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+            animation: crBattleSheen 3s linear infinite;
+        }
+        @keyframes crBattleSheen { 0% { left: -100%; } 100% { left: 200%; } }
+        #cr-battle-label {
+            font-size: 26px; font-weight: 900; color: #fff;
+            letter-spacing: 6px; text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            font-family: 'Courier New', Courier, monospace;
+            position: relative; z-index: 1;
+        }
+        #cr-battle-sub {
+            font-size: 10px; color: rgba(255,255,255,0.65); letter-spacing: 2px;
+            text-transform: uppercase; position: relative; z-index: 1;
+        }
+
+        /* Bottom Tab Bar */
+        #cr-tabbar {
+            height: 64px; flex-shrink: 0;
+            background: linear-gradient(180deg, #12122a 0%, #0a0a18 100%);
+            border-top: 1px solid rgba(255,255,255,0.08);
+            display: flex; align-items: stretch;
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+        .cr-tab {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            gap: 3px; cursor: pointer; position: relative;
+            -webkit-tap-highlight-color: transparent;
+            transition: background 0.15s;
+            padding: 6px 2px;
+        }
+        .cr-tab:active { background: rgba(255,255,255,0.05); }
+        .cr-tab-icon { font-size: 18px; line-height: 1; }
+        .cr-tab-lbl {
+            font-size: 8px; font-weight: 900; letter-spacing: 1px;
+            text-transform: uppercase; color: rgba(255,255,255,0.4);
+            transition: color 0.15s;
+        }
+        .cr-tab::after {
+            content: ''; position: absolute; bottom: 0; left: 20%; right: 20%;
+            height: 2px; border-radius: 2px 2px 0 0;
+            background: currentColor; opacity: 0; transition: opacity 0.15s;
+        }
+        .cr-tab.cr-tab-active .cr-tab-lbl { color: #fff; }
+        .cr-tab.cr-tab-active::after { opacity: 1; }
+        .cr-tab[data-tab="battle"] { color: var(--cr-pink); }
+        .cr-tab[data-tab="hangar"] { color: var(--cr-gold); }
+        .cr-tab[data-tab="modes"] { color: var(--cr-green); }
+        .cr-tab[data-tab="social"] { color: var(--cr-blue); }
+        .cr-tab[data-tab="ranks"] { color: var(--cr-purple); }
+        .cr-tab.cr-tab-active .cr-tab-icon { filter: drop-shadow(0 0 6px currentColor); }
+
+        /* ---- HANGAR TAB ---- */
+        #cr-panel-hangar {
+            overflow-y: auto; -webkit-overflow-scrolling: touch;
+            padding: 14px 14px 80px;
+        }
+        .cr-section-title {
+            font-size: 11px; font-weight: 900; letter-spacing: 3px;
+            text-transform: uppercase; color: rgba(255,255,255,0.5);
+            margin: 14px 0 8px; border-bottom: 1px solid rgba(255,255,255,0.07);
+            padding-bottom: 6px;
+        }
+        .cr-upgrade-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+        }
+        .cr-upgrade-card {
+            background: var(--cr-bg-card); border-radius: var(--cr-radius);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 12px 10px; display: flex; flex-direction: column; gap: 4px;
+            cursor: pointer; -webkit-tap-highlight-color: transparent;
+            transition: border-color 0.15s, transform 0.12s;
+            position: relative; overflow: hidden;
+        }
+        .cr-upgrade-card:active { transform: scale(0.97); }
+        .cr-upgrade-card.cr-affordable { border-color: var(--cr-gold); box-shadow: 0 0 8px rgba(255,204,0,0.2); }
+        .cr-upgrade-card.cr-owned { border-color: var(--cr-cyan); box-shadow: 0 0 8px rgba(0,255,204,0.15); }
+        .cr-card-icon { font-size: 24px; }
+        .cr-card-name { font-size: 11px; font-weight: 900; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
+        .cr-card-desc { font-size: 10px; color: rgba(255,255,255,0.45); line-height: 1.3; }
+        .cr-card-price {
+            font-size: 11px; font-weight: 900; color: var(--cr-gold);
+            display: flex; align-items: center; gap: 3px; margin-top: 2px;
+        }
+        .cr-card-price.cr-owned-lbl { color: var(--cr-cyan); }
+
+        /* Skin row */
+        .cr-skin-row {
+            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .cr-skin-card {
+            flex-shrink: 0; width: 70px; height: 80px; border-radius: 10px;
+            background: var(--cr-bg-card); border: 2px solid rgba(255,255,255,0.1);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 5px; cursor: pointer; -webkit-tap-highlight-color: transparent;
+            transition: transform 0.12s, border-color 0.15s;
+        }
+        .cr-skin-card:active { transform: scale(0.93); }
+        .cr-skin-card.cr-equipped { border-width: 2px; box-shadow: 0 0 12px; }
+        .cr-skin-dot { width: 28px; height: 28px; border-radius: 50%; box-shadow: 0 0 12px; }
+        .cr-skin-name { font-size: 8px; font-weight: 900; color: rgba(255,255,255,0.7); text-align: center; letter-spacing: 0.5px; }
+
+        /* ---- MODES TAB ---- */
+        #cr-panel-modes {
+            overflow-y: auto; -webkit-overflow-scrolling: touch;
+            padding: 10px 10px 80px;
+        }
+        .cr-modes-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+        }
+        .cr-mode-card {
+            background: var(--cr-bg-card); border-radius: var(--cr-radius);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 12px 10px; cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            display: flex; flex-direction: column; gap: 4px;
+            transition: transform 0.12s, border-color 0.2s;
+            position: relative; overflow: hidden;
+        }
+        .cr-mode-card:active { transform: scale(0.96); }
+        .cr-mode-card::before {
+            content: ''; position: absolute; inset: 0; opacity: 0.06;
+            background: var(--cr-card-accent, var(--cr-pink));
+        }
+        .cr-mode-icon { font-size: 22px; line-height: 1; }
+        .cr-mode-name { font-size: 11px; font-weight: 900; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
+        .cr-mode-desc { font-size: 10px; color: rgba(255,255,255,0.45); line-height: 1.3; }
+
+        /* ---- SOCIAL TAB ---- */
+        #cr-panel-social {
+            overflow-y: auto; -webkit-overflow-scrolling: touch;
+            padding: 14px 14px 80px;
+        }
+        .cr-social-btn {
+            width: 100%; padding: 16px 14px; border-radius: var(--cr-radius);
+            background: var(--cr-bg-card); border: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; gap: 14px;
+            cursor: pointer; margin-bottom: 8px;
+            -webkit-tap-highlight-color: transparent;
+            transition: transform 0.12s, border-color 0.15s;
+        }
+        .cr-social-btn:active { transform: scale(0.98); }
+        .cr-social-btn-icon { font-size: 24px; flex-shrink: 0; }
+        .cr-social-btn-info { flex: 1; text-align: left; }
+        .cr-social-btn-name { font-size: 13px; font-weight: 900; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
+        .cr-social-btn-desc { font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+        .cr-social-arrow { color: rgba(255,255,255,0.3); font-size: 14px; }
+
+        /* ---- RANKS TAB ---- */
+        #cr-panel-ranks {
+            overflow-y: auto; -webkit-overflow-scrolling: touch;
+            padding: 14px 14px 80px;
+        }
+        .cr-rank-card {
+            background: var(--cr-bg-card); border-radius: var(--cr-radius);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 14px 14px; display: flex; align-items: center;
+            gap: 14px; margin-bottom: 8px; cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            transition: transform 0.12s;
+        }
+        .cr-rank-card:active { transform: scale(0.98); }
+        .cr-rank-badge-big { font-size: 32px; flex-shrink: 0; }
+        .cr-rank-info { flex: 1; }
+        .cr-rank-name { font-size: 13px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
+        .cr-rank-sub { font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+        .cr-vip-block {
+            background: linear-gradient(135deg, rgba(170,0,255,0.2), rgba(255,0,85,0.1));
+            border: 1px solid var(--cr-purple);
+            border-radius: var(--cr-radius); padding: 14px;
+            margin-bottom: 12px; text-align: center;
+        }
+        .cr-vip-title { font-size: 10px; color: var(--cr-purple); letter-spacing: 3px; font-weight: 900; }
+        .cr-vip-tier { font-size: 28px; font-weight: 900; color: #fff; margin: 4px 0; }
+        .cr-vip-stars { font-size: 16px; letter-spacing: 4px; }
+
+        /* Scrollbar hide for mobile */
+        #cr-panel-hangar::-webkit-scrollbar,
+        #cr-panel-modes::-webkit-scrollbar,
+        #cr-panel-social::-webkit-scrollbar,
+        #cr-panel-ranks::-webkit-scrollbar,
+        .cr-skin-row::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="crt">
@@ -4808,10 +5192,382 @@
         window.addEventListener('keydown', (e) => { if((e.code === 'Space' || e.code === 'Enter') && !document.getElementById('cutscene-screen').classList.contains('hidden')) advanceCutscene(); });
 
 
+        // ===== CLASH ROYALE MOBILE MENU =====
+        function buildMobileMenu() {
+            // Hide old menu elements
+            ui.mainTitle.style.display = 'none';
+            ui.mainDesc.style.display = 'none';
+            document.getElementById('menu-coin-display').style.display = 'none';
+            ui.menuBtns.innerHTML = '';
+
+            // Remove any existing cr-menu
+            let existing = document.getElementById('cr-menu');
+            if (existing) existing.remove();
+
+            let unlockedRaw = localStorage.getItem('neonVoidStage');
+            let unlocked = parseInt(unlockedRaw);
+            if (isNaN(unlocked) || unlocked < 1) unlocked = 1;
+            let rushBest = parseInt(localStorage.getItem('neonVoidBossRushBest')) || 0;
+            let rushLabel = rushBest > 0 ? `Best: ${Math.floor(rushBest/60)}m ${(rushBest%60).toString().padStart(2,'0')}s` : 'All 15 Bosses';
+            let gemCount = parseInt(localStorage.getItem('neonVoidGems') || '0') || 0;
+            let playerName = (typeof currentUsername !== 'undefined' && currentUsername) ? currentUsername : 'PILOT';
+            let skinColor = (SKINS[equippedSkin] || SKINS['default']).color;
+            let skinName = (SKINS[equippedSkin] || SKINS['default']).name;
+            let rankTier = unlocked <= 3 ? 'ROOKIE' : unlocked <= 6 ? 'CADET' : unlocked <= 9 ? 'VETERAN' : unlocked <= 12 ? 'ELITE' : unlocked <= 14 ? 'LEGEND' : 'VOID LORD';
+            let sectorPct = Math.min(100, Math.round((unlocked / 15) * 100));
+
+            // Upgrade cards data
+            const upgradeCards = [
+                { id: 'homing', icon: '🎯', name: 'Smart Munitions', desc: 'Projectiles track targets', price: 5000 },
+                { id: 'explosive', icon: '💥', name: 'Explosive Payload', desc: 'Shots explode on impact', price: 10000 },
+                { id: 'pierce', icon: '⚡', name: 'Kinetic Pierce', desc: 'Shots pierce enemies', price: 15000 },
+                { id: 'magnet', icon: '🧲', name: 'Magnetic Core', desc: 'Increased pickup radius', price: 25000 },
+                { id: 'drone_bomb', icon: '💣', name: 'Bomb Drone', desc: 'AoE explosive shells', price: 30000 },
+                { id: 'antimatter', icon: '☢️', name: 'Antimatter', desc: 'Enemy death shockwave', price: 50000 },
+                { id: 'drone_laser', icon: '🔦', name: 'Laser Drone', desc: 'Piercing beam support', price: 60000 },
+                { id: 'drone_mini', icon: '🤖', name: 'Minigun Drone', desc: 'Rapid-fire turret', price: 80000 },
+            ];
+            let upgradeCardsHTML = upgradeCards.map(u => {
+                let owned = purchasedUpgrades.includes(u.id);
+                let canAfford = !owned && totalCoins >= u.price;
+                let cls = owned ? 'cr-owned' : canAfford ? 'cr-affordable' : '';
+                let priceLbl = owned ? `<span class="cr-card-price cr-owned-lbl">✓ OWNED</span>` : `<span class="cr-card-price">🪙 ${u.price.toLocaleString()}</span>`;
+                return `<div class="cr-upgrade-card ${cls}" onclick="if(!${owned})buyUpgradeById('${u.id}')">
+                    <div class="cr-card-icon">${u.icon}</div>
+                    <div class="cr-card-name">${u.name}</div>
+                    <div class="cr-card-desc">${u.desc}</div>
+                    ${priceLbl}
+                </div>`;
+            }).join('');
+
+            // Skin cards
+            let skinCardsHTML = Object.entries(SKINS).filter(([id]) => id !== 'custom').map(([id, sk]) => {
+                let isOwned = unlockedSkins.includes(id) || id === 'default';
+                let isEq = equippedSkin === id;
+                let style = isEq ? `border-color:${sk.color};box-shadow:0 0 12px ${sk.color};` : isOwned ? `border-color:${sk.color}66;` : 'border-color:#333;opacity:0.5;';
+                return `<div class="cr-skin-card" style="${style}" onclick="${isOwned ? `crEquipSkin('${id}')` : `openShop()`}">
+                    <div class="cr-skin-dot" style="background:${sk.color};box-shadow:0 0 12px ${sk.color};"></div>
+                    <div class="cr-skin-name" style="color:${sk.color}">${sk.name.split(' ')[0]}</div>
+                    ${isEq ? '<div style="font-size:7px;color:#fff;letter-spacing:1px">ACTIVE</div>' : (!isOwned ? '<div style="font-size:9px">🔒</div>' : '')}
+                </div>`;
+            }).join('');
+
+            // Modes grid
+            const modeCards = [
+                { icon: '🚀', name: 'Infinite', desc: 'Endless scaling', color: '#00ffcc', action: 'startInfinite()' },
+                { icon: '💀', name: 'Boss Rush', desc: rushLabel, color: '#ff0055', action: 'startBossRush()' },
+                { icon: '🎓', name: 'Training', desc: 'Test weapons', color: '#00ff88', action: 'startTraining()' },
+                { icon: '🗺️', name: 'Missions', desc: '15 Sectors', color: '#00aaff', action: 'openMissionSelect()' },
+                { icon: '🏎️', name: 'Race Mode', desc: 'Checkpoint sprint', color: '#ffcc00', action: 'startRaceMode()' },
+                { icon: '🛡️', name: 'Escort', desc: 'Protect the cargo', color: '#44ff88', action: 'startEscort()' },
+                { icon: '🌊', name: 'Survival', desc: 'How long can you last?', color: '#ff6600', action: 'startSurvivalArena()' },
+                { icon: '🏰', name: 'Horde Def', desc: 'Place turrets', color: '#ff6600', action: 'startHordeDefense()' },
+                { icon: '⏱️', name: 'Speedrun', desc: 'Sector 1-15 timer', color: '#ffd700', action: 'startSpeedrun()' },
+                { icon: '🔀', name: 'Mirror', desc: 'Everything reversed', color: '#cc44ff', action: 'startMirror()' },
+                { icon: '🎲', name: 'Chaos', desc: 'Randomized everything', color: '#ff4400', action: 'startChaos()' },
+                { icon: '☠️', name: 'One Hit', desc: 'Instant death', color: '#ff0088', action: 'startOneHit()' },
+                { icon: '🌪️', name: 'Bullet Hell', desc: 'Max projectiles', color: '#ff88ff', action: 'startBulletHell()' },
+                { icon: '🕊️', name: 'Pacifist', desc: 'No shooting', color: '#00ff88', action: 'startPacifist()' },
+                { icon: '🎮', name: 'Roguelike', desc: '10 floors, permadeath', color: '#8844ff', action: 'startRoguelike()' },
+                { icon: '🏆', name: 'Tournament', desc: 'Bracket matches', color: '#ffd700', action: 'startTournament()' },
+                { icon: '🔬', name: 'Sandbox', desc: 'Build rooms', color: '#00ffaa', action: 'openLevelEditor()' },
+                { icon: '🌑', name: 'Glitch', desc: unlocked > 14 ? 'Sector ??? — THE END' : 'Beat Sector 14', color: unlocked > 14 ? '#00ff00' : '#555', action: unlocked > 14 ? 'startMission(15)' : '' },
+            ];
+            let modeCardsHTML = modeCards.map(m => {
+                let dis = !m.action ? 'opacity:0.4;' : '';
+                return `<div class="cr-mode-card" style="--cr-card-accent:${m.color};border-color:${m.color}44;${dis}" ${m.action ? `onclick="${m.action}"` : ''}>
+                    <div class="cr-mode-icon">${m.icon}</div>
+                    <div class="cr-mode-name" style="color:${m.color}">${m.name}</div>
+                    <div class="cr-mode-desc">${m.desc}</div>
+                </div>`;
+            }).join('');
+
+            // Chest slots (cosmetic — show up to 4 reward milestones)
+            const chestData = [
+                { icon: '📦', label: 'BRONZE', ready: unlocked >= 3 },
+                { icon: '🥈', label: 'SILVER', ready: unlocked >= 6 },
+                { icon: '🥇', label: 'GOLD', ready: unlocked >= 10 },
+                { icon: '💎', label: 'VOID', ready: unlocked >= 15 },
+            ];
+            let chestsHTML = chestData.map(c => `
+                <div class="cr-chest-slot ${c.ready ? 'cr-chest-ready' : 'cr-chest-locked'}" onclick="${c.ready ? 'openShop()' : ''}">
+                    <div class="cr-chest-icon">${c.ready ? c.icon : '🔒'}</div>
+                    <div class="cr-chest-lbl">${c.label}</div>
+                </div>`).join('');
+
+            let html = `
+<div id="cr-menu">
+  <!-- TOP BAR -->
+  <div id="cr-topbar">
+    <div id="cr-avatar">${playerName.charAt(0)}</div>
+    <div id="cr-username">${playerName}</div>
+    <div id="cr-rank-badge">${rankTier}</div>
+    <div class="cr-resource"><span class="cr-resource-icon">🪙</span><span class="cr-resource-val" id="cr-coins-val">${totalCoins.toLocaleString()}</span></div>
+    <div class="cr-resource"><span class="cr-resource-icon">💎</span><span class="cr-resource-val" id="cr-gems-val">${gemCount.toLocaleString()}</span></div>
+    <div id="cr-settings-btn" onclick="crMenuSettings()">⚙️</div>
+  </div>
+
+  <!-- CONTENT AREA -->
+  <div id="cr-content">
+
+    <!-- BATTLE TAB -->
+    <div class="cr-tab-panel cr-active" id="cr-panel-battle">
+      <div id="cr-arena">
+        <div id="cr-arena-particles"></div>
+        <div class="cr-side-float" id="cr-daily-btn">
+          <div class="cr-side-float-btn" style="background:linear-gradient(135deg,#1a1a2e,#0f0f1e);border-color:#ffcc0044;" onclick="startTraining()">☀️</div>
+          <div class="cr-side-float-label">DAILY</div>
+        </div>
+        <div class="cr-side-float" id="cr-events-btn">
+          <div class="cr-side-float-btn" style="background:linear-gradient(135deg,#1a1a2e,#0f0f1e);border-color:#00ffcc44;" onclick="startBossRush()">⚡</div>
+          <div class="cr-side-float-label">EVENTS</div>
+        </div>
+        <div id="cr-ship-stage">
+          <canvas id="cr-ship-canvas" width="120" height="120"></canvas>
+          <div id="cr-sector-label">SECTOR ${unlocked} • ${skinName}</div>
+          <div id="cr-sector-progress-wrap">
+            <div id="cr-sector-progress-bar" style="width:${sectorPct}%"></div>
+          </div>
+        </div>
+      </div>
+      <div id="cr-chest-row">${chestsHTML}</div>
+      <div id="cr-battle-wrap">
+        <div id="cr-battle-btn" onclick="openMissionSelect()">
+          <div id="cr-battle-label">BATTLE</div>
+          <div id="cr-battle-sub">SECTOR ${unlocked} • TAP TO DEPLOY</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HANGAR TAB -->
+    <div class="cr-tab-panel" id="cr-panel-hangar">
+      <div class="cr-section-title">UPGRADES</div>
+      <div class="cr-upgrade-grid">${upgradeCardsHTML}</div>
+      <div class="cr-section-title" style="margin-top:16px">SHIP SKINS</div>
+      <div class="cr-skin-row">${skinCardsHTML}</div>
+      <div class="cr-section-title" style="margin-top:16px">FULL HANGAR</div>
+      <div style="padding:4px 0 80px">
+        <div class="cr-social-btn" onclick="openShop()" style="border-color:var(--cr-gold)44">
+          <div class="cr-social-btn-icon">🛒</div>
+          <div class="cr-social-btn-info">
+            <div class="cr-social-btn-name" style="color:var(--cr-gold)">Open Full Shop</div>
+            <div class="cr-social-btn-desc">All upgrades, skins, casino & more</div>
+          </div>
+          <div class="cr-social-arrow">›</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODES TAB -->
+    <div class="cr-tab-panel" id="cr-panel-modes">
+      <div class="cr-section-title">ALL GAME MODES</div>
+      <div class="cr-modes-grid">${modeCardsHTML}</div>
+    </div>
+
+    <!-- SOCIAL TAB -->
+    <div class="cr-tab-panel" id="cr-panel-social">
+      <div class="cr-section-title">MULTIPLAYER</div>
+      <div class="cr-social-btn" onclick="startPvP()" style="border-color:#ff005544">
+        <div class="cr-social-btn-icon">⚔️</div>
+        <div class="cr-social-btn-info">
+          <div class="cr-social-btn-name" style="color:var(--cr-pink)">PvP 1v1</div>
+          <div class="cr-social-btn-desc">Best of 3 rounds against another pilot</div>
+        </div><div class="cr-social-arrow">›</div>
+      </div>
+      <div class="cr-social-btn" onclick="startTagTeam()" style="border-color:#ffaa4444">
+        <div class="cr-social-btn-icon">👥</div>
+        <div class="cr-social-btn-info">
+          <div class="cr-social-btn-name" style="color:var(--cr-orange)">Tag Team</div>
+          <div class="cr-social-btn-desc">2-ship switching co-op</div>
+        </div><div class="cr-social-arrow">›</div>
+      </div>
+      <div class="cr-social-btn" onclick="startInfection()" style="border-color:#ff005544">
+        <div class="cr-social-btn-icon">🦠</div>
+        <div class="cr-social-btn-info">
+          <div class="cr-social-btn-name" style="color:var(--cr-pink)">Infection</div>
+          <div class="cr-social-btn-desc">Last healthy ship wins</div>
+        </div><div class="cr-social-arrow">›</div>
+      </div>
+      <div class="cr-section-title">EVENTS</div>
+      <div class="cr-social-btn" onclick="startBossRush()" style="border-color:#00ffcc44">
+        <div class="cr-social-btn-icon">🌩️</div>
+        <div class="cr-social-btn-info">
+          <div class="cr-social-btn-name" style="color:var(--cr-cyan)">Boss Rush</div>
+          <div class="cr-social-btn-desc">${rushLabel}</div>
+        </div><div class="cr-social-arrow">›</div>
+      </div>
+      <div class="cr-social-btn" onclick="startTournament()" style="border-color:#ffcc0044">
+        <div class="cr-social-btn-icon">🏆</div>
+        <div class="cr-social-btn-info">
+          <div class="cr-social-btn-name" style="color:var(--cr-gold)">Tournament</div>
+          <div class="cr-social-btn-desc">Bracket-style matches</div>
+        </div><div class="cr-social-arrow">›</div>
+      </div>
+    </div>
+
+    <!-- RANKS TAB -->
+    <div class="cr-tab-panel" id="cr-panel-ranks">
+      <div class="cr-vip-block">
+        <div class="cr-vip-title">PILOT RANK</div>
+        <div class="cr-vip-tier">${rankTier}</div>
+        <div class="cr-vip-stars">${'★'.repeat(Math.min(5, Math.ceil(unlocked/3)))}</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:4px;letter-spacing:1px">SECTOR ${unlocked} / 15 COMPLETE</div>
+      </div>
+      <div class="cr-section-title">LEADERBOARDS</div>
+      <div class="cr-rank-card" onclick="document.getElementById('cr-menu').style.display='none';ui.mainOverlay.classList.add('hidden');document.getElementById('settings-screen').classList.remove('hidden');openSettings()">
+        <div class="cr-rank-badge-big">🏆</div>
+        <div class="cr-rank-info">
+          <div class="cr-rank-name" style="color:var(--cr-gold)">Global Leaderboard</div>
+          <div class="cr-rank-sub">Top pilots by score &amp; time</div>
+        </div><div class="cr-social-arrow">›</div>
+      </div>
+      <div class="cr-section-title">ACHIEVEMENTS</div>
+      <div class="cr-rank-card" onclick="openShop()">
+        <div class="cr-rank-badge-big">🎖️</div>
+        <div class="cr-rank-info">
+          <div class="cr-rank-name" style="color:var(--cr-cyan)">Mastery</div>
+          <div class="cr-rank-sub">Unlock all ship skins &amp; upgrades</div>
+        </div><div class="cr-social-arrow">›</div>
+      </div>
+      <div class="cr-rank-card" onclick="startSpeedrun()">
+        <div class="cr-rank-badge-big">⏱️</div>
+        <div class="cr-rank-info">
+          <div class="cr-rank-name" style="color:var(--cr-green)">Speedrun Record</div>
+          <div class="cr-rank-sub">${rushBest > 0 ? `Best: ${Math.floor(rushBest/60)}m ${(rushBest%60).toString().padStart(2,'0')}s` : 'No record yet'}</div>
+        </div><div class="cr-social-arrow">›</div>
+      </div>
+      <div class="cr-section-title">PRESTIGE</div>
+      <div class="cr-rank-card" onclick="openShop()">
+        <div class="cr-rank-badge-big">⭐</div>
+        <div class="cr-rank-info">
+          <div class="cr-rank-name" style="color:var(--cr-purple)">Battle Pass</div>
+          <div class="cr-rank-sub">Unlock exclusive rewards</div>
+        </div><div class="cr-social-arrow">›</div>
+      </div>
+    </div>
+
+  </div><!-- end cr-content -->
+
+  <!-- BOTTOM TAB BAR -->
+  <div id="cr-tabbar">
+    <div class="cr-tab cr-tab-active" data-tab="battle" onclick="crSwitchTab('battle')">
+      <div class="cr-tab-icon">⚔️</div><div class="cr-tab-lbl">BATTLE</div>
+    </div>
+    <div class="cr-tab" data-tab="hangar" onclick="crSwitchTab('hangar')">
+      <div class="cr-tab-icon">🔧</div><div class="cr-tab-lbl">HANGAR</div>
+    </div>
+    <div class="cr-tab" data-tab="modes" onclick="crSwitchTab('modes')">
+      <div class="cr-tab-icon">🎮</div><div class="cr-tab-lbl">MODES</div>
+    </div>
+    <div class="cr-tab" data-tab="social" onclick="crSwitchTab('social')">
+      <div class="cr-tab-icon">👥</div><div class="cr-tab-lbl">SOCIAL</div>
+    </div>
+    <div class="cr-tab" data-tab="ranks" onclick="crSwitchTab('ranks')">
+      <div class="cr-tab-icon">🏆</div><div class="cr-tab-lbl">RANKS</div>
+    </div>
+  </div>
+</div>`;
+
+            // Inject into main overlay
+            ui.mainOverlay.insertAdjacentHTML('beforeend', html);
+
+            // Draw ship on canvas
+            requestAnimationFrame(() => {
+                let sc = document.getElementById('cr-ship-canvas');
+                if (sc) {
+                    let sctx = sc.getContext('2d');
+                    drawShip(sctx, 60, 60, 32, skinColor, 0, true);
+                }
+                // Spawn particles
+                let pContainer = document.getElementById('cr-arena-particles');
+                if (pContainer) {
+                    let colors = [skinColor, '#ff0055', '#00ffcc', '#aa00ff', '#ffcc00'];
+                    for (let i = 0; i < 18; i++) {
+                        let p = document.createElement('div');
+                        p.className = 'cr-particle';
+                        let sz = 2 + Math.random() * 3;
+                        let col = colors[Math.floor(Math.random() * colors.length)];
+                        let dur = 3 + Math.random() * 5;
+                        let delay = Math.random() * -8;
+                        p.style.cssText = `width:${sz}px;height:${sz}px;background:${col};left:${Math.random()*100}%;bottom:0;animation-duration:${dur}s;animation-delay:${delay}s;box-shadow:0 0 ${sz*2}px ${col};`;
+                        pContainer.appendChild(p);
+                    }
+                }
+            });
+
+            // Animate ship continuously
+            let crShipAnim = null;
+            function animateCRShip() {
+                let sc = document.getElementById('cr-ship-canvas');
+                if (!sc || !document.getElementById('cr-menu')) { if (crShipAnim) cancelAnimationFrame(crShipAnim); return; }
+                let sctx = sc.getContext('2d');
+                sctx.clearRect(0, 0, 120, 120);
+                let angle = Math.sin(Date.now() * 0.001) * 0.08;
+                drawShip(sctx, 60, 60, 32, skinColor, angle, true);
+                crShipAnim = requestAnimationFrame(animateCRShip);
+            }
+            setTimeout(animateCRShip, 100);
+        }
+
+        function crSwitchTab(tab) {
+            document.querySelectorAll('#cr-menu .cr-tab').forEach(t => t.classList.toggle('cr-tab-active', t.dataset.tab === tab));
+            document.querySelectorAll('#cr-menu .cr-tab-panel').forEach(p => p.classList.toggle('cr-active', p.id === 'cr-panel-' + tab));
+        }
+
+        function crMenuSettings() {
+            let m = document.getElementById('cr-menu');
+            if (m) m.style.display = 'none';
+            openSettings();
+        }
+
+        function crEquipSkin(id) {
+            if (!SKINS[id]) return;
+            equippedSkin = id;
+            localStorage.setItem('neonVoidEquippedSkin', id);
+            playSound('powerup');
+            // Rebuild menu to reflect new skin
+            let m = document.getElementById('cr-menu');
+            if (m) m.remove();
+            buildMobileMenu();
+        }
+
+        function buyUpgradeById(id) {
+            if (!PERMANENT_UPGRADES[id]) return;
+            let up = PERMANENT_UPGRADES[id];
+            if (purchasedUpgrades.includes(id)) return;
+            if (totalCoins < up.price) { playSound('hit'); return; }
+            totalCoins -= up.price;
+            purchasedUpgrades.push(id);
+            localStorage.setItem('neonVoidCoins', totalCoins);
+            localStorage.setItem('neonVoidUpgrades', JSON.stringify(purchasedUpgrades));
+            cloudSave();
+            playSound('powerup');
+            // Refresh coins display and rebuild menu
+            let m = document.getElementById('cr-menu');
+            if (m) m.remove();
+            buildMobileMenu();
+            crSwitchTab('hangar');
+        }
+
         function returnToMenu() {
             document.getElementById('mission-select').classList.add('hidden'); document.getElementById('shop-screen').classList.add('hidden'); document.getElementById('settings-screen').classList.add('hidden'); document.getElementById('pause-screen').classList.add('hidden'); document.getElementById('draw-screen').classList.add('hidden');
             stopMusic(); startMenuBg(); if (appSettings.music) startMenuMusic();
             ui.mainOverlay.classList.remove('hidden'); ui.mainOverlay.classList.remove('win-theme');
+
+            // Mobile: use Clash Royale menu
+            if (window.isNeonVoidApp || appSettings.mobile) {
+                // Restore main overlay display style
+                ui.mainOverlay.style.display = '';
+                ui.mainTitle.style.display = 'none';
+                ui.mainDesc.style.display = 'none';
+                document.getElementById('menu-coin-display').style.display = 'none';
+                document.getElementById('mobile-controls').style.display = 'none';
+                buildMobileMenu();
+                return;
+            }
+
+            ui.mainTitle.style.display = '';
+            ui.mainDesc.style.display = '';
             ui.mainTitle.innerText = "NEON VOID"; ui.mainTitle.style.webkitTextStroke = "3px #ff0055"; ui.mainTitle.style.textShadow = "0 0 50px #ff0055";
             ui.mainDesc.innerHTML = `<strong>ARROW KEYS / WASD</strong> to Move | <strong>SPACE / MOUSE</strong> to Shoot<br><strong>SHIFT / RIGHT-CLICK</strong> to Dash | <strong>[C]</strong> to Toggle Aim | <strong>[ESC]</strong> to Pause<br><span style="color: #ff0055; font-weight:bold;">THE ULTIMATE UPDATE</span>`;
             document.getElementById('menu-coin-display').innerText = `TOTAL COINS: ${totalCoins}`;
@@ -4854,8 +5610,10 @@
             if (window._menuTipCleanup) { window._menuTipCleanup(); window._menuTipCleanup = null; }
         }
 
+        function crHideMenu() { let m = document.getElementById('cr-menu'); if (m) m.style.display = 'none'; }
+
         function openMissionSelect() {
-            cleanupMenuAnims();
+            crHideMenu(); cleanupMenuAnims();
             ui.mainOverlay.classList.add('hidden'); document.getElementById('mission-select').classList.remove('hidden'); const grid = document.getElementById('stage-grid'); grid.innerHTML = '';
             let unlockedRaw = localStorage.getItem('neonVoidStage'); let unlocked = parseInt(unlockedRaw); if(isNaN(unlocked) || unlocked < 1) unlocked = 1;
             for(let i=1; i<=15; i++) {
@@ -4867,7 +5625,7 @@
         }
 
 
-        function openShop() { cleanupMenuAnims(); ui.mainOverlay.classList.add('hidden'); document.getElementById('shop-screen').classList.remove('hidden'); renderShop(); }
+        function openShop() { crHideMenu(); cleanupMenuAnims(); ui.mainOverlay.classList.add('hidden'); document.getElementById('shop-screen').classList.remove('hidden'); renderShop(); }
 
         // ==================== VOID CASINO ====================
         function coinFlip(bet) {
@@ -4945,7 +5703,7 @@
                 }
             }, 70);
         }
-        function openSettings() { cleanupMenuAnims(); ui.mainOverlay.classList.add('hidden'); document.getElementById('settings-screen').classList.remove('hidden');/* Init new settings UI */let _asld=document.getElementById('autoaim-slider');let _asv=document.getElementById('autoaim-val');if(_asld&&appSettings.autoAimStrength!==undefined){_asld.value=appSettings.autoAimStrength;if(_asv)_asv.textContent=appSettings.autoAimStrength;}let _ssld=document.getElementById('shake-slider');let _ssv=document.getElementById('shake-val');if(_ssld&&appSettings.shakeIntensity!==undefined){_ssld.value=appSettings.shakeIntensity;if(_ssv)_ssv.textContent=appSettings.shakeIntensity;}let _boh=document.getElementById('btn-onehand');if(_boh)_boh.innerText='ONE-HAND MODE: '+(appSettings.oneHandMode?'ON':'OFF');let _bpm=document.getElementById('btn-perfmode');if(_bpm)_bpm.innerText='PERFORMANCE MODE: '+(appSettings.perfMode?'ON':'OFF');if(typeof renderKeybindList==='function')renderKeybindList();let _lm=localStorage.getItem('neonVoidMod');let _mst=document.getElementById('mod-status');if(_lm&&_mst){try{let _mp=JSON.parse(_lm);_mst.textContent='Mod active: '+(_mp.enemies||[]).length+' enemies';_mst.style.color='#00ff88';}catch(e){}}}
+        function openSettings() { crHideMenu(); cleanupMenuAnims(); ui.mainOverlay.classList.add('hidden'); document.getElementById('settings-screen').classList.remove('hidden');/* Init new settings UI */let _asld=document.getElementById('autoaim-slider');let _asv=document.getElementById('autoaim-val');if(_asld&&appSettings.autoAimStrength!==undefined){_asld.value=appSettings.autoAimStrength;if(_asv)_asv.textContent=appSettings.autoAimStrength;}let _ssld=document.getElementById('shake-slider');let _ssv=document.getElementById('shake-val');if(_ssld&&appSettings.shakeIntensity!==undefined){_ssld.value=appSettings.shakeIntensity;if(_ssv)_ssv.textContent=appSettings.shakeIntensity;}let _boh=document.getElementById('btn-onehand');if(_boh)_boh.innerText='ONE-HAND MODE: '+(appSettings.oneHandMode?'ON':'OFF');let _bpm=document.getElementById('btn-perfmode');if(_bpm)_bpm.innerText='PERFORMANCE MODE: '+(appSettings.perfMode?'ON':'OFF');if(typeof renderKeybindList==='function')renderKeybindList();let _lm=localStorage.getItem('neonVoidMod');let _mst=document.getElementById('mod-status');if(_lm&&_mst){try{let _mp=JSON.parse(_lm);_mst.textContent='Mod active: '+(_mp.enemies||[]).length+' enemies';_mst.style.color='#00ff88';}catch(e){}}}
         
         function renderShop() {
             document.getElementById('shop-coin-display').innerText = `COINS: ${totalCoins}`; const grid = document.getElementById('shop-grid'); grid.innerHTML = '';
