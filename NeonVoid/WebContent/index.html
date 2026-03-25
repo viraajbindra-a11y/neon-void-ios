@@ -10,6 +10,17 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Google Identity Services — web only (not loaded inside iOS WKWebView) -->
+    <script>
+        // Only load Google Sign-In on web, not inside the iOS app
+        if (!window.isNeonVoidApp) {
+            var gsiScript = document.createElement('script');
+            gsiScript.src = 'https://accounts.google.com/gsi/client';
+            gsiScript.async = true;
+            gsiScript.defer = true;
+            document.head.appendChild(gsiScript);
+        }
+    </script>
     <style>
         body { 
             margin: 0; overflow: hidden; background: #000; 
@@ -161,390 +172,6 @@
         #menu-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 19; pointer-events: none; }
         @keyframes deathRing { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(3); opacity: 0; } }
         .death-ring { position: absolute; width: 40px; height: 40px; border-radius: 50%; border: 3px solid; pointer-events: none; z-index: 14; animation: deathRing 0.5s ease-out forwards; }
-
-        /* ===== CLASH ROYALE MOBILE MENU ===== */
-        :root {
-            --cr-bg-deep: #0a0a12;
-            --cr-bg-mid: #111128;
-            --cr-bg-card: #16162a;
-            --cr-pink: #ff0055;
-            --cr-cyan: #00ffcc;
-            --cr-gold: #ffcc00;
-            --cr-purple: #aa00ff;
-            --cr-green: #00ff88;
-            --cr-blue: #00aaff;
-            --cr-orange: #ff8800;
-            --cr-radius: 12px;
-        }
-
-        #cr-menu {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--cr-bg-deep);
-            display: flex; flex-direction: column;
-            z-index: 21; overflow: hidden;
-            font-family: 'Courier New', Courier, monospace;
-            padding-top: env(safe-area-inset-top, 0px);
-            padding-bottom: env(safe-area-inset-bottom, 0px);
-            box-sizing: border-box;
-        }
-        #cr-menu.hidden { display: none !important; }
-
-        /* Top Bar */
-        #cr-topbar {
-            height: 50px; flex-shrink: 0;
-            background: linear-gradient(180deg, #1a1a30 0%, #0f0f20 100%);
-            display: flex; align-items: center;
-            padding: 0 12px; gap: 8px;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            z-index: 2;
-        }
-        #cr-avatar {
-            width: 34px; height: 34px; border-radius: 50%;
-            background: linear-gradient(135deg, var(--cr-cyan), var(--cr-purple));
-            display: flex; align-items: center; justify-content: center;
-            font-size: 16px; font-weight: 900; color: #000;
-            flex-shrink: 0; border: 2px solid var(--cr-cyan);
-            box-shadow: 0 0 10px rgba(0,255,204,0.4);
-        }
-        #cr-username {
-            font-size: 13px; font-weight: 900; color: #fff;
-            letter-spacing: 1px; text-transform: uppercase;
-            flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        #cr-rank-badge {
-            background: linear-gradient(135deg, var(--cr-gold), #ff8800);
-            color: #000; font-size: 9px; font-weight: 900;
-            padding: 2px 6px; border-radius: 4px;
-            letter-spacing: 1px; flex-shrink: 0;
-        }
-        .cr-resource {
-            display: flex; align-items: center; gap: 4px;
-            background: rgba(0,0,0,0.4); border-radius: 20px;
-            padding: 4px 10px; border: 1px solid rgba(255,255,255,0.1);
-            flex-shrink: 0;
-        }
-        .cr-resource-icon { font-size: 14px; }
-        .cr-resource-val { font-size: 12px; font-weight: 900; letter-spacing: 0.5px; }
-        #cr-coins-val { color: var(--cr-gold); }
-        #cr-gems-val { color: var(--cr-cyan); }
-        #cr-settings-btn {
-            width: 34px; height: 34px; border-radius: 50%;
-            background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 16px; cursor: pointer; flex-shrink: 0;
-            -webkit-tap-highlight-color: transparent;
-            transition: background 0.15s;
-        }
-        #cr-settings-btn:active { background: rgba(255,255,255,0.15); }
-
-        /* Content area (swappable tabs) */
-        #cr-content { flex: 1; overflow: hidden; position: relative; display: flex; flex-direction: column; min-height: 0; }
-        .cr-tab-panel { display: none; flex-direction: column; height: 100%; overflow: hidden; }
-        .cr-tab-panel.cr-active { display: flex; }
-
-        /* BATTLE TAB */
-        #cr-arena {
-            flex: 1; position: relative; overflow: hidden;
-            background: radial-gradient(ellipse at 50% 60%, #1a0a2e 0%, #0a0a12 65%);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            min-height: 0;
-        }
-        #cr-arena-particles {
-            position: absolute; inset: 0; pointer-events: none; overflow: hidden;
-        }
-        .cr-particle {
-            position: absolute; border-radius: 50%; pointer-events: none;
-            animation: crParticleDrift linear infinite;
-        }
-        @keyframes crParticleDrift {
-            0% { transform: translateY(100%) scale(0); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 0.6; }
-            100% { transform: translateY(-120%) scale(1.5); opacity: 0; }
-        }
-        #cr-ship-stage {
-            position: relative; z-index: 1;
-            display: flex; flex-direction: column; align-items: center; gap: 4px;
-        }
-        #cr-ship-canvas {
-            display: block;
-            filter: drop-shadow(0 0 18px var(--cr-cyan)) drop-shadow(0 0 40px rgba(0,255,204,0.3));
-            animation: crShipFloat 3s ease-in-out infinite;
-        }
-        @keyframes crShipFloat {
-            0%, 100% { transform: translateY(0px) rotate(-1deg); }
-            50% { transform: translateY(-10px) rotate(1deg); }
-        }
-        #cr-sector-label {
-            font-size: 11px; color: rgba(0,255,204,0.7); letter-spacing: 3px;
-            text-transform: uppercase; margin-top: 4px;
-        }
-        #cr-sector-progress-wrap {
-            width: 140px; height: 6px; background: rgba(255,255,255,0.1);
-            border-radius: 3px; overflow: hidden; margin-top: 4px;
-        }
-        #cr-sector-progress-bar {
-            height: 100%; background: linear-gradient(90deg, var(--cr-cyan), var(--cr-purple));
-            border-radius: 3px; transition: width 0.5s;
-            box-shadow: 0 0 8px var(--cr-cyan);
-        }
-        .cr-side-float {
-            position: absolute; top: 50%; transform: translateY(-50%);
-            display: flex; flex-direction: column; align-items: center; gap: 4px;
-            z-index: 2;
-        }
-        #cr-daily-btn { left: 8px; }
-        #cr-events-btn { right: 8px; }
-        .cr-side-float-btn {
-            width: 48px; height: 48px; border-radius: 10px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 2px; cursor: pointer; font-size: 20px;
-            -webkit-tap-highlight-color: transparent;
-            border: 1px solid rgba(255,255,255,0.15);
-            background: rgba(0,0,0,0.5);
-            transition: transform 0.15s, box-shadow 0.15s;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.5);
-        }
-        .cr-side-float-btn:active { transform: scale(0.93); }
-        .cr-side-float-label {
-            font-size: 8px; color: rgba(255,255,255,0.7); letter-spacing: 1px;
-            text-transform: uppercase; text-align: center;
-        }
-
-        /* Chest Slots */
-        #cr-chest-row {
-            height: 64px; flex-shrink: 0;
-            background: linear-gradient(180deg, rgba(10,10,18,0) 0%, #0d0d1e 100%);
-            display: flex; align-items: center; justify-content: center;
-            gap: 8px; padding: 0 16px;
-        }
-        .cr-chest-slot {
-            width: 52px; height: 52px; border-radius: var(--cr-radius);
-            background: var(--cr-bg-card);
-            border: 1px solid rgba(255,255,255,0.1);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 2px; cursor: pointer; position: relative; overflow: hidden;
-            -webkit-tap-highlight-color: transparent;
-            transition: transform 0.15s, border-color 0.15s;
-        }
-        .cr-chest-slot:active { transform: scale(0.93); }
-        .cr-chest-slot.cr-chest-ready {
-            border-color: var(--cr-gold); box-shadow: 0 0 10px rgba(255,204,0,0.3);
-            animation: crChestPulse 1.5s ease-in-out infinite;
-        }
-        @keyframes crChestPulse {
-            0%, 100% { box-shadow: 0 0 10px rgba(255,204,0,0.3); }
-            50% { box-shadow: 0 0 20px rgba(255,204,0,0.6); }
-        }
-        .cr-chest-icon { font-size: 22px; line-height: 1; }
-        .cr-chest-lbl { font-size: 7px; color: rgba(255,255,255,0.5); letter-spacing: 0.5px; text-transform: uppercase; }
-        .cr-chest-locked .cr-chest-icon { opacity: 0.35; }
-
-        /* Battle Button */
-        #cr-battle-wrap {
-            flex-shrink: 0; padding: 10px 16px 8px;
-            background: var(--cr-bg-deep);
-        }
-        #cr-battle-btn {
-            width: 100%; padding: 16px 0; border-radius: 16px;
-            background: linear-gradient(135deg, #ff0066 0%, #cc0033 50%, #ff3300 100%);
-            border: none; cursor: pointer; position: relative; overflow: hidden;
-            -webkit-tap-highlight-color: transparent;
-            box-shadow: 0 4px 30px rgba(255,0,85,0.5), 0 0 0 2px rgba(255,0,85,0.3);
-            animation: crBattleGlow 2s ease-in-out infinite;
-            transition: transform 0.12s;
-            display: flex; flex-direction: column; align-items: center; gap: 2px;
-        }
-        #cr-battle-btn:active { transform: scale(0.97); }
-        @keyframes crBattleGlow {
-            0%, 100% { box-shadow: 0 4px 30px rgba(255,0,85,0.5), 0 0 0 2px rgba(255,0,85,0.3); }
-            50% { box-shadow: 0 4px 50px rgba(255,0,85,0.75), 0 0 0 3px rgba(255,60,0,0.5); }
-        }
-        #cr-battle-btn::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
-            animation: crBattleSheen 3s linear infinite;
-        }
-        @keyframes crBattleSheen { 0% { left: -100%; } 100% { left: 200%; } }
-        #cr-battle-label {
-            font-size: 26px; font-weight: 900; color: #fff;
-            letter-spacing: 6px; text-shadow: 0 2px 8px rgba(0,0,0,0.5);
-            font-family: 'Courier New', Courier, monospace;
-            position: relative; z-index: 1;
-        }
-        #cr-battle-sub {
-            font-size: 10px; color: rgba(255,255,255,0.65); letter-spacing: 2px;
-            text-transform: uppercase; position: relative; z-index: 1;
-        }
-
-        /* Bottom Tab Bar */
-        #cr-tabbar {
-            height: 64px; flex-shrink: 0;
-            background: linear-gradient(180deg, #12122a 0%, #0a0a18 100%);
-            border-top: 1px solid rgba(255,255,255,0.08);
-            display: flex; align-items: stretch;
-            padding-bottom: env(safe-area-inset-bottom, 0px);
-        }
-        .cr-tab {
-            flex: 1; display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            gap: 3px; cursor: pointer; position: relative;
-            -webkit-tap-highlight-color: transparent;
-            transition: background 0.15s;
-            padding: 6px 2px;
-        }
-        .cr-tab:active { background: rgba(255,255,255,0.05); }
-        .cr-tab-icon { font-size: 18px; line-height: 1; }
-        .cr-tab-lbl {
-            font-size: 8px; font-weight: 900; letter-spacing: 1px;
-            text-transform: uppercase; color: rgba(255,255,255,0.4);
-            transition: color 0.15s;
-        }
-        .cr-tab::after {
-            content: ''; position: absolute; bottom: 0; left: 20%; right: 20%;
-            height: 2px; border-radius: 2px 2px 0 0;
-            background: currentColor; opacity: 0; transition: opacity 0.15s;
-        }
-        .cr-tab.cr-tab-active .cr-tab-lbl { color: #fff; }
-        .cr-tab.cr-tab-active::after { opacity: 1; }
-        .cr-tab[data-tab="battle"] { color: var(--cr-pink); }
-        .cr-tab[data-tab="hangar"] { color: var(--cr-gold); }
-        .cr-tab[data-tab="modes"] { color: var(--cr-green); }
-        .cr-tab[data-tab="social"] { color: var(--cr-blue); }
-        .cr-tab[data-tab="ranks"] { color: var(--cr-purple); }
-        .cr-tab.cr-tab-active .cr-tab-icon { filter: drop-shadow(0 0 6px currentColor); }
-
-        /* ---- HANGAR TAB ---- */
-        #cr-panel-hangar {
-            overflow-y: auto; -webkit-overflow-scrolling: touch;
-            padding: 14px 14px 80px;
-        }
-        .cr-section-title {
-            font-size: 11px; font-weight: 900; letter-spacing: 3px;
-            text-transform: uppercase; color: rgba(255,255,255,0.5);
-            margin: 14px 0 8px; border-bottom: 1px solid rgba(255,255,255,0.07);
-            padding-bottom: 6px;
-        }
-        .cr-upgrade-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
-        }
-        .cr-upgrade-card {
-            background: var(--cr-bg-card); border-radius: var(--cr-radius);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 12px 10px; display: flex; flex-direction: column; gap: 4px;
-            cursor: pointer; -webkit-tap-highlight-color: transparent;
-            transition: border-color 0.15s, transform 0.12s;
-            position: relative; overflow: hidden;
-        }
-        .cr-upgrade-card:active { transform: scale(0.97); }
-        .cr-upgrade-card.cr-affordable { border-color: var(--cr-gold); box-shadow: 0 0 8px rgba(255,204,0,0.2); }
-        .cr-upgrade-card.cr-owned { border-color: var(--cr-cyan); box-shadow: 0 0 8px rgba(0,255,204,0.15); }
-        .cr-card-icon { font-size: 24px; }
-        .cr-card-name { font-size: 11px; font-weight: 900; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
-        .cr-card-desc { font-size: 10px; color: rgba(255,255,255,0.45); line-height: 1.3; }
-        .cr-card-price {
-            font-size: 11px; font-weight: 900; color: var(--cr-gold);
-            display: flex; align-items: center; gap: 3px; margin-top: 2px;
-        }
-        .cr-card-price.cr-owned-lbl { color: var(--cr-cyan); }
-
-        /* Skin row */
-        .cr-skin-row {
-            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px;
-            -webkit-overflow-scrolling: touch;
-        }
-        .cr-skin-card {
-            flex-shrink: 0; width: 70px; height: 80px; border-radius: 10px;
-            background: var(--cr-bg-card); border: 2px solid rgba(255,255,255,0.1);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 5px; cursor: pointer; -webkit-tap-highlight-color: transparent;
-            transition: transform 0.12s, border-color 0.15s;
-        }
-        .cr-skin-card:active { transform: scale(0.93); }
-        .cr-skin-card.cr-equipped { border-width: 2px; box-shadow: 0 0 12px; }
-        .cr-skin-dot { width: 28px; height: 28px; border-radius: 50%; box-shadow: 0 0 12px; }
-        .cr-skin-name { font-size: 8px; font-weight: 900; color: rgba(255,255,255,0.7); text-align: center; letter-spacing: 0.5px; }
-
-        /* ---- MODES TAB ---- */
-        #cr-panel-modes {
-            overflow-y: auto; -webkit-overflow-scrolling: touch;
-            padding: 10px 10px 80px;
-        }
-        .cr-modes-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
-        }
-        .cr-mode-card {
-            background: var(--cr-bg-card); border-radius: var(--cr-radius);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 12px 10px; cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-            display: flex; flex-direction: column; gap: 4px;
-            transition: transform 0.12s, border-color 0.2s;
-            position: relative; overflow: hidden;
-        }
-        .cr-mode-card:active { transform: scale(0.96); }
-        .cr-mode-card::before {
-            content: ''; position: absolute; inset: 0; opacity: 0.06;
-            background: var(--cr-card-accent, var(--cr-pink));
-        }
-        .cr-mode-icon { font-size: 22px; line-height: 1; }
-        .cr-mode-name { font-size: 11px; font-weight: 900; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
-        .cr-mode-desc { font-size: 10px; color: rgba(255,255,255,0.45); line-height: 1.3; }
-
-        /* ---- SOCIAL TAB ---- */
-        #cr-panel-social {
-            overflow-y: auto; -webkit-overflow-scrolling: touch;
-            padding: 14px 14px 80px;
-        }
-        .cr-social-btn {
-            width: 100%; padding: 16px 14px; border-radius: var(--cr-radius);
-            background: var(--cr-bg-card); border: 1px solid rgba(255,255,255,0.1);
-            display: flex; align-items: center; gap: 14px;
-            cursor: pointer; margin-bottom: 8px;
-            -webkit-tap-highlight-color: transparent;
-            transition: transform 0.12s, border-color 0.15s;
-        }
-        .cr-social-btn:active { transform: scale(0.98); }
-        .cr-social-btn-icon { font-size: 24px; flex-shrink: 0; }
-        .cr-social-btn-info { flex: 1; text-align: left; }
-        .cr-social-btn-name { font-size: 13px; font-weight: 900; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
-        .cr-social-btn-desc { font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 2px; }
-        .cr-social-arrow { color: rgba(255,255,255,0.3); font-size: 14px; }
-
-        /* ---- RANKS TAB ---- */
-        #cr-panel-ranks {
-            overflow-y: auto; -webkit-overflow-scrolling: touch;
-            padding: 14px 14px 80px;
-        }
-        .cr-rank-card {
-            background: var(--cr-bg-card); border-radius: var(--cr-radius);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 14px 14px; display: flex; align-items: center;
-            gap: 14px; margin-bottom: 8px; cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-            transition: transform 0.12s;
-        }
-        .cr-rank-card:active { transform: scale(0.98); }
-        .cr-rank-badge-big { font-size: 32px; flex-shrink: 0; }
-        .cr-rank-info { flex: 1; }
-        .cr-rank-name { font-size: 13px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
-        .cr-rank-sub { font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 2px; }
-        .cr-vip-block {
-            background: linear-gradient(135deg, rgba(170,0,255,0.2), rgba(255,0,85,0.1));
-            border: 1px solid var(--cr-purple);
-            border-radius: var(--cr-radius); padding: 14px;
-            margin-bottom: 12px; text-align: center;
-        }
-        .cr-vip-title { font-size: 10px; color: var(--cr-purple); letter-spacing: 3px; font-weight: 900; }
-        .cr-vip-tier { font-size: 28px; font-weight: 900; color: #fff; margin: 4px 0; }
-        .cr-vip-stars { font-size: 16px; letter-spacing: 4px; }
-
-        /* Scrollbar hide for mobile */
-        #cr-panel-hangar::-webkit-scrollbar,
-        #cr-panel-modes::-webkit-scrollbar,
-        #cr-panel-social::-webkit-scrollbar,
-        #cr-panel-ranks::-webkit-scrollbar,
-        .cr-skin-row::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="crt">
@@ -650,6 +277,27 @@
             <input type="password" id="password-input" class="nv-input" placeholder="PASSWORD (FOR CLOUD SYNC)" maxlength="32" autocomplete="off" style="width:320px;font-size:16px;padding:12px 25px;border-radius:4px;background:rgba(0,255,204,0.05);border:2px solid #00ffcc20;transition:all 0.3s;">
             <div style="color:#555;font-size:10px;margin-top:-8px;">Same name + password = same save on any device</div>
             <button id="login-btn" onclick="loginUser()" style="border-color:#00ffcc; color:#000; background:linear-gradient(135deg,#00ffcc,#00aa88); box-shadow: 0 0 30px #00ffcc80; padding:12px 50px; font-size:18px; font-weight:900; letter-spacing:4px; cursor:pointer; transition:all 0.3s; border-radius:4px;">DEPLOY</button>
+            <!-- Google Sign-In button — hidden inside iOS app via JS on load -->
+            <div id="google-signin-container" style="display:none; flex-direction:column; align-items:center; gap:10px; margin-top:6px;">
+                <div style="color:#555;font-size:11px;letter-spacing:3px;">— OR —</div>
+                <button id="google-signin-btn" onclick="handleGoogleSignIn()" style="
+                    display:flex; align-items:center; gap:10px;
+                    background:#0a0a1e; border:2px solid #4285F4;
+                    box-shadow:0 0 18px #4285F440; color:#fff;
+                    padding:11px 28px; font-family:monospace; font-size:14px;
+                    font-weight:700; letter-spacing:3px; cursor:pointer;
+                    border-radius:4px; transition:all 0.3s; min-width:260px;
+                    justify-content:center;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>
+                    SIGN IN WITH GOOGLE
+                </button>
+                <div style="color:#555;font-size:10px;letter-spacing:2px;">USE GOOGLE ACCOUNT AS CALLSIGN &amp; SAVE KEY</div>
+            </div>
             <div id="login-error" style="color: #ff0055; font-size: 14px; height: 20px;"></div>
             <div style="color:#555;font-size:11px;margin-top:10px;">ARROW KEYS / WASD + SPACE / MOUSE TO FIGHT</div>
         </div>
@@ -5192,382 +4840,10 @@
         window.addEventListener('keydown', (e) => { if((e.code === 'Space' || e.code === 'Enter') && !document.getElementById('cutscene-screen').classList.contains('hidden')) advanceCutscene(); });
 
 
-        // ===== CLASH ROYALE MOBILE MENU =====
-        function buildMobileMenu() {
-            // Hide old menu elements
-            ui.mainTitle.style.display = 'none';
-            ui.mainDesc.style.display = 'none';
-            document.getElementById('menu-coin-display').style.display = 'none';
-            ui.menuBtns.innerHTML = '';
-
-            // Remove any existing cr-menu
-            let existing = document.getElementById('cr-menu');
-            if (existing) existing.remove();
-
-            let unlockedRaw = localStorage.getItem('neonVoidStage');
-            let unlocked = parseInt(unlockedRaw);
-            if (isNaN(unlocked) || unlocked < 1) unlocked = 1;
-            let rushBest = parseInt(localStorage.getItem('neonVoidBossRushBest')) || 0;
-            let rushLabel = rushBest > 0 ? `Best: ${Math.floor(rushBest/60)}m ${(rushBest%60).toString().padStart(2,'0')}s` : 'All 15 Bosses';
-            let gemCount = parseInt(localStorage.getItem('neonVoidGems') || '0') || 0;
-            let playerName = (typeof currentUsername !== 'undefined' && currentUsername) ? currentUsername : 'PILOT';
-            let skinColor = (SKINS[equippedSkin] || SKINS['default']).color;
-            let skinName = (SKINS[equippedSkin] || SKINS['default']).name;
-            let rankTier = unlocked <= 3 ? 'ROOKIE' : unlocked <= 6 ? 'CADET' : unlocked <= 9 ? 'VETERAN' : unlocked <= 12 ? 'ELITE' : unlocked <= 14 ? 'LEGEND' : 'VOID LORD';
-            let sectorPct = Math.min(100, Math.round((unlocked / 15) * 100));
-
-            // Upgrade cards data
-            const upgradeCards = [
-                { id: 'homing', icon: '🎯', name: 'Smart Munitions', desc: 'Projectiles track targets', price: 5000 },
-                { id: 'explosive', icon: '💥', name: 'Explosive Payload', desc: 'Shots explode on impact', price: 10000 },
-                { id: 'pierce', icon: '⚡', name: 'Kinetic Pierce', desc: 'Shots pierce enemies', price: 15000 },
-                { id: 'magnet', icon: '🧲', name: 'Magnetic Core', desc: 'Increased pickup radius', price: 25000 },
-                { id: 'drone_bomb', icon: '💣', name: 'Bomb Drone', desc: 'AoE explosive shells', price: 30000 },
-                { id: 'antimatter', icon: '☢️', name: 'Antimatter', desc: 'Enemy death shockwave', price: 50000 },
-                { id: 'drone_laser', icon: '🔦', name: 'Laser Drone', desc: 'Piercing beam support', price: 60000 },
-                { id: 'drone_mini', icon: '🤖', name: 'Minigun Drone', desc: 'Rapid-fire turret', price: 80000 },
-            ];
-            let upgradeCardsHTML = upgradeCards.map(u => {
-                let owned = purchasedUpgrades.includes(u.id);
-                let canAfford = !owned && totalCoins >= u.price;
-                let cls = owned ? 'cr-owned' : canAfford ? 'cr-affordable' : '';
-                let priceLbl = owned ? `<span class="cr-card-price cr-owned-lbl">✓ OWNED</span>` : `<span class="cr-card-price">🪙 ${u.price.toLocaleString()}</span>`;
-                return `<div class="cr-upgrade-card ${cls}" onclick="if(!${owned})buyUpgradeById('${u.id}')">
-                    <div class="cr-card-icon">${u.icon}</div>
-                    <div class="cr-card-name">${u.name}</div>
-                    <div class="cr-card-desc">${u.desc}</div>
-                    ${priceLbl}
-                </div>`;
-            }).join('');
-
-            // Skin cards
-            let skinCardsHTML = Object.entries(SKINS).filter(([id]) => id !== 'custom').map(([id, sk]) => {
-                let isOwned = unlockedSkins.includes(id) || id === 'default';
-                let isEq = equippedSkin === id;
-                let style = isEq ? `border-color:${sk.color};box-shadow:0 0 12px ${sk.color};` : isOwned ? `border-color:${sk.color}66;` : 'border-color:#333;opacity:0.5;';
-                return `<div class="cr-skin-card" style="${style}" onclick="${isOwned ? `crEquipSkin('${id}')` : `openShop()`}">
-                    <div class="cr-skin-dot" style="background:${sk.color};box-shadow:0 0 12px ${sk.color};"></div>
-                    <div class="cr-skin-name" style="color:${sk.color}">${sk.name.split(' ')[0]}</div>
-                    ${isEq ? '<div style="font-size:7px;color:#fff;letter-spacing:1px">ACTIVE</div>' : (!isOwned ? '<div style="font-size:9px">🔒</div>' : '')}
-                </div>`;
-            }).join('');
-
-            // Modes grid
-            const modeCards = [
-                { icon: '🚀', name: 'Infinite', desc: 'Endless scaling', color: '#00ffcc', action: 'startInfinite()' },
-                { icon: '💀', name: 'Boss Rush', desc: rushLabel, color: '#ff0055', action: 'startBossRush()' },
-                { icon: '🎓', name: 'Training', desc: 'Test weapons', color: '#00ff88', action: 'startTraining()' },
-                { icon: '🗺️', name: 'Missions', desc: '15 Sectors', color: '#00aaff', action: 'openMissionSelect()' },
-                { icon: '🏎️', name: 'Race Mode', desc: 'Checkpoint sprint', color: '#ffcc00', action: 'startRaceMode()' },
-                { icon: '🛡️', name: 'Escort', desc: 'Protect the cargo', color: '#44ff88', action: 'startEscort()' },
-                { icon: '🌊', name: 'Survival', desc: 'How long can you last?', color: '#ff6600', action: 'startSurvivalArena()' },
-                { icon: '🏰', name: 'Horde Def', desc: 'Place turrets', color: '#ff6600', action: 'startHordeDefense()' },
-                { icon: '⏱️', name: 'Speedrun', desc: 'Sector 1-15 timer', color: '#ffd700', action: 'startSpeedrun()' },
-                { icon: '🔀', name: 'Mirror', desc: 'Everything reversed', color: '#cc44ff', action: 'startMirror()' },
-                { icon: '🎲', name: 'Chaos', desc: 'Randomized everything', color: '#ff4400', action: 'startChaos()' },
-                { icon: '☠️', name: 'One Hit', desc: 'Instant death', color: '#ff0088', action: 'startOneHit()' },
-                { icon: '🌪️', name: 'Bullet Hell', desc: 'Max projectiles', color: '#ff88ff', action: 'startBulletHell()' },
-                { icon: '🕊️', name: 'Pacifist', desc: 'No shooting', color: '#00ff88', action: 'startPacifist()' },
-                { icon: '🎮', name: 'Roguelike', desc: '10 floors, permadeath', color: '#8844ff', action: 'startRoguelike()' },
-                { icon: '🏆', name: 'Tournament', desc: 'Bracket matches', color: '#ffd700', action: 'startTournament()' },
-                { icon: '🔬', name: 'Sandbox', desc: 'Build rooms', color: '#00ffaa', action: 'openLevelEditor()' },
-                { icon: '🌑', name: 'Glitch', desc: unlocked > 14 ? 'Sector ??? — THE END' : 'Beat Sector 14', color: unlocked > 14 ? '#00ff00' : '#555', action: unlocked > 14 ? 'startMission(15)' : '' },
-            ];
-            let modeCardsHTML = modeCards.map(m => {
-                let dis = !m.action ? 'opacity:0.4;' : '';
-                return `<div class="cr-mode-card" style="--cr-card-accent:${m.color};border-color:${m.color}44;${dis}" ${m.action ? `onclick="${m.action}"` : ''}>
-                    <div class="cr-mode-icon">${m.icon}</div>
-                    <div class="cr-mode-name" style="color:${m.color}">${m.name}</div>
-                    <div class="cr-mode-desc">${m.desc}</div>
-                </div>`;
-            }).join('');
-
-            // Chest slots (cosmetic — show up to 4 reward milestones)
-            const chestData = [
-                { icon: '📦', label: 'BRONZE', ready: unlocked >= 3 },
-                { icon: '🥈', label: 'SILVER', ready: unlocked >= 6 },
-                { icon: '🥇', label: 'GOLD', ready: unlocked >= 10 },
-                { icon: '💎', label: 'VOID', ready: unlocked >= 15 },
-            ];
-            let chestsHTML = chestData.map(c => `
-                <div class="cr-chest-slot ${c.ready ? 'cr-chest-ready' : 'cr-chest-locked'}" onclick="${c.ready ? 'openShop()' : ''}">
-                    <div class="cr-chest-icon">${c.ready ? c.icon : '🔒'}</div>
-                    <div class="cr-chest-lbl">${c.label}</div>
-                </div>`).join('');
-
-            let html = `
-<div id="cr-menu">
-  <!-- TOP BAR -->
-  <div id="cr-topbar">
-    <div id="cr-avatar">${playerName.charAt(0)}</div>
-    <div id="cr-username">${playerName}</div>
-    <div id="cr-rank-badge">${rankTier}</div>
-    <div class="cr-resource"><span class="cr-resource-icon">🪙</span><span class="cr-resource-val" id="cr-coins-val">${totalCoins.toLocaleString()}</span></div>
-    <div class="cr-resource"><span class="cr-resource-icon">💎</span><span class="cr-resource-val" id="cr-gems-val">${gemCount.toLocaleString()}</span></div>
-    <div id="cr-settings-btn" onclick="crMenuSettings()">⚙️</div>
-  </div>
-
-  <!-- CONTENT AREA -->
-  <div id="cr-content">
-
-    <!-- BATTLE TAB -->
-    <div class="cr-tab-panel cr-active" id="cr-panel-battle">
-      <div id="cr-arena">
-        <div id="cr-arena-particles"></div>
-        <div class="cr-side-float" id="cr-daily-btn">
-          <div class="cr-side-float-btn" style="background:linear-gradient(135deg,#1a1a2e,#0f0f1e);border-color:#ffcc0044;" onclick="startTraining()">☀️</div>
-          <div class="cr-side-float-label">DAILY</div>
-        </div>
-        <div class="cr-side-float" id="cr-events-btn">
-          <div class="cr-side-float-btn" style="background:linear-gradient(135deg,#1a1a2e,#0f0f1e);border-color:#00ffcc44;" onclick="startBossRush()">⚡</div>
-          <div class="cr-side-float-label">EVENTS</div>
-        </div>
-        <div id="cr-ship-stage">
-          <canvas id="cr-ship-canvas" width="120" height="120"></canvas>
-          <div id="cr-sector-label">SECTOR ${unlocked} • ${skinName}</div>
-          <div id="cr-sector-progress-wrap">
-            <div id="cr-sector-progress-bar" style="width:${sectorPct}%"></div>
-          </div>
-        </div>
-      </div>
-      <div id="cr-chest-row">${chestsHTML}</div>
-      <div id="cr-battle-wrap">
-        <div id="cr-battle-btn" onclick="openMissionSelect()">
-          <div id="cr-battle-label">BATTLE</div>
-          <div id="cr-battle-sub">SECTOR ${unlocked} • TAP TO DEPLOY</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- HANGAR TAB -->
-    <div class="cr-tab-panel" id="cr-panel-hangar">
-      <div class="cr-section-title">UPGRADES</div>
-      <div class="cr-upgrade-grid">${upgradeCardsHTML}</div>
-      <div class="cr-section-title" style="margin-top:16px">SHIP SKINS</div>
-      <div class="cr-skin-row">${skinCardsHTML}</div>
-      <div class="cr-section-title" style="margin-top:16px">FULL HANGAR</div>
-      <div style="padding:4px 0 80px">
-        <div class="cr-social-btn" onclick="openShop()" style="border-color:var(--cr-gold)44">
-          <div class="cr-social-btn-icon">🛒</div>
-          <div class="cr-social-btn-info">
-            <div class="cr-social-btn-name" style="color:var(--cr-gold)">Open Full Shop</div>
-            <div class="cr-social-btn-desc">All upgrades, skins, casino & more</div>
-          </div>
-          <div class="cr-social-arrow">›</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- MODES TAB -->
-    <div class="cr-tab-panel" id="cr-panel-modes">
-      <div class="cr-section-title">ALL GAME MODES</div>
-      <div class="cr-modes-grid">${modeCardsHTML}</div>
-    </div>
-
-    <!-- SOCIAL TAB -->
-    <div class="cr-tab-panel" id="cr-panel-social">
-      <div class="cr-section-title">MULTIPLAYER</div>
-      <div class="cr-social-btn" onclick="startPvP()" style="border-color:#ff005544">
-        <div class="cr-social-btn-icon">⚔️</div>
-        <div class="cr-social-btn-info">
-          <div class="cr-social-btn-name" style="color:var(--cr-pink)">PvP 1v1</div>
-          <div class="cr-social-btn-desc">Best of 3 rounds against another pilot</div>
-        </div><div class="cr-social-arrow">›</div>
-      </div>
-      <div class="cr-social-btn" onclick="startTagTeam()" style="border-color:#ffaa4444">
-        <div class="cr-social-btn-icon">👥</div>
-        <div class="cr-social-btn-info">
-          <div class="cr-social-btn-name" style="color:var(--cr-orange)">Tag Team</div>
-          <div class="cr-social-btn-desc">2-ship switching co-op</div>
-        </div><div class="cr-social-arrow">›</div>
-      </div>
-      <div class="cr-social-btn" onclick="startInfection()" style="border-color:#ff005544">
-        <div class="cr-social-btn-icon">🦠</div>
-        <div class="cr-social-btn-info">
-          <div class="cr-social-btn-name" style="color:var(--cr-pink)">Infection</div>
-          <div class="cr-social-btn-desc">Last healthy ship wins</div>
-        </div><div class="cr-social-arrow">›</div>
-      </div>
-      <div class="cr-section-title">EVENTS</div>
-      <div class="cr-social-btn" onclick="startBossRush()" style="border-color:#00ffcc44">
-        <div class="cr-social-btn-icon">🌩️</div>
-        <div class="cr-social-btn-info">
-          <div class="cr-social-btn-name" style="color:var(--cr-cyan)">Boss Rush</div>
-          <div class="cr-social-btn-desc">${rushLabel}</div>
-        </div><div class="cr-social-arrow">›</div>
-      </div>
-      <div class="cr-social-btn" onclick="startTournament()" style="border-color:#ffcc0044">
-        <div class="cr-social-btn-icon">🏆</div>
-        <div class="cr-social-btn-info">
-          <div class="cr-social-btn-name" style="color:var(--cr-gold)">Tournament</div>
-          <div class="cr-social-btn-desc">Bracket-style matches</div>
-        </div><div class="cr-social-arrow">›</div>
-      </div>
-    </div>
-
-    <!-- RANKS TAB -->
-    <div class="cr-tab-panel" id="cr-panel-ranks">
-      <div class="cr-vip-block">
-        <div class="cr-vip-title">PILOT RANK</div>
-        <div class="cr-vip-tier">${rankTier}</div>
-        <div class="cr-vip-stars">${'★'.repeat(Math.min(5, Math.ceil(unlocked/3)))}</div>
-        <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:4px;letter-spacing:1px">SECTOR ${unlocked} / 15 COMPLETE</div>
-      </div>
-      <div class="cr-section-title">LEADERBOARDS</div>
-      <div class="cr-rank-card" onclick="document.getElementById('cr-menu').style.display='none';ui.mainOverlay.classList.add('hidden');document.getElementById('settings-screen').classList.remove('hidden');openSettings()">
-        <div class="cr-rank-badge-big">🏆</div>
-        <div class="cr-rank-info">
-          <div class="cr-rank-name" style="color:var(--cr-gold)">Global Leaderboard</div>
-          <div class="cr-rank-sub">Top pilots by score &amp; time</div>
-        </div><div class="cr-social-arrow">›</div>
-      </div>
-      <div class="cr-section-title">ACHIEVEMENTS</div>
-      <div class="cr-rank-card" onclick="openShop()">
-        <div class="cr-rank-badge-big">🎖️</div>
-        <div class="cr-rank-info">
-          <div class="cr-rank-name" style="color:var(--cr-cyan)">Mastery</div>
-          <div class="cr-rank-sub">Unlock all ship skins &amp; upgrades</div>
-        </div><div class="cr-social-arrow">›</div>
-      </div>
-      <div class="cr-rank-card" onclick="startSpeedrun()">
-        <div class="cr-rank-badge-big">⏱️</div>
-        <div class="cr-rank-info">
-          <div class="cr-rank-name" style="color:var(--cr-green)">Speedrun Record</div>
-          <div class="cr-rank-sub">${rushBest > 0 ? `Best: ${Math.floor(rushBest/60)}m ${(rushBest%60).toString().padStart(2,'0')}s` : 'No record yet'}</div>
-        </div><div class="cr-social-arrow">›</div>
-      </div>
-      <div class="cr-section-title">PRESTIGE</div>
-      <div class="cr-rank-card" onclick="openShop()">
-        <div class="cr-rank-badge-big">⭐</div>
-        <div class="cr-rank-info">
-          <div class="cr-rank-name" style="color:var(--cr-purple)">Battle Pass</div>
-          <div class="cr-rank-sub">Unlock exclusive rewards</div>
-        </div><div class="cr-social-arrow">›</div>
-      </div>
-    </div>
-
-  </div><!-- end cr-content -->
-
-  <!-- BOTTOM TAB BAR -->
-  <div id="cr-tabbar">
-    <div class="cr-tab cr-tab-active" data-tab="battle" onclick="crSwitchTab('battle')">
-      <div class="cr-tab-icon">⚔️</div><div class="cr-tab-lbl">BATTLE</div>
-    </div>
-    <div class="cr-tab" data-tab="hangar" onclick="crSwitchTab('hangar')">
-      <div class="cr-tab-icon">🔧</div><div class="cr-tab-lbl">HANGAR</div>
-    </div>
-    <div class="cr-tab" data-tab="modes" onclick="crSwitchTab('modes')">
-      <div class="cr-tab-icon">🎮</div><div class="cr-tab-lbl">MODES</div>
-    </div>
-    <div class="cr-tab" data-tab="social" onclick="crSwitchTab('social')">
-      <div class="cr-tab-icon">👥</div><div class="cr-tab-lbl">SOCIAL</div>
-    </div>
-    <div class="cr-tab" data-tab="ranks" onclick="crSwitchTab('ranks')">
-      <div class="cr-tab-icon">🏆</div><div class="cr-tab-lbl">RANKS</div>
-    </div>
-  </div>
-</div>`;
-
-            // Inject into main overlay
-            ui.mainOverlay.insertAdjacentHTML('beforeend', html);
-
-            // Draw ship on canvas
-            requestAnimationFrame(() => {
-                let sc = document.getElementById('cr-ship-canvas');
-                if (sc) {
-                    let sctx = sc.getContext('2d');
-                    drawShip(sctx, 60, 60, 32, skinColor, 0, true);
-                }
-                // Spawn particles
-                let pContainer = document.getElementById('cr-arena-particles');
-                if (pContainer) {
-                    let colors = [skinColor, '#ff0055', '#00ffcc', '#aa00ff', '#ffcc00'];
-                    for (let i = 0; i < 18; i++) {
-                        let p = document.createElement('div');
-                        p.className = 'cr-particle';
-                        let sz = 2 + Math.random() * 3;
-                        let col = colors[Math.floor(Math.random() * colors.length)];
-                        let dur = 3 + Math.random() * 5;
-                        let delay = Math.random() * -8;
-                        p.style.cssText = `width:${sz}px;height:${sz}px;background:${col};left:${Math.random()*100}%;bottom:0;animation-duration:${dur}s;animation-delay:${delay}s;box-shadow:0 0 ${sz*2}px ${col};`;
-                        pContainer.appendChild(p);
-                    }
-                }
-            });
-
-            // Animate ship continuously
-            let crShipAnim = null;
-            function animateCRShip() {
-                let sc = document.getElementById('cr-ship-canvas');
-                if (!sc || !document.getElementById('cr-menu')) { if (crShipAnim) cancelAnimationFrame(crShipAnim); return; }
-                let sctx = sc.getContext('2d');
-                sctx.clearRect(0, 0, 120, 120);
-                let angle = Math.sin(Date.now() * 0.001) * 0.08;
-                drawShip(sctx, 60, 60, 32, skinColor, angle, true);
-                crShipAnim = requestAnimationFrame(animateCRShip);
-            }
-            setTimeout(animateCRShip, 100);
-        }
-
-        function crSwitchTab(tab) {
-            document.querySelectorAll('#cr-menu .cr-tab').forEach(t => t.classList.toggle('cr-tab-active', t.dataset.tab === tab));
-            document.querySelectorAll('#cr-menu .cr-tab-panel').forEach(p => p.classList.toggle('cr-active', p.id === 'cr-panel-' + tab));
-        }
-
-        function crMenuSettings() {
-            let m = document.getElementById('cr-menu');
-            if (m) m.style.display = 'none';
-            openSettings();
-        }
-
-        function crEquipSkin(id) {
-            if (!SKINS[id]) return;
-            equippedSkin = id;
-            localStorage.setItem('neonVoidEquippedSkin', id);
-            playSound('powerup');
-            // Rebuild menu to reflect new skin
-            let m = document.getElementById('cr-menu');
-            if (m) m.remove();
-            buildMobileMenu();
-        }
-
-        function buyUpgradeById(id) {
-            if (!PERMANENT_UPGRADES[id]) return;
-            let up = PERMANENT_UPGRADES[id];
-            if (purchasedUpgrades.includes(id)) return;
-            if (totalCoins < up.price) { playSound('hit'); return; }
-            totalCoins -= up.price;
-            purchasedUpgrades.push(id);
-            localStorage.setItem('neonVoidCoins', totalCoins);
-            localStorage.setItem('neonVoidUpgrades', JSON.stringify(purchasedUpgrades));
-            cloudSave();
-            playSound('powerup');
-            // Refresh coins display and rebuild menu
-            let m = document.getElementById('cr-menu');
-            if (m) m.remove();
-            buildMobileMenu();
-            crSwitchTab('hangar');
-        }
-
         function returnToMenu() {
             document.getElementById('mission-select').classList.add('hidden'); document.getElementById('shop-screen').classList.add('hidden'); document.getElementById('settings-screen').classList.add('hidden'); document.getElementById('pause-screen').classList.add('hidden'); document.getElementById('draw-screen').classList.add('hidden');
             stopMusic(); startMenuBg(); if (appSettings.music) startMenuMusic();
             ui.mainOverlay.classList.remove('hidden'); ui.mainOverlay.classList.remove('win-theme');
-
-            // Mobile: use Clash Royale menu
-            if (window.isNeonVoidApp || appSettings.mobile) {
-                // Restore main overlay display style
-                ui.mainOverlay.style.display = '';
-                ui.mainTitle.style.display = 'none';
-                ui.mainDesc.style.display = 'none';
-                document.getElementById('menu-coin-display').style.display = 'none';
-                document.getElementById('mobile-controls').style.display = 'none';
-                buildMobileMenu();
-                return;
-            }
-
-            ui.mainTitle.style.display = '';
-            ui.mainDesc.style.display = '';
             ui.mainTitle.innerText = "NEON VOID"; ui.mainTitle.style.webkitTextStroke = "3px #ff0055"; ui.mainTitle.style.textShadow = "0 0 50px #ff0055";
             ui.mainDesc.innerHTML = `<strong>ARROW KEYS / WASD</strong> to Move | <strong>SPACE / MOUSE</strong> to Shoot<br><strong>SHIFT / RIGHT-CLICK</strong> to Dash | <strong>[C]</strong> to Toggle Aim | <strong>[ESC]</strong> to Pause<br><span style="color: #ff0055; font-weight:bold;">THE ULTIMATE UPDATE</span>`;
             document.getElementById('menu-coin-display').innerText = `TOTAL COINS: ${totalCoins}`;
@@ -5600,7 +4876,26 @@
     <button style="border-color:#00ffaa;color:#00ffaa;font-size:11px;padding:6px 10px;" onclick="openLevelEditor()">Level Editor<br><span style="font-size:10px">Build Rooms</span></button>
   </div>
 </div>
-`;
+<div style="width:100%;margin-top:8px;padding-top:6px;border-top:1px solid #333;">
+  <div style="color:#888;font-size:11px;font-family:monospace;text-align:center;margin-bottom:6px;letter-spacing:2px;">HANGAR &amp; PROGRESSION</div>
+  <div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:center;">
+    <button style="border-color:#ffe04b;color:#ffe04b;font-size:11px;padding:5px 9px;" onclick="openBattlePass()">Battle Pass</button>
+    <button style="border-color:#ffaa00;color:#ffaa00;font-size:11px;padding:5px 9px;" onclick="openMastery()">Mastery</button>
+    <button style="border-color:#44ffdd;color:#44ffdd;font-size:11px;padding:5px 9px;" onclick="openBlueprints()">Blueprints</button>
+    <button style="border-color:#44ff88;color:#44ff88;font-size:11px;padding:5px 9px;" onclick="openContracts()">Contracts</button>
+    <button style="border-color:#ff4488;color:#ff4488;font-size:11px;padding:5px 9px;" onclick="openBlackMarket()">Black Market</button>
+    <button style="border-color:#88eeff;color:#88eeff;font-size:11px;padding:5px 9px;" onclick="openGemShop()">Gem Shop</button>
+    <button style="border-color:#ffcc44;color:#ffcc44;font-size:11px;padding:5px 9px;" onclick="openTradePost()">Trade Post</button>
+    <button style="border-color:#ff8800;color:#ff8800;font-size:11px;padding:5px 9px;" onclick="openBounties()">Bounties</button>
+    <button style="border-color:#ff6622;color:#ff6622;font-size:11px;padding:5px 9px;" onclick="openRebirth()">Rebirth</button>
+    <button style="border-color:#ffd700;color:#ffd700;font-size:11px;padding:5px 9px;" onclick="openVIPPanel()">VIP Status</button>
+    <button style="border-color:#ffcc00;color:#ffcc00;font-size:11px;padding:5px 9px;" onclick="openAchievementsPanel()">Achievements</button>
+    <button style="border-color:#00ff88;color:#00ff88;font-size:11px;padding:5px 9px;" onclick="openLeaderboards()">Leaderboards</button>
+    <button style="border-color:#ff9900;color:#ff9900;font-size:11px;padding:5px 9px;" onclick="openClan()">Clan</button>
+    <button style="border-color:#c8a0ff;color:#c8a0ff;font-size:11px;padding:5px 9px;" onclick="openPrestigePanel()">Prestige</button>
+    <button style="border-color:#00ffcc;color:#00ffcc;font-size:11px;padding:5px 9px;" onclick="openPhotoMode()">Photo Mode</button>
+  </div>
+</div>`;
             document.getElementById('menu-coin-display').style.display = 'block'; document.getElementById('mobile-controls').style.display = 'none';
         }
 
@@ -5610,10 +4905,8 @@
             if (window._menuTipCleanup) { window._menuTipCleanup(); window._menuTipCleanup = null; }
         }
 
-        function crHideMenu() { let m = document.getElementById('cr-menu'); if (m) m.style.display = 'none'; }
-
         function openMissionSelect() {
-            crHideMenu(); cleanupMenuAnims();
+            cleanupMenuAnims();
             ui.mainOverlay.classList.add('hidden'); document.getElementById('mission-select').classList.remove('hidden'); const grid = document.getElementById('stage-grid'); grid.innerHTML = '';
             let unlockedRaw = localStorage.getItem('neonVoidStage'); let unlocked = parseInt(unlockedRaw); if(isNaN(unlocked) || unlocked < 1) unlocked = 1;
             for(let i=1; i<=15; i++) {
@@ -5625,7 +4918,7 @@
         }
 
 
-        function openShop() { crHideMenu(); cleanupMenuAnims(); ui.mainOverlay.classList.add('hidden'); document.getElementById('shop-screen').classList.remove('hidden'); renderShop(); }
+        function openShop() { cleanupMenuAnims(); ui.mainOverlay.classList.add('hidden'); document.getElementById('shop-screen').classList.remove('hidden'); renderShop(); }
 
         // ==================== VOID CASINO ====================
         function coinFlip(bet) {
@@ -5703,7 +4996,7 @@
                 }
             }, 70);
         }
-        function openSettings() { crHideMenu(); cleanupMenuAnims(); ui.mainOverlay.classList.add('hidden'); document.getElementById('settings-screen').classList.remove('hidden');/* Init new settings UI */let _asld=document.getElementById('autoaim-slider');let _asv=document.getElementById('autoaim-val');if(_asld&&appSettings.autoAimStrength!==undefined){_asld.value=appSettings.autoAimStrength;if(_asv)_asv.textContent=appSettings.autoAimStrength;}let _ssld=document.getElementById('shake-slider');let _ssv=document.getElementById('shake-val');if(_ssld&&appSettings.shakeIntensity!==undefined){_ssld.value=appSettings.shakeIntensity;if(_ssv)_ssv.textContent=appSettings.shakeIntensity;}let _boh=document.getElementById('btn-onehand');if(_boh)_boh.innerText='ONE-HAND MODE: '+(appSettings.oneHandMode?'ON':'OFF');let _bpm=document.getElementById('btn-perfmode');if(_bpm)_bpm.innerText='PERFORMANCE MODE: '+(appSettings.perfMode?'ON':'OFF');if(typeof renderKeybindList==='function')renderKeybindList();let _lm=localStorage.getItem('neonVoidMod');let _mst=document.getElementById('mod-status');if(_lm&&_mst){try{let _mp=JSON.parse(_lm);_mst.textContent='Mod active: '+(_mp.enemies||[]).length+' enemies';_mst.style.color='#00ff88';}catch(e){}}}
+        function openSettings() { cleanupMenuAnims(); ui.mainOverlay.classList.add('hidden'); document.getElementById('settings-screen').classList.remove('hidden');/* Init new settings UI */let _asld=document.getElementById('autoaim-slider');let _asv=document.getElementById('autoaim-val');if(_asld&&appSettings.autoAimStrength!==undefined){_asld.value=appSettings.autoAimStrength;if(_asv)_asv.textContent=appSettings.autoAimStrength;}let _ssld=document.getElementById('shake-slider');let _ssv=document.getElementById('shake-val');if(_ssld&&appSettings.shakeIntensity!==undefined){_ssld.value=appSettings.shakeIntensity;if(_ssv)_ssv.textContent=appSettings.shakeIntensity;}let _boh=document.getElementById('btn-onehand');if(_boh)_boh.innerText='ONE-HAND MODE: '+(appSettings.oneHandMode?'ON':'OFF');let _bpm=document.getElementById('btn-perfmode');if(_bpm)_bpm.innerText='PERFORMANCE MODE: '+(appSettings.perfMode?'ON':'OFF');if(typeof renderKeybindList==='function')renderKeybindList();let _lm=localStorage.getItem('neonVoidMod');let _mst=document.getElementById('mod-status');if(_lm&&_mst){try{let _mp=JSON.parse(_lm);_mst.textContent='Mod active: '+(_mp.enemies||[]).length+' enemies';_mst.style.color='#00ff88';}catch(e){}}}
         
         function renderShop() {
             document.getElementById('shop-coin-display').innerText = `COINS: ${totalCoins}`; const grid = document.getElementById('shop-grid'); grid.innerHTML = '';
@@ -9352,6 +8645,105 @@ function generateSyncCode() {
         // --- Username / Login ---
         let currentUsername = localStorage.getItem('neonVoidUsername') || '';
 
+        // ── Google Sign-In (web only) ─────────────────────────────────────────
+        // IMPORTANT: Replace YOUR_GOOGLE_CLIENT_ID with your actual OAuth 2.0
+        // client ID from https://console.cloud.google.com/
+        const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+
+        function initGoogleSignIn() {
+            // Don't show Google button inside iOS app
+            if (window.isNeonVoidApp) return;
+            const container = document.getElementById('google-signin-container');
+            if (container) container.style.display = 'flex';
+
+            if (typeof google === 'undefined' || !google.accounts) return;
+            google.accounts.id.initialize({
+                client_id: GOOGLE_CLIENT_ID,
+                callback: onGoogleCredential,
+                auto_select: false,
+                cancel_on_tap_outside: true
+            });
+        }
+
+        function handleGoogleSignIn() {
+            if (typeof google === 'undefined' || !google.accounts) {
+                document.getElementById('login-error').textContent = 'GOOGLE SIGN-IN NOT AVAILABLE';
+                return;
+            }
+            google.accounts.id.prompt((notification) => {
+                if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                    // Fallback: show the One Tap popup explicitly
+                    google.accounts.id.renderButton(
+                        document.getElementById('google-signin-btn'),
+                        { theme: 'outline', size: 'large' }
+                    );
+                }
+            });
+        }
+
+        function parseJwt(token) {
+            try {
+                const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+                return JSON.parse(atob(base64));
+            } catch (e) { return null; }
+        }
+
+        async function onGoogleCredential(response) {
+            const payload = parseJwt(response.credential);
+            if (!payload) {
+                document.getElementById('login-error').textContent = 'GOOGLE AUTH FAILED';
+                return;
+            }
+            // Derive a callsign from the Google name (max 16 chars, alphanumeric)
+            const rawName = (payload.given_name || payload.name || 'PILOT').toUpperCase();
+            const callsign = rawName.replace(/[^A-Z0-9_\-]/g, '').substring(0, 16) || 'PILOT';
+            const googleId = payload.sub; // stable, unique Google user ID
+
+            // Persist Google session
+            localStorage.setItem('neonVoidGoogleCredential', response.credential);
+            localStorage.setItem('neonVoidGoogleId', googleId);
+            localStorage.setItem('neonVoidUsername', callsign);
+
+            // Complete login using the Google ID as the cloud save key
+            await completeLogin(callsign, googleId);
+        }
+
+        async function checkGoogleAutoLogin() {
+            if (window.isNeonVoidApp) return false;
+            const savedCred = localStorage.getItem('neonVoidGoogleCredential');
+            const savedId   = localStorage.getItem('neonVoidGoogleId');
+            if (!savedCred || !savedId) return false;
+            const payload = parseJwt(savedCred);
+            if (!payload) return false;
+            // Check token expiry (exp is Unix timestamp in seconds)
+            if (payload.exp && Date.now() / 1000 > payload.exp) {
+                // Token expired — clear and require re-login
+                localStorage.removeItem('neonVoidGoogleCredential');
+                localStorage.removeItem('neonVoidGoogleId');
+                return false;
+            }
+            const callsign = (payload.given_name || payload.name || 'PILOT')
+                .toUpperCase().replace(/[^A-Z0-9_\-]/g, '').substring(0, 16) || 'PILOT';
+            await completeLogin(callsign, savedId);
+            return true;
+        }
+
+        // Shared login completion used by Google, Apple (via JS callback), and manual login
+        async function completeLogin(username, cloudKey) {
+            currentUsername = username;
+            localStorage.setItem('neonVoidUsername', currentUsername);
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('player-tag').textContent = 'PILOT: ' + currentUsername;
+            document.getElementById('player-tag').style.display = 'block';
+            playSound('powerup');
+            if (window.needsTutorial && window.needsTutorial()) { window.startTutorialStage(); return; }
+            returnToMenu();
+            fetchCloudProfile(cloudKey || currentUsername).then(() => {
+                returnToMenu();
+            }).catch(() => {});
+        }
+        // ── End Google Sign-In ────────────────────────────────────────────────
+
         let userPasswordHash = '';
         async function hashCredentials(name, pass) {
             let data = new TextEncoder().encode(name + ':' + pass);
@@ -9390,12 +8782,25 @@ function generateSyncCode() {
 
         function logoutUser() {
             localStorage.removeItem('neonVoidUsername');
+            localStorage.removeItem('neonVoidPassHash');
+            // Clear Google session
+            localStorage.removeItem('neonVoidGoogleCredential');
+            localStorage.removeItem('neonVoidGoogleId');
+            if (!window.isNeonVoidApp && typeof google !== 'undefined' && google.accounts) {
+                google.accounts.id.disableAutoSelect();
+            }
             currentUsername = '';
+            userPasswordHash = '';
             document.getElementById('player-tag').style.display = 'none';
             document.getElementById('settings-screen').classList.add('hidden');
             ui.mainOverlay.classList.add('hidden');
             document.getElementById('login-screen').classList.remove('hidden');
             document.getElementById('username-input').value = '';
+            // Re-show Google button on web
+            if (!window.isNeonVoidApp) {
+                const container = document.getElementById('google-signin-container');
+                if (container) container.style.display = 'flex';
+            }
         }
 
         document.getElementById('username-input').addEventListener('keydown', (e) => {
@@ -9403,20 +8808,42 @@ function generateSyncCode() {
         });
 
         // Show login on load or skip if already logged in
-        function checkLogin() {
+        async function checkLogin() {
+            // Show Google Sign-In button on web
+            if (!window.isNeonVoidApp) {
+                const container = document.getElementById('google-signin-container');
+                if (container) container.style.display = 'flex';
+            }
+
             if (currentUsername) {
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('player-tag').textContent = 'PILOT: ' + currentUsername;
                 document.getElementById('player-tag').style.display = 'block';
                 // Restore cloud profile on page load - use password hash if available
                 userPasswordHash = localStorage.getItem('neonVoidPassHash') || '';
-                fetchCloudProfile(userPasswordHash || currentUsername).then(() => {
+                const googleId = localStorage.getItem('neonVoidGoogleId') || '';
+                const cloudKey = googleId || userPasswordHash || currentUsername;
+                fetchCloudProfile(cloudKey).then(() => {
                     if (window.needsTutorial && window.needsTutorial()) { window.startTutorialStage(); return; }
                     if (typeof returnToMenu === 'function') setTimeout(() => returnToMenu(), 200);
                 });
             } else {
-                document.getElementById('login-screen').classList.remove('hidden');
-                ui.mainOverlay.classList.add('hidden');
+                // Try Google auto-login (uses saved credential token)
+                const googleAutoLoggedIn = await checkGoogleAutoLogin();
+                if (!googleAutoLoggedIn) {
+                    document.getElementById('login-screen').classList.remove('hidden');
+                    ui.mainOverlay.classList.add('hidden');
+                    // Init Google Sign-In UI once the GSI library is ready
+                    if (!window.isNeonVoidApp) {
+                        if (typeof google !== 'undefined' && google.accounts) {
+                            initGoogleSignIn();
+                        } else {
+                            // Wait for library to load
+                            window.onGoogleLibraryLoad = initGoogleSignIn;
+                            setTimeout(initGoogleSignIn, 2000);
+                        }
+                    }
+                }
             }
         }
 
@@ -10364,158 +9791,89 @@ function generateSyncCode() {
         menuStyleTag.textContent = `
             @keyframes menuFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
             @keyframes menuGlow { 0%,100%{filter:drop-shadow(0 0 8px #ff005580)} 50%{filter:drop-shadow(0 0 20px #ff0055cc)} }
-            @keyframes battlePulse { 0%,100%{transform:scale(1);box-shadow:0 0 20px #ff005566,inset 0 0 20px #ff005522} 50%{transform:scale(1.025);box-shadow:0 0 40px #ff0055bb,inset 0 0 30px #ff005544} }
+            @keyframes battlePulse { 0%,100%{transform:scale(1);box-shadow:0 0 30px #ff005566,inset 0 0 30px #ff005522} 50%{transform:scale(1.03);box-shadow:0 0 50px #ff0055aa,inset 0 0 40px #ff005544} }
             @keyframes shimmer { 0%{background-position:-200% center} 100%{background-position:200% center} }
             @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
             @keyframes rotateSlow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-            @keyframes xpShimmer { 0%{background-position:-200% center} 100%{background-position:200% center} }
-            @keyframes centerGlow { 0%,100%{box-shadow:0 0 30px #ff005533,inset 0 0 40px #00000044} 50%{box-shadow:0 0 60px #ff005555,inset 0 0 40px #00000044} }
-            @keyframes particleDrift { 0%{transform:translateY(0) translateX(0) scale(1);opacity:0.7} 100%{transform:translateY(-40px) translateX(var(--dx,5px)) scale(0);opacity:0} }
-            @keyframes chestGlow { 0%,100%{box-shadow:0 0 8px rgba(var(--gc),0.3)} 50%{box-shadow:0 0 16px rgba(var(--gc),0.6)} }
-            @keyframes tabActivePop { 0%{transform:scale(1)} 40%{transform:scale(1.15)} 100%{transform:scale(1)} }
+            @keyframes bannerScroll { 0%{transform:translateX(100%)} 100%{transform:translateX(-100%)} }
 
             .nv-menu-root { position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;font-family:'Courier New',monospace; }
 
-            /* ===== TOP BAR — ultra compact Clash Royale style ===== */
-            .nv-topbar { display:flex;align-items:center;gap:6px;padding:0 8px;height:40px;background:linear-gradient(180deg,rgba(15,0,25,0.98) 0%,rgba(8,0,14,0.95) 100%);border-bottom:1px solid #ff005533;z-index:5;flex-shrink:0; }
-            .nv-level-badge { display:flex;align-items:center;gap:4px;background:linear-gradient(135deg,#1a0030,#0d001a);border:1.5px solid #ff005566;border-radius:10px;padding:2px 8px 2px 5px;flex-shrink:0; }
-            .nv-level-icon { font-size:13px;line-height:1; }
-            .nv-level-num { font-size:12px;font-weight:900;color:#ff0055;letter-spacing:0.5px; }
-            .nv-xp-bar-wrap { flex:1;min-width:60px;max-width:120px;display:flex;flex-direction:column;gap:1px; }
-            .nv-xp-bar { height:7px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;border:1px solid rgba(255,255,255,0.06); }
-            .nv-xp-fill { height:100%;border-radius:4px;background:linear-gradient(90deg,#ff0055,#ff8800,#ffcc00);background-size:200% 100%;animation:xpShimmer 3s linear infinite; }
-            .nv-xp-text { font-size:7px;color:#ffffff44;letter-spacing:0.5px;text-align:right; }
-            .nv-topbar-spacer { flex:1; }
-            .nv-coin-pill { display:flex;align-items:center;gap:4px;background:linear-gradient(135deg,rgba(255,204,0,0.12),rgba(0,0,0,0.7));border:1px solid #ffcc0044;border-radius:10px;padding:3px 10px 3px 5px;font-size:12px;color:#ffcc00;font-weight:900;letter-spacing:0.3px;flex-shrink:0; }
-            .nv-coin-icon { font-size:13px; }
-            .nv-gem-pill { display:flex;align-items:center;gap:4px;background:linear-gradient(135deg,rgba(0,255,204,0.1),rgba(0,0,0,0.7));border:1px solid #00ffcc33;border-radius:10px;padding:3px 10px 3px 5px;font-size:12px;color:#00ffcc;font-weight:900;letter-spacing:0.3px;flex-shrink:0; }
-            .nv-gem-icon { font-size:13px; }
-            .nv-settings-btn { width:30px;height:30px;border-radius:8px;border:1px solid #ffffff22;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;transition:all 0.2s;flex-shrink:0; }
-            .nv-settings-btn:hover { border-color:#ffffff66;background:rgba(255,255,255,0.12);transform:rotate(90deg); }
+            /* TOP BAR — resource bar */
+            .nv-topbar { display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:linear-gradient(180deg,rgba(20,0,30,0.95),rgba(10,0,15,0.9));border-bottom:2px solid #ff005544;z-index:5;flex-shrink:0; }
+            .nv-topbar-left { display:flex;align-items:center;gap:10px; }
+            .nv-topbar-right { display:flex;align-items:center;gap:12px; }
+            .nv-pilot-badge { display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#1a0025,#0a0010);border:1px solid #ff005566;border-radius:20px;padding:4px 14px 4px 6px; }
+            .nv-pilot-avatar { width:28px;height:28px;border-radius:50%;border:2px solid #00ffcc;display:flex;align-items:center;justify-content:center;font-size:14px;background:rgba(0,255,200,0.1); }
+            .nv-pilot-name { color:#00ffcc;font-weight:bold;font-size:13px;letter-spacing:1px; }
+            .nv-resource { display:flex;align-items:center;gap:5px;background:linear-gradient(135deg,rgba(255,204,0,0.1),rgba(0,0,0,0.6));border:1px solid #ffcc0044;border-radius:14px;padding:3px 12px 3px 6px;font-size:13px;color:#ffcc00;font-weight:bold; }
+            .nv-settings-btn { width:32px;height:32px;border-radius:50%;border:1px solid #555;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all 0.2s; }
+            .nv-settings-btn:hover { border-color:#fff;background:rgba(255,255,255,0.15);transform:rotate(90deg); }
 
-            /* ===== PLAYER INFO ROW ===== */
-            .nv-player-row { display:flex;align-items:center;gap:8px;padding:5px 10px;background:linear-gradient(180deg,rgba(8,0,14,0.95),rgba(5,0,10,0.9));border-bottom:1px solid #ffffff0a;flex-shrink:0; }
-            .nv-avatar-btn { width:32px;height:32px;border-radius:50%;border:2px solid #00ffcc66;background:rgba(0,255,204,0.08);display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;flex-shrink:0;transition:border-color 0.2s; }
-            .nv-avatar-btn:hover { border-color:#00ffcc; }
-            .nv-player-info { flex:1;min-width:0; }
-            .nv-player-name { font-size:13px;font-weight:900;color:#ffffff;letter-spacing:1.5px;line-height:1.1; }
-            .nv-player-sub { font-size:9px;color:#ffffff55;letter-spacing:0.5px;margin-top:1px; }
-            .nv-trophy-badge { display:flex;align-items:center;gap:4px;background:linear-gradient(135deg,rgba(255,215,0,0.12),rgba(0,0,0,0.6));border:1px solid #ffd70044;border-radius:10px;padding:3px 10px 3px 5px;flex-shrink:0; }
-            .nv-trophy-icon { font-size:14px; }
-            .nv-trophy-val { font-size:12px;font-weight:900;color:#ffd700;letter-spacing:0.5px; }
-            .nv-rank-chip { font-size:9px;font-weight:bold;color:#ff8800;background:rgba(255,136,0,0.12);border:1px solid #ff880033;border-radius:6px;padding:2px 6px;letter-spacing:0.5px;flex-shrink:0; }
+            /* HERO SECTION — Big logo + ship art */
+            .nv-hero { flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:15px 0 5px;position:relative; }
+            .nv-logo { font-size:52px;font-weight:900;letter-spacing:10px;color:transparent;-webkit-text-stroke:2px #ff0055;text-shadow:0 0 40px #ff005588;animation:menuGlow 3s infinite;text-transform:uppercase;margin:0;line-height:1; }
+            .nv-logo-sub { font-size:11px;letter-spacing:6px;color:#ff005588;text-transform:uppercase;margin-top:2px; }
+            .nv-ship-display { width:60px;height:60px;margin:4px 0;pointer-events:none;overflow:hidden; }
+            .nv-sector-progress { display:flex;align-items:center;gap:6px;margin-top:4px; }
+            .nv-sector-bar { width:180px;height:6px;background:#1a1a2e;border-radius:3px;overflow:hidden;border:1px solid #333; }
+            .nv-sector-fill { height:100%;border-radius:3px;transition:width 0.5s;background:linear-gradient(90deg,#ff0055,#ff8800,#ffcc00); }
+            .nv-sector-text { font-size:10px;color:#888;letter-spacing:1px; }
 
-            /* ===== CENTERPIECE ===== */
-            .nv-centerpiece { flex:0 0 auto;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;animation:centerGlow 4s ease-in-out infinite; }
-            .nv-centerpiece-canvas { display:block;width:100%;pointer-events:none; }
-            .nv-centerpiece-overlay { position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(0deg,rgba(5,0,10,0.9),transparent);pointer-events:none; }
+            /* CENTER CONTENT — scrollable area between hero and bottom nav */
+            .nv-center { flex:1;overflow-y:auto;overflow-x:hidden;padding:8px 16px 10px;display:flex;flex-direction:column;gap:10px; }
 
-            /* ===== CHEST SLOTS ROW ===== */
-            .nv-chest-row { display:flex;align-items:stretch;gap:5px;padding:6px 10px;background:rgba(0,0,0,0.4);border-top:1px solid #ffffff0a;border-bottom:1px solid #ffffff0a;flex-shrink:0; }
-            .nv-chest-slot { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:linear-gradient(135deg,rgba(var(--gc),0.08),rgba(0,0,0,0.6));border:1.5px solid rgba(var(--gc),0.3);border-radius:10px;padding:6px 4px;cursor:pointer;transition:all 0.2s;min-height:52px;animation:chestGlow 3s ease-in-out infinite; }
-            .nv-chest-slot:hover { border-color:rgba(var(--gc),0.7);transform:translateY(-2px); }
-            .nv-chest-slot:active { transform:scale(0.95); }
-            .nv-chest-icon { font-size:20px;line-height:1; }
-            .nv-chest-label { font-size:7px;font-weight:bold;letter-spacing:0.5px;text-align:center;text-transform:uppercase; }
-
-            /* CENTER CONTENT — scrollable */
-            .nv-center { flex:1;overflow-y:auto;overflow-x:hidden;padding:8px 10px 6px;display:flex;flex-direction:column;gap:8px; }
-
-            /* TAB CONTENT VISIBILITY */
-            .nv-tab-content { display:none; }
-            #nv-tab-battle { display:block; }
-
-            /* ===== BATTLE AREA ===== */
-            .nv-battle-area { display:flex;align-items:center;gap:8px;flex-shrink:0;padding:0 2px; }
-            .nv-side-mode { flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:4px;background:linear-gradient(135deg,rgba(var(--gc),0.1),rgba(0,0,0,0.75));border:1.5px solid rgba(var(--gc),0.4);border-radius:12px;padding:10px 8px;cursor:pointer;transition:all 0.2s;min-width:62px;min-height:68px;justify-content:center; }
-            .nv-side-mode:hover { border-color:rgba(var(--gc),0.85);transform:translateY(-2px); }
-            .nv-side-mode:active { transform:scale(0.95); }
-            .nv-side-mode .sm-icon { font-size:22px;line-height:1; }
-            .nv-side-mode .sm-label { font-size:8px;font-weight:900;letter-spacing:1px;text-align:center;text-transform:uppercase; }
-            .nv-battle-btn { flex:1;height:68px;border-radius:14px;border:3px solid #ff0055;background:linear-gradient(180deg,#3a0020 0%,#1a000a 50%,#3a0020 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;animation:battlePulse 2s infinite;position:relative;overflow:hidden;transition:all 0.15s;gap:2px; }
-            .nv-battle-btn:hover { border-color:#ff5588;filter:brightness(1.2); }
+            /* BATTLE BUTTON */
+            .nv-battle-section { display:flex;flex-direction:column;align-items:center;gap:8px; }
+            .nv-battle-btn { width:280px;height:64px;border-radius:16px;border:3px solid #ff0055;background:linear-gradient(180deg,#2a0015 0%,#1a000a 50%,#2a0015 100%);display:flex;align-items:center;justify-content:center;cursor:pointer;animation:battlePulse 2s infinite;position:relative;overflow:hidden;transition:all 0.15s; }
+            .nv-battle-btn:hover { border-color:#ff3377;filter:brightness(1.3); }
             .nv-battle-btn:active { transform:scale(0.97); }
-            .nv-battle-text { font-size:26px;font-weight:900;letter-spacing:5px;color:#ff0055;text-shadow:0 0 20px #ff005599;z-index:1;line-height:1; }
-            .nv-battle-sub { font-size:9px;color:#ff005577;letter-spacing:2px;z-index:1; }
-            .nv-battle-shimmer { position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(90deg,transparent 0%,rgba(255,0,85,0.12) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 2.5s infinite; }
+            .nv-battle-text { font-size:28px;font-weight:900;letter-spacing:6px;color:#ff0055;text-shadow:0 0 20px #ff005588;z-index:1; }
+            .nv-battle-shimmer { position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(90deg,transparent 0%,rgba(255,0,85,0.15) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 3s infinite; }
+            .nv-battle-sub { font-size:10px;color:#ff005588;letter-spacing:3px; }
 
-            /* ===== MORE MODES ===== */
-            .nv-modes-section-label { font-size:8px;letter-spacing:3px;color:#ffffff33;text-transform:uppercase;margin-top:2px;margin-bottom:-2px; }
-            .nv-modes-row { display:flex;gap:8px;overflow-x:auto;overflow-y:visible;padding:4px 2px;-webkit-overflow-scrolling:touch;flex-shrink:0;min-height:52px; }
-            .nv-modes-row::-webkit-scrollbar { height:2px; }
-            .nv-modes-row::-webkit-scrollbar-thumb { background:#ff005533;border-radius:2px; }
-            .nv-mode-chip { display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:10px;border:1.5px solid;cursor:pointer;white-space:nowrap;transition:all 0.2s;flex-shrink:0;min-height:40px; }
+            /* MODE SELECTOR ROW — horizontal scroll of game modes */
+            .nv-modes-row { display:flex;gap:10px;overflow-x:auto;overflow-y:visible;padding:6px 2px;-webkit-overflow-scrolling:touch;flex-shrink:0;min-height:46px; }
+            .nv-modes-row::-webkit-scrollbar { height:4px; }
+            .nv-modes-row::-webkit-scrollbar-thumb { background:#ff005544;border-radius:2px; }
+            .nv-mode-chip { display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;border:1.5px solid;cursor:pointer;white-space:nowrap;transition:all 0.2s;flex-shrink:0; }
             .nv-mode-chip:hover { transform:translateY(-2px);filter:brightness(1.3); }
-            .nv-mode-chip:active { transform:scale(0.96); }
-            .nv-mode-chip .nv-chip-icon { font-size:18px; }
-            .nv-mode-chip .nv-chip-label { font-size:12px;font-weight:bold;letter-spacing:1px; }
-            .nv-mode-chip .nv-chip-sub { font-size:9px;opacity:0.6; }
+            .nv-mode-chip .nv-chip-icon { font-size:22px; }
+            .nv-mode-chip .nv-chip-label { font-size:13px;font-weight:bold;letter-spacing:1px; }
+            .nv-mode-chip .nv-chip-sub { font-size:10px;opacity:0.6; }
 
-            /* HANGAR SECTION */
-            .nv-section-header { font-size:8px;letter-spacing:3px;color:#ffffff44;text-transform:uppercase;margin-bottom:5px;margin-top:4px;padding-bottom:5px;border-bottom:1px solid #ffffff0e; }
-            .nv-skins-row { display:flex;gap:9px;overflow-x:auto;padding:3px 2px 7px;-webkit-overflow-scrolling:touch; }
-            .nv-skins-row::-webkit-scrollbar { height:2px; }
-            .nv-skins-row::-webkit-scrollbar-thumb { background:#aa44ff33;border-radius:2px; }
-            .nv-skin-card { width:72px;flex-shrink:0;border:1.5px solid rgba(var(--gc),0.35);border-radius:11px;background:linear-gradient(135deg,rgba(var(--gc),0.1),rgba(0,0,0,0.7));padding:9px 5px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;transition:all 0.2s; }
-            .nv-skin-card:hover { border-color:rgba(var(--gc),0.8);transform:translateY(-2px); }
-            .nv-skin-card .sk-icon { font-size:26px; }
-            .nv-skin-card .sk-name { font-size:7px;letter-spacing:1px;text-align:center; }
-            .nv-upgrades-grid { display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:5px; }
-            .nv-upgrade-card { background:linear-gradient(135deg,rgba(var(--gc),0.08),rgba(0,0,0,0.75));border:1.5px solid rgba(var(--gc),0.35);border-radius:11px;padding:10px;display:flex;align-items:center;gap:9px;cursor:pointer;transition:all 0.2s;min-height:52px; }
-            .nv-upgrade-card:hover { border-color:rgba(var(--gc),0.8);transform:translateY(-2px); }
-            .nv-upgrade-card .uc-icon { font-size:20px;flex-shrink:0;width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:9px;background:rgba(var(--gc),0.12); }
-            .nv-upgrade-card .uc-text .uc-title { font-size:10px;font-weight:bold;letter-spacing:1px; }
-            .nv-upgrade-card .uc-text .uc-sub { font-size:8px;opacity:0.5;margin-top:1px; }
-            .nv-prog-grid { display:flex;gap:5px;flex-wrap:wrap;padding:3px 0; }
-            .nv-prog-btn { padding:8px 12px;border-radius:9px;cursor:pointer;font-size:9px;letter-spacing:1px;font-family:'Courier New',monospace;font-weight:bold;transition:all 0.2s;min-height:40px;display:flex;align-items:center; }
-            .nv-prog-btn:hover { filter:brightness(1.3);transform:translateY(-1px); }
-            .nv-prog-btn:active { transform:scale(0.96); }
-
-            /* CO-OP SECTION */
-            .nv-mp-grid { display:grid;grid-template-columns:1fr 1fr;gap:9px; }
-            .nv-mp-card { background:linear-gradient(135deg,rgba(var(--gc),0.1),rgba(0,0,0,0.75));border:1.5px solid rgba(var(--gc),0.4);border-radius:13px;padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:all 0.2s;min-height:90px;justify-content:center; }
-            .nv-mp-card:hover { border-color:rgba(var(--gc),0.85);transform:translateY(-2px);box-shadow:0 4px 18px rgba(var(--gc),0.2); }
-            .nv-mp-card:active { transform:scale(0.97); }
-            .nv-mp-card .mc-icon { font-size:28px; }
-            .nv-mp-card .mc-title { font-size:10px;font-weight:900;letter-spacing:2px;text-align:center; }
-            .nv-mp-card .mc-desc { font-size:8px;opacity:0.55;text-align:center; }
-
-            /* RANKS SECTION */
-            .nv-ranks-list { display:flex;flex-direction:column;gap:7px; }
-            .nv-rank-row { background:linear-gradient(135deg,rgba(var(--gc),0.07),rgba(0,0,0,0.7));border:1.5px solid rgba(var(--gc),0.3);border-radius:11px;padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all 0.2s;min-height:52px; }
-            .nv-rank-row:hover { border-color:rgba(var(--gc),0.75);transform:translateX(2px); }
-            .nv-rank-row .rr-icon { font-size:22px;flex-shrink:0; }
-            .nv-rank-row .rr-text .rr-title { font-size:11px;font-weight:bold;letter-spacing:1px; }
-            .nv-rank-row .rr-text .rr-sub { font-size:8px;opacity:0.5;margin-top:1px; }
-            .nv-rank-row .rr-arrow { margin-left:auto;font-size:14px;opacity:0.4; }
+            /* EVENT BANNER */
+            .nv-event-banner { background:linear-gradient(135deg,rgba(255,136,0,0.12),rgba(0,0,0,0.7));border:1.5px solid #ff880044;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.2s; }
+            .nv-event-banner:hover { border-color:#ff8800;transform:translateY(-1px); }
+            .nv-event-icon { font-size:28px;flex-shrink:0; }
+            .nv-event-info { flex:1;min-width:0; }
+            .nv-event-title { font-size:13px;font-weight:bold;color:#ff8800;letter-spacing:1px; }
+            .nv-event-desc { font-size:10px;color:#ff880088;margin-top:2px; }
+            .nv-event-badge { font-size:9px;color:#000;background:#ff8800;border-radius:8px;padding:2px 8px;font-weight:bold;flex-shrink:0; }
 
             /* QUICK ACCESS GRID */
-            .nv-grid { display:grid;grid-template-columns:1fr 1fr;gap:7px; }
-            .nv-grid-card { background:linear-gradient(135deg,rgba(var(--gc),0.08),rgba(0,0,0,0.75));border:1.5px solid rgba(var(--gc),0.4);border-radius:11px;padding:10px;display:flex;align-items:center;gap:9px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden; }
-            .nv-grid-card:hover { border-color:rgba(var(--gc),0.9);transform:translateY(-2px);box-shadow:0 4px 18px rgba(var(--gc),0.2); }
-            .nv-grid-card .gc-icon { font-size:20px;flex-shrink:0;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:9px;background:rgba(var(--gc),0.12); }
+            .nv-grid { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+            .nv-grid-card { background:linear-gradient(135deg,rgba(var(--gc),0.08),rgba(0,0,0,0.75));border:1.5px solid rgba(var(--gc),0.4);border-radius:12px;padding:12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden; }
+            .nv-grid-card:hover { border-color:rgba(var(--gc),0.9);transform:translateY(-2px);box-shadow:0 4px 20px rgba(var(--gc),0.2); }
+            .nv-grid-card .gc-icon { font-size:22px;flex-shrink:0;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:rgba(var(--gc),0.12); }
             .nv-grid-card .gc-text { flex:1;min-width:0; }
-            .nv-grid-card .gc-title { font-size:11px;font-weight:bold;letter-spacing:1px; }
-            .nv-grid-card .gc-sub { font-size:8px;opacity:0.5;margin-top:1px; }
-            .nv-grid-card .gc-badge { position:absolute;top:5px;right:7px;font-size:7px;border-radius:5px;padding:1px 5px;font-weight:bold; }
+            .nv-grid-card .gc-title { font-size:12px;font-weight:bold;letter-spacing:1px; }
+            .nv-grid-card .gc-sub { font-size:9px;opacity:0.5;margin-top:1px; }
+            .nv-grid-card .gc-badge { position:absolute;top:6px;right:8px;font-size:8px;border-radius:6px;padding:1px 6px;font-weight:bold; }
 
-            /* ===== BOTTOM NAV — chunky Clash Royale style ===== */
-            .nv-bottomnav { display:flex;align-items:stretch;background:linear-gradient(180deg,rgba(8,0,14,0.98),rgba(3,0,6,1));border-top:1px solid #ffffff11;position:fixed;bottom:0;left:0;right:0;z-index:50;height:62px; }
-            .nv-center { padding-bottom:70px; }
-            .nv-nav-tab { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 3px 8px;cursor:pointer;transition:all 0.18s;position:relative;gap:3px; }
+            /* BOTTOM NAV — Fixed tab bar */
+            .nv-bottomnav { display:flex;align-items:stretch;background:linear-gradient(180deg,rgba(10,0,15,0.95),rgba(5,0,8,0.98));border-top:2px solid #ff005533;flex-shrink:0;z-index:5; }
+            .nv-nav-tab { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 2px 8px;cursor:pointer;transition:all 0.2s;border-top:2px solid transparent;position:relative; }
             .nv-nav-tab:hover { background:rgba(255,255,255,0.04); }
-            .nv-nav-tab.active { background:rgba(var(--tab-color, 255,0,85),0.14); }
-            .nv-nav-tab.active::before { content:'';position:absolute;top:0;left:20%;right:20%;height:3px;border-radius:0 0 3px 3px;background:rgb(var(--tab-color,255,0,85));box-shadow:0 0 10px rgb(var(--tab-color,255,0,85)); }
-            .nv-nav-tab .nav-icon { font-size:22px;line-height:1;transition:transform 0.18s; }
-            .nv-nav-tab.active .nav-icon { transform:scale(1.15); }
-            .nv-nav-tab .nav-label { font-size:9px;letter-spacing:0.5px;color:#55556a;text-transform:uppercase;font-weight:bold;transition:color 0.18s; }
-            .nv-nav-tab:hover .nav-label { color:#aaa; }
-            .nv-nav-tab.active .nav-label { color:rgb(var(--tab-color,255,0,85)); }
-            .nv-nav-tab .nav-notif { position:absolute;top:6px;right:calc(50% - 16px);width:7px;height:7px;border-radius:50%;background:#ff0055;box-shadow:0 0 6px #ff0055;border:1px solid #0a0010; }
+            .nv-nav-tab.active { border-top-color:#ff0055;background:rgba(255,0,85,0.08); }
+            .nv-nav-tab .nav-icon { font-size:18px;margin-bottom:1px; }
+            .nv-nav-tab .nav-label { font-size:8px;letter-spacing:1px;color:#888;text-transform:uppercase; }
+            .nv-nav-tab:hover .nav-label { color:#ccc; }
+            .nv-nav-tab .nav-notif { position:absolute;top:3px;right:calc(50% - 16px);width:7px;height:7px;border-radius:50%;background:#ff0055;box-shadow:0 0 6px #ff0055; }
 
             /* Secret boss buttons in modes row */
             .nv-secret-chip { border-style:dashed !important;position:relative; }
-            .nv-secret-chip::after { content:'';position:absolute;inset:0;border-radius:10px;background:linear-gradient(135deg,transparent,rgba(var(--gc),0.08));pointer-events:none; }
+            .nv-secret-chip::after { content:'';position:absolute;inset:0;border-radius:12px;background:linear-gradient(135deg,transparent,rgba(var(--gc),0.1));pointer-events:none; }
         `;
         document.head.appendChild(menuStyleTag);
 
@@ -10602,17 +9960,6 @@ function generateSyncCode() {
             };
         }
 
-        function switchMenuTab(tab) {
-            document.querySelectorAll('.nv-tab-content').forEach(d => d.style.display = 'none');
-            let el = document.getElementById('nv-tab-' + tab);
-            if (el) el.style.display = 'block';
-            document.querySelectorAll('.nv-nav-tab').forEach(t => t.classList.remove('active'));
-            // Find by data-tab attribute to avoid needing the event
-            let targetTab = document.querySelector('.nv-nav-tab[data-tab="' + tab + '"]');
-            if (targetTab) targetTab.classList.add('active');
-            else if (event && event.currentTarget) event.currentTarget.classList.add('active');
-        }
-
         let _menuReturnToMenu = returnToMenu;
         returnToMenu = function() {
             _nvMenuActive = true;
@@ -10656,525 +10003,310 @@ function generateSyncCode() {
                 <div><div class="nv-chip-label" style="color:#ff00ff;">SECTOR ???</div></div>
             </div>` : '';
 
-            // Fake XP / level values from progress
-            let pilotLevel = Math.max(1, unlocked + Math.floor(parseInt(localStorage.getItem('neonVoidBossRushBest')||'0')/60));
-            let xpCurrent = (unlocked * 1847 + 3239) % 75000;
-            let xpMax = 75000;
-            let coinsDisplay = totalCoins >= 1000000 ? (totalCoins/1000000).toFixed(1)+'M' : totalCoins >= 1000 ? (totalCoins/1000).toFixed(1)+'K' : totalCoins;
-            let gemCount = parseInt(localStorage.getItem('neonVoidGems')||'0') || Math.max(0, unlocked * 23 - 47);
-            let trophyCount = unlocked * 312 + (parseInt(localStorage.getItem('neonVoidBossRushBest')||'0') * 2);
-            let rankNames = ['BRONZE','SILVER','GOLD','PLATINUM','DIAMOND','MASTER','GRANDMASTER','MYTH'];
-            let rankName = rankNames[Math.min(Math.floor(unlocked / 2), rankNames.length-1)];
-
             // Build full menu HTML
             ui.menuBtns.style.maxWidth = '100%';
             ui.menuBtns.style.width = '100%';
             ui.menuBtns.innerHTML = `<div class="nv-menu-root">
 
-                <!-- TOP BAR: level badge, XP bar, spacer, coins, gems, settings -->
+                <!-- TOP BAR -->
                 <div class="nv-topbar">
-                    <div class="nv-level-badge">
-                        <span class="nv-level-icon">🚀</span>
-                        <span class="nv-level-num">${pilotLevel}</span>
+                    <div class="nv-topbar-left">
+                        <div class="nv-pilot-badge" onclick="openAvatarPicker()" style="cursor:pointer;" title="Change Avatar">
+                            <div class="nv-pilot-avatar">${playerAvatar}</div>
+                            <span class="nv-pilot-name">${currentUsername || 'PILOT'}</span>
+                        </div>
                     </div>
-                    <div class="nv-xp-bar-wrap">
-                        <div class="nv-xp-bar"><div class="nv-xp-fill" style="width:${Math.round((xpCurrent/xpMax)*100)}%"></div></div>
-                        <div class="nv-xp-text">${xpCurrent.toLocaleString()}/${xpMax.toLocaleString()}</div>
+                    <div class="nv-topbar-right">
+                        <div class="nv-resource"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 12h6"/></svg> ${totalCoins >= 1000000 ? (totalCoins/1000000).toFixed(1)+'M' : totalCoins >= 1000 ? (totalCoins/1000).toFixed(1)+'K' : totalCoins}</div>
+                        <div class="nv-settings-btn" onclick="openSettings()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
                     </div>
-                    <div class="nv-topbar-spacer"></div>
-                    <div class="nv-coin-pill">
-                        <span class="nv-coin-icon">💰</span>${coinsDisplay}
-                    </div>
-                    <div class="nv-gem-pill">
-                        <span class="nv-gem-icon">💎</span>${gemCount}
-                    </div>
-                    <div class="nv-settings-btn" onclick="openSettings()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
                 </div>
 
-                <!-- PLAYER INFO ROW: avatar, name+sector, trophy, rank -->
-                <div class="nv-player-row">
-                    <div class="nv-avatar-btn" onclick="openAvatarPicker()" title="Change Avatar">${playerAvatar}</div>
-                    <div class="nv-player-info">
-                        <div class="nv-player-name">${currentUsername || 'PILOT'}</div>
-                        <div class="nv-player-sub">Sector ${unlocked}/15 &bull; ${sectorPct}% cleared</div>
+                <!-- HERO SECTION -->
+                <div class="nv-hero">
+                    <div class="nv-logo">NEON VOID</div>
+                    <div class="nv-logo-sub">VOID HUNTER PROTOCOL</div>
+                    <div class="nv-ship-display">
+                        <canvas id="nv-menu-ship" width="60" height="60" style="display:block;"></canvas>
                     </div>
-                    <div class="nv-trophy-badge">
-                        <span class="nv-trophy-icon">🏆</span>
-                        <span class="nv-trophy-val">${trophyCount.toLocaleString()}</span>
-                    </div>
-                    <div class="nv-rank-chip">${rankName}</div>
-                </div>
-
-                <!-- CENTERPIECE: large animated ship canvas -->
-                <div class="nv-centerpiece" style="height:clamp(140px,28vh,220px);background:linear-gradient(180deg,#070010 0%,#0a001a 40%,#06000e 100%);">
-                    <canvas id="nv-centerpiece-canvas" class="nv-centerpiece-canvas" style="height:100%;"></canvas>
-                    <div class="nv-centerpiece-overlay"></div>
-                </div>
-
-                <!-- CHEST SLOTS ROW: 4 quick-access icon cards -->
-                <div class="nv-chest-row">
-                    <div class="nv-chest-slot" style="--gc:255,215,0;" onclick="openBattlePass()">
-                        <span class="nv-chest-icon">🎖</span>
-                        <span class="nv-chest-label" style="color:#ffd700;">PASS</span>
-                    </div>
-                    <div class="nv-chest-slot" style="--gc:255,136,0;" onclick="openContracts()">
-                        <span class="nv-chest-icon">📋</span>
-                        <span class="nv-chest-label" style="color:#ff8800;">DAILY</span>
-                    </div>
-                    <div class="nv-chest-slot" style="--gc:170,68,255;" onclick="openBlackMarket()">
-                        <span class="nv-chest-icon">🛒</span>
-                        <span class="nv-chest-label" style="color:#aa44ff;">MARKET</span>
-                    </div>
-                    <div class="nv-chest-slot" style="--gc:0,204,255;" onclick="openGemShop()">
-                        <span class="nv-chest-icon">⚡</span>
-                        <span class="nv-chest-label" style="color:#00ccff;">EVENTS</span>
+                    <div class="nv-sector-progress">
+                        <span class="nv-sector-text">SECTOR ${unlocked}/15</span>
+                        <div class="nv-sector-bar"><div class="nv-sector-fill" style="width:${sectorPct}%"></div></div>
+                        <span class="nv-sector-text">${sectorPct}%</span>
                     </div>
                 </div>
 
                 <!-- CENTER SCROLLABLE CONTENT -->
                 <div class="nv-center">
 
-                    <!-- ===== BATTLE TAB ===== -->
-                    <div id="nv-tab-battle" class="nv-tab-content">
-
-                        <!-- BATTLE AREA: flanking mode chips + big BATTLE button -->
-                        <div class="nv-battle-area">
-                            <div class="nv-side-mode" style="--gc:${mc('#ff0055')};" onclick="startInfinite()">
-                                <span class="sm-icon">∞</span>
-                                <span class="sm-label" style="color:#ff0055;">INFINITE</span>
-                            </div>
-                            <div class="nv-battle-btn" onclick="openMissionSelect()">
-                                <div class="nv-battle-shimmer"></div>
-                                <span class="nv-battle-text">BATTLE</span>
-                                <span class="nv-battle-sub">SECTOR ${unlocked} &bull; DEPLOY</span>
-                            </div>
-                            <div class="nv-side-mode" style="--gc:${mc('#ff4400')};" onclick="startBossRush()">
-                                <span class="sm-icon">💀</span>
-                                <span class="sm-label" style="color:#ff4400;">BOSS</span>
-                            </div>
+                    <!-- BIG BATTLE BUTTON -->
+                    <div class="nv-battle-section">
+                        <div class="nv-battle-btn" onclick="openMissionSelect()">
+                            <div class="nv-battle-shimmer"></div>
+                            <span class="nv-battle-text">BATTLE</span>
                         </div>
-
-                        <!-- MORE MODES LABEL + HORIZONTAL SCROLL -->
-                        <div class="nv-modes-section-label">MORE MODES</div>
-                        <div class="nv-modes-row">
-                            <div class="nv-mode-chip" style="--gc:${mc('#00ff88')};border-color:#00ff8866;background:rgba(0,255,136,0.07);" onclick="startTraining()">
-                                <span class="nv-chip-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></span>
-                                <div><div class="nv-chip-label" style="color:#00ff88;">TRAINING</div><div class="nv-chip-sub" style="color:#00ff8877;">Safe Practice</div></div>
-                            </div>
-                            <div class="nv-mode-chip" style="--gc:${mc('#ffcc00')};border-color:#ffcc0066;background:rgba(255,204,0,0.07);" onclick="startArcade()">
-                                <span class="nv-chip-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span>
-                                <div><div class="nv-chip-label" style="color:#ffcc00;">ARCADE</div><div class="nv-chip-sub" style="color:#ffcc0077;">${arcadeHighScore > 0 ? 'Best: ' + arcadeHighScore.toLocaleString() : '3 Lives'}</div></div>
-                            </div>
-                            <div class="nv-mode-chip" style="--gc:${mc('#44ccff')};border-color:#44ccff66;background:rgba(68,204,255,0.07);" onclick="startSandbox()">
-                                <span class="nv-chip-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#44ccff" stroke-width="2" stroke-linecap="round"><path d="M12 3l9 4.5v9L12 21l-9-4.5v-9L12 3z"/><path d="M12 12l9-4.5M12 12v9M12 12L3 7.5"/></svg></span>
-                                <div><div class="nv-chip-label" style="color:#44ccff;">SANDBOX</div><div class="nv-chip-sub" style="color:#44ccff77;">God Mode</div></div>
-                            </div>
-                            ${parseInt(localStorage.getItem('neonVoidStage')||'1') >= 16 ? `<div class="nv-mode-chip" style="--gc:${mc('#00ff88')};border-color:#00ff8866;background:rgba(0,255,136,0.08);animation:pulse 1.5s infinite;" onclick="startCrashedAdventure()">
-                                <span class="nv-chip-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span>
-                                <div><div class="nv-chip-label" style="color:#00ff88;">CRASHED</div><div class="nv-chip-sub" style="color:#00ff8877;">Adventure</div></div>
-                            </div>` : ''}
-                            <div class="nv-mode-chip" style="--gc:${mc('#ffd700')};border-color:#ffd70066;background:rgba(255,215,0,0.07);" onclick="startSpeedrun()">
-                                <span class="nv-chip-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
-                                <div><div class="nv-chip-label" style="color:#ffd700;">SPEEDRUN</div><div class="nv-chip-sub" style="color:#ffd70077;">Timer</div></div>
-                            </div>
-                            <div class="nv-mode-chip" style="--gc:${mc('#cc44ff')};border-color:#cc44ff66;background:rgba(204,68,255,0.07);" onclick="startMirror()">
-                                <span class="nv-chip-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cc44ff" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M3 9l4 3-4 3M21 9l-4 3 4 3"/></svg></span>
-                                <div><div class="nv-chip-label" style="color:#cc44ff;">MIRROR</div><div class="nv-chip-sub" style="color:#cc44ff77;">Reversed</div></div>
-                            </div>
-                            <div class="nv-mode-chip" style="--gc:${mc('#ff8800')};border-color:#ff880066;background:rgba(255,136,0,0.07);" onclick="startChaos()">
-                                <span class="nv-chip-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff8800" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></span>
-                                <div><div class="nv-chip-label" style="color:#ff8800;">CHAOS</div><div class="nv-chip-sub" style="color:#ff880077;">Modifiers</div></div>
-                            </div>
-                            <div class="nv-mode-chip" style="--gc:${mc('#ff0055')};border-color:#ff005566;background:rgba(255,0,85,0.07);" onclick="startOneHit()">
-                                <span class="nv-chip-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff0055" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></span>
-                                <div><div class="nv-chip-label" style="color:#ff0055;">ONE HIT</div><div class="nv-chip-sub" style="color:#ff005577;">1 HP</div></div>
-                            </div>
-                            <div class="nv-mode-chip" style="--gc:${mc('#ff4400')};border-color:#ff440066;background:rgba(255,68,0,0.07);" onclick="startBulletHell()">
-                                <span class="nv-chip-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff4400" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg></span>
-                                <div><div class="nv-chip-label" style="color:#ff4400;">BULLET HELL</div><div class="nv-chip-sub" style="color:#ff440077;">10x Fire</div></div>
-                            </div>
-                            <div class="nv-mode-chip" style="--gc:${mc('#00ff88')};border-color:#00ff8866;background:rgba(0,255,136,0.07);" onclick="startPacifist()">
-                                <span class="nv-chip-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M4.22 4.22l15.56 15.56"/></svg></span>
-                                <div><div class="nv-chip-label" style="color:#00ff88;">PACIFIST</div><div class="nv-chip-sub" style="color:#00ff8877;">No Guns</div></div>
-                            </div>
-                            <div class="nv-mode-chip" style="--gc:${mc('#ffd700')};border-color:#ffd70066;background:rgba(255,215,0,0.07);" onclick="startTournament()">
-                                <span class="nv-chip-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2" stroke-linecap="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V22M14 14.66V22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></span>
-                                <div><div class="nv-chip-label" style="color:#ffd700;">TOURNAMENT</div><div class="nv-chip-sub" style="color:#ffd70077;">AI Bracket</div></div>
-                            </div>
-                            <div class="nv-mode-chip" style="--gc:${mc('#44ff88')};border-color:#44ff8866;background:rgba(68,255,136,0.07);" onclick="startSurvivalArena()">
-                                <span class="nv-chip-icon">⚔</span>
-                                <div><div class="nv-chip-label" style="color:#44ff88;">SURVIVAL</div><div class="nv-chip-sub" style="color:#44ff8877;">Arena</div></div>
-                            </div>
-                            <div class="nv-mode-chip" style="--gc:${mc('#44ccff')};border-color:#44ccff66;background:rgba(68,204,255,0.07);" onclick="startRaceMode()">
-                                <span class="nv-chip-icon">🏁</span>
-                                <div><div class="nv-chip-label" style="color:#44ccff;">RACE</div><div class="nv-chip-sub" style="color:#44ccff77;">Checkpoints</div></div>
-                            </div>
-                            <div class="nv-mode-chip" style="--gc:${mc('#88ff44')};border-color:#88ff4466;background:rgba(136,255,68,0.07);" onclick="startEscort()">
-                                <span class="nv-chip-icon">🚀</span>
-                                <div><div class="nv-chip-label" style="color:#88ff44;">ESCORT</div><div class="nv-chip-sub" style="color:#88ff4477;">Protect Cargo</div></div>
-                            </div>
-                            <div class="nv-mode-chip" style="--gc:${mc('#ff8844')};border-color:#ff884466;background:rgba(255,136,68,0.07);" onclick="startHordeDefense()">
-                                <span class="nv-chip-icon">🏰</span>
-                                <div><div class="nv-chip-label" style="color:#ff8844;">HORDE</div><div class="nv-chip-sub" style="color:#ff884477;">Tower Defense</div></div>
-                            </div>
-                            <div class="nv-mode-chip" style="--gc:${mc('#aa44ff')};border-color:#aa44ff66;background:rgba(170,68,255,0.07);" onclick="startRoguelike()">
-                                <span class="nv-chip-icon">🎲</span>
-                                <div><div class="nv-chip-label" style="color:#aa44ff;">ROGUELIKE</div><div class="nv-chip-sub" style="color:#aa44ff77;">10 Floors</div></div>
-                            </div>
-                            <div class="nv-mode-chip" style="--gc:${mc('#88ffcc')};border-color:#88ffcc66;background:rgba(136,255,204,0.07);" onclick="openLevelEditor()">
-                                <span class="nv-chip-icon">🔧</span>
-                                <div><div class="nv-chip-label" style="color:#88ffcc;">EDITOR</div><div class="nv-chip-sub" style="color:#88ffcc77;">Level Design</div></div>
-                            </div>
-                            ${secretChip}${paradoxChip}
-                        </div>
-
+                        <div class="nv-battle-sub">SECTOR ${unlocked} &#x2022; TAP TO DEPLOY</div>
                     </div>
 
-                    <!-- ===== HANGAR TAB ===== -->
-                    <div id="nv-tab-hangar" class="nv-tab-content">
-
-                        <!-- SKINS SECTION -->
-                        <div class="nv-section-header">SKINS</div>
-                        <div class="nv-skins-row">
-                            <div class="nv-skin-card" style="--gc:${mc('#ff0055')};" onclick="openShop()">
-                                <span class="sk-icon">🚀</span>
-                                <span class="sk-name" style="color:#ff0055;">DEFAULT</span>
-                            </div>
-                            <div class="nv-skin-card" style="--gc:${mc('#00ffcc')};" onclick="openShop()">
-                                <span class="sk-icon">✨</span>
-                                <span class="sk-name" style="color:#00ffcc;">PHANTOM</span>
-                            </div>
-                            <div class="nv-skin-card" style="--gc:${mc('#ffcc00')};" onclick="openShop()">
-                                <span class="sk-icon">⚡</span>
-                                <span class="sk-name" style="color:#ffcc00;">STORM</span>
-                            </div>
-                            <div class="nv-skin-card" style="--gc:${mc('#aa44ff')};" onclick="openShop()">
-                                <span class="sk-icon">🌀</span>
-                                <span class="sk-name" style="color:#aa44ff;">VOID</span>
-                            </div>
-                            <div class="nv-skin-card" style="--gc:${mc('#44ccff')};border-style:dashed;" onclick="openShop()">
-                                <span class="sk-icon">➕</span>
-                                <span class="sk-name" style="color:#44ccff;">MORE</span>
-                            </div>
+                    <!-- GAME MODES HORIZONTAL SCROLL -->
+                    <div class="nv-modes-row">
+                        <div class="nv-mode-chip" style="--gc:${mc('#ff0055')};border-color:#ff005566;background:rgba(255,0,85,0.06);" onclick="startInfinite()">
+                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff0055" stroke-width="2.5" stroke-linecap="round"><path d="M6 12c0-2.2 1.8-4 4-4s4 1.8 4 4-1.8 4-4 4-4-1.8-4-4zM14 12c0-2.2 1.8-4 4-4s4 1.8 4 4-1.8 4-4 4-4-1.8-4-4z"/></svg></span>
+                            <div><div class="nv-chip-label" style="color:#ff0055;">INFINITE</div><div class="nv-chip-sub" style="color:#ff005588;">Endless</div></div>
                         </div>
-
-                        <!-- UPGRADES SECTION -->
-                        <div class="nv-section-header" style="margin-top:10px;">UPGRADES</div>
-                        <div class="nv-upgrades-grid">
-                            <div class="nv-upgrade-card" style="--gc:${mc('#ff0055')};" onclick="openShop()">
-                                <div class="uc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff0055" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg></div>
-                                <div class="uc-text"><div class="uc-title" style="color:#ff0055;">FIREPOWER</div><div class="uc-sub">Weapon mods</div></div>
-                            </div>
-                            <div class="nv-upgrade-card" style="--gc:${mc('#00ffcc')};" onclick="openShop()">
-                                <div class="uc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00ffcc" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-                                <div class="uc-text"><div class="uc-title" style="color:#00ffcc;">SHIELDS</div><div class="uc-sub">Defense mods</div></div>
-                            </div>
-                            <div class="nv-upgrade-card" style="--gc:${mc('#ffcc00')};" onclick="openShop()">
-                                <div class="uc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round"><path d="M12 2L4 14h6l-2 8 10-12h-6l2-8z"/></svg></div>
-                                <div class="uc-text"><div class="uc-title" style="color:#ffcc00;">ENGINES</div><div class="uc-sub">Speed mods</div></div>
-                            </div>
-                            <div class="nv-upgrade-card" style="--gc:${mc('#aa44ff')};" onclick="openShop()">
-                                <div class="uc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aa44ff" stroke-width="2" stroke-linecap="round"><path d="M12 3l9 4.5v9L12 21l-9-4.5v-9L12 3z"/></svg></div>
-                                <div class="uc-text"><div class="uc-title" style="color:#aa44ff;">SYSTEMS</div><div class="uc-sub">Special mods</div></div>
-                            </div>
+                        <div class="nv-mode-chip" style="--gc:${mc('#ff4400')};border-color:#ff440066;background:rgba(255,68,0,0.06);" onclick="startBossRush()">
+                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff4400" stroke-width="2" stroke-linecap="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5M13 7l4-4 4 4-4 4"/><path d="M3 3l7.586 7.586M11 14l7 7M8 6.5L1.5 13"/></svg></span>
+                            <div><div class="nv-chip-label" style="color:#ff4400;">BOSS RUSH</div><div class="nv-chip-sub" style="color:#ff440088;">${rushLabel}</div></div>
                         </div>
-
-                        <!-- PROGRESSION SECTION -->
-                        <div class="nv-section-header" style="margin-top:10px;">PROGRESSION</div>
-                        <div class="nv-prog-grid">
-                            <div class="nv-prog-btn" style="border:1px solid #ffd70044;color:#ffd700;background:rgba(255,215,0,0.07);" onclick="openBattlePass()">BATTLE PASS</div>
-                            <div class="nv-prog-btn" style="border:1px solid #ff880044;color:#ff8800;background:rgba(255,136,0,0.07);" onclick="openMastery()">MASTERY</div>
-                            <div class="nv-prog-btn" style="border:1px solid #44ff8844;color:#44ff88;background:rgba(68,255,136,0.07);" onclick="openBlueprints()">BLUEPRINTS</div>
-                            <div class="nv-prog-btn" style="border:1px solid #ff445544;color:#ff4455;background:rgba(255,68,85,0.07);" onclick="openContracts()">CONTRACTS</div>
-                            <div class="nv-prog-btn" style="border:1px solid #aa44ff44;color:#aa44ff;background:rgba(170,68,255,0.07);" onclick="openBlackMarket()">BLACK MARKET</div>
-                            <div class="nv-prog-btn" style="border:1px solid #00ffcc44;color:#00ffcc;background:rgba(0,255,204,0.07);" onclick="openGemShop()">GEM SHOP</div>
-                            <div class="nv-prog-btn" style="border:1px solid #ffcc0044;color:#ffcc00;background:rgba(255,204,0,0.07);" onclick="openTradePost()">TRADE POST</div>
-                            <div class="nv-prog-btn" style="border:1px solid #ff005544;color:#ff0055;background:rgba(255,0,85,0.07);" onclick="openBounties()">BOUNTIES</div>
-                            <div class="nv-prog-btn" style="border:1px solid #4488ff44;color:#4488ff;background:rgba(68,136,255,0.07);" onclick="openRebirth()">REBIRTH</div>
+                        <div class="nv-mode-chip" style="--gc:${mc('#00ff88')};border-color:#00ff8866;background:rgba(0,255,136,0.06);" onclick="startTraining()">
+                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></span>
+                            <div><div class="nv-chip-label" style="color:#00ff88;">TRAINING</div><div class="nv-chip-sub" style="color:#00ff8888;">Practice</div></div>
                         </div>
-                        <div style="height:16px;"></div>
-
+                        <div class="nv-mode-chip" style="--gc:${mc('#00ccff')};border-color:#00ccff66;background:rgba(0,204,255,0.06);" onclick="openMultiplayer()">
+                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00ccff" stroke-width="2" stroke-linecap="round"><path d="M16 3.13a4 4 0 0 1 0 7.75M21 21v-2a4 4 0 0 0-3-3.87M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg></span>
+                            <div><div class="nv-chip-label" style="color:#00ccff;">CO-OP</div><div class="nv-chip-sub" style="color:#00ccff88;">Multiplayer</div></div>
+                        </div>
+                        <div class="nv-mode-chip" style="--gc:${mc('#ffcc00')};border-color:#ffcc0066;background:rgba(255,204,0,0.06);animation:pulse 2s infinite;" onclick="startArcade()">
+                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span>
+                            <div><div class="nv-chip-label" style="color:#ffcc00;">ARCADE</div><div class="nv-chip-sub" style="color:#ffcc0088;">${arcadeHighScore > 0 ? 'Best: ' + arcadeHighScore.toLocaleString() : '3 Lives'}</div></div>
+                        </div>
+                        <div class="nv-mode-chip" style="--gc:${mc('#44ccff')};border-color:#44ccff66;background:rgba(68,204,255,0.06);" onclick="startSandbox()">
+                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#44ccff" stroke-width="2" stroke-linecap="round"><path d="M12 3l9 4.5v9L12 21l-9-4.5v-9L12 3z"/><path d="M12 12l9-4.5M12 12v9M12 12L3 7.5"/></svg></span>
+                            <div><div class="nv-chip-label" style="color:#44ccff;">SANDBOX</div><div class="nv-chip-sub" style="color:#44ccff88;">God Mode</div></div>
+                        </div>
+                        ${parseInt(localStorage.getItem('neonVoidStage')||'1') >= 16 ? `<div class="nv-mode-chip" style="--gc:\${mc('#00ff88')};border-color:#00ff8866;background:rgba(0,255,136,0.08);animation:pulse 1.5s infinite;" onclick="startCrashedAdventure()">
+                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                            <div><div class="nv-chip-label" style="color:#00ff88;">CRASHED</div><div class="nv-chip-sub" style="color:#00ff8888;">Crashed Adventure</div></div>
+                        </div>` : ''}
+                        
+                        <div class="nv-mode-chip" style="--gc:${mc('#ffd700')};border-color:#ffd70066;background:rgba(255,215,0,0.06);" onclick="startSpeedrun()">
+                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
+                            <div><div class="nv-chip-label" style="color:#ffd700;">SPEEDRUN</div><div class="nv-chip-sub" style="color:#ffd70088;">Timer</div></div>
+                        </div>
+                        <div class="nv-mode-chip" style="--gc:${mc('#cc44ff')};border-color:#cc44ff66;background:rgba(204,68,255,0.06);" onclick="startMirror()" title="Everything is horizontally flipped - controls are reversed!">
+                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#cc44ff" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M3 9l4 3-4 3M21 9l-4 3 4 3"/></svg></span>
+                            <div><div class="nv-chip-label" style="color:#cc44ff;">MIRROR</div><div class="nv-chip-sub" style="color:#cc44ff88;">Controls Reversed!</div></div>
+                        </div>
+                        <div class="nv-mode-chip" style="--gc:${mc('#ff8800')};border-color:#ff880066;background:rgba(255,136,0,0.06);" onclick="startChaos()">
+                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff8800" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></span>
+                            <div><div class="nv-chip-label" style="color:#ff8800;">CHAOS</div><div class="nv-chip-sub" style="color:#ff880088;">Modifiers</div></div>
+                        </div>
+                        <div class="nv-mode-chip" style="--gc:${mc('#ff0055')};border-color:#ff005566;background:rgba(255,0,85,0.06);" onclick="startOneHit()">
+                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff0055" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></span>
+                            <div><div class="nv-chip-label" style="color:#ff0055;">ONE HIT</div><div class="nv-chip-sub" style="color:#ff005588;">1 HP</div></div>
+                        </div>
+                        <div class="nv-mode-chip" style="--gc:${mc('#ff4400')};border-color:#ff440066;background:rgba(255,68,0,0.06);" onclick="startBulletHell()">
+                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff4400" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg></span>
+                            <div><div class="nv-chip-label" style="color:#ff4400;">BULLET HELL</div><div class="nv-chip-sub" style="color:#ff440088;">10x Fire</div></div>
+                        </div>
+                        <div class="nv-mode-chip" style="--gc:${mc('#00ff88')};border-color:#00ff8866;background:rgba(0,255,136,0.06);" onclick="startPacifist()">
+                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M4.22 4.22l15.56 15.56"/></svg></span>
+                            <div><div class="nv-chip-label" style="color:#00ff88;">PACIFIST</div><div class="nv-chip-sub" style="color:#00ff8888;">No Guns</div></div>
+                        </div>
+                        <div class="nv-mode-chip" style="--gc:${mc('#ffd700')};border-color:#ffd70066;background:rgba(255,215,0,0.06);" onclick="startTournament()">
+                            <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2" stroke-linecap="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V22M14 14.66V22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></span>
+                            <div><div class="nv-chip-label" style="color:#ffd700;">TOURNAMENT</div><div class="nv-chip-sub" style="color:#ffd70088;">AI Bracket</div></div>
+                        </div>
+                        <div class="nv-mode-chip" style="--gc:${mc('#44ff88')};border-color:#44ff8866;background:rgba(68,255,136,0.06);" onclick="startSurvivalArena()">
+                            <span class="nv-chip-icon">⚔</span>
+                            <div><div class="nv-chip-label" style="color:#44ff88;">SURVIVAL</div><div class="nv-chip-sub" style="color:#44ff8888;">Arena</div></div>
+                        </div>
+                        <div class="nv-mode-chip" style="--gc:${mc('#44ccff')};border-color:#44ccff66;background:rgba(68,204,255,0.06);" onclick="startRaceMode()">
+                            <span class="nv-chip-icon">🏁</span>
+                            <div><div class="nv-chip-label" style="color:#44ccff;">RACE</div><div class="nv-chip-sub" style="color:#44ccff88;">Checkpoints</div></div>
+                        </div>
+                        <div class="nv-mode-chip" style="--gc:${mc('#88ff44')};border-color:#88ff4466;background:rgba(136,255,68,0.06);" onclick="startEscort()">
+                            <span class="nv-chip-icon">🚀</span>
+                            <div><div class="nv-chip-label" style="color:#88ff44;">ESCORT</div><div class="nv-chip-sub" style="color:#88ff4488;">Protect Cargo</div></div>
+                        </div>
+                        <div class="nv-mode-chip" style="--gc:${mc('#ff8844')};border-color:#ff884466;background:rgba(255,136,68,0.06);" onclick="startHordeDefense()">
+                            <span class="nv-chip-icon">🏰</span>
+                            <div><div class="nv-chip-label" style="color:#ff8844;">HORDE</div><div class="nv-chip-sub" style="color:#ff884488;">Tower Defense</div></div>
+                        </div>
+                        <div class="nv-mode-chip" style="--gc:${mc('#ffaa00')};border-color:#ffaa0066;background:rgba(255,170,0,0.06);" onclick="startTagTeam()">
+                            <span class="nv-chip-icon">🤝</span>
+                            <div><div class="nv-chip-label" style="color:#ffaa00;">TAG TEAM</div><div class="nv-chip-sub" style="color:#ffaa0088;">Co-op Swap</div></div>
+                        </div>
+                        <div class="nv-mode-chip" style="--gc:${mc('#ff2244')};border-color:#ff224466;background:rgba(255,34,68,0.06);" onclick="startInfection()">
+                            <span class="nv-chip-icon">🦠</span>
+                            <div><div class="nv-chip-label" style="color:#ff2244;">INFECTION</div><div class="nv-chip-sub" style="color:#ff224488;">Co-op Tag</div></div>
+                        </div>
+                        <div class="nv-mode-chip" style="--gc:${mc('#aa44ff')};border-color:#aa44ff66;background:rgba(170,68,255,0.06);" onclick="startRoguelike()">
+                            <span class="nv-chip-icon">🎲</span>
+                            <div><div class="nv-chip-label" style="color:#aa44ff;">ROGUELIKE</div><div class="nv-chip-sub" style="color:#aa44ff88;">10 Floors</div></div>
+                        </div>
+                        <div class="nv-mode-chip" style="--gc:${mc('#ff4488')};border-color:#ff448866;background:rgba(255,68,136,0.06);" onclick="startPvP()">
+                            <span class="nv-chip-icon">⚡</span>
+                            <div><div class="nv-chip-label" style="color:#ff4488;">1v1 PVP</div><div class="nv-chip-sub" style="color:#ff448888;">Duel</div></div>
+                        </div>
+                        <div class="nv-mode-chip" style="--gc:${mc('#4488ff')};border-color:#4488ff66;background:rgba(68,136,255,0.06);" onclick="startCaptureTheFlag()">
+                            <span class="nv-chip-icon">🚩</span>
+                            <div><div class="nv-chip-label" style="color:#4488ff;">CTF</div><div class="nv-chip-sub" style="color:#4488ff88;">Capture Flag</div></div>
+                        </div>
+                        <div class="nv-mode-chip" style="--gc:${mc('#88ffcc')};border-color:#88ffcc66;background:rgba(136,255,204,0.06);" onclick="openLevelEditor()">
+                            <span class="nv-chip-icon">🔧</span>
+                            <div><div class="nv-chip-label" style="color:#88ffcc;">EDITOR</div><div class="nv-chip-sub" style="color:#88ffcc88;">Level Design</div></div>
+                        </div>
+                        ${secretChip}${paradoxChip}
                     </div>
 
-                    <!-- ===== CO-OP TAB ===== -->
-                    <div id="nv-tab-coop" class="nv-tab-content">
-
-                        <div style="font-size:11px;letter-spacing:4px;color:#00ccff;font-weight:bold;text-align:center;padding:8px 0 12px;">MULTIPLAYER</div>
-                        <div class="nv-mp-grid">
-                            <div class="nv-mp-card" style="--gc:${mc('#00ccff')};" onclick="openMultiplayer()">
-                                <span class="mc-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#00ccff" stroke-width="2" stroke-linecap="round"><path d="M16 3.13a4 4 0 0 1 0 7.75M21 21v-2a4 4 0 0 0-3-3.87M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg></span>
-                                <div class="mc-title" style="color:#00ccff;">CO-OP</div>
-                                <div class="mc-desc" style="color:#00ccff77;">Team up online</div>
-                            </div>
-                            <div class="nv-mp-card" style="--gc:${mc('#ff4488')};" onclick="startPvP()">
-                                <span class="mc-icon">⚡</span>
-                                <div class="mc-title" style="color:#ff4488;">1v1 PvP</div>
-                                <div class="mc-desc" style="color:#ff448877;">Pilot duel</div>
-                            </div>
-                            <div class="nv-mp-card" style="--gc:${mc('#4488ff')};" onclick="startCaptureTheFlag()">
-                                <span class="mc-icon">🚩</span>
-                                <div class="mc-title" style="color:#4488ff;">CTF</div>
-                                <div class="mc-desc" style="color:#4488ff77;">Capture the flag</div>
-                            </div>
-                            <div class="nv-mp-card" style="--gc:${mc('#ff2244')};" onclick="startInfection()">
-                                <span class="mc-icon">🦠</span>
-                                <div class="mc-title" style="color:#ff2244;">INFECTION</div>
-                                <div class="mc-desc" style="color:#ff224477;">Co-op tag mode</div>
-                            </div>
-                            <div class="nv-mp-card" style="--gc:${mc('#ffaa00')};" onclick="startTagTeam()">
-                                <span class="mc-icon">🤝</span>
-                                <div class="mc-title" style="color:#ffaa00;">TAG TEAM</div>
-                                <div class="mc-desc" style="color:#ffaa0077;">Co-op swap</div>
-                            </div>
-                            <div class="nv-mp-card" style="--gc:${mc('#ffd700')};" onclick="startTournament()">
-                                <span class="mc-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2" stroke-linecap="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V22M14 14.66V22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></span>
-                                <div class="mc-title" style="color:#ffd700;">TOURNAMENT</div>
-                                <div class="mc-desc" style="color:#ffd70077;">AI bracket</div>
-                            </div>
+                    <!-- QUICK ACCESS GRID -->
+                    <div class="nv-grid">
+                        <div class="nv-grid-card" style="--gc:${mc('#ffcc00')};" onclick="openShop()">
+                            <div class="gc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+                            <div class="gc-text"><div class="gc-title" style="color:#ffcc00;">HANGAR</div><div class="gc-sub">Black Market</div></div>
                         </div>
-                        <div style="height:16px;"></div>
-
+                        <div class="nv-grid-card" style="--gc:${mc('#ff88ff')};" onclick="openLeaderboard()">
+                            <div class="gc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff88ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V22M14 14.66V22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></div>
+                            <div class="gc-text"><div class="gc-title" style="color:#ff88ff;">RANKS</div><div class="gc-sub">Leaderboards</div></div>
+                        </div>
                     </div>
+                    <div style="margin-top:8px;padding:0 4px;">
+                        <div style="font-size:9px;letter-spacing:3px;color:#ffffff44;margin-bottom:6px;">PROGRESSION</div>
+                        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                            <div style="padding:6px 12px;border:1px solid #ffd70044;border-radius:8px;cursor:pointer;font-size:10px;color:#ffd700;letter-spacing:1px;" onclick="openBattlePass()">⭐ BATTLE PASS</div>
+                            <div style="padding:6px 12px;border:1px solid #ff880044;border-radius:8px;cursor:pointer;font-size:10px;color:#ff8800;letter-spacing:1px;" onclick="openMastery()">🎯 MASTERY</div>
+                            <div style="padding:6px 12px;border:1px solid #44ff8844;border-radius:8px;cursor:pointer;font-size:10px;color:#44ff88;letter-spacing:1px;" onclick="openBlueprints()">📜 BLUEPRINTS</div>
+                            <div style="padding:6px 12px;border:1px solid #ff445544;border-radius:8px;cursor:pointer;font-size:10px;color:#ff4455;letter-spacing:1px;" onclick="openContracts()">📋 CONTRACTS</div>
+                            <div style="padding:6px 12px;border:1px solid #aa44ff44;border-radius:8px;cursor:pointer;font-size:10px;color:#aa44ff;letter-spacing:1px;" onclick="openBlackMarket()">🏪 BLACK MARKET</div>
+                            <div style="padding:6px 12px;border:1px solid #00ffcc44;border-radius:8px;cursor:pointer;font-size:10px;color:#00ffcc;letter-spacing:1px;" onclick="openGemShop()">💎 GEM SHOP</div>
+                            <div style="padding:6px 12px;border:1px solid #ffcc0044;border-radius:8px;cursor:pointer;font-size:10px;color:#ffcc00;letter-spacing:1px;" onclick="openTradePost()">🔄 TRADE POST</div>
+                            <div style="padding:6px 12px;border:1px solid #ff005544;border-radius:8px;cursor:pointer;font-size:10px;color:#ff0055;letter-spacing:1px;" onclick="openBounties()">🎯 BOUNTIES</div>
+                            <div style="padding:6px 12px;border:1px solid #4488ff44;border-radius:8px;cursor:pointer;font-size:10px;color:#4488ff;letter-spacing:1px;" onclick="openRebirth()">♻️ REBIRTH</div>
+                            <div style="padding:6px 12px;border:1px solid #ffd70044;border-radius:8px;cursor:pointer;font-size:10px;color:#ffd700;letter-spacing:1px;" onclick="openVIPPanel()">👑 VIP</div>
+                            <div style="padding:6px 12px;border:1px solid #ffffff44;border-radius:8px;cursor:pointer;font-size:10px;color:#ffffff;letter-spacing:1px;" onclick="openAchievements()">🏆 ACHIEVEMENTS</div>
+                            <div style="padding:6px 12px;border:1px solid #00ffcc44;border-radius:8px;cursor:pointer;font-size:10px;color:#00ffcc;letter-spacing:1px;" onclick="openClan()">👥 CLAN</div>
+                            <div style="padding:6px 12px;border:1px solid #ff88ff44;border-radius:8px;cursor:pointer;font-size:10px;color:#ff88ff;letter-spacing:1px;" onclick="openPrestige()">🌟 PRESTIGE</div>
+                            <div style="padding:6px 12px;border:1px solid #88ffcc44;border-radius:8px;cursor:pointer;font-size:10px;color:#88ffcc;letter-spacing:1px;" onclick="openPhotoMode()">📸 PHOTO MODE</div>
+                        </div>
+                    </div>
+                    <div style="height:80px;"></div>
 
-                    <!-- ===== RANKS TAB ===== -->
-                    <div id="nv-tab-ranks" class="nv-tab-content">
+                    <!-- ANIMATED INFO PANEL -->
+                    <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px;">
 
-                        <div class="nv-section-header">LEADERBOARDS</div>
-                        <div class="nv-ranks-list">
-                            <div class="nv-rank-row" style="--gc:${mc('#ff0055')};" onclick="openLeaderboard()">
-                                <span class="rr-icon">∞</span>
-                                <div class="rr-text"><div class="rr-title" style="color:#ff0055;">INFINITE MODE</div><div class="rr-sub">Top endless pilots</div></div>
-                                <span class="rr-arrow" style="color:#ff0055;">›</span>
-                            </div>
-                            <div class="nv-rank-row" style="--gc:${mc('#ff4400')};" onclick="openLeaderboard()">
-                                <span class="rr-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff4400" stroke-width="2" stroke-linecap="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5M13 7l4-4 4 4-4 4"/></svg></span>
-                                <div class="rr-text"><div class="rr-title" style="color:#ff4400;">BOSS RUSH</div><div class="rr-sub">Fastest clears</div></div>
-                                <span class="rr-arrow" style="color:#ff4400;">›</span>
-                            </div>
-                            <div class="nv-rank-row" style="--gc:${mc('#44ff88')};" onclick="openLeaderboard()">
-                                <span class="rr-icon">⚔</span>
-                                <div class="rr-text"><div class="rr-title" style="color:#44ff88;">SURVIVAL</div><div class="rr-sub">Longest survivors</div></div>
-                                <span class="rr-arrow" style="color:#44ff88;">›</span>
+                        <!-- Animated ship showcase -->
+                        <div style="position:relative;border:1.5px solid rgba(0,255,204,0.2);border-radius:10px;background:linear-gradient(180deg,rgba(0,255,204,0.03) 0%,rgba(0,0,0,0.6) 100%);padding:8px 12px;overflow:hidden;">
+                            <canvas id="menu-ship-anim" style="width:100%;height:60px;display:block;border-radius:6px;"></canvas>
+                            <div style="position:absolute;bottom:6px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:flex-end;pointer-events:none;">
+                                <div>
+                                    <div style="font-size:7px;color:#00ffcc88;letter-spacing:2px;">PILOT</div>
+                                    <div style="font-size:11px;color:#00ffcc;font-weight:bold;text-shadow:0 0 10px #00ffcc;">${currentUsername}</div>
+                                </div>
+                                <div style="text-align:right;">
+                                    <div style="font-size:7px;color:#ff005588;letter-spacing:2px;">THREAT</div>
+                                    <div style="font-size:11px;color:#ff0055;font-weight:bold;text-shadow:0 0 10px #ff0055;">${unlocked >= 15 ? 'VOID WALKER' : unlocked >= 10 ? 'ELITE' : unlocked >= 5 ? 'VETERAN' : 'ROOKIE'}</div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="nv-section-header" style="margin-top:12px;">PROFILE</div>
-                        <div class="nv-ranks-list">
-                            <div class="nv-rank-row" style="--gc:${mc('#ffffff')};" onclick="openAchievements()">
-                                <span class="rr-icon">🏆</span>
-                                <div class="rr-text"><div class="rr-title" style="color:#ffffff;">ACHIEVEMENTS</div><div class="rr-sub">Track your milestones</div></div>
-                                <span class="rr-arrow">›</span>
-                            </div>
-                            <div class="nv-rank-row" style="--gc:${mc('#00ffcc')};" onclick="openClan()">
-                                <span class="rr-icon">🛸</span>
-                                <div class="rr-text"><div class="rr-title" style="color:#00ffcc;">CLAN</div><div class="rr-sub">Join a squadron</div></div>
-                                <span class="rr-arrow" style="color:#00ffcc;">›</span>
-                            </div>
-                            <div class="nv-rank-row" style="--gc:${mc('#ffd700')};" onclick="openVIPPanel()">
-                                <span class="rr-icon">💎</span>
-                                <div class="rr-text"><div class="rr-title" style="color:#ffd700;">VIP STATUS</div><div class="rr-sub">${unlocked >= 10 ? 'Elite rank active' : 'Unlock at Sector 10'}</div></div>
-                                <span class="rr-arrow" style="color:#ffd700;">›</span>
-                            </div>
-                            <div class="nv-rank-row" style="--gc:${mc('#ff88ff')};" onclick="openPrestige()">
-                                <span class="rr-icon">🌟</span>
-                                <div class="rr-text"><div class="rr-title" style="color:#ff88ff;">PRESTIGE</div><div class="rr-sub">Reset for glory</div></div>
-                                <span class="rr-arrow" style="color:#ff88ff;">›</span>
+                        <!-- Tip carousel with typing effect -->
+                        <div id="menu-tip-box" style="border:1px solid rgba(255,136,0,0.2);border-radius:10px;background:rgba(255,136,0,0.04);padding:12px 16px;display:flex;align-items:center;gap:10px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff8800" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                            <div style="flex:1;">
+                                <div style="font-size:9px;color:#ff880088;letter-spacing:2px;margin-bottom:2px;">INTEL BRIEF</div>
+                                <div id="menu-tip-text" style="font-size:12px;color:#ff8800cc;min-height:16px;font-family:monospace;"></div>
                             </div>
                         </div>
-                        <div style="height:16px;"></div>
+
+                        <!-- Quick stats row -->
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+                            <div style="border:1px solid rgba(255,204,0,0.15);border-radius:10px;background:rgba(255,204,0,0.04);padding:10px;text-align:center;">
+                                <div style="font-size:9px;color:#ffcc0088;letter-spacing:1px;">SECTORS</div>
+                                <div style="font-size:20px;color:#ffcc00;font-weight:bold;text-shadow:0 0 10px #ffcc0044;">${unlocked}/15</div>
+                            </div>
+                            <div style="border:1px solid rgba(0,255,204,0.15);border-radius:10px;background:rgba(0,255,204,0.04);padding:10px;text-align:center;">
+                                <div style="font-size:9px;color:#00ffcc88;letter-spacing:1px;">CREDITS</div>
+                                <div style="font-size:20px;color:#00ffcc;font-weight:bold;text-shadow:0 0 10px #00ffcc44;">${totalCoins >= 1000000 ? (totalCoins/1000000).toFixed(1)+'M' : totalCoins >= 1000 ? (totalCoins/1000).toFixed(0)+'K' : totalCoins}</div>
+                            </div>
+                            <div style="border:1px solid rgba(170,0,255,0.15);border-radius:10px;background:rgba(170,0,255,0.04);padding:10px;text-align:center;">
+                                <div style="font-size:9px;color:#aa00ff88;letter-spacing:1px;">UPGRADES</div>
+                                <div style="font-size:20px;color:#aa00ff;font-weight:bold;text-shadow:0 0 10px #aa00ff44;">${purchasedUpgrades.length}</div>
+                            </div>
+                        </div>
 
                     </div>
 
                 </div>
 
-                <!-- BOTTOM NAVIGATION BAR — chunky Clash Royale style -->
+                <!-- BOTTOM NAVIGATION BAR -->
                 <div class="nv-bottomnav">
-                    <div class="nv-nav-tab active" style="--tab-color:255,0,85;" onclick="switchMenuTab('battle')" data-tab="battle">
-                        <span class="nav-icon">⚔️</span>
-                        <span class="nav-label">Battle</span>
+                    <div class="nv-nav-tab active" onclick="openMissionSelect()">
+                        <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff0055" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L4 14h6l-2 8 10-12h-6l2-8z"/></svg></span>
+                        <span class="nav-label">BATTLE</span>
                     </div>
-                    <div class="nv-nav-tab" style="--tab-color:0,204,255;" onclick="switchMenuTab('hangar')" data-tab="hangar">
-                        <span class="nav-icon">🔧</span>
-                        <span class="nav-label">Hangar</span>
+                    <div class="nv-nav-tab" onclick="openShop()">
+                        <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
+                        <span class="nav-label">HANGAR</span>
                     </div>
-                    <div class="nv-nav-tab" style="--tab-color:68,255,136;" onclick="switchMenuTab('coop')" data-tab="coop">
-                        <span class="nav-icon">👥</span>
-                        <span class="nav-label">Co-op</span>
+                    <div class="nv-nav-tab" onclick="openMultiplayer()">
+                        <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00ccff" stroke-width="2" stroke-linecap="round"><path d="M16 3.13a4 4 0 0 1 0 7.75M21 21v-2a4 4 0 0 0-3-3.87M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg></span>
+                        <span class="nav-label">CO-OP</span>
                     </div>
-                    <div class="nv-nav-tab" style="--tab-color:255,215,0;" onclick="switchMenuTab('ranks')" data-tab="ranks">
-                        <span class="nav-icon">🏆</span>
-                        <span class="nav-label">Ranks</span>
+                    <div class="nv-nav-tab" onclick="openLeaderboard()">
+                        <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff88ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V22M14 14.66V22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></span>
+                        <span class="nav-label">RANKS</span>
                     </div>
                 </div>
             </div>`;
 
-            // ---- Centerpiece animated ship canvas ----
+            // Draw ship on the mini canvas
             try {
-                let cpCanvas = document.getElementById('nv-centerpiece-canvas');
-                if (cpCanvas) {
-                    // Cancel previous animation if any
-                    if (window._cpShipCleanup) { window._cpShipCleanup(); window._cpShipCleanup = null; }
-
-                    let dpr = window.devicePixelRatio || 1;
-                    let cssW = cpCanvas.offsetWidth || cpCanvas.parentElement.offsetWidth || 300;
-                    let cssH = cpCanvas.offsetHeight || cpCanvas.parentElement.offsetHeight || 180;
-                    cpCanvas.width = cssW * dpr;
-                    cpCanvas.height = cssH * dpr;
-                    let sac = cpCanvas.getContext('2d');
-                    sac.scale(dpr, dpr);
-                    let saW = cssW, saH = cssH;
-
-                    // Get current skin color
-                    let skinColor = '#ff0055';
-                    try { skinColor = (SKINS[equippedSkin] || SKINS['default']).color; } catch(e2) {}
-
-                    // Star field
-                    let saStars = [];
-                    let starCount = Math.round(saW * 0.1);
-                    for (let i = 0; i < starCount; i++) saStars.push({ x: Math.random()*saW, y: Math.random()*saH, s: 0.4+Math.random()*1.2, sp: 0.15+Math.random()*0.6, b: Math.random() });
-                    // Debris
-                    let saDebris = [];
-                    for (let i = 0; i < 5; i++) saDebris.push({ x: Math.random()*saW, y: Math.random()*saH, s: 1+Math.random()*2, sp: 0.1+Math.random()*0.3, r: Math.random()*Math.PI*2, rv: (Math.random()-0.5)*0.015, c: [skinColor+'22','#00ffcc22','#ffcc0022','#aa00ff22'][i%4] });
-
-                    // Ship scale to use ~40% of canvas height
-                    let shipScale = (saH * 0.38) / 32;
-                    let shipX = saW * 0.5, shipY = saH * 0.44;
-                    let shipBob = 0, shipFrame = 0;
-                    let saTrail = [];
-                    // Nebula particles that drift upward
-                    let nebula = [];
-                    for (let i = 0; i < 18; i++) nebula.push({ x: Math.random()*saW, y: saH + Math.random()*saH, vx:(Math.random()-0.5)*0.3, vy:-(0.2+Math.random()*0.5), life:Math.random(), maxLife:1, size:1+Math.random()*3, c:[skinColor+'33','#00ffcc22','#ff880022'][Math.floor(Math.random()*3)] });
-
-                    let cpRAF = null;
-                    function drawCenterpiece() {
-                        shipFrame++;
-                        shipBob = Math.sin(shipFrame * 0.025) * 4 * shipScale;
-                        let curX = shipX + Math.sin(shipFrame * 0.012) * 12 * shipScale;
-                        let curY = shipY + shipBob;
-
-                        sac.clearRect(0, 0, saW, saH);
-
-                        // BG gradient
-                        let bgG = sac.createLinearGradient(0, 0, 0, saH);
-                        bgG.addColorStop(0, '#070010');
-                        bgG.addColorStop(0.5, '#0b0018');
-                        bgG.addColorStop(1, '#06000c');
-                        sac.fillStyle = bgG;
-                        sac.fillRect(0, 0, saW, saH);
-
-                        // Nebula particles
-                        for (let n of nebula) {
-                            n.x += n.vx; n.y += n.vy; n.life -= 0.003;
-                            if (n.y < -10 || n.life <= 0) { n.x = Math.random()*saW; n.y = saH + 5; n.life = 0.2 + Math.random()*0.8; }
-                            sac.globalAlpha = Math.min(n.life, 0.4);
-                            sac.fillStyle = n.c;
-                            sac.beginPath(); sac.arc(n.x, n.y, n.size, 0, Math.PI*2); sac.fill();
-                        }
-                        sac.globalAlpha = 1;
-
-                        // Stars
-                        for (let st of saStars) {
-                            st.x -= st.sp;
-                            if (st.x < 0) { st.x = saW; st.y = Math.random()*saH; }
-                            st.b += (Math.random()-0.5)*0.08;
-                            st.b = Math.max(0.3, Math.min(1, st.b));
-                            sac.globalAlpha = st.b * 0.75;
-                            sac.fillStyle = '#ffffff';
-                            sac.beginPath(); sac.arc(st.x, st.y, st.s, 0, Math.PI*2); sac.fill();
-                        }
-                        sac.globalAlpha = 1;
-
-                        // Debris
-                        for (let d of saDebris) {
-                            d.x -= d.sp; d.r += d.rv;
-                            if (d.x < -10) { d.x = saW + 10; d.y = Math.random()*saH; }
-                            sac.save(); sac.translate(d.x, d.y); sac.rotate(d.r);
-                            sac.fillStyle = d.c; sac.fillRect(-d.s/2, -d.s/2, d.s, d.s); sac.restore();
-                        }
-
-                        // Arena glow behind ship
-                        let arenaGlow = sac.createRadialGradient(curX, curY, 4*shipScale, curX, curY, 40*shipScale);
-                        arenaGlow.addColorStop(0, skinColor + '22');
-                        arenaGlow.addColorStop(0.4, skinColor + '11');
-                        arenaGlow.addColorStop(1, 'transparent');
-                        sac.fillStyle = arenaGlow;
-                        sac.beginPath(); sac.arc(curX, curY, 40*shipScale, 0, Math.PI*2); sac.fill();
-
-                        // Engine trail particles
-                        saTrail.push({ x: curX + (Math.random()-0.5)*4*shipScale, y: curY + 10*shipScale + Math.random()*2*shipScale, vx: -0.5-Math.random()*1.5, vy: (Math.random()-0.5)*0.4, life: 1, size: (1.5+Math.random()*2.5)*shipScale });
-                        if (shipFrame % 2 === 0) saTrail.push({ x: curX + (Math.random()-0.5)*2*shipScale, y: curY + 10*shipScale, vx: -1.5-Math.random()*2, vy: (Math.random()-0.5)*0.3, life: 1, size: (1+Math.random()*1.8)*shipScale });
-                        for (let i = saTrail.length-1; i >= 0; i--) {
-                            let t = saTrail[i];
-                            t.x += t.vx; t.y += t.vy; t.life -= 0.028; t.size *= 0.975;
-                            if (t.life <= 0) { saTrail.splice(i, 1); continue; }
-                            sac.globalAlpha = t.life * 0.65;
-                            sac.fillStyle = t.life > 0.5 ? '#00ffcc' : '#00ffcc55';
-                            sac.beginPath(); sac.arc(t.x, t.y, t.size, 0, Math.PI*2); sac.fill();
-                        }
-                        if (saTrail.length > 140) saTrail.splice(0, saTrail.length - 140);
-                        sac.globalAlpha = 1;
-
-                        // Engine glow
-                        let eGlow = sac.createRadialGradient(curX, curY+10*shipScale, 1, curX, curY+10*shipScale, 20*shipScale);
-                        eGlow.addColorStop(0, '#00ffccaa'); eGlow.addColorStop(0.4, '#00ffcc33'); eGlow.addColorStop(1, 'transparent');
-                        sac.fillStyle = eGlow;
-                        sac.fillRect(curX-25*shipScale, curY, 50*shipScale, 30*shipScale);
-
-                        // Ship body
-                        sac.save();
-                        sac.translate(curX, curY);
-                        sac.scale(shipScale, shipScale);
-                        sac.rotate(Math.sin(shipFrame * 0.018) * 0.04);
-                        // Wing shadow
-                        sac.beginPath(); sac.moveTo(0,-14); sac.lineTo(11,6); sac.lineTo(20,14); sac.lineTo(7,10); sac.lineTo(0,16); sac.lineTo(-7,10); sac.lineTo(-20,14); sac.lineTo(-11,6); sac.closePath();
-                        sac.fillStyle = 'rgba(0,0,0,0.4)'; sac.fill();
-                        // Main hull
-                        sac.beginPath(); sac.moveTo(0,-16); sac.lineTo(10,5); sac.lineTo(18,12); sac.lineTo(6,8); sac.lineTo(0,14); sac.lineTo(-6,8); sac.lineTo(-18,12); sac.lineTo(-10,5); sac.closePath();
-                        let sGrad = sac.createLinearGradient(0,-16,0,14);
-                        sGrad.addColorStop(0, skinColor); sGrad.addColorStop(0.4, skinColor); sGrad.addColorStop(1, skinColor+'88');
-                        sac.fillStyle = sGrad; sac.fill();
-                        sac.strokeStyle = skinColor + '88'; sac.lineWidth = 0.8; sac.stroke();
-                        // Panel lines
-                        sac.strokeStyle = 'rgba(255,255,255,0.13)'; sac.lineWidth = 0.5;
-                        sac.beginPath(); sac.moveTo(0,-14); sac.lineTo(0,12); sac.stroke();
-                        sac.beginPath(); sac.moveTo(-3,-4); sac.lineTo(3,-4); sac.stroke();
-                        sac.beginPath(); sac.moveTo(-5,3); sac.lineTo(5,3); sac.stroke();
-                        // Wing stripes
-                        sac.strokeStyle = skinColor+'44'; sac.lineWidth = 0.8;
-                        sac.beginPath(); sac.moveTo(6,4); sac.lineTo(14,10); sac.stroke();
-                        sac.beginPath(); sac.moveTo(-6,4); sac.lineTo(-14,10); sac.stroke();
-                        // Wing tip lights
-                        let wingPulse = 0.5 + Math.sin(shipFrame * 0.08) * 0.5;
-                        sac.fillStyle = 'rgba(0,255,204,' + wingPulse + ')';
-                        sac.beginPath(); sac.arc(16,11,1.5,0,Math.PI*2); sac.fill();
-                        sac.beginPath(); sac.arc(-16,11,1.5,0,Math.PI*2); sac.fill();
-                        // Engine pods
-                        sac.fillStyle = '#0a0a1e';
-                        sac.beginPath(); sac.ellipse(7,12,2.5,4,0,0,Math.PI*2); sac.fill();
-                        sac.beginPath(); sac.ellipse(-7,12,2.5,4,0,0,Math.PI*2); sac.fill();
-                        let epulse = 0.5 + Math.sin(shipFrame * 0.1) * 0.5;
-                        sac.fillStyle = 'rgba(0,255,204,' + (0.4 + epulse*0.6) + ')';
-                        sac.beginPath(); sac.ellipse(7,14.5,1.8,1.3,0,0,Math.PI*2); sac.fill();
-                        sac.beginPath(); sac.ellipse(-7,14.5,1.8,1.3,0,0,Math.PI*2); sac.fill();
-                        // Cockpit
-                        sac.beginPath(); sac.moveTo(0,-18); sac.lineTo(5,0); sac.lineTo(0,6); sac.lineTo(-5,0); sac.closePath();
-                        let cpg = sac.createLinearGradient(0,-18,0,6); cpg.addColorStop(0,'#00ffcc55'); cpg.addColorStop(0.5,'#00ffcc99'); cpg.addColorStop(1,'#00ffcc33');
-                        sac.fillStyle = cpg; sac.fill();
-                        sac.beginPath(); sac.moveTo(0,-14); sac.lineTo(2.5,-2); sac.lineTo(0,2); sac.lineTo(-2.5,-2); sac.closePath();
-                        sac.fillStyle = '#00ffcccc'; sac.fill();
-                        sac.fillStyle = '#ffffff33'; sac.beginPath(); sac.arc(0,-15,1.3,0,Math.PI*2); sac.fill();
-                        sac.restore();
-
-                        cpRAF = requestAnimationFrame(drawCenterpiece);
-                    }
-                    drawCenterpiece();
-                    window._cpShipCleanup = function() { if (cpRAF) cancelAnimationFrame(cpRAF); cpRAF = null; };
+                let shipCanvas = document.getElementById('nv-menu-ship');
+                if (shipCanvas) {
+                    let sctx = shipCanvas.getContext('2d');
+                    sctx.clearRect(0,0,60,60);
+                    sctx.save();
+                    sctx.translate(30,30);
+                    sctx.scale(0.75,0.75);
+                    // Engine glow
+                    let eg = sctx.createRadialGradient(0,18,2,0,18,20);
+                    eg.addColorStop(0,'#00ffcc');
+                    eg.addColorStop(0.5,'#00ffcc44');
+                    eg.addColorStop(1,'transparent');
+                    sctx.fillStyle = eg;
+                    sctx.fillRect(-20,8,40,30);
+                    // Shadow
+                    sctx.beginPath();
+                    sctx.moveTo(0,-26);sctx.lineTo(15,12);sctx.lineTo(24,20);sctx.lineTo(9,14);sctx.lineTo(0,22);sctx.lineTo(-9,14);sctx.lineTo(-24,20);sctx.lineTo(-15,12);sctx.closePath();
+                    sctx.fillStyle='rgba(0,0,0,0.3)';sctx.fill();
+                    // Hull
+                    sctx.beginPath();
+                    sctx.moveTo(0,-28);sctx.lineTo(14,10);sctx.lineTo(22,18);sctx.lineTo(8,12);sctx.lineTo(0,20);sctx.lineTo(-8,12);sctx.lineTo(-22,18);sctx.lineTo(-14,10);sctx.closePath();
+                    let sg = sctx.createLinearGradient(0,-28,0,20);
+                    sg.addColorStop(0,'#ff0055');sg.addColorStop(0.5,'#cc0044');sg.addColorStop(1,'#880033');
+                    sctx.fillStyle = sg;sctx.fill();
+                    sctx.strokeStyle = '#ff005566';sctx.lineWidth = 0.8;sctx.stroke();
+                    // Panel lines
+                    sctx.strokeStyle='rgba(255,255,255,0.1)';sctx.lineWidth=0.5;
+                    sctx.beginPath();sctx.moveTo(0,-24);sctx.lineTo(0,18);sctx.stroke();
+                    sctx.beginPath();sctx.moveTo(-4,-2);sctx.lineTo(4,-2);sctx.stroke();
+                    // Wing tips
+                    sctx.fillStyle='#00ffcc88';
+                    sctx.beginPath();sctx.arc(20,16,1.5,0,Math.PI*2);sctx.fill();
+                    sctx.beginPath();sctx.arc(-20,16,1.5,0,Math.PI*2);sctx.fill();
+                    // Engine pods
+                    sctx.fillStyle='#0a0a1e';
+                    sctx.beginPath();sctx.ellipse(8,14,3,5,0,0,Math.PI*2);sctx.fill();
+                    sctx.beginPath();sctx.ellipse(-8,14,3,5,0,0,Math.PI*2);sctx.fill();
+                    sctx.fillStyle='#00ffcc55';
+                    sctx.beginPath();sctx.ellipse(8,17,2,1.5,0,0,Math.PI*2);sctx.fill();
+                    sctx.beginPath();sctx.ellipse(-8,17,2,1.5,0,0,Math.PI*2);sctx.fill();
+                    // Cockpit
+                    sctx.beginPath();sctx.moveTo(0,-18);sctx.lineTo(5,0);sctx.lineTo(0,6);sctx.lineTo(-5,0);sctx.closePath();
+                    let cpg=sctx.createLinearGradient(0,-18,0,6);cpg.addColorStop(0,'#00ffcc55');cpg.addColorStop(0.5,'#00ffcc99');cpg.addColorStop(1,'#00ffcc33');
+                    sctx.fillStyle=cpg;sctx.fill();
+                    sctx.beginPath();sctx.moveTo(0,-14);sctx.lineTo(2.5,-2);sctx.lineTo(0,2);sctx.lineTo(-2.5,-2);sctx.closePath();
+                    sctx.fillStyle='#00ffcccc';sctx.fill();
+                    // Nose highlight
+                    sctx.fillStyle='#ffffff33';sctx.beginPath();sctx.arc(0,-27,1.2,0,Math.PI*2);sctx.fill();
+                    sctx.restore();
                 }
-            } catch(e) { console.log('Centerpiece anim error:', e); }
+            } catch(e) {}
 
-            // ---- Old animated ship showcase (disabled) ----
-            try { if (false) {
-                let shipAnimCanvas = null;
+            // ---- Animated ship showcase on #menu-ship-anim ----
+            try {
+                let shipAnimCanvas = document.getElementById('menu-ship-anim');
                 if (shipAnimCanvas) {
                     let sac = shipAnimCanvas.getContext('2d');
 
@@ -11432,11 +10564,11 @@ function generateSyncCode() {
                         menuShipRAF = null;
                     };
                 }
-            }} catch(e) { console.log('Ship anim error:', e); }
+            } catch(e) { console.log('Ship anim error:', e); }
 
-            // ---- Tip carousel removed (tab-based layout) ----
-            try { if (false) {
-                let tipEl = null;
+            // ---- Tip carousel with typing effect ----
+            try {
+                let tipEl = document.getElementById('menu-tip-text');
                 if (tipEl) {
                     const TIPS = [
                         'Dash through enemy bullets for a close-call XP bonus',
@@ -11487,7 +10619,7 @@ function generateSyncCode() {
                         tipInterval = null;
                     };
                 }
-            }} catch(e) { console.log('Tip anim error:', e); }
+            } catch(e) { console.log('Tip anim error:', e); }
 
             document.getElementById('mobile-controls').style.display = 'none';
         };
