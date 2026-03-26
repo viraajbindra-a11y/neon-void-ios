@@ -10851,6 +10851,8 @@ function generateSyncCode() {
             if (isMobileMenu) {
                 _nvBuildMobileMenu(unlocked, sectorPct);
                 document.getElementById('mobile-controls').style.display = 'none';
+                // Hide old nav bars from _nvBuildMobileMenu and add padding for fixed nav
+                if (!document.getElementById('nv-hide-old-nav')) { let hs = document.createElement('style'); hs.id='nv-hide-old-nav'; hs.textContent='.nv-bottomnav{display:none!important} .nv-nav-tab:not(#nv-fixed-bottomnav .nv-nav-tab){} #nv-debug{display:none!important} #menu-btns{padding-bottom:70px!important}'; document.head.appendChild(hs); }
                 // FORCE fixed bottom nav on mobile
                 let oldNav = document.getElementById('nv-fixed-bottomnav');
                 if (oldNav) oldNav.remove();
