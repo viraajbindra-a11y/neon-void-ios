@@ -10851,6 +10851,14 @@ function generateSyncCode() {
             if (isMobileMenu) {
                 _nvBuildMobileMenu(unlocked, sectorPct);
                 document.getElementById('mobile-controls').style.display = 'none';
+                // FORCE fixed bottom nav on mobile
+                let oldNav = document.getElementById('nv-fixed-bottomnav');
+                if (oldNav) oldNav.remove();
+                let fixedNav = document.createElement('div');
+                fixedNav.id = 'nv-fixed-bottomnav';
+                fixedNav.style.cssText = 'position:fixed;bottom:0;left:0;right:0;display:flex;align-items:stretch;background:#000;border-top:2px solid #ff005533;z-index:99999;padding-bottom:env(safe-area-inset-bottom,0px);min-height:56px;';
+                fixedNav.innerHTML = '<div onclick="openMissionSelect()" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 2px 10px;border-top:2px solid #ff0055;background:rgba(255,0,85,0.08);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff0055" stroke-width="2"><path d="M12 2L4 14h6l-2 8 10-12h-6l2-8z"/></svg><span style="font-size:9px;color:#ff0055;font-family:monospace;font-weight:bold;letter-spacing:1px;margin-top:2px;">BATTLE</span></div><div onclick="openShop()" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 2px 10px;border-top:2px solid transparent;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><span style="font-size:9px;color:#888;font-family:monospace;font-weight:bold;letter-spacing:1px;margin-top:2px;">HANGAR</span></div><div onclick="openMultiplayer()" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 2px 10px;border-top:2px solid transparent;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00ccff" stroke-width="2"><path d="M16 3.13a4 4 0 0 1 0 7.75M21 21v-2a4 4 0 0 0-3-3.87M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg><span style="font-size:9px;color:#888;font-family:monospace;font-weight:bold;letter-spacing:1px;margin-top:2px;">CO-OP</span></div><div onclick="openLeaderboard()" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 2px 10px;border-top:2px solid transparent;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff88ff" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V22M14 14.66V22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg><span style="font-size:9px;color:#888;font-family:monospace;font-weight:bold;letter-spacing:1px;margin-top:2px;">RANKS</span></div><div onclick="openSettings()" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 2px 10px;border-top:2px solid transparent;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg><span style="font-size:9px;color:#888;font-family:monospace;font-weight:bold;letter-spacing:1px;margin-top:2px;">MORE</span></div>';
+                document.body.appendChild(fixedNav);
                 return;
             }
             // ============================================================
@@ -11137,6 +11145,15 @@ function generateSyncCode() {
                         <span style="font-size:10px;letter-spacing:1px;color:#888;text-transform:uppercase;font-weight:bold;font-family:monospace;">RANKS</span>
                     </div>
             `; document.body.appendChild(navEl);
+            // DEBUG: show nav position
+            setTimeout(function(){
+                let d=document.getElementById('nv-debug');
+                if(!d){d=document.createElement('div');d.id='nv-debug';d.style.cssText='position:fixed;top:50px;right:5px;background:red;color:white;font-size:9px;padding:3px 5px;z-index:999999;font-family:monospace;border-radius:4px;pointer-events:none;';document.body.appendChild(d);}
+                let nav=document.getElementById('nv-fixed-bottomnav');
+                let mo=document.getElementById('main-overlay');
+                let mb=document.getElementById('menu-btns');
+                d.textContent='iH:'+window.innerHeight+' nav:'+(nav?nav.getBoundingClientRect().bottom:'X')+' mo:'+(mo?mo.offsetHeight:'X')+' mb:'+(mb?mb.offsetHeight:'X')+' navP:'+(nav?getComputedStyle(nav).position:'X');
+            },500);
 
             // Draw ship on the mini canvas
             try {

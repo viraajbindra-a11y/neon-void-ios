@@ -153,5 +153,29 @@ class WebViewCoordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         UIApplication.shared.isIdleTimerDisabled = true
+        // Debug: show viewport info on screen
+        webView.evaluateJavaScript("""
+            (function() {
+                var d = document.createElement('div');
+                d.id = 'nv-debug';
+                d.style.cssText = 'position:fixed;top:50px;right:5px;background:red;color:white;font-size:10px;padding:4px 6px;z-index:999999;font-family:monospace;border-radius:4px;pointer-events:none;';
+                d.textContent = 'H:' + window.innerHeight + ' B:' + document.body.offsetHeight + ' S:' + screen.height;
+                document.body.appendChild(d);
+                // Also force the nav to bottom with exact pixels
+                setTimeout(function() {
+                    var nav = document.getElementById('nv-fixed-bottomnav');
+                    if (nav) {
+                        nav.style.position = 'fixed';
+                        nav.style.bottom = '0px';
+                        nav.style.left = '0px';
+                        nav.style.right = '0px';
+                        nav.style.zIndex = '999999';
+                        d.textContent += ' NAV:YES';
+                    } else {
+                        d.textContent += ' NAV:NONE';
+                    }
+                }, 2000);
+            })();
+        """, completionHandler: nil)
     }
 }
