@@ -10878,13 +10878,13 @@ function generateSyncCode() {
                 let s = document.createElement('style');
                 s.id = 'nv-mobile-override';
                 s.textContent = `
-                    html,body { margin:0!important;padding:0!important;height:100%!important;overflow:hidden!important;background:#000!important; }
-                    #main-overlay { position:fixed!important;top:0!important;left:0!important;width:100vw!important;height:var(--nvh,100vh)!important;height:100%!important;overflow:hidden!important;padding:0!important;margin:0!important;display:flex!important;flex-direction:column!important;background:#000!important;z-index:20!important; }
+                    html,body { margin:0!important;padding:0!important;width:100%!important;height:100%!important;overflow:hidden!important;background:#000!important; }
+                    #main-overlay { position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:0!important;overflow:hidden!important;padding:0!important;margin:0!important;display:block!important;background:#000!important;z-index:20!important; }
                     #main-overlay > *:not(#menu-btns) { display:none!important; }
-                    #menu-btns { flex:1!important;display:flex!important;flex-direction:column!important;width:100%!important;max-width:100%!important;margin:0!important;padding:0!important;gap:0!important;overflow:hidden!important; }
-                    .nv-menu-root { flex:1!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;width:100%!important;min-height:0!important; }
-                    .nv-center { flex:1!important;min-height:0!important;overflow-y:auto!important; }
-                    .nv-bottomnav { flex-shrink:0!important;margin-top:auto!important;background:#000!important;padding-bottom:var(--sab,env(safe-area-inset-bottom,0))!important; }
+                    #menu-btns { position:absolute!important;top:0!important;left:0!important;right:0!important;bottom:0!important;margin:0!important;padding:0!important;padding-bottom:80px!important;gap:0!important;display:block!important;overflow-y:auto!important;overflow-x:hidden!important;max-width:100%!important; }
+                    .nv-menu-root { display:block!important;width:100%!important; }
+                    .nv-center { display:block!important; }
+                    .nv-bottomnav { position:fixed!important;bottom:0!important;left:0!important;right:0!important;display:flex!important;background:#000!important;border-top:2px solid #ff005533!important;padding-bottom:var(--sab,env(safe-area-inset-bottom,0))!important;z-index:9999!important; }
                 `;
                 document.head.appendChild(s);
             }
