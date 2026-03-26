@@ -74,8 +74,13 @@ struct GameWebView: UIViewRepresentable {
                 left: \(Int(safeAreaInsets.leading))
             };
             var style = document.createElement('style');
-            style.textContent = ':root { --sat: \(Int(safeAreaInsets.top))px; --sar: \(Int(safeAreaInsets.trailing))px; --sab: \(Int(safeAreaInsets.bottom))px; --sal: \(Int(safeAreaInsets.leading))px; }';
+            style.textContent = ':root { --sat: \(Int(safeAreaInsets.top))px; --sar: \(Int(safeAreaInsets.trailing))px; --sab: \(Int(safeAreaInsets.bottom))px; --sal: \(Int(safeAreaInsets.leading))px; } html,body { height:100%!important;overflow:hidden!important;margin:0!important;padding:0!important;background:#000!important; } #main-overlay { height:100%!important; }';
             document.head.appendChild(style);
+            // Force viewport to actual window size
+            window.addEventListener('resize', function() {
+                document.documentElement.style.setProperty('--nvh', window.innerHeight + 'px');
+            });
+            document.documentElement.style.setProperty('--nvh', window.innerHeight + 'px');
         })();
         """
     }
