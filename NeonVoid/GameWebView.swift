@@ -76,11 +76,22 @@ struct GameWebView: UIViewRepresentable {
             var style = document.createElement('style');
             style.textContent = ':root { --sat: \(Int(safeAreaInsets.top))px; --sar: \(Int(safeAreaInsets.trailing))px; --sab: \(Int(safeAreaInsets.bottom))px; --sal: \(Int(safeAreaInsets.leading))px; } html,body { height:100%!important;overflow:hidden!important;margin:0!important;padding:0!important;background:#000!important; } #main-overlay { height:100%!important; }';
             document.head.appendChild(style);
-            // Force viewport to actual window size
+            // Force ALL elements to use real viewport height
+            var realH = window.innerHeight;
+            document.documentElement.style.height = realH + 'px';
+            document.body.style.height = realH + 'px';
+            document.documentElement.style.setProperty('--nvh', realH + 'px');
             window.addEventListener('resize', function() {
-                document.documentElement.style.setProperty('--nvh', window.innerHeight + 'px');
+                var h = window.innerHeight;
+                document.documentElement.style.height = h + 'px';
+                document.body.style.height = h + 'px';
+                document.documentElement.style.setProperty('--nvh', h + 'px');
             });
-            document.documentElement.style.setProperty('--nvh', window.innerHeight + 'px');
+            // Also force #main-overlay height after DOM ready
+            setTimeout(function() {
+                var mo = document.getElementById('main-overlay');
+                if (mo) mo.style.height = window.innerHeight + 'px';
+            }, 500);
         })();
         """
     }
