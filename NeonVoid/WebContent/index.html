@@ -8400,93 +8400,240 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                 bpm: 140, bassType: 'sawtooth', arpType: 'square',
                 bassNotes: [55, 55, 73.4, 65.4, 55, 55, 82.4, 73.4],
                 arpNotes: [220, 330, 440, 330, 261, 392, 523, 392],
-                bassVol: 0.06, arpVol: 0.03
+                padNotes: [110, 110, 146.8, 130.8],
+                bassVol: 0.06, arpVol: 0.03, drumVol: 0.7,
+                drumPattern: [1,0,2,0, 1,0,2,1, 1,0,2,0, 1,2,2,0],
+                filterFreq: 2000, filterQ: 4
             },
             infinite: {
                 bpm: 155, bassType: 'sawtooth', arpType: 'triangle',
                 bassNotes: [41.2, 55, 55, 41.2, 49, 55, 65.4, 55],
                 arpNotes: [330, 440, 523, 660, 523, 440, 330, 261],
-                bassVol: 0.07, arpVol: 0.04
+                padNotes: [82.4, 110, 98, 110],
+                bassVol: 0.07, arpVol: 0.04, drumVol: 0.75,
+                drumPattern: [1,0,2,0, 1,0,2,2, 1,0,2,0, 1,0,3,0],
+                filterFreq: 2500, filterQ: 3
             },
             boss_rush: {
                 bpm: 170, bassType: 'square', arpType: 'sawtooth',
                 bassNotes: [55, 65.4, 55, 73.4, 55, 82.4, 73.4, 65.4],
                 arpNotes: [440, 523, 660, 523, 440, 392, 330, 392],
-                bassVol: 0.09, arpVol: 0.05
+                padNotes: [110, 130.8, 146.8, 130.8],
+                bassVol: 0.09, arpVol: 0.05, drumVol: 0.9,
+                drumPattern: [1,2,3,2, 1,2,3,2, 1,2,3,2, 1,3,3,3],
+                filterFreq: 3000, filterQ: 5
             },
             horde: {
                 bpm: 130, bassType: 'triangle', arpType: 'square',
                 bassNotes: [36.7, 41.2, 49, 55, 49, 41.2, 36.7, 41.2],
                 arpNotes: [196, 261, 330, 392, 440, 392, 330, 261],
-                bassVol: 0.08, arpVol: 0.035
+                padNotes: [73.4, 82.4, 98, 82.4],
+                bassVol: 0.08, arpVol: 0.035, drumVol: 0.8,
+                drumPattern: [1,0,2,0, 1,0,2,0, 1,0,2,0, 1,0,3,0],
+                filterFreq: 1800, filterQ: 3
             },
             speedrun: {
                 bpm: 180, bassType: 'sawtooth', arpType: 'sawtooth',
                 bassNotes: [73.4, 82.4, 73.4, 98, 73.4, 82.4, 110, 98],
                 arpNotes: [523, 660, 784, 660, 523, 440, 523, 660],
-                bassVol: 0.07, arpVol: 0.05
+                padNotes: [146.8, 164.8, 196, 164.8],
+                bassVol: 0.07, arpVol: 0.05, drumVol: 0.85,
+                drumPattern: [1,2,3,2, 1,2,3,2, 1,2,3,0, 1,3,3,2],
+                filterFreq: 3500, filterQ: 4
             },
             mission: {
                 bpm: 145, bassType: 'sawtooth', arpType: 'triangle',
                 bassNotes: [49, 55, 65.4, 55, 49, 41.2, 49, 55],
                 arpNotes: [261, 330, 392, 440, 392, 330, 261, 196],
-                bassVol: 0.06, arpVol: 0.03
+                padNotes: [98, 110, 130.8, 110],
+                bassVol: 0.06, arpVol: 0.03, drumVol: 0.7,
+                drumPattern: [1,0,2,0, 1,0,2,0, 1,0,2,0, 1,2,3,0],
+                filterFreq: 2200, filterQ: 3
             },
             sandbox: {
                 bpm: 120, bassType: 'sine', arpType: 'triangle',
                 bassNotes: [55, 82.4, 65.4, 73.4, 55, 65.4, 82.4, 73.4],
                 arpNotes: [220, 261, 330, 440, 523, 440, 330, 261],
-                bassVol: 0.04, arpVol: 0.025
+                padNotes: [110, 130.8, 164.8, 146.8],
+                bassVol: 0.04, arpVol: 0.025, drumVol: 0.4,
+                drumPattern: [1,0,0,0, 0,0,2,0, 1,0,0,0, 0,0,2,0],
+                filterFreq: 1500, filterQ: 2
             },
             training: {
                 bpm: 135, bassType: 'triangle', arpType: 'square',
                 bassNotes: [65.4, 65.4, 82.4, 73.4, 65.4, 55, 65.4, 73.4],
                 arpNotes: [330, 392, 440, 523, 440, 392, 330, 261],
-                bassVol: 0.05, arpVol: 0.03
+                padNotes: [130.8, 130.8, 164.8, 146.8],
+                bassVol: 0.05, arpVol: 0.03, drumVol: 0.6,
+                drumPattern: [1,0,2,0, 1,0,2,0, 1,0,2,0, 1,0,2,0],
+                filterFreq: 2000, filterQ: 3
             },
             og: {
                 bpm: 128, bassType: 'square', arpType: 'triangle',
                 bassNotes: [55, 55, 55, 55, 73.4, 73.4, 65.4, 65.4],
                 arpNotes: [220, 220, 330, 330, 440, 440, 330, 330],
-                bassVol: 0.05, arpVol: 0.025
+                padNotes: [110, 110, 146.8, 130.8],
+                bassVol: 0.05, arpVol: 0.025, drumVol: 0.6,
+                drumPattern: [1,0,2,0, 0,0,2,0, 1,0,2,0, 0,0,2,0],
+                filterFreq: 1800, filterQ: 3
             },
             mirror: {
                 bpm: 150, bassType: 'sawtooth', arpType: 'square',
                 bassNotes: [73.4, 55, 82.4, 55, 65.4, 55, 98, 82.4],
                 arpNotes: [440, 330, 523, 392, 660, 523, 440, 330],
-                bassVol: 0.07, arpVol: 0.04
+                padNotes: [146.8, 110, 164.8, 110],
+                bassVol: 0.07, arpVol: 0.04, drumVol: 0.75,
+                drumPattern: [1,0,2,0, 1,2,2,0, 1,0,2,0, 1,2,3,0],
+                filterFreq: 2500, filterQ: 4
             },
             chaos: {
                 bpm: 160, bassType: 'sawtooth', arpType: 'sawtooth',
                 bassNotes: [41.2, 55, 73.4, 98, 55, 82.4, 65.4, 49],
                 arpNotes: [523, 392, 660, 440, 784, 523, 330, 440],
-                bassVol: 0.08, arpVol: 0.05
+                padNotes: [82.4, 110, 146.8, 98],
+                bassVol: 0.08, arpVol: 0.05, drumVol: 0.85,
+                drumPattern: [1,2,3,2, 1,3,2,3, 1,2,3,0, 3,2,1,2],
+                filterFreq: 3000, filterQ: 5
             },
             one_hit: {
                 bpm: 165, bassType: 'square', arpType: 'triangle',
                 bassNotes: [55, 73.4, 55, 82.4, 55, 65.4, 55, 98],
                 arpNotes: [660, 523, 784, 660, 523, 440, 523, 660],
-                bassVol: 0.06, arpVol: 0.04
+                padNotes: [110, 146.8, 110, 164.8],
+                bassVol: 0.06, arpVol: 0.04, drumVol: 0.8,
+                drumPattern: [1,0,3,0, 1,0,3,2, 1,0,3,0, 1,2,3,2],
+                filterFreq: 2800, filterQ: 4
             },
             bullet_hell: {
                 bpm: 175, bassType: 'sawtooth', arpType: 'square',
                 bassNotes: [82.4, 82.4, 98, 82.4, 110, 98, 82.4, 73.4],
                 arpNotes: [660, 784, 880, 784, 660, 523, 660, 784],
-                bassVol: 0.08, arpVol: 0.05
+                padNotes: [164.8, 164.8, 196, 164.8],
+                bassVol: 0.08, arpVol: 0.05, drumVol: 0.9,
+                drumPattern: [1,2,3,2, 1,2,3,2, 1,2,3,2, 1,3,3,3],
+                filterFreq: 3500, filterQ: 5
             },
             arcade: {
                 bpm: 150, bassType: 'square', arpType: 'square',
                 bassNotes: [55, 65.4, 55, 73.4, 82.4, 73.4, 65.4, 55],
                 arpNotes: [330, 440, 330, 523, 440, 523, 660, 523],
-                bassVol: 0.06, arpVol: 0.04
+                padNotes: [110, 130.8, 146.8, 130.8],
+                bassVol: 0.06, arpVol: 0.04, drumVol: 0.75,
+                drumPattern: [1,0,2,0, 1,0,2,2, 1,0,2,0, 1,0,3,0],
+                filterFreq: 2500, filterQ: 4
             },
             pacifist: {
                 bpm: 110, bassType: 'sine', arpType: 'triangle',
                 bassNotes: [55, 65.4, 73.4, 82.4, 73.4, 65.4, 55, 49],
                 arpNotes: [261, 330, 392, 440, 523, 440, 330, 261],
-                bassVol: 0.04, arpVol: 0.025
+                padNotes: [110, 130.8, 146.8, 164.8],
+                bassVol: 0.04, arpVol: 0.025, drumVol: 0.35,
+                drumPattern: [1,0,0,0, 0,0,2,0, 0,0,0,0, 0,0,2,0],
+                filterFreq: 1200, filterQ: 2
             }
         };
+
+        // --- Noise buffer for drum synthesis ---
+        let _noiseBuffer = null;
+        function _getNoiseBuffer() {
+            if (_noiseBuffer) return _noiseBuffer;
+            if (!audioCtx) return null;
+            const len = audioCtx.sampleRate * 2;
+            _noiseBuffer = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+            const data = _noiseBuffer.getChannelData(0);
+            for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+            return _noiseBuffer;
+        }
+
+        // --- Drum synthesis helpers ---
+        function _playKick(dest, time, vol) {
+            const osc = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(150, time);
+            osc.frequency.exponentialRampToValueAtTime(30, time + 0.12);
+            g.gain.setValueAtTime(vol, time);
+            g.gain.exponentialRampToValueAtTime(0.001, time + 0.25);
+            osc.connect(g); g.connect(dest);
+            osc.start(time); osc.stop(time + 0.3);
+            // Sub layer for thump
+            const sub = audioCtx.createOscillator();
+            const sg = audioCtx.createGain();
+            sub.type = 'sine';
+            sub.frequency.setValueAtTime(80, time);
+            sub.frequency.exponentialRampToValueAtTime(20, time + 0.15);
+            sg.gain.setValueAtTime(vol * 0.6, time);
+            sg.gain.exponentialRampToValueAtTime(0.001, time + 0.2);
+            sub.connect(sg); sg.connect(dest);
+            sub.start(time); sub.stop(time + 0.25);
+        }
+
+        function _playHihat(dest, time, vol, open) {
+            const buf = _getNoiseBuffer();
+            if (!buf) return;
+            const src = audioCtx.createBufferSource();
+            src.buffer = buf;
+            const hp = audioCtx.createBiquadFilter();
+            hp.type = 'highpass'; hp.frequency.value = 7000; hp.Q.value = 1;
+            const bp = audioCtx.createBiquadFilter();
+            bp.type = 'bandpass'; bp.frequency.value = 10000; bp.Q.value = 0.5;
+            const g = audioCtx.createGain();
+            const dur = open ? 0.15 : 0.05;
+            g.gain.setValueAtTime(vol * 0.5, time);
+            g.gain.exponentialRampToValueAtTime(0.001, time + dur);
+            src.connect(hp); hp.connect(bp); bp.connect(g); g.connect(dest);
+            src.start(time); src.stop(time + dur + 0.01);
+        }
+
+        function _playSnare(dest, time, vol) {
+            // Noise body
+            const buf = _getNoiseBuffer();
+            if (!buf) return;
+            const src = audioCtx.createBufferSource();
+            src.buffer = buf;
+            const nf = audioCtx.createBiquadFilter();
+            nf.type = 'bandpass'; nf.frequency.value = 3000; nf.Q.value = 1.0;
+            const ng = audioCtx.createGain();
+            ng.gain.setValueAtTime(vol * 0.55, time);
+            ng.gain.exponentialRampToValueAtTime(0.001, time + 0.15);
+            src.connect(nf); nf.connect(ng); ng.connect(dest);
+            src.start(time); src.stop(time + 0.2);
+            // Tonal snap
+            const osc = audioCtx.createOscillator();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(200, time);
+            osc.frequency.exponentialRampToValueAtTime(80, time + 0.06);
+            const og = audioCtx.createGain();
+            og.gain.setValueAtTime(vol * 0.4, time);
+            og.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
+            osc.connect(og); og.connect(dest);
+            osc.start(time); osc.stop(time + 0.15);
+        }
+
+        // --- Create delay effect node ---
+        function _createDelay(dest, delayTime, feedback, wetLevel) {
+            const input = audioCtx.createGain();
+            input.gain.value = 1.0;
+            const delay = audioCtx.createDelay(2.0);
+            delay.delayTime.value = delayTime;
+            const fb = audioCtx.createGain();
+            fb.gain.value = feedback;
+            const wet = audioCtx.createGain();
+            wet.gain.value = wetLevel;
+            const dry = audioCtx.createGain();
+            dry.gain.value = 1.0;
+            const hp = audioCtx.createBiquadFilter();
+            hp.type = 'highpass'; hp.frequency.value = 400;
+            const lp = audioCtx.createBiquadFilter();
+            lp.type = 'lowpass'; lp.frequency.value = 4000;
+            input.connect(dry); dry.connect(dest);
+            input.connect(delay); delay.connect(hp); hp.connect(lp);
+            lp.connect(wet); wet.connect(dest);
+            lp.connect(fb); fb.connect(delay);
+            return input;
+        }
+
+        let _bossActive = false;
 
         function startMusic() {
             if (musicNodes || !appSettings.music) return;
@@ -8495,81 +8642,224 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
 
             let mode = (state && state.mode) || 'normal';
             let theme = MUSIC_THEMES[mode] || MUSIC_THEMES.normal;
-            let bpm = theme.bpm;
+            let bpm = _bossActive ? Math.min(theme.bpm * 1.2, 200) : theme.bpm;
             let beatLen = 60 / bpm;
+            let sixteenthLen = beatLen / 4;
 
-            let bassGain = audioCtx.createGain();
+            // Master chain: compressor -> gain -> destination
+            const masterGain = audioCtx.createGain();
+            masterGain.gain.value = 0;
+            const masterComp = audioCtx.createDynamicsCompressor();
+            masterComp.threshold.value = -18;
+            masterComp.knee.value = 12;
+            masterComp.ratio.value = 4;
+            masterComp.attack.value = 0.003;
+            masterComp.release.value = 0.15;
+            masterGain.connect(masterComp);
+            masterComp.connect(audioCtx.destination);
+            // Fade in
+            masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+            masterGain.gain.linearRampToValueAtTime(_bossActive ? 0.12 : 0.10, audioCtx.currentTime + 0.5);
+
+            // --- Bass bus: two detuned oscillators + filter ---
+            const bassGain = audioCtx.createGain();
             bassGain.gain.value = theme.bassVol;
-            bassGain.connect(audioCtx.destination);
+            const bassFilter = audioCtx.createBiquadFilter();
+            bassFilter.type = 'lowpass';
+            bassFilter.frequency.value = _bossActive ? 600 : 400;
+            bassFilter.Q.value = 2;
+            bassGain.connect(bassFilter);
+            bassFilter.connect(masterGain);
 
-            let arpGain = audioCtx.createGain();
+            // --- Arp bus: gain -> delay -> master ---
+            const arpGain = audioCtx.createGain();
             arpGain.gain.value = theme.arpVol;
-            arpGain.connect(audioCtx.destination);
+            const arpFilter = audioCtx.createBiquadFilter();
+            arpFilter.type = 'lowpass';
+            arpFilter.frequency.value = theme.filterFreq || 2000;
+            arpFilter.Q.value = theme.filterQ || 3;
+            arpGain.connect(arpFilter);
+            const arpDelay = _createDelay(masterGain, beatLen * 0.75, 0.35, 0.25);
+            arpFilter.connect(arpDelay);
 
-            // Add a subtle pad layer for atmosphere
-            let padGain = audioCtx.createGain();
-            padGain.gain.value = 0.02;
-            padGain.connect(audioCtx.destination);
-            let pad = audioCtx.createOscillator();
-            pad.type = 'sine';
-            pad.frequency.value = theme.bassNotes[0] * 2;
-            pad.connect(padGain);
-            pad.start();
+            // --- Pad bus ---
+            const padGain = audioCtx.createGain();
+            padGain.gain.value = 0.018;
+            const padFilter = audioCtx.createBiquadFilter();
+            padFilter.type = 'lowpass';
+            padFilter.frequency.value = 800;
+            padFilter.Q.value = 0.5;
+            padGain.connect(padFilter);
+            padFilter.connect(masterGain);
+
+            // Pad oscillators: two detuned sines + triangle
+            const padOsc1 = audioCtx.createOscillator();
+            padOsc1.type = 'sine';
+            padOsc1.frequency.value = (theme.padNotes || theme.bassNotes)[0];
+            padOsc1.detune.value = -8;
+            const padOsc2 = audioCtx.createOscillator();
+            padOsc2.type = 'sine';
+            padOsc2.frequency.value = (theme.padNotes || theme.bassNotes)[0];
+            padOsc2.detune.value = 8;
+            const padOsc3 = audioCtx.createOscillator();
+            padOsc3.type = 'triangle';
+            padOsc3.frequency.value = (theme.padNotes || theme.bassNotes)[0] * 2;
+            padOsc3.detune.value = 5;
+            const po3g = audioCtx.createGain();
+            po3g.gain.value = 0.3;
+            padOsc1.connect(padGain);
+            padOsc2.connect(padGain);
+            padOsc3.connect(po3g); po3g.connect(padGain);
+            padOsc1.start(); padOsc2.start(); padOsc3.start();
+
+            // --- Drum bus ---
+            const drumGain = audioCtx.createGain();
+            drumGain.gain.value = (theme.drumVol || 0.7) * (_bossActive ? 0.055 : 0.04);
+            drumGain.connect(masterGain);
+
+            // --- Distortion for boss mode ---
+            let distortion = null;
+            if (_bossActive) {
+                distortion = audioCtx.createWaveShaper();
+                const curve = new Float32Array(256);
+                for (let i = 0; i < 256; i++) {
+                    const x = (i / 128) - 1;
+                    curve[i] = (Math.PI + 3) * x / (Math.PI + 3 * Math.abs(x));
+                }
+                distortion.curve = curve;
+                distortion.oversample = '2x';
+                // Insert distortion before master compressor
+                masterGain.disconnect();
+                masterGain.connect(distortion);
+                distortion.connect(masterComp);
+            }
+
+            // --- Filter sweep LFO ---
+            const sweepLFO = audioCtx.createOscillator();
+            sweepLFO.type = 'sine';
+            sweepLFO.frequency.value = _bossActive ? 0.4 : 0.15;
+            const sweepDepth = audioCtx.createGain();
+            sweepDepth.gain.value = _bossActive ? 1500 : 800;
+            sweepLFO.connect(sweepDepth);
+            sweepDepth.connect(arpFilter.frequency);
+            sweepLFO.start();
 
             let noteIdx = 0;
+            let drumIdx = 0;
+            const drumPat = theme.drumPattern || [1,0,2,0, 1,0,2,0, 1,0,2,0, 1,0,3,0];
+
             let musicInterval = setInterval(() => {
                 if (!appSettings.music) { stopMusic(); return; }
                 let now = audioCtx.currentTime;
 
-                let bass = audioCtx.createOscillator();
-                bass.type = theme.bassType;
-                bass.frequency.value = theme.bassNotes[noteIdx % theme.bassNotes.length];
-                bass.connect(bassGain);
-                bass.start(now);
-                bass.stop(now + beatLen * 0.8);
-
-                let arp = audioCtx.createOscillator();
-                arp.type = theme.arpType;
-                arp.frequency.value = theme.arpNotes[noteIdx % theme.arpNotes.length];
-                arp.connect(arpGain);
-                arp.start(now);
-                arp.stop(now + beatLen * 0.3);
-
-                // Evolve pad note slowly
-                if (noteIdx % 16 === 0) {
-                    pad.frequency.linearRampToValueAtTime(
-                        theme.bassNotes[Math.floor(noteIdx / 16) % theme.bassNotes.length] * 2,
-                        now + 1
-                    );
+                // --- Play bass: two detuned oscillators with ADSR ---
+                if (noteIdx % 2 === 0) {
+                    let bassFreq = theme.bassNotes[Math.floor(noteIdx / 2) % theme.bassNotes.length];
+                    let dur = beatLen * 0.75;
+                    // Osc 1
+                    let b1 = audioCtx.createOscillator();
+                    b1.type = theme.bassType;
+                    b1.frequency.value = bassFreq;
+                    b1.detune.value = -12;
+                    let bg1 = audioCtx.createGain();
+                    bg1.gain.setValueAtTime(0.001, now);
+                    bg1.gain.linearRampToValueAtTime(1.0, now + 0.01); // Attack
+                    bg1.gain.linearRampToValueAtTime(0.7, now + 0.05); // Decay to sustain
+                    bg1.gain.setValueAtTime(0.7, now + dur - 0.05);
+                    bg1.gain.linearRampToValueAtTime(0.001, now + dur); // Release
+                    b1.connect(bg1); bg1.connect(bassGain);
+                    b1.start(now); b1.stop(now + dur + 0.01);
+                    // Osc 2 detuned
+                    let b2 = audioCtx.createOscillator();
+                    b2.type = theme.bassType;
+                    b2.frequency.value = bassFreq;
+                    b2.detune.value = 12;
+                    let bg2 = audioCtx.createGain();
+                    bg2.gain.setValueAtTime(0.001, now);
+                    bg2.gain.linearRampToValueAtTime(0.8, now + 0.01);
+                    bg2.gain.linearRampToValueAtTime(0.5, now + 0.05);
+                    bg2.gain.setValueAtTime(0.5, now + dur - 0.05);
+                    bg2.gain.linearRampToValueAtTime(0.001, now + dur);
+                    b2.connect(bg2); bg2.connect(bassGain);
+                    b2.start(now); b2.stop(now + dur + 0.01);
                 }
 
-                noteIdx++;
-            }, beatLen * 1000 / 2);
+                // --- Play arp with envelope ---
+                let arpFreq = theme.arpNotes[noteIdx % theme.arpNotes.length];
+                let arpDur = beatLen * 0.35;
+                let arp = audioCtx.createOscillator();
+                arp.type = theme.arpType;
+                arp.frequency.value = arpFreq;
+                let ag = audioCtx.createGain();
+                ag.gain.setValueAtTime(0.001, now);
+                ag.gain.linearRampToValueAtTime(1.0, now + 0.005);
+                ag.gain.exponentialRampToValueAtTime(0.001, now + arpDur);
+                arp.connect(ag); ag.connect(arpGain);
+                arp.start(now); arp.stop(now + arpDur + 0.01);
 
-            musicNodes = { interval: musicInterval, bassGain, arpGain, pad, padGain };
+                // --- Evolve pad ---
+                if (noteIdx % 16 === 0) {
+                    let pn = (theme.padNotes || theme.bassNotes);
+                    let pf = pn[Math.floor(noteIdx / 16) % pn.length];
+                    padOsc1.frequency.linearRampToValueAtTime(pf, now + 2);
+                    padOsc2.frequency.linearRampToValueAtTime(pf, now + 2);
+                    padOsc3.frequency.linearRampToValueAtTime(pf * 2, now + 2);
+                }
+
+                // --- Drums on sixteenth grid ---
+                let drumHit = drumPat[drumIdx % drumPat.length];
+                if (drumHit === 1) {
+                    _playKick(drumGain, now, 1.0);
+                    _playHihat(drumGain, now, 0.6, false);
+                } else if (drumHit === 2) {
+                    _playHihat(drumGain, now, 0.8, false);
+                } else if (drumHit === 3) {
+                    _playSnare(drumGain, now, 0.9);
+                    _playHihat(drumGain, now, 0.4, true);
+                }
+                drumIdx++;
+                noteIdx++;
+            }, sixteenthLen * 1000);
+
+            musicNodes = {
+                interval: musicInterval, bassGain, arpGain, padGain, drumGain,
+                masterGain, masterComp, pad: padOsc1,
+                _oscs: [padOsc1, padOsc2, padOsc3, sweepLFO],
+                _filters: [bassFilter, arpFilter, padFilter],
+                _distortion: distortion,
+                _arpDelay: arpDelay,
+                _theme: theme, _bpm: bpm
+            };
             musicPlaying = true;
         }
 
         function stopMusic() {
             if (musicNodes) {
                 clearInterval(musicNodes.interval);
-                musicNodes.bassGain.disconnect();
-                musicNodes.arpGain.disconnect();
-                if (musicNodes.pad) { try { musicNodes.pad.stop(); } catch(e){} musicNodes.padGain.disconnect(); }
+                try { musicNodes.masterGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3); } catch(e){}
+                let nodes = musicNodes;
                 musicNodes = null;
+                setTimeout(() => {
+                    try {
+                        if (nodes._oscs) nodes._oscs.forEach(o => { try { o.stop(); } catch(e){} });
+                        if (nodes.masterComp) nodes.masterComp.disconnect();
+                        if (nodes.masterGain) nodes.masterGain.disconnect();
+                        if (nodes._distortion) nodes._distortion.disconnect();
+                    } catch(e){}
+                }, 400);
             }
             musicPlaying = false;
         }
 
         function setBossMusic(active) {
-            if (!musicNodes) return;
-            // Boss fight = louder bass, faster tempo feel via gain
-            if (active) {
-                musicNodes.bassGain.gain.linearRampToValueAtTime(0.12, audioCtx.currentTime + 0.5);
-                musicNodes.arpGain.gain.linearRampToValueAtTime(0.06, audioCtx.currentTime + 0.5);
-            } else {
-                musicNodes.bassGain.gain.linearRampToValueAtTime(0.06, audioCtx.currentTime + 1);
-                musicNodes.arpGain.gain.linearRampToValueAtTime(0.03, audioCtx.currentTime + 1);
+            _bossActive = active;
+            // Restart music with new boss state for full effect
+            if (musicNodes) {
+                let wasPlaying = true;
+                stopMusic();
+                if (wasPlaying && appSettings.music) {
+                    setTimeout(() => startMusic(), 100);
+                }
             }
         }
 
@@ -8589,45 +8879,155 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             if (menuMusicNodes || !appSettings.music) return;
             if (!audioCtx) _ensureAudioCtx();
             if (!audioCtx) return;
-            let masterGain = audioCtx.createGain();
+
+            const masterGain = audioCtx.createGain();
             masterGain.gain.value = 0;
-            masterGain.gain.linearRampToValueAtTime(0.08, audioCtx.currentTime + 2);
             masterGain.connect(audioCtx.destination);
-            // Deep pad
-            let pad1 = audioCtx.createOscillator(); pad1.type = 'sine'; pad1.frequency.value = 55;
-            let pad1g = audioCtx.createGain(); pad1g.gain.value = 0.4; pad1.connect(pad1g); pad1g.connect(masterGain); pad1.start();
-            let pad2 = audioCtx.createOscillator(); pad2.type = 'sine'; pad2.frequency.value = 82.4;
-            let pad2g = audioCtx.createGain(); pad2g.gain.value = 0.3; pad2.connect(pad2g); pad2g.connect(masterGain); pad2.start();
-            // Shimmer
-            let shimmer = audioCtx.createOscillator(); shimmer.type = 'sine'; shimmer.frequency.value = 440;
-            let shimmerG = audioCtx.createGain(); shimmerG.gain.value = 0.05;
-            let shimmerLFO = audioCtx.createOscillator(); shimmerLFO.type = 'sine'; shimmerLFO.frequency.value = 0.2;
-            let lfoGain = audioCtx.createGain(); lfoGain.gain.value = 0.03;
-            shimmerLFO.connect(lfoGain); lfoGain.connect(shimmerG.gain);
-            shimmer.connect(shimmerG); shimmerG.connect(masterGain); shimmer.start(); shimmerLFO.start();
-            // Slow arp
-            let arpNotes = [220, 261, 330, 392, 440, 392, 330, 261];
+            // Slow fade in
+            masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+            masterGain.gain.linearRampToValueAtTime(0.08, audioCtx.currentTime + 3);
+
+            // --- Deep sub pad ---
+            const subOsc = audioCtx.createOscillator();
+            subOsc.type = 'sine';
+            subOsc.frequency.value = 36.7; // deep D1
+            const subGain = audioCtx.createGain();
+            subGain.gain.value = 0.5;
+            subOsc.connect(subGain); subGain.connect(masterGain);
+            subOsc.start();
+
+            // --- Wide pad: two detuned saws through lowpass ---
+            const padFilter = audioCtx.createBiquadFilter();
+            padFilter.type = 'lowpass';
+            padFilter.frequency.value = 600;
+            padFilter.Q.value = 1;
+            padFilter.connect(masterGain);
+
+            const padLFO = audioCtx.createOscillator();
+            padLFO.type = 'sine';
+            padLFO.frequency.value = 0.08;
+            const padLFOGain = audioCtx.createGain();
+            padLFOGain.gain.value = 200;
+            padLFO.connect(padLFOGain);
+            padLFOGain.connect(padFilter.frequency);
+            padLFO.start();
+
+            const padSaw1 = audioCtx.createOscillator();
+            padSaw1.type = 'sawtooth';
+            padSaw1.frequency.value = 55;
+            padSaw1.detune.value = -15;
+            const ps1g = audioCtx.createGain(); ps1g.gain.value = 0.12;
+            padSaw1.connect(ps1g); ps1g.connect(padFilter);
+            padSaw1.start();
+
+            const padSaw2 = audioCtx.createOscillator();
+            padSaw2.type = 'sawtooth';
+            padSaw2.frequency.value = 55;
+            padSaw2.detune.value = 15;
+            const ps2g = audioCtx.createGain(); ps2g.gain.value = 0.12;
+            padSaw2.connect(ps2g); ps2g.connect(padFilter);
+            padSaw2.start();
+
+            // --- Fifth interval pad layer ---
+            const fifthOsc = audioCtx.createOscillator();
+            fifthOsc.type = 'sine';
+            fifthOsc.frequency.value = 82.4; // E2
+            const fifthGain = audioCtx.createGain();
+            fifthGain.gain.value = 0.15;
+            fifthOsc.connect(fifthGain); fifthGain.connect(padFilter);
+            fifthOsc.start();
+
+            // --- Shimmer layer: high sine with slow LFO tremolo ---
+            const shimmerOsc = audioCtx.createOscillator();
+            shimmerOsc.type = 'sine';
+            shimmerOsc.frequency.value = 440;
+            const shimmerGain = audioCtx.createGain();
+            shimmerGain.gain.value = 0.025;
+            const shimmerLFO = audioCtx.createOscillator();
+            shimmerLFO.type = 'sine';
+            shimmerLFO.frequency.value = 0.15;
+            const shimmerLFOGain = audioCtx.createGain();
+            shimmerLFOGain.gain.value = 0.02;
+            shimmerLFO.connect(shimmerLFOGain);
+            shimmerLFOGain.connect(shimmerGain.gain);
+            shimmerOsc.connect(shimmerGain);
+            shimmerGain.connect(masterGain);
+            shimmerOsc.start(); shimmerLFO.start();
+
+            // --- Evolving pad chord changes ---
+            const padChords = [
+                { root: 55, fifth: 82.4, shimmer: 440 },   // A minor
+                { root: 49, fifth: 73.4, shimmer: 392 },   // G
+                { root: 41.2, fifth: 61.7, shimmer: 330 }, // E minor
+                { root: 46.2, fifth: 69.3, shimmer: 370 }  // F#dim-ish
+            ];
+            let chordIdx = 0;
+            let chordInterval = setInterval(() => {
+                if (!appSettings.music) { stopMenuMusic(); return; }
+                let now = audioCtx.currentTime;
+                chordIdx = (chordIdx + 1) % padChords.length;
+                let ch = padChords[chordIdx];
+                subOsc.frequency.linearRampToValueAtTime(ch.root * 0.667, now + 4);
+                padSaw1.frequency.linearRampToValueAtTime(ch.root, now + 4);
+                padSaw2.frequency.linearRampToValueAtTime(ch.root, now + 4);
+                fifthOsc.frequency.linearRampToValueAtTime(ch.fifth, now + 4);
+                shimmerOsc.frequency.linearRampToValueAtTime(ch.shimmer, now + 4);
+            }, 6000);
+
+            // --- Gentle delayed arp ---
+            const arpNotes = [220, 330, 261, 392, 440, 330, 392, 261, 220, 293, 349, 440];
             let arpIdx = 0;
+            const menuArpDelay = _createDelay(masterGain, 0.6, 0.45, 0.35);
+            const menuArpFilter = audioCtx.createBiquadFilter();
+            menuArpFilter.type = 'lowpass';
+            menuArpFilter.frequency.value = 2000;
+            menuArpFilter.Q.value = 1;
+            menuArpFilter.connect(menuArpDelay);
+
             let arpInterval = setInterval(() => {
                 if (!appSettings.music) { stopMenuMusic(); return; }
                 let now = audioCtx.currentTime;
-                let arp = audioCtx.createOscillator(); arp.type = 'triangle';
-                arp.frequency.value = arpNotes[arpIdx % arpNotes.length];
-                let ag = audioCtx.createGain(); ag.gain.setValueAtTime(0.06, now);
-                ag.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
-                arp.connect(ag); ag.connect(masterGain);
-                arp.start(now); arp.stop(now + 1.5);
+                // Play two notes: fundamental + octave above very quietly
+                let freq = arpNotes[arpIdx % arpNotes.length];
+                let arp1 = audioCtx.createOscillator();
+                arp1.type = 'triangle';
+                arp1.frequency.value = freq;
+                let ag1 = audioCtx.createGain();
+                ag1.gain.setValueAtTime(0.001, now);
+                ag1.gain.linearRampToValueAtTime(0.06, now + 0.02);
+                ag1.gain.exponentialRampToValueAtTime(0.001, now + 1.8);
+                arp1.connect(ag1); ag1.connect(menuArpFilter);
+                arp1.start(now); arp1.stop(now + 2.0);
+
+                let arp2 = audioCtx.createOscillator();
+                arp2.type = 'sine';
+                arp2.frequency.value = freq * 2;
+                let ag2 = audioCtx.createGain();
+                ag2.gain.setValueAtTime(0.001, now);
+                ag2.gain.linearRampToValueAtTime(0.015, now + 0.02);
+                ag2.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
+                arp2.connect(ag2); ag2.connect(menuArpFilter);
+                arp2.start(now); arp2.stop(now + 1.8);
+
                 arpIdx++;
-            }, 800);
-            menuMusicNodes = { oscs: [pad1, pad2, shimmer, shimmerLFO], masterGain, arpInterval };
+            }, 1100);
+
+            menuMusicNodes = {
+                oscs: [subOsc, padSaw1, padSaw2, fifthOsc, shimmerOsc, shimmerLFO, padLFO],
+                masterGain, arpInterval, chordInterval
+            };
         }
         function stopMenuMusic() {
             if (!menuMusicNodes) return;
             clearInterval(menuMusicNodes.arpInterval);
-            menuMusicNodes.masterGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
+            if (menuMusicNodes.chordInterval) clearInterval(menuMusicNodes.chordInterval);
+            menuMusicNodes.masterGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.8);
             let nodes = menuMusicNodes;
-            setTimeout(() => { nodes.oscs.forEach(o => { try { o.stop(); } catch(e){} }); nodes.masterGain.disconnect(); }, 600);
             menuMusicNodes = null;
+            setTimeout(() => {
+                nodes.oscs.forEach(o => { try { o.stop(); } catch(e){} });
+                try { nodes.masterGain.disconnect(); } catch(e){}
+            }, 900);
         }
 
         // ==================== ANIMATED MENU BACKGROUND ====================
