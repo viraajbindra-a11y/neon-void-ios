@@ -6354,7 +6354,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
         // ==================== FEATURE 32: VICTORY POSE ====================
         function triggerVictoryPose() {
             victoryPoseTimer = 180;
-            for (let i=0; i<5; i++) { setTimeout(() => { spawnParticles(player.x+(Math.random()-0.5)*100, player.y+(Math.random()-0.5)*100, `hsl(${Math.random()*360},100%,60%)`, 6, 3); }, i*100); }
+            for (let i=0; i<5; i++) { setTimeout(() => { if (!player) return; spawnParticles(player.x+(Math.random()-0.5)*100, player.y+(Math.random()-0.5)*100, `hsl(${Math.random()*360},100%,60%)`, 6, 3); }, i*100); }
         }
 
         // ==================== FEATURE 38: HUD THEME SETTINGS ====================
