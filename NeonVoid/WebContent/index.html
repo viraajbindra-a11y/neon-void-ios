@@ -9605,8 +9605,17 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             } catch(e) { console.warn('Cloud fetch failed:', e.message); }
         }
 
-        async function saveCloudProfile() {
-            if (!currentUsername || Date.now() - lastCloudSave < 10000) return;
+        var _pendingCloudSave = false;
+        async function saveCloudProfile(force) {
+            if (!currentUsername) return;
+            if (!force && Date.now() - lastCloudSave < 10000) {
+                // Queue a deferred save so we don't lose data
+                if (!_pendingCloudSave) {
+                    _pendingCloudSave = true;
+                    setTimeout(() => { _pendingCloudSave = false; saveCloudProfile(); }, 10500);
+                }
+                return;
+            }
             lastCloudSave = Date.now();
             let saveKey = _cloudKey(userPasswordHash || currentUsername);
             let saveData = {
@@ -9656,7 +9665,11 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
 
         function cloudSave() { saveCloudProfile(); }
 
-        
+        // Auto-save to cloud on page close or tab switch
+        window.addEventListener('beforeunload', () => { if (currentUsername) saveCloudProfile(true); });
+        document.addEventListener('visibilitychange', () => { if (document.hidden && currentUsername) saveCloudProfile(true); });
+
+
 // ==================== FEATURE 97: ACCESSIBILITY OPTIONS ====================
 function setCBMode(mode) {
     appSettings.colorblindMode = mode;
@@ -9884,8 +9897,12 @@ function generateSyncCode() {
         }
 
         function logoutUser() {
+            // Force cloud save before wiping credentials
+            saveCloudProfile(true);
             localStorage.removeItem('neonVoidUsername');
+            localStorage.removeItem('neonVoidUsername_sig');
             localStorage.removeItem('neonVoidPassHash');
+            localStorage.removeItem('neonVoidPassHash_sig');
             _godCheck.deactivate();
             // Clear Google session
             localStorage.removeItem('neonVoidGoogleCredential');
