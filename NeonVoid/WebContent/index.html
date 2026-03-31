@@ -11157,22 +11157,7 @@ function generateSyncCode() {
             stopMusic(); startMenuBg(); if (appSettings.music) startMenuMusic();
             ui.mainOverlay.classList.remove('hidden'); ui.mainOverlay.classList.remove('win-theme');
 
-            // Desktop: use original classic menu, mobile: use CR-style menu
-            let _isMobileMenu = window.innerWidth <= 900 || ('ontouchstart' in window && window.innerWidth <= 1024);
-            if (!_isMobileMenu) {
-                _nvMenuActive = false;
-                ui.mainTitle.style.display = '';
-                ui.mainDesc.style.display = '';
-                document.getElementById('menu-coin-display').style.display = '';
-                let mw = document.getElementById('menu-inner-wrap');
-                if (mw) mw.style.justifyContent = 'flex-start';
-                ui.menuBtns.style.maxWidth = '';
-                ui.menuBtns.style.width = '';
-                _menuReturnToMenu();
-                setTimeout(() => { ui.mainOverlay.scrollTop = 0; }, 50);
-                return;
-            }
-            // Mobile: restore center alignment for CR menu
+            // CR-style menu for all screen sizes
             let mw2 = document.getElementById('menu-inner-wrap');
             if (mw2) mw2.style.justifyContent = 'center';
 
