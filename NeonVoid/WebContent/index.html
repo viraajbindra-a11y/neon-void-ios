@@ -10734,6 +10734,9 @@ function generateSyncCode() {
             // Cleanup game state
             if (typeof state !== 'undefined') { state.active = false; state.paused = false; state.mirrored = false; state.pendingLevels = 0; }
             activeBoss = null; entities.enemies = []; entities.eBullets = []; entities.bullets = [];
+            // Remove mode-specific UI overlays
+            ['horde-ui','rogue-pick','prestige-overlay','tut-hud','bp-overlay','title-overlay','lb-overlay','clan-overlay','mentor-overlay','mastery-overlay'].forEach(id => { let el = document.getElementById(id); if (el) el.remove(); });
+            if (sandboxPanel) { sandboxPanel.remove(); sandboxPanel = null; }
             // Hide all screens
             ['mission-select','shop-screen','settings-screen','pause-screen','draw-screen',
              'lobby-browser','lobby-room',
