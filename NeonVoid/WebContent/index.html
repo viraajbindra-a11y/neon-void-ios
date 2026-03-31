@@ -5242,6 +5242,9 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
 
         function returnToMenu() {
             document.getElementById('mission-select').classList.add('hidden'); document.getElementById('shop-screen').classList.add('hidden'); document.getElementById('settings-screen').classList.add('hidden'); document.getElementById('pause-screen').classList.add('hidden'); document.getElementById('draw-screen').classList.add('hidden');
+            // Cleanup game state on menu return
+            if (typeof state !== 'undefined') { state.active = false; state.paused = false; state.mirrored = false; state.pendingLevels = 0; }
+            activeBoss = null; entities.enemies = []; entities.eBullets = []; entities.bullets = [];
             stopMusic(); startMenuBg(); if (appSettings.music) startMenuMusic();
             ui.mainOverlay.classList.remove('hidden'); ui.mainOverlay.classList.remove('win-theme');
             ui.mainTitle.innerText = "NEON VOID"; ui.mainTitle.style.webkitTextStroke = "3px #ff0055"; ui.mainTitle.style.textShadow = "0 0 50px #ff0055";
@@ -10714,6 +10717,9 @@ function generateSyncCode() {
         let _menuReturnToMenu = returnToMenu;
         returnToMenu = function() {
             _nvMenuActive = true;
+            // Cleanup game state
+            if (typeof state !== 'undefined') { state.active = false; state.paused = false; state.mirrored = false; state.pendingLevels = 0; }
+            activeBoss = null; entities.enemies = []; entities.eBullets = []; entities.bullets = [];
             // Hide all screens
             ['mission-select','shop-screen','settings-screen','pause-screen','draw-screen',
              'lobby-browser','lobby-room',
