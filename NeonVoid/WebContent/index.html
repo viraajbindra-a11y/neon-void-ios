@@ -356,7 +356,7 @@
 
 
     <div id="main-overlay" class="overlay-screen" style="overflow-y:auto;">
-        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;padding:30px 0 50px;">
+        <div id="menu-inner-wrap" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;padding:30px 0 50px;">
         <div class="title-text" id="main-title">NEON VOID</div>
         <div class="subtitle-text" id="main-desc">
             <strong>ARROW KEYS / WASD</strong> to Move | <strong>SPACE / MOUSE</strong> to Shoot<br>
@@ -5259,6 +5259,9 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             // Cleanup game state on menu return
             if (typeof state !== 'undefined') { state.active = false; state.paused = false; state.mirrored = false; state.pendingLevels = 0; }
             activeBoss = null; entities.enemies = []; entities.eBullets = []; entities.bullets = [];
+            // Remove mode-specific UI overlays
+            ['horde-ui','rogue-pick','prestige-overlay','tut-hud','bp-overlay','title-overlay','lb-overlay','clan-overlay','mentor-overlay','mastery-overlay'].forEach(id => { let el = document.getElementById(id); if (el) el.remove(); });
+            if (typeof sandboxPanel !== 'undefined' && sandboxPanel) { sandboxPanel.remove(); sandboxPanel = null; }
             stopMusic(); startMenuBg(); if (appSettings.music) startMenuMusic();
             ui.mainOverlay.classList.remove('hidden'); ui.mainOverlay.classList.remove('win-theme');
             ui.mainTitle.innerText = "NEON VOID"; ui.mainTitle.style.webkitTextStroke = "3px #ff0055"; ui.mainTitle.style.textShadow = "0 0 50px #ff0055";
@@ -10753,6 +10756,25 @@ function generateSyncCode() {
             if (gearScreen) gearScreen.classList.add('hidden');
             stopMusic(); startMenuBg(); if (appSettings.music) startMenuMusic();
             ui.mainOverlay.classList.remove('hidden'); ui.mainOverlay.classList.remove('win-theme');
+
+            // Desktop: use original classic menu, mobile: use CR-style menu
+            let _isMobileMenu = window.innerWidth <= 900 || ('ontouchstart' in window && window.innerWidth <= 1024);
+            if (!_isMobileMenu) {
+                _nvMenuActive = false;
+                ui.mainTitle.style.display = '';
+                ui.mainDesc.style.display = '';
+                document.getElementById('menu-coin-display').style.display = '';
+                let mw = document.getElementById('menu-inner-wrap');
+                if (mw) mw.style.justifyContent = 'flex-start';
+                ui.menuBtns.style.maxWidth = '';
+                ui.menuBtns.style.width = '';
+                _menuReturnToMenu();
+                setTimeout(() => { ui.mainOverlay.scrollTop = 0; }, 50);
+                return;
+            }
+            // Mobile: restore center alignment for CR menu
+            let mw2 = document.getElementById('menu-inner-wrap');
+            if (mw2) mw2.style.justifyContent = 'center';
 
             // Gather data
             let unlockedRaw = secureLoad('neonVoidStage', '1'); let unlocked = parseInt(unlockedRaw); if(isNaN(unlocked) || unlocked < 1) unlocked = 1;
