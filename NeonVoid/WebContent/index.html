@@ -11046,6 +11046,64 @@ function generateSyncCode() {
             /* Secret boss buttons in modes row */
             .nv-secret-chip { border-style:dashed !important;position:relative; }
             .nv-secret-chip::after { content:'';position:absolute;inset:0;border-radius:12px;background:linear-gradient(135deg,transparent,rgba(var(--gc),0.1));pointer-events:none; }
+
+            /* NEON TITLE SECTION — centered glow title */
+            .nv-title-section { display:flex;flex-direction:column;align-items:center;padding:18px 16px 6px;flex-shrink:0; }
+            .nv-title-logo { font-size:clamp(32px,9vw,56px);font-weight:900;letter-spacing:8px;color:transparent;-webkit-text-stroke:2px #ff0055;text-shadow:0 0 40px #ff005588,0 0 80px #ff005544;animation:menuGlow 3s infinite;text-transform:uppercase;line-height:1; }
+
+            /* SHIP ICON — centered player ship */
+            .nv-ship-icon { display:flex;align-items:center;justify-content:center;padding:8px 0 4px;flex-shrink:0; }
+            .nv-ship-triangle { width:0;height:0;border-left:16px solid transparent;border-right:16px solid transparent;border-bottom:32px solid #ff0055;filter:drop-shadow(0 0 8px #ff005588) drop-shadow(0 0 16px #ff005544); }
+
+            /* SECTOR PROGRESS — bar with gradient fill */
+            .nv-sector-progress { display:flex;flex-direction:column;align-items:center;padding:4px 24px 10px;flex-shrink:0;width:100%;box-sizing:border-box; }
+            .nv-sector-label { font-size:11px;color:#ff0055;font-weight:bold;letter-spacing:3px;margin-bottom:6px; }
+            .nv-progress-bar { width:min(300px,80vw);height:10px;border-radius:6px;background:rgba(255,255,255,0.08);border:1px solid #ff005533;overflow:hidden;position:relative; }
+            .nv-progress-fill { height:100%;border-radius:6px;background:linear-gradient(90deg,#ff0055,#ff8800,#ffcc00);transition:width 0.5s ease; }
+
+            /* DUAL CARDS — HANGAR + RANKS side by side */
+            .nv-dual-cards { display:flex;gap:10px;padding:8px 16px;flex-shrink:0; }
+            .nv-dual-card { flex:1;display:flex;align-items:center;gap:10px;padding:14px 12px;border-radius:14px;border:1.5px solid;cursor:pointer;transition:all 0.2s;-webkit-tap-highlight-color:transparent; }
+            .nv-dual-card:hover { transform:translateY(-2px);filter:brightness(1.2); }
+            .nv-dual-card:active { transform:scale(0.96); }
+            .nv-dual-card .dc-icon { font-size:24px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:10px;flex-shrink:0; }
+            .nv-dual-card .dc-info { flex:1;min-width:0; }
+            .nv-dual-card .dc-title { font-size:13px;font-weight:bold;letter-spacing:1px; }
+            .nv-dual-card .dc-sub { font-size:9px;opacity:0.5;margin-top:2px; }
+
+            /* PROGRESSION SECTION — pill badges grid */
+            .nv-progression { padding:8px 16px;flex-shrink:0; }
+            .nv-prog-label { font-size:10px;color:#888;letter-spacing:3px;font-weight:bold;margin-bottom:8px; }
+            .nv-prog-grid { display:flex;flex-wrap:wrap;gap:6px; }
+            .nv-prog-pill { display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);cursor:pointer;transition:all 0.2s;-webkit-tap-highlight-color:transparent; }
+            .nv-prog-pill:hover { background:rgba(255,255,255,0.1);transform:translateY(-1px); }
+            .nv-prog-pill:active { transform:scale(0.95); }
+            .nv-prog-pill .pp-icon { font-size:14px; }
+            .nv-prog-pill .pp-label { font-size:9px;font-weight:bold;letter-spacing:0.5px; }
+
+            /* SHIP PREVIEW CARD */
+            .nv-ship-preview { margin:8px 16px;padding:14px;border-radius:14px;background:linear-gradient(135deg,rgba(20,0,30,0.95),rgba(5,0,10,0.95));border:1.5px solid #ff005533;display:flex;align-items:center;gap:14px;flex-shrink:0; }
+            .nv-ship-sprite { width:56px;height:56px;display:flex;align-items:center;justify-content:center;background:rgba(255,0,85,0.08);border-radius:12px;border:1px solid #ff005533; }
+            .nv-ship-sprite .ship-shape { width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-bottom:24px solid #ff0055;filter:drop-shadow(0 0 6px #ff005588); }
+            .nv-ship-info { flex:1;min-width:0; }
+            .nv-ship-name { font-size:14px;font-weight:bold;color:#00ffcc;letter-spacing:1px; }
+            .nv-ship-rank-label { font-size:10px;color:#ff005588;letter-spacing:2px;margin-top:2px; }
+
+            /* INTEL BRIEF CARD */
+            .nv-intel { margin:8px 16px;padding:12px 14px;border-radius:12px;background:linear-gradient(135deg,rgba(0,255,200,0.05),rgba(0,0,0,0.7));border:1px solid #00ffcc33;flex-shrink:0; }
+            .nv-intel-title { font-size:10px;color:#00ffcc;font-weight:bold;letter-spacing:2px;margin-bottom:4px; }
+            .nv-intel-text { font-size:11px;color:#00ffcc88;line-height:1.4; }
+
+            /* SECTION TABS — 3 equal tabs above bottom nav */
+            .nv-section-tabs { display:flex;flex-shrink:0;border-top:1px solid #ffffff11; }
+            .nv-section-tab { flex:1;display:flex;align-items:center;justify-content:center;padding:10px 4px;font-size:10px;font-weight:bold;letter-spacing:2px;color:#666;cursor:pointer;transition:all 0.2s;-webkit-tap-highlight-color:transparent;background:rgba(10,0,15,0.9); }
+            .nv-section-tab:hover { color:#ccc;background:rgba(255,255,255,0.04); }
+            .nv-section-tab:active { background:rgba(255,255,255,0.08); }
+
+            /* SCROLLABLE BODY between topbar and bottomnav */
+            .nv-body-scroll { flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column; }
+            .nv-body-scroll::-webkit-scrollbar { width:3px; }
+            .nv-body-scroll::-webkit-scrollbar-thumb { background:#ff005533;border-radius:2px; }
         `;
         document.head.appendChild(menuStyleTag);
 
@@ -11190,7 +11248,7 @@ function generateSyncCode() {
             ui.menuBtns.style.width = '100%';
             ui.menuBtns.innerHTML = `<div class="nv-menu-root">
 
-                <!-- TOP BAR — CR style -->
+                <!-- TOP BAR -->
                 <div class="nv-topbar">
                     <div class="nv-topbar-left">
                         <div class="nv-pilot-badge" onclick="openAvatarPicker()" title="Change Avatar">
@@ -11208,48 +11266,38 @@ function generateSyncCode() {
                     </div>
                 </div>
 
-                <!-- ARENA PREVIEW — CR-style center view -->
-                <div class="nv-arena-section">
-                    <canvas id="nv-arena-preview" class="nv-arena-canvas"></canvas>
-                    <div class="nv-arena-overlay">
-                        <div class="nv-arena-title">
-                            <div class="nv-logo">NEON VOID</div>
-                            <div class="nv-logo-sub">VOID HUNTER PROTOCOL</div>
-                            <div class="nv-sector-badge"><span>⚔ SECTOR ${unlocked}/20</span></div>
+                <!-- SCROLLABLE BODY -->
+                <div class="nv-body-scroll">
+
+                    <!-- NEON VOID TITLE -->
+                    <div class="nv-title-section">
+                        <div class="nv-title-logo">NEON VOID</div>
+                    </div>
+
+                    <!-- SHIP ICON -->
+                    <div class="nv-ship-icon">
+                        <div class="nv-ship-triangle"></div>
+                    </div>
+
+                    <!-- SECTOR PROGRESS -->
+                    <div class="nv-sector-progress">
+                        <div class="nv-sector-label">SECTOR ${unlocked}/20</div>
+                        <div class="nv-progress-bar">
+                            <div class="nv-progress-fill" style="width:${sectorPct}%;"></div>
                         </div>
                     </div>
-                </div>
 
-                <!-- CHEST SLOTS — CR-style reward crates -->
-                <div class="nv-chest-row">
-                    <div class="nv-chest-slot" style="--cc:${mc('#ffcc00')};" onclick="openBattlePass()">
-                        <div class="nv-chest-icon">⭐</div>
-                        <div class="nv-chest-label">PASS</div>
+                    <!-- BATTLE BUTTON -->
+                    <div class="nv-battle-dock">
+                        <div class="nv-battle-btn" onclick="openMissionSelect()">
+                            <div class="nv-battle-shimmer"></div>
+                            <span class="nv-battle-text">BATTLE</span>
+                        </div>
+                        <div class="nv-battle-sub">SECTOR ${unlocked} &#x2022; TAP TO DEPLOY</div>
                     </div>
-                    <div class="nv-chest-slot" style="--cc:${mc('#ff8800')};" onclick="openShop()">
-                        <div class="nv-chest-icon">🔧</div>
-                        <div class="nv-chest-label">HANGAR</div>
-                    </div>
-                    <div class="nv-chest-slot" style="--cc:${mc('#aa44ff')};" onclick="openBlackMarket()">
-                        <div class="nv-chest-icon">🎁</div>
-                        <div class="nv-chest-label">CRATE</div>
-                    </div>
-                    <div class="nv-chest-slot" style="--cc:${mc('#00ffcc')};" onclick="openGemShop()">
-                        <div class="nv-chest-icon">💎</div>
-                        <div class="nv-chest-label">GEMS</div>
-                    </div>
-                </div>
-
-                <!-- BATTLE DOCK — CR-style golden button -->
-                <div class="nv-battle-dock">
-                    <div class="nv-battle-btn" onclick="openMissionSelect()">
-                        <div class="nv-battle-shimmer"></div>
-                        <span class="nv-battle-text">BATTLE</span>
-                    </div>
-                    <div class="nv-battle-sub">SECTOR ${unlocked} &#x2022; TAP TO DEPLOY</div>
 
                     <!-- GAME MODES HORIZONTAL SCROLL -->
-                    <div class="nv-modes-row">
+                    <div class="nv-modes-row" style="padding:4px 16px 8px;">
                         <div class="nv-mode-chip" style="--gc:${mc('#ff0055')};border-color:#ff005566;background:rgba(255,0,85,0.06);" onclick="startInfinite()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff0055" stroke-width="2.5" stroke-linecap="round"><path d="M6 12c0-2.2 1.8-4 4-4s4 1.8 4 4-1.8 4-4 4-4-1.8-4-4zM14 12c0-2.2 1.8-4 4-4s4 1.8 4 4-1.8 4-4 4-4-1.8-4-4z"/></svg></span>
                             <div><div class="nv-chip-label" style="color:#ff0055;">INFINITE</div><div class="nv-chip-sub" style="color:#ff005588;">Endless</div></div>
@@ -11278,7 +11326,6 @@ function generateSyncCode() {
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span>
                             <div><div class="nv-chip-label" style="color:#00ff88;">CRASHED</div><div class="nv-chip-sub" style="color:#00ff8888;">Crashed Adventure</div></div>
                         </div>` : ''}
-                        
                         <div class="nv-mode-chip" style="--gc:${mc('#ffd700')};border-color:#ffd70066;background:rgba(255,215,0,0.06);" onclick="startSpeedrun()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
                             <div><div class="nv-chip-label" style="color:#ffd700;">SPEEDRUN</div><div class="nv-chip-sub" style="color:#ffd70088;">Timer</div></div>
@@ -11353,10 +11400,76 @@ function generateSyncCode() {
                         </div>
                         ${secretChip}${paradoxChip}
                     </div>
+
+                    <!-- DUAL CARDS: HANGAR + RANKS -->
+                    <div class="nv-dual-cards">
+                        <div class="nv-dual-card" style="border-color:#ff880055;background:linear-gradient(135deg,rgba(255,136,0,0.08),rgba(0,0,0,0.75));" onclick="openShop()">
+                            <div class="dc-icon" style="background:rgba(255,136,0,0.15);">🔧</div>
+                            <div class="dc-info">
+                                <div class="dc-title" style="color:#ff8800;">HANGAR</div>
+                                <div class="dc-sub" style="color:#ff880088;">Black Market</div>
+                            </div>
+                        </div>
+                        <div class="nv-dual-card" style="border-color:#ffd70055;background:linear-gradient(135deg,rgba(255,215,0,0.08),rgba(0,0,0,0.75));" onclick="openLeaderboard()">
+                            <div class="dc-icon" style="background:rgba(255,215,0,0.15);">🏆</div>
+                            <div class="dc-info">
+                                <div class="dc-title" style="color:#ffd700;">RANKS</div>
+                                <div class="dc-sub" style="color:#ffd70088;">Leaderboards</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PROGRESSION SECTION -->
+                    <div class="nv-progression">
+                        <div class="nv-prog-label">PROGRESSION</div>
+                        <div class="nv-prog-grid">
+                            <div class="nv-prog-pill" onclick="openBattlePass()"><span class="pp-icon">⭐</span><span class="pp-label" style="color:#ffcc00;">BATTLE PASS</span></div>
+                            <div class="nv-prog-pill" onclick="openMastery()"><span class="pp-icon">🎯</span><span class="pp-label" style="color:#ff4400;">MASTERY</span></div>
+                            <div class="nv-prog-pill" onclick="openBlueprints()"><span class="pp-icon">📐</span><span class="pp-label" style="color:#44ccff;">BLUEPRINTS</span></div>
+                            <div class="nv-prog-pill" onclick="openContracts()"><span class="pp-icon">📋</span><span class="pp-label" style="color:#00ff88;">CONTRACTS</span></div>
+                            <div class="nv-prog-pill" onclick="openBlackMarket()"><span class="pp-icon">🎁</span><span class="pp-label" style="color:#aa44ff;">BLACK MARKET</span></div>
+                            <div class="nv-prog-pill" onclick="openGemShop()"><span class="pp-icon">💎</span><span class="pp-label" style="color:#00ffcc;">GEM SHOP</span></div>
+                            <div class="nv-prog-pill" onclick="openTradePost()"><span class="pp-icon">🔄</span><span class="pp-label" style="color:#ff8844;">TRADE POST</span></div>
+                            <div class="nv-prog-pill" onclick="openBounties()"><span class="pp-icon">🎯</span><span class="pp-label" style="color:#ff0055;">BOUNTIES</span></div>
+                            <div class="nv-prog-pill" onclick="openPrestige()"><span class="pp-icon">🔥</span><span class="pp-label" style="color:#ff8800;">REBIRTH</span></div>
+                            <div class="nv-prog-pill" onclick="openVIP()"><span class="pp-icon">👑</span><span class="pp-label" style="color:#ffd700;">VIP</span></div>
+                            <div class="nv-prog-pill" onclick="openAchievements()"><span class="pp-icon">🏅</span><span class="pp-label" style="color:#ffcc00;">ACHIEVEMENTS</span></div>
+                            <div class="nv-prog-pill" onclick="openClan()"><span class="pp-icon">🛡</span><span class="pp-label" style="color:#4488ff;">CLAN</span></div>
+                            <div class="nv-prog-pill" onclick="openPrestige()"><span class="pp-icon">✨</span><span class="pp-label" style="color:#cc44ff;">PRESTIGE</span></div>
+                            <div class="nv-prog-pill" onclick="openPhotoMode()"><span class="pp-icon">📸</span><span class="pp-label" style="color:#88ffcc;">PHOTO MODE</span></div>
+                        </div>
+                    </div>
+
+                    <!-- SHIP PREVIEW CARD -->
+                    <div class="nv-ship-preview">
+                        <div class="nv-ship-sprite"><div class="ship-shape"></div></div>
+                        <div class="nv-ship-info">
+                            <div class="nv-ship-name">${currentUsername || 'PILOT'}</div>
+                            <div class="nv-ship-rank-label">${unlocked >= 15 ? 'VOID WALKER' : unlocked >= 10 ? 'ELITE' : unlocked >= 5 ? 'VETERAN' : 'ROOKIE'}</div>
+                        </div>
+                    </div>
+
+                    <!-- INTEL BRIEF -->
+                    <div class="nv-intel">
+                        <div class="nv-intel-title">INTEL BRIEF</div>
+                        <div class="nv-intel-text">${['Hold near screen edges to move faster in combat.','Upgrade your ship between sectors for better survivability.','Boss patterns change based on your weapon loadout.','Collect blueprints to unlock rare ship variants.','Co-op mode shares score but doubles enemy health.','Rebirth resets progress but grants permanent multipliers.','Sandbox mode is great for testing new strategies.','Achievements unlock bonus coins and cosmetics.','The Black Market refreshes its stock every session.','Mirror mode reverses all controls - even menus.'][Math.floor(Math.random()*10)]}</div>
+                    </div>
+
+                    <!-- SECTION TABS -->
+                    <div class="nv-section-tabs">
+                        <div class="nv-section-tab" onclick="openMissionSelect()">SECTORS</div>
+                        <div class="nv-section-tab" onclick="openGemShop()">CREDITS</div>
+                        <div class="nv-section-tab" onclick="openShop()">UPGRADES</div>
+                    </div>
+
                 </div>
 
-                <!-- BOTTOM NAVIGATION BAR — CR-style 5 tabs -->
+                <!-- BOTTOM NAVIGATION BAR — 4 tabs -->
                 <div class="nv-bottomnav">
+                    <div class="nv-nav-tab active" onclick="openMissionSelect()">
+                        <span class="nav-icon" style="font-size:26px;">⚔</span>
+                        <span class="nav-label" style="color:#ff0055;">BATTLE</span>
+                    </div>
                     <div class="nv-nav-tab" onclick="openShop()">
                         <span class="nav-icon">🔧</span>
                         <span class="nav-label">HANGAR</span>
@@ -11365,18 +11478,9 @@ function generateSyncCode() {
                         <span class="nav-icon">👥</span>
                         <span class="nav-label">CO-OP</span>
                     </div>
-                    <div class="nv-nav-tab active" onclick="openMissionSelect()">
-                        <span class="nav-icon" style="font-size:26px;">⚔</span>
-                        <span class="nav-label" style="color:#ff0055;">BATTLE</span>
-                    </div>
                     <div class="nv-nav-tab" onclick="openLeaderboard()">
                         <span class="nav-icon">🏆</span>
                         <span class="nav-label">RANKS</span>
-                    </div>
-                    <div class="nv-nav-tab" onclick="openAchievements()">
-                        <span class="nav-icon">⭐</span>
-                        <span class="nav-label">MORE</span>
-                        <div class="nav-notif"></div>
                     </div>
                 </div>
             </div>`;
