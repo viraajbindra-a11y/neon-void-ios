@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Neon Void: Multiplayer Update</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#ff0055">
@@ -25,7 +25,7 @@
             z-index: 10; background-size: 100% 2px, 3px 100%; pointer-events: none; 
         }
         
-        #ui-layer { position: absolute; top: 20px; left: 20px; pointer-events: none; text-shadow: 0 0 10px #00ffcc; z-index: 5; }
+        #ui-layer { position: absolute; top: calc(20px + env(safe-area-inset-top, 0px)); left: calc(20px + env(safe-area-inset-left, 0px)); pointer-events: none; text-shadow: 0 0 10px #00ffcc; z-index: 5; }
         h1 { margin: 0; font-size: 32px; letter-spacing: 5px; color: #ff0055; font-weight: 900; font-style: italic; }
         .hud-text { font-size: 18px; margin-top: 5px; color: #ffffff; }
         
@@ -43,7 +43,7 @@
         #xp-bar-container { width: 100%; height: 8px; border: none; border-top: 1px solid #00ffcc; position: absolute; bottom: 0; left: 0; background: #111; z-index: 5; }
         #xp-bar { height: 100%; background: #00ffcc; width: 0%; box-shadow: 0 0 15px #00ffcc; transition: width 0.2s; }
         
-        #boss-ui { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: min(600px, 90vw); display: none; z-index: 5; text-align: center; }
+        #boss-ui { position: absolute; top: calc(20px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); width: min(600px, 90vw); display: none; z-index: 5; text-align: center; }
         #boss-hp-bg { width: 100%; height: 25px; border: 2px solid #ff0055; background: rgba(0,0,0,0.7); position: relative; }
         #boss-hp-bar { width: 100%; height: 100%; background: #ff0055; box-shadow: 0 0 20px #ff0055; transition: width 0.1s; background-color: #00ff00; }
         #boss-name { position: absolute; top: 35px; width: 100%; color: #ff0055; text-shadow: 0 0 15px #ff0055; font-size: 24px; font-weight: bold; letter-spacing: 5px; text-transform: uppercase;}
@@ -70,9 +70,9 @@
         
         #mobile-controls { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; z-index: 15; pointer-events: none; }
         #touch-left-zone { position: absolute; top: 0; left: 0; width: 50%; height: 100%; pointer-events: auto; }
-        #joystick-area { width: 100px; height: 100px; background: rgba(0,255,204,0.12); border-radius: 50%; border: 2px solid rgba(0,255,204,0.2); position: absolute; bottom: 80px; left: 40px; pointer-events: none; display: none; }
+        #joystick-area { width: 100px; height: 100px; background: rgba(0,255,204,0.12); border-radius: 50%; border: 2px solid rgba(0,255,204,0.2); position: absolute; bottom: calc(80px + env(safe-area-inset-bottom, 0px)); left: calc(40px + env(safe-area-inset-left, 0px)); pointer-events: none; display: none; }
         #joystick-knob { width: 30px; height: 30px; background: rgba(0,255,204,0.55); border-radius: 50%; border: 2px solid rgba(0,255,204,0.8); position: absolute; top: 35px; left: 35px; pointer-events: none; transition: transform 0.05s; box-shadow: 0 0 12px rgba(0,255,204,0.4); }
-        .action-btns { position: absolute; bottom: 60px; right: 30px; display: flex; flex-direction: column; gap: 16px; pointer-events: auto; }
+        .action-btns { position: absolute; bottom: calc(60px + env(safe-area-inset-bottom, 0px)); right: calc(30px + env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 16px; pointer-events: auto; }
         .mob-btn { border-radius: 50%; background: rgba(0,0,0,0.4); font-weight: bold; font-family: inherit; text-align: center; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
         .mob-fire { width: 70px; height: 70px; border: 2px solid #00ffcc; color: #00ffcc; font-size: 14px; box-shadow: 0 0 15px rgba(0,255,204,0.25); }
         .mob-dash-btn { width: 60px; height: 60px; border: 2px solid #ffcc00; color: #ffcc00; font-size: 12px; box-shadow: 0 0 15px rgba(255,204,0,0.25); }
@@ -856,7 +856,9 @@
 
 
         function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-        window.addEventListener('resize', resize); resize();
+        window.addEventListener('resize', resize);
+        window.addEventListener('orientationchange', () => { setTimeout(resize, 150); });
+        resize();
 
 
         let appSettings = { graphics: 'medium', sound: true, mobile: false, hardcore: false, hyper: false, render3D: false, dodgeRoll: false };
@@ -889,10 +891,25 @@
         function toggleHyperSpeed() { appSettings.hyper = !appSettings.hyper; saveSettings(); }
 
 
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let audioCtx = null;
+        function _ensureAudioCtx() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            return audioCtx;
+        }
+        // Initialize audio on first user gesture (required by iOS/WKWebView)
+        ['touchstart','mousedown','keydown'].forEach(evt => {
+            document.addEventListener(evt, function _initAudio() {
+                _ensureAudioCtx();
+                document.removeEventListener(evt, _initAudio);
+            }, { once: true });
+        });
         function playSound(type) {
             if (!appSettings.sound) return;
-            if (audioCtx.state === 'suspended') audioCtx.resume();
+            if (!audioCtx) _ensureAudioCtx();
+            if (!audioCtx || audioCtx.state === 'suspended') { audioCtx && audioCtx.resume(); return; }
             const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
             osc.connect(gain); gain.connect(audioCtx.destination);
             const now = audioCtx.currentTime;
@@ -8417,7 +8434,8 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
 
         function startMusic() {
             if (musicNodes || !appSettings.music) return;
-            if (audioCtx.state === 'suspended') audioCtx.resume();
+            if (!audioCtx) _ensureAudioCtx();
+            if (!audioCtx) return;
 
             let mode = (state && state.mode) || 'normal';
             let theme = MUSIC_THEMES[mode] || MUSIC_THEMES.normal;
@@ -8513,7 +8531,8 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
         let menuMusicNodes = null;
         function startMenuMusic() {
             if (menuMusicNodes || !appSettings.music) return;
-            if (audioCtx.state === 'suspended') audioCtx.resume();
+            if (!audioCtx) _ensureAudioCtx();
+            if (!audioCtx) return;
             let masterGain = audioCtx.createGain();
             masterGain.gain.value = 0;
             masterGain.gain.linearRampToValueAtTime(0.08, audioCtx.currentTime + 2);
@@ -10477,56 +10496,77 @@ function generateSyncCode() {
         menuStyleTag.textContent = `
             @keyframes menuFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
             @keyframes menuGlow { 0%,100%{filter:drop-shadow(0 0 8px #ff005580)} 50%{filter:drop-shadow(0 0 20px #ff0055cc)} }
-            @keyframes battlePulse { 0%,100%{transform:scale(1);box-shadow:0 0 30px #ff005566,inset 0 0 30px #ff005522} 50%{transform:scale(1.03);box-shadow:0 0 50px #ff0055aa,inset 0 0 40px #ff005544} }
+            @keyframes battlePulse { 0%,100%{transform:scale(1);box-shadow:0 6px 30px rgba(255,170,0,0.5),inset 0 2px 0 rgba(255,255,200,0.3)} 50%{transform:scale(1.02);box-shadow:0 8px 40px rgba(255,170,0,0.7),inset 0 2px 0 rgba(255,255,200,0.5)} }
             @keyframes shimmer { 0%{background-position:-200% center} 100%{background-position:200% center} }
             @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
             @keyframes rotateSlow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
             @keyframes bannerScroll { 0%{transform:translateX(100%)} 100%{transform:translateX(-100%)} }
+            @keyframes chestGlow { 0%,100%{box-shadow:0 0 8px rgba(var(--cc),0.3)} 50%{box-shadow:0 0 18px rgba(var(--cc),0.6)} }
+            @keyframes arenaParticle { 0%{opacity:0;transform:translateY(0)} 50%{opacity:1} 100%{opacity:0;transform:translateY(-30px)} }
 
             .nv-menu-root { position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;font-family:'Courier New',monospace; }
 
-            /* TOP BAR — resource bar */
-            .nv-topbar { display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:linear-gradient(180deg,rgba(20,0,30,0.95),rgba(10,0,15,0.9));border-bottom:2px solid #ff005544;z-index:5;flex-shrink:0; }
-            .nv-topbar-left { display:flex;align-items:center;gap:10px; }
-            .nv-topbar-right { display:flex;align-items:center;gap:12px; }
-            .nv-pilot-badge { display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#1a0025,#0a0010);border:1px solid #ff005566;border-radius:20px;padding:4px 14px 4px 6px; }
-            .nv-pilot-avatar { width:28px;height:28px;border-radius:50%;border:2px solid #00ffcc;display:flex;align-items:center;justify-content:center;font-size:14px;background:rgba(0,255,200,0.1); }
+            /* TOP BAR — Clash-style player info bar */
+            .nv-topbar { display:flex;align-items:center;justify-content:space-between;padding:calc(6px + env(safe-area-inset-top, 0px)) calc(12px + env(safe-area-inset-right, 0px)) 6px calc(12px + env(safe-area-inset-left, 0px));background:linear-gradient(180deg,rgba(15,0,25,0.98),rgba(8,0,12,0.95));border-bottom:2px solid #ff005544;z-index:5;flex-shrink:0; }
+            .nv-topbar-left { display:flex;align-items:center;gap:8px; }
+            .nv-topbar-right { display:flex;align-items:center;gap:8px; }
+            .nv-pilot-badge { display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#1a0025,#0a0010);border:1.5px solid #ff005566;border-radius:20px;padding:4px 14px 4px 6px;cursor:pointer; }
+            .nv-pilot-avatar { width:30px;height:30px;border-radius:50%;border:2px solid #00ffcc;display:flex;align-items:center;justify-content:center;font-size:16px;background:rgba(0,255,200,0.1); }
             .nv-pilot-name { color:#00ffcc;font-weight:bold;font-size:13px;letter-spacing:1px; }
-            .nv-resource { display:flex;align-items:center;gap:5px;background:linear-gradient(135deg,rgba(255,204,0,0.1),rgba(0,0,0,0.6));border:1px solid #ffcc0044;border-radius:14px;padding:3px 12px 3px 6px;font-size:13px;color:#ffcc00;font-weight:bold; }
+            .nv-pilot-rank { font-size:9px;color:#ff005588;letter-spacing:1px; }
+            .nv-resource { display:flex;align-items:center;gap:5px;background:linear-gradient(135deg,rgba(255,204,0,0.15),rgba(0,0,0,0.7));border:1.5px solid #ffcc0044;border-radius:16px;padding:4px 14px 4px 8px;font-size:14px;color:#ffcc00;font-weight:bold; }
             .nv-settings-btn { width:32px;height:32px;border-radius:50%;border:1px solid #555;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all 0.2s; }
             .nv-settings-btn:hover { border-color:#fff;background:rgba(255,255,255,0.15);transform:rotate(90deg); }
 
-            /* HERO SECTION — Big logo + ship art */
-            .nv-hero { flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:15px 0 5px;position:relative; }
-            .nv-logo { font-size:52px;font-weight:900;letter-spacing:10px;color:transparent;-webkit-text-stroke:2px #ff0055;text-shadow:0 0 40px #ff005588;animation:menuGlow 3s infinite;text-transform:uppercase;margin:0;line-height:1; }
-            .nv-logo-sub { font-size:11px;letter-spacing:6px;color:#ff005588;text-transform:uppercase;margin-top:2px; }
-            .nv-ship-display { width:60px;height:60px;margin:4px 0;pointer-events:none;overflow:hidden; }
-            .nv-sector-progress { display:flex;align-items:center;gap:6px;margin-top:4px; }
-            .nv-sector-bar { width:180px;height:6px;background:#1a1a2e;border-radius:3px;overflow:hidden;border:1px solid #333; }
-            .nv-sector-fill { height:100%;border-radius:3px;transition:width 0.5s;background:linear-gradient(90deg,#ff0055,#ff8800,#ffcc00); }
-            .nv-sector-text { font-size:10px;color:#888;letter-spacing:1px; }
+            /* ARENA PREVIEW — CR-style center arena view */
+            .nv-arena-section { flex:1;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden; }
+            .nv-arena-canvas { width:100%;height:100%;display:block; }
+            .nv-arena-overlay { position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:flex-start; }
+            .nv-arena-title { margin-top:12px;text-align:center; }
+            .nv-logo { font-size:clamp(28px,8vw,52px);font-weight:900;letter-spacing:8px;color:transparent;-webkit-text-stroke:2px #ff0055;text-shadow:0 0 40px #ff005588;animation:menuGlow 3s infinite;text-transform:uppercase;margin:0;line-height:1; }
+            .nv-logo-sub { font-size:10px;letter-spacing:5px;color:#ff005577;text-transform:uppercase;margin-top:2px; }
+            .nv-sector-badge { display:inline-flex;align-items:center;gap:6px;margin-top:8px;background:linear-gradient(135deg,rgba(255,0,85,0.2),rgba(0,0,0,0.8));border:1.5px solid #ff005555;border-radius:20px;padding:5px 16px; }
+            .nv-sector-badge span { font-size:12px;color:#ff0055;font-weight:bold;letter-spacing:2px; }
 
-            /* CENTER CONTENT — scrollable area between hero and bottom nav */
-            .nv-center { flex:1;overflow-y:auto;overflow-x:hidden;padding:8px 16px 10px;display:flex;flex-direction:column;gap:10px; }
+            /* CHEST SLOTS — CR-style reward slots */
+            .nv-chest-row { display:flex;gap:6px;justify-content:center;padding:0 12px;position:absolute;bottom:0;left:0;right:0;z-index:2; }
+            .nv-chest-slot { flex:1;max-width:90px;aspect-ratio:1;border-radius:12px;border:2px solid rgba(var(--cc),0.5);background:linear-gradient(180deg,rgba(var(--cc),0.12),rgba(0,0,0,0.85));display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;animation:chestGlow 3s infinite;position:relative; }
+            .nv-chest-slot:hover { transform:translateY(-3px);border-color:rgba(var(--cc),0.9); }
+            .nv-chest-icon { font-size:28px; }
+            .nv-chest-label { font-size:8px;color:rgba(var(--cc),0.7);letter-spacing:1px;margin-top:2px; }
+            .nv-chest-timer { font-size:9px;color:#fff;background:rgba(0,0,0,0.6);border-radius:8px;padding:1px 6px;position:absolute;bottom:4px; }
 
-            /* BATTLE BUTTON */
-            .nv-battle-section { display:flex;flex-direction:column;align-items:center;gap:8px; }
-            .nv-battle-btn { width:280px;height:64px;border-radius:16px;border:3px solid #ff0055;background:linear-gradient(180deg,#2a0015 0%,#1a000a 50%,#2a0015 100%);display:flex;align-items:center;justify-content:center;cursor:pointer;animation:battlePulse 2s infinite;position:relative;overflow:hidden;transition:all 0.15s; }
-            .nv-battle-btn:hover { border-color:#ff3377;filter:brightness(1.3); }
-            .nv-battle-btn:active { transform:scale(0.97); }
-            .nv-battle-text { font-size:28px;font-weight:900;letter-spacing:6px;color:#ff0055;text-shadow:0 0 20px #ff005588;z-index:1; }
-            .nv-battle-shimmer { position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(90deg,transparent 0%,rgba(255,0,85,0.15) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 3s infinite; }
-            .nv-battle-sub { font-size:10px;color:#ff005588;letter-spacing:3px; }
+            /* BATTLE BUTTON — CR-style golden/prominent */
+            .nv-battle-dock { position:relative;display:flex;flex-direction:column;align-items:center;padding:10px 16px 6px;background:linear-gradient(180deg,transparent,rgba(0,0,0,0.9) 30%);flex-shrink:0;z-index:3; }
+            .nv-battle-btn { width:min(320px,85vw);height:68px;border-radius:18px;border:3px solid #ffaa00;background:linear-gradient(180deg,#ff8800 0%,#cc5500 40%,#aa3300 60%,#ff6600 100%);display:flex;align-items:center;justify-content:center;cursor:pointer;animation:battlePulse 2s infinite;position:relative;overflow:hidden;transition:all 0.15s;-webkit-tap-highlight-color:transparent; }
+            .nv-battle-btn:hover { filter:brightness(1.15); }
+            .nv-battle-btn:active { transform:scale(0.96); }
+            .nv-battle-text { font-size:32px;font-weight:900;letter-spacing:8px;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.5),0 0 20px rgba(255,170,0,0.5);z-index:1; }
+            .nv-battle-shimmer { position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(90deg,transparent 0%,rgba(255,255,200,0.2) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 2.5s infinite; }
+            .nv-battle-sub { font-size:10px;color:#ffaa0088;letter-spacing:3px;margin-top:4px; }
 
-            /* MODE SELECTOR ROW — horizontal scroll of game modes */
-            .nv-modes-row { display:flex;gap:10px;overflow-x:auto;overflow-y:visible;padding:6px 2px;-webkit-overflow-scrolling:touch;flex-shrink:0;min-height:46px; }
-            .nv-modes-row::-webkit-scrollbar { height:4px; }
+            /* MODE SELECTOR ROW — horizontal scroll below battle */
+            .nv-modes-row { display:flex;gap:8px;overflow-x:auto;overflow-y:visible;padding:8px 4px 4px;-webkit-overflow-scrolling:touch;flex-shrink:0; }
+            .nv-modes-row::-webkit-scrollbar { height:3px; }
             .nv-modes-row::-webkit-scrollbar-thumb { background:#ff005544;border-radius:2px; }
-            .nv-mode-chip { display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;border:1.5px solid;cursor:pointer;white-space:nowrap;transition:all 0.2s;flex-shrink:0; }
+            .nv-mode-chip { display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:12px;border:1.5px solid;cursor:pointer;white-space:nowrap;transition:all 0.2s;flex-shrink:0;-webkit-tap-highlight-color:transparent; }
             .nv-mode-chip:hover { transform:translateY(-2px);filter:brightness(1.3); }
-            .nv-mode-chip .nv-chip-icon { font-size:22px; }
-            .nv-mode-chip .nv-chip-label { font-size:13px;font-weight:bold;letter-spacing:1px; }
-            .nv-mode-chip .nv-chip-sub { font-size:10px;opacity:0.6; }
+            .nv-mode-chip:active { transform:scale(0.95); }
+            .nv-mode-chip .nv-chip-icon { font-size:20px; }
+            .nv-mode-chip .nv-chip-label { font-size:12px;font-weight:bold;letter-spacing:1px; }
+            .nv-mode-chip .nv-chip-sub { font-size:9px;opacity:0.6; }
+
+            /* BOTTOM NAV — CR-style tab bar */
+            .nv-bottomnav { display:flex;align-items:stretch;background:linear-gradient(180deg,rgba(15,0,22,0.98),rgba(5,0,8,1));border-top:2px solid #ff005544;flex-shrink:0;z-index:5;padding-bottom:env(safe-area-inset-bottom,0px); }
+            .nv-nav-tab { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 2px 6px;cursor:pointer;transition:all 0.2s;border-top:3px solid transparent;position:relative;-webkit-tap-highlight-color:transparent; }
+            .nv-nav-tab:hover { background:rgba(255,255,255,0.04); }
+            .nv-nav-tab:active { background:rgba(255,255,255,0.08); }
+            .nv-nav-tab.active { border-top-color:#ff0055;background:rgba(255,0,85,0.1); }
+            .nv-nav-tab .nav-icon { font-size:22px;margin-bottom:2px; }
+            .nv-nav-tab .nav-label { font-size:9px;letter-spacing:1px;color:#888;text-transform:uppercase;font-weight:bold; }
+            .nv-nav-tab:hover .nav-label { color:#ccc; }
+            .nv-nav-tab.active .nav-label { color:#ff0055; }
+            .nv-nav-tab .nav-notif { position:absolute;top:4px;right:calc(50% - 18px);width:8px;height:8px;border-radius:50%;background:#ff0055;box-shadow:0 0 8px #ff0055; }
 
             /* EVENT BANNER */
             .nv-event-banner { background:linear-gradient(135deg,rgba(255,136,0,0.12),rgba(0,0,0,0.7));border:1.5px solid #ff880044;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.2s; }
@@ -10546,16 +10586,6 @@ function generateSyncCode() {
             .nv-grid-card .gc-title { font-size:12px;font-weight:bold;letter-spacing:1px; }
             .nv-grid-card .gc-sub { font-size:9px;opacity:0.5;margin-top:1px; }
             .nv-grid-card .gc-badge { position:absolute;top:6px;right:8px;font-size:8px;border-radius:6px;padding:1px 6px;font-weight:bold; }
-
-            /* BOTTOM NAV — Fixed tab bar */
-            .nv-bottomnav { display:flex;align-items:stretch;background:linear-gradient(180deg,rgba(10,0,15,0.95),rgba(5,0,8,0.98));border-top:2px solid #ff005533;flex-shrink:0;z-index:5; }
-            .nv-nav-tab { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 2px 8px;cursor:pointer;transition:all 0.2s;border-top:2px solid transparent;position:relative; }
-            .nv-nav-tab:hover { background:rgba(255,255,255,0.04); }
-            .nv-nav-tab.active { border-top-color:#ff0055;background:rgba(255,0,85,0.08); }
-            .nv-nav-tab .nav-icon { font-size:18px;margin-bottom:1px; }
-            .nv-nav-tab .nav-label { font-size:8px;letter-spacing:1px;color:#888;text-transform:uppercase; }
-            .nv-nav-tab:hover .nav-label { color:#ccc; }
-            .nv-nav-tab .nav-notif { position:absolute;top:3px;right:calc(50% - 16px);width:7px;height:7px;border-radius:50%;background:#ff0055;box-shadow:0 0 6px #ff0055; }
 
             /* Secret boss buttons in modes row */
             .nv-secret-chip { border-style:dashed !important;position:relative; }
@@ -10694,25 +10724,54 @@ function generateSyncCode() {
             ui.menuBtns.style.width = '100%';
             ui.menuBtns.innerHTML = `<div class="nv-menu-root">
 
-                <!-- TOP BAR -->
+                <!-- TOP BAR — CR style -->
                 <div class="nv-topbar">
                     <div class="nv-topbar-left">
-                        <div class="nv-pilot-badge" onclick="openAvatarPicker()" style="cursor:pointer;" title="Change Avatar">
+                        <div class="nv-pilot-badge" onclick="openAvatarPicker()" title="Change Avatar">
                             <div class="nv-pilot-avatar">${playerAvatar}</div>
-                            <span class="nv-pilot-name">${currentUsername || 'PILOT'}</span>
+                            <div>
+                                <div class="nv-pilot-name">${currentUsername || 'PILOT'}</div>
+                                <div class="nv-pilot-rank">${unlocked >= 15 ? 'VOID WALKER' : unlocked >= 10 ? 'ELITE' : unlocked >= 5 ? 'VETERAN' : 'ROOKIE'}</div>
+                            </div>
                         </div>
                     </div>
                     <div class="nv-topbar-right">
-                        <div class="nv-resource"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 12h6"/></svg> ${totalCoins >= 1000000 ? (totalCoins/1000000).toFixed(1)+'M' : totalCoins >= 1000 ? (totalCoins/1000).toFixed(1)+'K' : totalCoins}</div>
+                        <div class="nv-resource"><span style="font-size:16px;">💰</span> ${totalCoins >= 1000000 ? (totalCoins/1000000).toFixed(1)+'M' : totalCoins >= 1000 ? (totalCoins/1000).toFixed(1)+'K' : totalCoins}</div>
                         <div class="nv-settings-btn" onclick="openSettings()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
-                        <div class="nv-settings-btn" onclick="logoutUser()" title="Logout" style="cursor:pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff0055" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
+                        <div class="nv-settings-btn" onclick="logoutUser()" title="Logout"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff0055" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
                     </div>
                 </div>
 
-                <!-- HERO SECTION -->
-                <div class="nv-hero">
-                    <div class="nv-logo">NEON VOID</div>
-                    <div class="nv-logo-sub">VOID HUNTER PROTOCOL</div>
+                <!-- ARENA PREVIEW — CR-style center view -->
+                <div class="nv-arena-section">
+                    <canvas id="nv-arena-preview" class="nv-arena-canvas"></canvas>
+                    <div class="nv-arena-overlay">
+                        <div class="nv-arena-title">
+                            <div class="nv-logo">NEON VOID</div>
+                            <div class="nv-logo-sub">VOID HUNTER PROTOCOL</div>
+                            <div class="nv-sector-badge"><span>⚔ SECTOR ${unlocked}/20</span></div>
+                        </div>
+                    </div>
+                    <!-- CHEST SLOTS — CR-style reward crates -->
+                    <div class="nv-chest-row">
+                        <div class="nv-chest-slot" style="--cc:${mc('#ffcc00')};" onclick="openBattlePass()">
+                            <div class="nv-chest-icon">⭐</div>
+                            <div class="nv-chest-label">PASS</div>
+                        </div>
+                        <div class="nv-chest-slot" style="--cc:${mc('#ff8800')};" onclick="openShop()">
+                            <div class="nv-chest-icon">🔧</div>
+                            <div class="nv-chest-label">HANGAR</div>
+                        </div>
+                        <div class="nv-chest-slot" style="--cc:${mc('#aa44ff')};" onclick="openBlackMarket()">
+                            <div class="nv-chest-icon">🎁</div>
+                            <div class="nv-chest-label">CRATE</div>
+                        </div>
+                        <div class="nv-chest-slot" style="--cc:${mc('#00ffcc')};" onclick="openGemShop()">
+                            <div class="nv-chest-icon">💎</div>
+                            <div class="nv-chest-label">GEMS</div>
+                        </div>
+                    </div>
+                </div>
                     <div class="nv-ship-display">
                         <canvas id="nv-menu-ship" width="60" height="60" style="display:block;"></canvas>
                     </div>
@@ -10723,17 +10782,13 @@ function generateSyncCode() {
                     </div>
                 </div>
 
-                <!-- CENTER SCROLLABLE CONTENT -->
-                <div class="nv-center">
-
-                    <!-- BIG BATTLE BUTTON -->
-                    <div class="nv-battle-section">
-                        <div class="nv-battle-btn" onclick="openMissionSelect()">
-                            <div class="nv-battle-shimmer"></div>
-                            <span class="nv-battle-text">BATTLE</span>
-                        </div>
-                        <div class="nv-battle-sub">SECTOR ${unlocked} &#x2022; TAP TO DEPLOY</div>
+                <!-- BATTLE DOCK — CR-style golden button -->
+                <div class="nv-battle-dock">
+                    <div class="nv-battle-btn" onclick="openMissionSelect()">
+                        <div class="nv-battle-shimmer"></div>
+                        <span class="nv-battle-text">BATTLE</span>
                     </div>
+                    <div class="nv-battle-sub">SECTOR ${unlocked} &#x2022; TAP TO DEPLOY</div>
 
                     <!-- GAME MODES HORIZONTAL SCROLL -->
                     <div class="nv-modes-row">
@@ -10841,161 +10896,125 @@ function generateSyncCode() {
                         ${secretChip}${paradoxChip}
                     </div>
 
-                    <!-- QUICK ACCESS GRID -->
-                    <div class="nv-grid">
-                        <div class="nv-grid-card" style="--gc:${mc('#ffcc00')};" onclick="openShop()">
-                            <div class="gc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
-                            <div class="gc-text"><div class="gc-title" style="color:#ffcc00;">HANGAR</div><div class="gc-sub">Black Market</div></div>
-                        </div>
-                        <div class="nv-grid-card" style="--gc:${mc('#ff88ff')};" onclick="openLeaderboard()">
-                            <div class="gc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff88ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V22M14 14.66V22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></div>
-                            <div class="gc-text"><div class="gc-title" style="color:#ff88ff;">RANKS</div><div class="gc-sub">Leaderboards</div></div>
-                        </div>
+                    ${secretChip}${paradoxChip}
                     </div>
-                    <div style="margin-top:8px;padding:0 4px;">
-                        <div style="font-size:9px;letter-spacing:3px;color:#ffffff44;margin-bottom:6px;">PROGRESSION</div>
-                        <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                            <div style="padding:6px 12px;border:1px solid #ffd70044;border-radius:8px;cursor:pointer;font-size:10px;color:#ffd700;letter-spacing:1px;" onclick="openBattlePass()">⭐ BATTLE PASS</div>
-                            <div style="padding:6px 12px;border:1px solid #ff880044;border-radius:8px;cursor:pointer;font-size:10px;color:#ff8800;letter-spacing:1px;" onclick="openMastery()">🎯 MASTERY</div>
-                            <div style="padding:6px 12px;border:1px solid #44ff8844;border-radius:8px;cursor:pointer;font-size:10px;color:#44ff88;letter-spacing:1px;" onclick="openBlueprints()">📜 BLUEPRINTS</div>
-                            <div style="padding:6px 12px;border:1px solid #ff445544;border-radius:8px;cursor:pointer;font-size:10px;color:#ff4455;letter-spacing:1px;" onclick="openContracts()">📋 CONTRACTS</div>
-                            <div style="padding:6px 12px;border:1px solid #aa44ff44;border-radius:8px;cursor:pointer;font-size:10px;color:#aa44ff;letter-spacing:1px;" onclick="openBlackMarket()">🏪 BLACK MARKET</div>
-                            <div style="padding:6px 12px;border:1px solid #00ffcc44;border-radius:8px;cursor:pointer;font-size:10px;color:#00ffcc;letter-spacing:1px;" onclick="openGemShop()">💎 GEM SHOP</div>
-                            <div style="padding:6px 12px;border:1px solid #ffcc0044;border-radius:8px;cursor:pointer;font-size:10px;color:#ffcc00;letter-spacing:1px;" onclick="openTradePost()">🔄 TRADE POST</div>
-                            <div style="padding:6px 12px;border:1px solid #ff005544;border-radius:8px;cursor:pointer;font-size:10px;color:#ff0055;letter-spacing:1px;" onclick="openBounties()">🎯 BOUNTIES</div>
-                            <div style="padding:6px 12px;border:1px solid #4488ff44;border-radius:8px;cursor:pointer;font-size:10px;color:#4488ff;letter-spacing:1px;" onclick="openRebirth()">♻️ REBIRTH</div>
-                            <div style="padding:6px 12px;border:1px solid #ffd70044;border-radius:8px;cursor:pointer;font-size:10px;color:#ffd700;letter-spacing:1px;" onclick="openVIPPanel()">👑 VIP</div>
-                            <div style="padding:6px 12px;border:1px solid #ffffff44;border-radius:8px;cursor:pointer;font-size:10px;color:#ffffff;letter-spacing:1px;" onclick="openAchievements()">🏆 ACHIEVEMENTS</div>
-                            <div style="padding:6px 12px;border:1px solid #00ffcc44;border-radius:8px;cursor:pointer;font-size:10px;color:#00ffcc;letter-spacing:1px;" onclick="openClan()">👥 CLAN</div>
-                            <div style="padding:6px 12px;border:1px solid #ff88ff44;border-radius:8px;cursor:pointer;font-size:10px;color:#ff88ff;letter-spacing:1px;" onclick="openPrestige()">🌟 PRESTIGE</div>
-                            <div style="padding:6px 12px;border:1px solid #88ffcc44;border-radius:8px;cursor:pointer;font-size:10px;color:#88ffcc;letter-spacing:1px;" onclick="openPhotoMode()">📸 PHOTO MODE</div>
-                        </div>
-                    </div>
-                    <div style="height:80px;"></div>
-
-                    <!-- ANIMATED INFO PANEL -->
-                    <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px;">
-
-                        <!-- Animated ship showcase -->
-                        <div style="position:relative;border:1.5px solid rgba(0,255,204,0.2);border-radius:10px;background:linear-gradient(180deg,rgba(0,255,204,0.03) 0%,rgba(0,0,0,0.6) 100%);padding:8px 12px;overflow:hidden;">
-                            <canvas id="menu-ship-anim" style="width:100%;height:60px;display:block;border-radius:6px;"></canvas>
-                            <div style="position:absolute;bottom:6px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:flex-end;pointer-events:none;">
-                                <div>
-                                    <div style="font-size:7px;color:#00ffcc88;letter-spacing:2px;">PILOT</div>
-                                    <div style="font-size:11px;color:#00ffcc;font-weight:bold;text-shadow:0 0 10px #00ffcc;">${currentUsername}</div>
-                                </div>
-                                <div style="text-align:right;">
-                                    <div style="font-size:7px;color:#ff005588;letter-spacing:2px;">THREAT</div>
-                                    <div style="font-size:11px;color:#ff0055;font-weight:bold;text-shadow:0 0 10px #ff0055;">${unlocked >= 15 ? 'VOID WALKER' : unlocked >= 10 ? 'ELITE' : unlocked >= 5 ? 'VETERAN' : 'ROOKIE'}</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Tip carousel with typing effect -->
-                        <div id="menu-tip-box" style="border:1px solid rgba(255,136,0,0.2);border-radius:10px;background:rgba(255,136,0,0.04);padding:12px 16px;display:flex;align-items:center;gap:10px;">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff8800" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-                            <div style="flex:1;">
-                                <div style="font-size:9px;color:#ff880088;letter-spacing:2px;margin-bottom:2px;">INTEL BRIEF</div>
-                                <div id="menu-tip-text" style="font-size:12px;color:#ff8800cc;min-height:16px;font-family:monospace;"></div>
-                            </div>
-                        </div>
-
-                        <!-- Quick stats row -->
-                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
-                            <div style="border:1px solid rgba(255,204,0,0.15);border-radius:10px;background:rgba(255,204,0,0.04);padding:10px;text-align:center;">
-                                <div style="font-size:9px;color:#ffcc0088;letter-spacing:1px;">SECTORS</div>
-                                <div style="font-size:20px;color:#ffcc00;font-weight:bold;text-shadow:0 0 10px #ffcc0044;">${unlocked}/15</div>
-                            </div>
-                            <div style="border:1px solid rgba(0,255,204,0.15);border-radius:10px;background:rgba(0,255,204,0.04);padding:10px;text-align:center;">
-                                <div style="font-size:9px;color:#00ffcc88;letter-spacing:1px;">CREDITS</div>
-                                <div style="font-size:20px;color:#00ffcc;font-weight:bold;text-shadow:0 0 10px #00ffcc44;">${totalCoins >= 1000000 ? (totalCoins/1000000).toFixed(1)+'M' : totalCoins >= 1000 ? (totalCoins/1000).toFixed(0)+'K' : totalCoins}</div>
-                            </div>
-                            <div style="border:1px solid rgba(170,0,255,0.15);border-radius:10px;background:rgba(170,0,255,0.04);padding:10px;text-align:center;">
-                                <div style="font-size:9px;color:#aa00ff88;letter-spacing:1px;">UPGRADES</div>
-                                <div style="font-size:20px;color:#aa00ff;font-weight:bold;text-shadow:0 0 10px #aa00ff44;">${purchasedUpgrades.length}</div>
-                            </div>
-                        </div>
-
-                    </div>
-
                 </div>
 
-                <!-- BOTTOM NAVIGATION BAR -->
+                <!-- BOTTOM NAVIGATION BAR — CR-style 5 tabs -->
                 <div class="nv-bottomnav">
-                    <div class="nv-nav-tab active" onclick="openMissionSelect()">
-                        <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff0055" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L4 14h6l-2 8 10-12h-6l2-8z"/></svg></span>
-                        <span class="nav-label">BATTLE</span>
-                    </div>
                     <div class="nv-nav-tab" onclick="openShop()">
-                        <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
+                        <span class="nav-icon">🔧</span>
                         <span class="nav-label">HANGAR</span>
                     </div>
                     <div class="nv-nav-tab" onclick="openMultiplayer()">
-                        <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00ccff" stroke-width="2" stroke-linecap="round"><path d="M16 3.13a4 4 0 0 1 0 7.75M21 21v-2a4 4 0 0 0-3-3.87M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg></span>
+                        <span class="nav-icon">👥</span>
                         <span class="nav-label">CO-OP</span>
                     </div>
+                    <div class="nv-nav-tab active" onclick="openMissionSelect()">
+                        <span class="nav-icon" style="font-size:26px;">⚔</span>
+                        <span class="nav-label" style="color:#ff0055;">BATTLE</span>
+                    </div>
                     <div class="nv-nav-tab" onclick="openLeaderboard()">
-                        <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff88ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V22M14 14.66V22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></span>
+                        <span class="nav-icon">🏆</span>
                         <span class="nav-label">RANKS</span>
+                    </div>
+                    <div class="nv-nav-tab" onclick="openAchievements()">
+                        <span class="nav-icon">⭐</span>
+                        <span class="nav-label">MORE</span>
+                        <div class="nav-notif"></div>
                     </div>
                 </div>
             </div>`;
 
-            // Draw ship on the mini canvas
+            // ---- Arena Preview Canvas (CR-style animated background) ----
             try {
-                let shipCanvas = document.getElementById('nv-menu-ship');
-                if (shipCanvas) {
-                    let sctx = shipCanvas.getContext('2d');
-                    sctx.clearRect(0,0,60,60);
-                    sctx.save();
-                    sctx.translate(30,30);
-                    sctx.scale(0.75,0.75);
-                    // Engine glow
-                    let eg = sctx.createRadialGradient(0,18,2,0,18,20);
-                    eg.addColorStop(0,'#00ffcc');
-                    eg.addColorStop(0.5,'#00ffcc44');
-                    eg.addColorStop(1,'transparent');
-                    sctx.fillStyle = eg;
-                    sctx.fillRect(-20,8,40,30);
-                    // Shadow
-                    sctx.beginPath();
-                    sctx.moveTo(0,-26);sctx.lineTo(15,12);sctx.lineTo(24,20);sctx.lineTo(9,14);sctx.lineTo(0,22);sctx.lineTo(-9,14);sctx.lineTo(-24,20);sctx.lineTo(-15,12);sctx.closePath();
-                    sctx.fillStyle='rgba(0,0,0,0.3)';sctx.fill();
-                    // Hull
-                    sctx.beginPath();
-                    sctx.moveTo(0,-28);sctx.lineTo(14,10);sctx.lineTo(22,18);sctx.lineTo(8,12);sctx.lineTo(0,20);sctx.lineTo(-8,12);sctx.lineTo(-22,18);sctx.lineTo(-14,10);sctx.closePath();
-                    let sg = sctx.createLinearGradient(0,-28,0,20);
-                    sg.addColorStop(0,'#ff0055');sg.addColorStop(0.5,'#cc0044');sg.addColorStop(1,'#880033');
-                    sctx.fillStyle = sg;sctx.fill();
-                    sctx.strokeStyle = '#ff005566';sctx.lineWidth = 0.8;sctx.stroke();
-                    // Panel lines
-                    sctx.strokeStyle='rgba(255,255,255,0.1)';sctx.lineWidth=0.5;
-                    sctx.beginPath();sctx.moveTo(0,-24);sctx.lineTo(0,18);sctx.stroke();
-                    sctx.beginPath();sctx.moveTo(-4,-2);sctx.lineTo(4,-2);sctx.stroke();
-                    // Wing tips
-                    sctx.fillStyle='#00ffcc88';
-                    sctx.beginPath();sctx.arc(20,16,1.5,0,Math.PI*2);sctx.fill();
-                    sctx.beginPath();sctx.arc(-20,16,1.5,0,Math.PI*2);sctx.fill();
-                    // Engine pods
-                    sctx.fillStyle='#0a0a1e';
-                    sctx.beginPath();sctx.ellipse(8,14,3,5,0,0,Math.PI*2);sctx.fill();
-                    sctx.beginPath();sctx.ellipse(-8,14,3,5,0,0,Math.PI*2);sctx.fill();
-                    sctx.fillStyle='#00ffcc55';
-                    sctx.beginPath();sctx.ellipse(8,17,2,1.5,0,0,Math.PI*2);sctx.fill();
-                    sctx.beginPath();sctx.ellipse(-8,17,2,1.5,0,0,Math.PI*2);sctx.fill();
-                    // Cockpit
-                    sctx.beginPath();sctx.moveTo(0,-18);sctx.lineTo(5,0);sctx.lineTo(0,6);sctx.lineTo(-5,0);sctx.closePath();
-                    let cpg=sctx.createLinearGradient(0,-18,0,6);cpg.addColorStop(0,'#00ffcc55');cpg.addColorStop(0.5,'#00ffcc99');cpg.addColorStop(1,'#00ffcc33');
-                    sctx.fillStyle=cpg;sctx.fill();
-                    sctx.beginPath();sctx.moveTo(0,-14);sctx.lineTo(2.5,-2);sctx.lineTo(0,2);sctx.lineTo(-2.5,-2);sctx.closePath();
-                    sctx.fillStyle='#00ffcccc';sctx.fill();
-                    // Nose highlight
-                    sctx.fillStyle='#ffffff33';sctx.beginPath();sctx.arc(0,-27,1.2,0,Math.PI*2);sctx.fill();
-                    sctx.restore();
-                }
-            } catch(e) {}
+                let arenaCanvas = document.getElementById('nv-arena-preview');
+                if (arenaCanvas) {
+                    let dpr = window.devicePixelRatio || 1;
+                    let aw = arenaCanvas.clientWidth, ah = arenaCanvas.clientHeight;
+                    arenaCanvas.width = aw * dpr; arenaCanvas.height = ah * dpr;
+                    let actx = arenaCanvas.getContext('2d');
+                    actx.scale(dpr, dpr);
 
-            // ---- Animated ship showcase on #menu-ship-anim ----
+                    // Arena entities
+                    let aStars = []; for(let i=0;i<60;i++) aStars.push({x:Math.random()*aw,y:Math.random()*ah,s:0.3+Math.random()*1.2,sp:0.2+Math.random()*0.8,b:Math.random()});
+                    let aEnemies = []; for(let i=0;i<8;i++) aEnemies.push({x:Math.random()*aw,y:50+Math.random()*(ah*0.4),r:6+Math.random()*10,c:['#ff0055','#ff8800','#00ffcc','#aa00ff','#ffcc00','#ff4400'][Math.floor(Math.random()*6)],vx:(Math.random()-0.5)*1.5,vy:(Math.random()-0.5)*0.8,angle:Math.random()*Math.PI*2});
+                    let aBullets = [];
+                    let aShipX = aw/2, aShipY = ah*0.65, aFrame = 0;
+                    let skinColor = '#ff0055'; try { skinColor = (SKINS[equippedSkin]||SKINS['default']).color; } catch(e2){}
+
+                    let arenaRAF = null;
+                    function drawArena() {
+                        arenaRAF = requestAnimationFrame(drawArena);
+                        aFrame++;
+                        if(aFrame%2!==0) return; // 30fps
+
+                        actx.clearRect(0,0,aw,ah);
+                        // Dark gradient BG
+                        let bg = actx.createRadialGradient(aw/2,ah*0.4,50,aw/2,ah/2,ah);
+                        bg.addColorStop(0,'#0f0020'); bg.addColorStop(0.5,'#08001a'); bg.addColorStop(1,'#040010');
+                        actx.fillStyle = bg; actx.fillRect(0,0,aw,ah);
+
+                        // Grid lines (perspective feel)
+                        actx.strokeStyle = '#ff005512'; actx.lineWidth = 0.5;
+                        for(let gy=0;gy<ah;gy+=40){ actx.beginPath(); actx.moveTo(0,gy); actx.lineTo(aw,gy); actx.stroke(); }
+                        for(let gx=0;gx<aw;gx+=40){ actx.beginPath(); actx.moveTo(gx,0); actx.lineTo(gx,ah); actx.stroke(); }
+
+                        // Stars
+                        for(let st of aStars){ st.x-=st.sp; if(st.x<0){st.x=aw;st.y=Math.random()*ah;} st.b+=(Math.random()-0.5)*0.08; st.b=Math.max(0.2,Math.min(1,st.b)); actx.globalAlpha=st.b*0.6; actx.fillStyle='#fff'; actx.beginPath(); actx.arc(st.x,st.y,st.s,0,Math.PI*2); actx.fill(); }
+                        actx.globalAlpha=1;
+
+                        // Enemies patrol
+                        for(let e of aEnemies){
+                            e.x+=e.vx; e.y+=e.vy; e.angle+=0.03;
+                            if(e.x<20||e.x>aw-20) e.vx*=-1;
+                            if(e.y<30||e.y>ah*0.5) e.vy*=-1;
+                            actx.save(); actx.translate(e.x,e.y); actx.rotate(e.angle);
+                            actx.shadowBlur=12; actx.shadowColor=e.c;
+                            actx.strokeStyle=e.c; actx.lineWidth=1.5;
+                            actx.beginPath(); actx.moveTo(0,-e.r); actx.lineTo(e.r*0.7,e.r*0.7); actx.lineTo(-e.r*0.7,e.r*0.7); actx.closePath(); actx.stroke();
+                            actx.shadowBlur=0; actx.restore();
+                        }
+
+                        // Ship auto-fires
+                        if(aFrame%20===0){ aBullets.push({x:aShipX,y:aShipY-14,vy:-6,life:60}); }
+                        // Bullets
+                        for(let i=aBullets.length-1;i>=0;i--){
+                            let b=aBullets[i]; b.y+=b.vy; b.life--;
+                            if(b.life<0||b.y<-10){aBullets.splice(i,1);continue;}
+                            actx.shadowBlur=8; actx.shadowColor=skinColor;
+                            actx.fillStyle=skinColor; actx.beginPath(); actx.arc(b.x,b.y,2,0,Math.PI*2); actx.fill();
+                            actx.shadowBlur=0;
+                            // Hit check
+                            for(let e of aEnemies){ if(Math.hypot(e.x-b.x,e.y-b.y)<e.r+3){ e.x=Math.random()*aw; e.y=30+Math.random()*(ah*0.35); aBullets.splice(i,1); break; } }
+                        }
+
+                        // Player ship
+                        let sx=aShipX+Math.sin(aFrame*0.02)*30, sy=aShipY+Math.sin(aFrame*0.03)*5;
+                        actx.save(); actx.translate(sx,sy);
+                        // Engine glow
+                        let eg=actx.createRadialGradient(0,12,1,0,12,18);
+                        eg.addColorStop(0,'#00ffcc66'); eg.addColorStop(1,'transparent');
+                        actx.fillStyle=eg; actx.fillRect(-15,5,30,25);
+                        // Hull
+                        actx.beginPath(); actx.moveTo(0,-14); actx.lineTo(10,8); actx.lineTo(16,14); actx.lineTo(6,10); actx.lineTo(0,16); actx.lineTo(-6,10); actx.lineTo(-16,14); actx.lineTo(-10,8); actx.closePath();
+                        actx.fillStyle=skinColor; actx.shadowBlur=15; actx.shadowColor=skinColor; actx.fill();
+                        actx.shadowBlur=0;
+                        // Cockpit
+                        actx.fillStyle='#00ffcc88'; actx.beginPath(); actx.moveTo(0,-10); actx.lineTo(3,0); actx.lineTo(0,4); actx.lineTo(-3,0); actx.closePath(); actx.fill();
+                        actx.restore();
+
+                        // Bottom fade for chest slots
+                        let fadeG = actx.createLinearGradient(0,ah-80,0,ah);
+                        fadeG.addColorStop(0,'transparent'); fadeG.addColorStop(1,'rgba(0,0,0,0.9)');
+                        actx.fillStyle=fadeG; actx.fillRect(0,ah-80,aw,80);
+                    }
+                    drawArena();
+                    window._menuShipCleanup = function() { if(arenaRAF) cancelAnimationFrame(arenaRAF); arenaRAF=null; };
+                }
+            } catch(e) { console.log('Arena preview error:', e); }
+
+            // ---- Animated ship showcase on #menu-ship-anim (legacy, skip if no element) ----
             try {
                 let shipAnimCanvas = document.getElementById('menu-ship-anim');
                 if (shipAnimCanvas) {

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Neon Void: God Mode Update</title>
     <style>
         body { 
@@ -401,10 +401,13 @@
         function toggleHyperSpeed() { appSettings.hyper = !appSettings.hyper; saveSettings(); }
 
 
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let audioCtx = null;
+        function _ensureAudioCtx() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === 'suspended') audioCtx.resume(); return audioCtx; }
+        ['touchstart','mousedown','keydown'].forEach(evt => { document.addEventListener(evt, function _ia() { _ensureAudioCtx(); document.removeEventListener(evt, _ia); }, { once: true }); });
         function playSound(type) {
             if (!appSettings.sound) return;
-            if (audioCtx.state === 'suspended') audioCtx.resume();
+            if (!audioCtx) _ensureAudioCtx();
+            if (!audioCtx || audioCtx.state === 'suspended') { audioCtx && audioCtx.resume(); return; }
             const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
             osc.connect(gain); gain.connect(audioCtx.destination);
             const now = audioCtx.currentTime;
