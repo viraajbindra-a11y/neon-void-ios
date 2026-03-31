@@ -3198,6 +3198,11 @@
         function addXp(amt) { let xpMult = (state.stats && state.stats.xpMulti) ? state.stats.xpMulti : 1; if (state.stats && state.stats._blueprintDoubleXP) xpMult *= 2; state.xp += amt * state.combo * xpMult; let levelsGained = 0; while (state.xp >= state.xpNeeded) { state.xp -= state.xpNeeded; state.level++; state.xpNeeded = Math.floor(state.xpNeeded * 1.5); levelsGained++; } if (levelsGained > 0) { state.pendingLevels = (state.pendingLevels || 0) + levelsGained - 1; triggerLevelUp(); } }
         
         function triggerLevelUp() {
+            // Defer level up if roguelike floor pick is active
+            if (state._rogueWaiting || document.getElementById('rogue-pick')) {
+                state.pendingLevels = (state.pendingLevels || 0) + 1;
+                return;
+            }
             // Level-up burst effect
             spawnParticles(player.x, player.y, '#00ffcc', 12, 3);
             shakeScreen(8);
@@ -3563,7 +3568,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                     let d = document.createElement('div'); d.id='rogue-pick'; d.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:99999;background:rgba(6,6,12,0.97);border:2px solid #8844ff;border-radius:12px;padding:30px;font-family:monospace;color:#fff;text-align:center;min-width:500px;';
                     d.innerHTML='<div style="font-size:22px;color:#8844ff;font-weight:bold;margin-bottom:5px;">ROGUELIKE - FLOOR '+(roguelikeFloor+1)+'</div><div style="font-size:14px;color:#888;margin-bottom:20px;">Choose 1 of 3 upgrades:</div><div style="display:flex;gap:15px;justify-content:center;">' + shuffled.map((u,i)=>`<div style="border:2px solid #8844ff;padding:15px;border-radius:8px;cursor:pointer;min-width:130px;background:rgba(136,68,255,0.1);" id="rogue-opt-${i}"><div style="font-size:16px;font-weight:bold;color:#8844ff;margin-bottom:8px;">${u.name}</div><div style="font-size:12px;color:#aaa;">${u.desc}</div></div>`).join('') + '</div>';
                     document.body.appendChild(d);
-                    shuffled.forEach((u,i)=>{ let btn=d.querySelector('#rogue-opt-'+i); btn.onclick=()=>{ u.apply(); d.remove(); roguelikeFloor++; state.stats.maxHp=Math.floor(state.stats.maxHp*1.05); state._rogueWaiting=false; state.paused=false; ui.status.innerText=`ROGUELIKE MODE - FLOOR ${roguelikeFloor}/10`; setTimeout(()=>spawnRoguelikeFloor(),500); }; });
+                    shuffled.forEach((u,i)=>{ let btn=d.querySelector('#rogue-opt-'+i); btn.onclick=()=>{ u.apply(); d.remove(); roguelikeFloor++; state.stats.maxHp=Math.floor(state.stats.maxHp*1.05); state._rogueWaiting=false; ui.status.innerText=`ROGUELIKE MODE - FLOOR ${roguelikeFloor}/10`; if (state.pendingLevels && state.pendingLevels > 0) { state.pendingLevels--; triggerLevelUp(); } else { state.paused=false; } setTimeout(()=>spawnRoguelikeFloor(),500); }; });
                 }
                 return;
             }
@@ -3652,7 +3657,16 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                         let origBtns = ui.perkContainer.querySelectorAll('button');
                         origBtns.forEach(btn => {
                             let origClick = btn.onclick;
-                            btn.onclick = () => { origClick(); setTimeout(() => { activeBoss = new Boss(state.bossesDefeated); state.spawningBoss = false; }, 1500); };
+                            btn.onclick = () => {
+                                origClick();
+                                // Wait for all pending level ups to finish before spawning next boss
+                                let _waitForLevels = setInterval(() => {
+                                    if (!state.pendingLevels || state.pendingLevels <= 0) {
+                                        clearInterval(_waitForLevels);
+                                        setTimeout(() => { activeBoss = new Boss(state.bossesDefeated); state.spawningBoss = false; }, 1000);
+                                    }
+                                }, 200);
+                            };
                         });
                     }, 1500);
                 }
