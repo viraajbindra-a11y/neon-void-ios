@@ -1301,7 +1301,7 @@
                 this.twinkleSpeed = Math.random() * 0.03 + 0.01;
                 this.twinkleOffset = Math.random() * Math.PI * 2;
             }
-            update() { let stretch = state.warping ? 40 : 1; this.y += this.z * (player ? (player.timers.dash > 0 ? 8 : 2) : 1) * stretch; if (this.y > canvas.height) { this.y = 0; this.x = Math.random() * canvas.width; } }
+            update() { let stretch = state.warping ? 40 : 1; this.y += this.z * (player && player.timers ? (player.timers.dash > 0 ? 8 : 2) : 1) * stretch; if (this.y > canvas.height) { this.y = 0; this.x = Math.random() * canvas.width; } }
             draw(ctx) {
                 let twinkle = 0.5 + 0.5 * Math.sin(state.frame * this.twinkleSpeed + this.twinkleOffset);
                 let baseAlpha = this.z / 2;
@@ -5335,7 +5335,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             if (typeof state !== 'undefined') { state.active = false; state.paused = false; state.mirrored = false; state.pendingLevels = 0; }
             activeBoss = null; entities.enemies = []; entities.eBullets = []; entities.bullets = [];
             // Remove mode-specific UI overlays
-            ['horde-ui','rogue-pick','prestige-overlay','tut-hud','bp-overlay','title-overlay','lb-overlay','clan-overlay','mentor-overlay','mastery-overlay'].forEach(id => { let el = document.getElementById(id); if (el) el.remove(); });
+            ['horde-ui','rogue-pick','prestige-overlay','tut-hud','bp-overlay','title-overlay','lb-overlay','clan-overlay','mentor-overlay','mastery-overlay','ach-overlay','rebirth-overlay','emote-overlay','vip-overlay','gemshop-overlay','blueprints-overlay','bm-overlay','contracts-overlay','trade-overlay','replay-overlay','mg-end-overlay','avatar-picker-overlay'].forEach(id => { let el = document.getElementById(id); if (el) el.remove(); });
             if (typeof sandboxPanel !== 'undefined' && sandboxPanel) { sandboxPanel.remove(); sandboxPanel = null; }
             stopMusic(); startMenuBg(); if (appSettings.music) startMenuMusic();
             ui.mainOverlay.classList.remove('hidden'); ui.mainOverlay.classList.remove('win-theme');
@@ -11777,7 +11777,7 @@ function generateSyncCode() {
             if (typeof state !== 'undefined') { state.active = false; state.paused = false; state.mirrored = false; state.pendingLevels = 0; }
             activeBoss = null; entities.enemies = []; entities.eBullets = []; entities.bullets = [];
             // Remove mode-specific UI overlays
-            ['horde-ui','rogue-pick','prestige-overlay','tut-hud','bp-overlay','title-overlay','lb-overlay','clan-overlay','mentor-overlay','mastery-overlay'].forEach(id => { let el = document.getElementById(id); if (el) el.remove(); });
+            ['horde-ui','rogue-pick','prestige-overlay','tut-hud','bp-overlay','title-overlay','lb-overlay','clan-overlay','mentor-overlay','mastery-overlay','ach-overlay','rebirth-overlay','emote-overlay','vip-overlay','gemshop-overlay','blueprints-overlay','bm-overlay','contracts-overlay','trade-overlay','replay-overlay','mg-end-overlay','avatar-picker-overlay'].forEach(id => { let el = document.getElementById(id); if (el) el.remove(); });
             if (sandboxPanel) { sandboxPanel.remove(); sandboxPanel = null; }
             // Hide all screens
             ['mission-select','shop-screen','settings-screen','pause-screen','draw-screen',
