@@ -11064,7 +11064,7 @@ function generateSyncCode() {
             @keyframes chestGlow { 0%,100%{box-shadow:0 0 8px rgba(var(--cc),0.3)} 50%{box-shadow:0 0 18px rgba(var(--cc),0.6)} }
             @keyframes arenaParticle { 0%{opacity:0;transform:translateY(0)} 50%{opacity:1} 100%{opacity:0;transform:translateY(-30px)} }
 
-            .nv-menu-root { position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;font-family:'Courier New',monospace; }
+            .nv-menu-root { width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;font-family:'Courier New',monospace; }
 
             /* TOP BAR — Clash-style player info bar */
             .nv-topbar { display:flex;align-items:center;justify-content:space-between;padding:calc(6px + env(safe-area-inset-top, 0px)) calc(12px + env(safe-area-inset-right, 0px)) 6px calc(12px + env(safe-area-inset-left, 0px));background:linear-gradient(180deg,rgba(15,0,25,0.98),rgba(8,0,12,0.95));border-bottom:2px solid #ff005544;position:sticky;top:0;z-index:10;flex-shrink:0; }
@@ -11382,10 +11382,15 @@ function generateSyncCode() {
             stopMusic(); startMenuBg(); if (appSettings.music) startMenuMusic();
             ui.mainOverlay.classList.remove('hidden'); ui.mainOverlay.classList.remove('win-theme');
 
-            // CR-style menu for all screen sizes
+            // CR-style menu for all screen sizes — make containers fill viewport
             let mw2 = document.getElementById('menu-inner-wrap');
-            if (mw2) { mw2.style.justifyContent = 'center'; mw2.style.padding = '0'; mw2.style.overflow = 'hidden'; }
+            if (mw2) { mw2.style.justifyContent = 'flex-start'; mw2.style.padding = '0'; mw2.style.overflow = 'hidden'; mw2.style.height = '100%'; mw2.style.minHeight = '100%'; mw2.style.maxHeight = '100%'; }
             ui.mainOverlay.style.overflow = 'hidden';
+            ui.menuBtns.style.position = 'relative';
+            ui.menuBtns.style.width = '100%';
+            ui.menuBtns.style.height = '100%';
+            ui.menuBtns.style.flex = '1';
+            ui.menuBtns.style.display = 'flex';
 
             // Gather data
             let unlockedRaw = secureLoad('neonVoidStage', '1'); let unlocked = parseInt(unlockedRaw); if(isNaN(unlocked) || unlocked < 1) unlocked = 1;
