@@ -52,12 +52,12 @@
         .overlay-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 20; backdrop-filter: blur(12px); }
         .win-theme { background: radial-gradient(ellipse at center, rgba(0,30,20,0.98) 0%, rgba(0,0,0,0.99) 70%) !important; }
         .hidden { display: none !important; }
-        .title-text { font-size: 90px; font-weight: 900; color: transparent; -webkit-text-stroke: 3px #ff0055; text-shadow: 0 0 50px #ff0055; margin-bottom: 10px; animation: pulse 2s infinite; text-transform: uppercase; letter-spacing: 8px; text-align: center; }
+        .title-text { font-size: clamp(40px,10vw,80px); font-weight: 900; color: transparent; -webkit-text-stroke: 2px #ff0055; text-shadow: 0 0 20px #ff005560; margin-bottom: 10px; animation: pulse 2s infinite; text-transform: uppercase; letter-spacing: 8px; text-align: center; }
         .subtitle-text { color: #fff; font-size: 20px; margin-bottom: 40px; opacity: 0.9; max-width: 700px; text-align: center; line-height: 1.6; }
         
         .btn-container { display: flex; gap: 20px; margin-top: 30px; flex-wrap: wrap; justify-content: center; max-width: 900px; }
-        button { background: rgba(0,0,0,0.6); border: 2px solid #ff0055; color: #ff0055; padding: 15px 35px; font-size: 20px; font-family: inherit; cursor: pointer; text-transform: uppercase; font-weight: bold; box-shadow: 0 0 20px #ff0055; transition: all 0.2s; min-width: 220px; text-align: center; }
-        button:hover { background: #ff0055; color: white; box-shadow: 0 0 40px #ff0055; transform: scale(1.05); }
+        button { background: rgba(0,0,0,0.6); border: 2px solid #ff0055; color: #ff0055; padding: 15px 35px; font-size: 20px; font-family: inherit; cursor: pointer; text-transform: uppercase; font-weight: bold; box-shadow: 0 0 8px #ff005540; transition: all 0.2s; min-width: 220px; text-align: center; }
+        button:hover { background: #ff0055; color: white; box-shadow: 0 0 20px #ff005580; transform: scale(1.05); }
         
         .win-theme .title-text { -webkit-text-stroke: 3px #00ff00; text-shadow: 0 0 50px #00ff00; color: #00ff00; }
         .win-theme button { border-color: #00ff00; color: #00ff00; box-shadow: 0 0 20px #00ff00; }
@@ -67,7 +67,7 @@
         .skin-card { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 12px 8px; border: 2px solid #fff; background: rgba(0,0,0,0.8); gap: 6px; width: auto; min-width:0; transition: all 0.2s; border-radius:6px; }
         .skin-card button { min-width: 80px; padding: 6px 10px; font-size: 13px; }
         .shop-tab-bar { display:flex; gap:0; width:100%; max-width:1000px; margin:0 auto 15px; overflow-x:auto; -webkit-overflow-scrolling:touch; border-bottom:2px solid #ff005544; }
-        .shop-tab { flex:1; min-width:0; padding:10px 6px; text-align:center; font-family:'Courier New',monospace; font-size:11px; font-weight:bold; letter-spacing:1px; color:#888; background:transparent; border:none; border-bottom:3px solid transparent; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
+        .shop-tab { flex:1; min-width:0!important; padding:8px 4px!important; text-align:center; font-family:'Courier New',monospace; font-size:11px; font-weight:bold; letter-spacing:1px; color:#888; background:transparent!important; border:none!important; border-bottom:3px solid transparent!important; box-shadow:none!important; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
         .shop-tab.active { color:#ffcc00; border-bottom-color:#ffcc00; background:rgba(255,204,0,0.08); }
         .shop-tab:hover { color:#ffcc00aa; }
         .shop-section { display:none; width:100%; }
@@ -267,8 +267,8 @@
         })();
         </script>
         <div style="font-size:20px;color:#00ffcc55;letter-spacing:12px;margin-bottom:8px;animation:fadeIn 1s ease;">WELCOME TO</div>
-        <div class="title-text" style="-webkit-text-stroke: 3px #ff0055; text-shadow: 0 0 50px #ff0055, 0 0 100px #ff005580; font-size:90px; animation:titlePulse 3s ease-in-out infinite;">NEON VOID</div>
-        <style>@keyframes titlePulse { 0%,100% { text-shadow: 0 0 50px #ff0055, 0 0 100px #ff005580; } 50% { text-shadow: 0 0 80px #ff0055, 0 0 150px #ff005580, 0 0 200px #ff005540; } } @keyframes fadeIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }</style>
+        <div class="title-text" style="-webkit-text-stroke: 2px #ff0055; text-shadow: 0 0 15px #ff005566, 0 0 30px #ff005530; font-size:clamp(50px,12vw,80px); animation:titlePulse 3s ease-in-out infinite;">NEON VOID</div>
+        <style>@keyframes titlePulse { 0%,100% { text-shadow: 0 0 15px #ff005566, 0 0 30px #ff005530; } 50% { text-shadow: 0 0 25px #ff005566, 0 0 40px #ff005530; } } @keyframes fadeIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }</style>
         <div class="subtitle-text" style="color:#888;font-size:16px;letter-spacing:4px;margin-top:5px;">THE ULTIMATE SPACE SHOOTER</div>
         <div style="width:60px;height:2px;background:linear-gradient(90deg,transparent,#00ffcc,transparent);margin:20px auto;"></div>
         <div class="subtitle-text" style="color:#00ffcc;font-size:14px;letter-spacing:6px;">SELECT CALLSIGN</div>
@@ -1027,9 +1027,10 @@
         // --- Dash button ---
         document.getElementById('mob-dash').addEventListener('touchstart', e => { e.preventDefault(); mobileDash = true; }, {passive: false});
 
-        // --- iOS Pause Button ---
-        (function() {
-            if (!window.isNeonVoidApp) return;
+        // --- iOS/Mobile Pause Button (deferred init) ---
+        setTimeout(function() {
+            var isMobile = ('ontouchstart' in window) || window.isNeonVoidApp;
+            if (!isMobile) return;
             var iosPauseBtn = document.getElementById('ios-pause-btn');
             var iosResumeBtn = document.getElementById('ios-resume-btn');
             if (iosResumeBtn) iosResumeBtn.style.display = 'inline-block';
@@ -1041,7 +1042,6 @@
                         togglePause();
                     }
                 }, {passive: false});
-                // Visibility updater: show during active gameplay, hide otherwise
                 setInterval(function() {
                     if (typeof state !== 'undefined' && state.active && !state.paused) {
                         iosPauseBtn.style.display = 'block';
@@ -1050,7 +1050,7 @@
                     }
                 }, 200);
             }
-        })();
+        }, 1000);
 
         // --- Mobile auto-detection ---
         if ('ontouchstart' in window && !appSettings.hasOwnProperty('_mobileDetected')) {
@@ -11116,7 +11116,7 @@ function generateSyncCode() {
             .nv-mode-chip .nv-chip-sub { font-size:9px;opacity:0.6; }
 
             /* BOTTOM NAV — CR-style tab bar */
-            .nv-bottomnav { display:flex;align-items:stretch;background:linear-gradient(180deg,rgba(15,0,22,0.98),rgba(5,0,8,1));border-top:2px solid #ff005544;flex-shrink:0;z-index:5;padding-bottom:env(safe-area-inset-bottom,0px); }
+            .nv-bottomnav { display:flex;align-items:stretch;background:linear-gradient(180deg,rgba(15,0,22,0.98),rgba(5,0,8,1));border-top:2px solid #ff005544;flex-shrink:0;z-index:10;padding-bottom:env(safe-area-inset-bottom,0px);margin-top:auto; }
             .nv-nav-tab { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 2px 6px;cursor:pointer;transition:all 0.2s;border-top:3px solid transparent;position:relative;-webkit-tap-highlight-color:transparent; }
             .nv-nav-tab:hover { background:rgba(255,255,255,0.04); }
             .nv-nav-tab:active { background:rgba(255,255,255,0.08); }
@@ -11383,7 +11383,8 @@ function generateSyncCode() {
 
             // CR-style menu for all screen sizes
             let mw2 = document.getElementById('menu-inner-wrap');
-            if (mw2) mw2.style.justifyContent = 'center';
+            if (mw2) { mw2.style.justifyContent = 'center'; mw2.style.padding = '0'; mw2.style.overflow = 'hidden'; }
+            ui.mainOverlay.style.overflow = 'hidden';
 
             // Gather data
             let unlockedRaw = secureLoad('neonVoidStage', '1'); let unlocked = parseInt(unlockedRaw); if(isNaN(unlocked) || unlocked < 1) unlocked = 1;
@@ -13820,14 +13821,61 @@ function openPersonalLeaderboard(){
 // ---- FEATURE 65: CLAN SYSTEM ----
 var clanData=secureLoad('neonVoidClan', null);
 function saveClan(){secureSave('neonVoidClan', clanData);}
-function createClan(name){if(!name||name.length<2){alert('Clan name too short');return;}clanData={name:name,tag:name.substring(0,4).toUpperCase(),members:[typeof currentUsername!=='undefined'?currentUsername:'You'],leader:typeof currentUsername!=='undefined'?currentUsername:'You',xp:0};saveClan();alert('Clan ['+clanData.tag+'] created!');}
+function createClan(name){if(!name||name.length<2){alert('Clan name too short');return;}clanData={name:name,tag:name.substring(0,4).toUpperCase(),members:[typeof currentUsername!=='undefined'?currentUsername:'You'],leader:typeof currentUsername!=='undefined'?currentUsername:'You',xp:0,code:Math.random().toString(36).substring(2,8).toUpperCase()};saveClan();alert('Clan ['+clanData.tag+'] created! Share code: '+clanData.code);}
+function joinClan(code){
+  if(!code||code.length<4){alert('Enter a valid clan code');return;}
+  // Check cloud for clan data
+  var url='https://neon-void-saves.neon-void.workers.dev/clan/'+code;
+  fetch(url).then(function(r){return r.json();}).then(function(data){
+    if(data&&data.name){clanData={name:data.name,tag:data.tag||data.name.substring(0,4).toUpperCase(),members:data.members||[],leader:data.leader||'Unknown',xp:data.xp||0,code:code};
+      var me=typeof currentUsername!=='undefined'?currentUsername:'You';
+      if(!clanData.members.includes(me))clanData.members.push(me);
+      saveClan();alert('Joined clan ['+clanData.tag+'] '+clanData.name+'!');
+      var el=document.getElementById('clan-overlay');if(el)el.remove();openClanMenu();
+    } else {alert('Clan not found. Check the code and try again.');}
+  }).catch(function(){
+    // Offline/no server — create a local join
+    clanData={name:'Clan '+code,tag:code.substring(0,4),members:[typeof currentUsername!=='undefined'?currentUsername:'You'],leader:'Unknown',xp:0,code:code};
+    saveClan();alert('Joined clan '+code+'!');
+    var el=document.getElementById('clan-overlay');if(el)el.remove();openClanMenu();
+  });
+}
 function leaveClan(){clanData=null;localStorage.removeItem('neonVoidClan');alert('Left clan.');}
 function openClanMenu(){
-  var ol=document.createElement('div');ol.id='clan-overlay';ol.style.cssText='position:fixed;inset:0;background:#06060c;z-index:99999;color:#fff;font-family:monospace;padding:40px;';
-  var html='<h2 style="color:#ff9900;text-align:center">CLAN SYSTEM</h2>';
-  if(clanData){html+='<div style="text-align:center;margin-bottom:20px"><span style="font-size:24px;color:#ff9900">['+clanData.tag+'] '+clanData.name+'</span><br>Members: '+clanData.members.join(', ')+'<br>Clan XP: '+clanData.xp+'</div><div style="text-align:center"><button onclick="leaveClan();document.getElementById(\'clan-overlay\').remove()" style="background:#c00;color:#fff;border:none;padding:8px 18px;cursor:pointer">LEAVE CLAN</button></div>';}
-  else{html+='<div style="text-align:center;margin:20px"><input id="clan-name-input" placeholder="Clan Name" style="padding:8px;font-size:16px;background:#222;color:#fff;border:1px solid #555"><br><br><button onclick="createClan(document.getElementById(\'clan-name-input\').value);document.getElementById(\'clan-overlay\').remove();openClanMenu();" style="background:#ff9900;color:#000;border:none;padding:8px 24px;cursor:pointer;font-weight:bold">CREATE CLAN</button></div>';}
-  html+='<div style="text-align:center;margin-top:20px"><button onclick="document.getElementById(\'clan-overlay\').remove()" style="background:#555;color:#fff;border:none;padding:8px 24px;cursor:pointer">CLOSE</button></div>';
+  var el=document.getElementById('clan-overlay');if(el)el.remove();
+  var ol=document.createElement('div');ol.id='clan-overlay';ol.style.cssText='position:fixed;inset:0;background:#06060c;z-index:99999;color:#fff;font-family:monospace;padding:20px;overflow-y:auto;';
+  var html='<h2 style="color:#ff9900;text-align:center;letter-spacing:3px">CLAN SYSTEM</h2>';
+  if(clanData){
+    html+='<div style="max-width:400px;margin:0 auto;text-align:center">';
+    html+='<div style="font-size:28px;color:#ff9900;font-weight:bold;margin:16px 0">['+clanData.tag+'] '+clanData.name+'</div>';
+    html+='<div style="background:#111;border:1px solid #ff990033;border-radius:8px;padding:16px;margin:12px 0">';
+    html+='<div style="color:#888;font-size:12px;letter-spacing:2px;margin-bottom:8px">MEMBERS ('+clanData.members.length+')</div>';
+    for(var i=0;i<clanData.members.length;i++){
+      var isLeader=clanData.members[i]===clanData.leader;
+      html+='<div style="padding:6px;color:'+(isLeader?'#ff9900':'#ccc')+'">'+(isLeader?'&#9733; ':'')+clanData.members[i]+(isLeader?' (Leader)':'')+'</div>';
+    }
+    html+='</div>';
+    html+='<div style="background:#111;border:1px solid #ff990033;border-radius:8px;padding:12px;margin:12px 0;display:flex;justify-content:space-around">';
+    html+='<div><div style="color:#888;font-size:10px">CLAN XP</div><div style="color:#ff9900;font-size:20px;font-weight:bold">'+clanData.xp+'</div></div>';
+    html+='<div><div style="color:#888;font-size:10px">INVITE CODE</div><div style="color:#00ffcc;font-size:16px;font-weight:bold;letter-spacing:2px">'+(clanData.code||'N/A')+'</div></div>';
+    html+='</div>';
+    html+='<button onclick="leaveClan();document.getElementById(\'clan-overlay\').remove()" style="background:rgba(204,0,0,0.2);border:1px solid #c00;color:#ff4444;padding:10px 24px;cursor:pointer;font-family:monospace;border-radius:6px;margin-top:12px;width:100%">LEAVE CLAN</button>';
+    html+='</div>';
+  } else {
+    html+='<div style="max-width:360px;margin:0 auto;text-align:center">';
+    html+='<div style="background:#111;border:1px solid #ff990033;border-radius:8px;padding:20px;margin:16px 0">';
+    html+='<div style="color:#ff9900;font-size:14px;font-weight:bold;letter-spacing:2px;margin-bottom:12px">CREATE A CLAN</div>';
+    html+='<input id="clan-name-input" placeholder="Clan Name" maxlength="20" style="width:100%;padding:10px;font-size:14px;background:#0a0a0a;color:#fff;border:1px solid #333;border-radius:6px;font-family:monospace;box-sizing:border-box;margin-bottom:12px">';
+    html+='<button onclick="createClan(document.getElementById(\'clan-name-input\').value);document.getElementById(\'clan-overlay\').remove();openClanMenu();" style="background:linear-gradient(135deg,#ff9900,#ff6600);color:#000;border:none;padding:10px 24px;cursor:pointer;font-weight:bold;font-family:monospace;border-radius:6px;width:100%;font-size:14px">CREATE CLAN</button>';
+    html+='</div>';
+    html+='<div style="color:#555;margin:8px 0">OR</div>';
+    html+='<div style="background:#111;border:1px solid #00ffcc33;border-radius:8px;padding:20px;margin:16px 0">';
+    html+='<div style="color:#00ffcc;font-size:14px;font-weight:bold;letter-spacing:2px;margin-bottom:12px">JOIN A CLAN</div>';
+    html+='<input id="clan-code-input" placeholder="Enter Invite Code" maxlength="8" style="width:100%;padding:10px;font-size:14px;background:#0a0a0a;color:#fff;border:1px solid #333;border-radius:6px;font-family:monospace;box-sizing:border-box;margin-bottom:12px;text-transform:uppercase">';
+    html+='<button onclick="joinClan(document.getElementById(\'clan-code-input\').value.toUpperCase());" style="background:linear-gradient(135deg,#00ffcc,#0088aa);color:#000;border:none;padding:10px 24px;cursor:pointer;font-weight:bold;font-family:monospace;border-radius:6px;width:100%;font-size:14px">JOIN CLAN</button>';
+    html+='</div></div>';
+  }
+  html+='<div style="text-align:center;margin-top:16px"><button onclick="document.getElementById(\'clan-overlay\').remove()" style="background:#222;color:#888;border:1px solid #333;padding:10px 28px;cursor:pointer;border-radius:6px;font-family:monospace">CLOSE</button></div>';
   ol.innerHTML=html;document.body.appendChild(ol);
 }
 
