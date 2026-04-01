@@ -66,10 +66,10 @@
         
         .skin-card { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 12px 8px; border: 2px solid #fff; background: rgba(0,0,0,0.8); gap: 6px; width: auto; min-width:0; transition: all 0.2s; border-radius:6px; }
         .skin-card button { min-width: 80px; padding: 6px 10px; font-size: 13px; }
-        .shop-tab-bar { display:flex; gap:0; width:100%; max-width:1000px; margin:0 auto 15px; overflow-x:auto; -webkit-overflow-scrolling:touch; border-bottom:2px solid #ff005544; }
-        .shop-tab { flex:1; min-width:0!important; padding:8px 4px!important; text-align:center; font-family:'Courier New',monospace; font-size:11px; font-weight:bold; letter-spacing:1px; color:#888; background:transparent!important; border:none!important; border-bottom:3px solid transparent!important; box-shadow:none!important; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
-        .shop-tab.active { color:#ffcc00; border-bottom-color:#ffcc00; background:rgba(255,204,0,0.08); }
-        .shop-tab:hover { color:#ffcc00aa; }
+        .shop-tab-bar { display:flex; gap:4px; width:calc(100% - 20px); max-width:1000px; margin:0 auto 15px; padding:6px 10px; overflow-x:auto; -webkit-overflow-scrolling:touch; background:rgba(255,255,255,0.03); border-radius:8px; }
+        .shop-tab { flex:1; min-width:0!important; padding:10px 6px!important; text-align:center; font-family:'Courier New',monospace; font-size:12px; font-weight:bold; letter-spacing:1px; color:#aaa; background:rgba(255,255,255,0.04)!important; border:1px solid #ffffff15!important; border-radius:6px!important; box-shadow:none!important; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
+        .shop-tab.active { color:#ffcc00!important; background:rgba(255,204,0,0.15)!important; border-color:#ffcc0066!important; }
+        .shop-tab:hover { color:#ffcc00aa; background:rgba(255,204,0,0.08)!important; }
         .shop-section { display:none; width:100%; }
         .shop-section.active { display:flex; }
         .shop-grid-2col { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; max-width:1000px; margin:0 auto 30px; padding:0 10px; box-sizing:border-box; }
