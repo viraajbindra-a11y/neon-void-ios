@@ -292,6 +292,9 @@
             <div class="btn-container" style="margin-bottom: 20px;">
                 <button onclick="createLobby('coop')" style="border-color:#00ffcc; color:#00ffcc;">CREATE CO-OP</button>
                 <button onclick="createLobby('race')" style="border-color:#ff8800; color:#ff8800; box-shadow: 0 0 20px #ff8800;">CREATE RACE</button>
+                <button onclick="createLobby('minigame_dodge')" style="border-color:#ff00ff; color:#ff00ff; box-shadow: 0 0 20px #ff00ff;">DODGE BALL</button>
+                <button onclick="createLobby('minigame_targets')" style="border-color:#00ff88; color:#00ff88; box-shadow: 0 0 20px #00ff88;">TARGET RACE</button>
+                <button onclick="createLobby('minigame_koth')" style="border-color:#ffcc00; color:#ffcc00; box-shadow: 0 0 20px #ffcc00;">KING OF HILL</button>
             </div>
             <div class="subtitle-text" style="margin-bottom: 10px; font-size: 16px;">OR JOIN WITH CODE:</div>
             <div style="display:flex; gap:10px; align-items:center;">
@@ -428,12 +431,12 @@
             <div class="title-text" style="-webkit-text-stroke: 2px #ffcc00; text-shadow: 0 0 50px #ffcc00; font-size: clamp(30px, 9vw, 70px);">THE HANGAR</div>
             <div class="subtitle-text" id="shop-coin-display" style="color: #ffcc00; font-weight: bold; font-size: 22px; margin-bottom:10px;">COINS: 0</div>
             <div class="shop-tab-bar">
-                <button class="shop-tab active" onclick="switchShopTab('upgrades')">UPGRADES</button>
-                <button class="shop-tab" onclick="switchShopTab('skins')">SKINS</button>
-                <button class="shop-tab" onclick="switchShopTab('wisps')">WISPS</button>
-                <button class="shop-tab" onclick="switchShopTab('forge')">FORGE</button>
-                <button class="shop-tab" onclick="switchShopTab('skills')">SKILLS</button>
-                <button class="shop-tab" onclick="switchShopTab('casino')">CASINO</button>
+                <button class="shop-tab active" onclick="switchShopTab('upgrades')" style="color:#ffcc00;font-size:14px;font-weight:bold;">UPGRADES</button>
+                <button class="shop-tab" onclick="switchShopTab('skins')" style="color:#ffcc00;font-size:14px;font-weight:bold;">SKINS</button>
+                <button class="shop-tab" onclick="switchShopTab('wisps')" style="color:#ffcc00;font-size:14px;font-weight:bold;">WISPS</button>
+                <button class="shop-tab" onclick="switchShopTab('forge')" style="color:#ffcc00;font-size:14px;font-weight:bold;">FORGE</button>
+                <button class="shop-tab" onclick="switchShopTab('skills')" style="color:#ffcc00;font-size:14px;font-weight:bold;">SKILLS</button>
+                <button class="shop-tab" onclick="switchShopTab('casino')" style="color:#ffcc00;font-size:14px;font-weight:bold;">CASINO</button>
             </div>
             <div id="shop-section-upgrades" class="shop-section active" style="display:flex;flex-direction:column;align-items:center;">
                 <h2 style="color: #ff0000; text-decoration: underline; margin-top: 10px; letter-spacing: 5px; text-shadow: 0 0 10px #ff0000; font-size:16px;">ILLEGAL UPGRADES</h2>
@@ -2154,7 +2157,7 @@
                 // Feature 12: Beam sword
                 if (!this._beamSwordTimer) this._beamSwordTimer = 0; if (this._beamSwordTimer > 0) this._beamSwordTimer--;
                 if (state.stats.beamSword && keys['KeyV'] && !this._vKeyHeld && this.beamSwordCd <= 0) { this._vKeyHeld = true; this._beamSwordTimer = 15; this.beamSwordCd = 180; let dmg = state.stats.dmgMulti * 20 * 5; entities.enemies.forEach(e => { if(e && Math.hypot(e.x-this.x,e.y-this.y)<60) { e.hp -= dmg; if(e.hp<=0) killEnemy(e); } }); if(activeBoss && Math.hypot(activeBoss.x-this.x,activeBoss.y-this.y)<60) { activeBoss.hp -= dmg; if(activeBoss.hp<=0&&!activeBoss.isDead){activeBoss.isDead=true;handleBossDeath();} } shakeScreen(8); spawnParticles(this.x, this.y, '#00ffff', 8, 3); } else if (!keys['KeyV']) { this._vKeyHeld = false; }
-                if (state.active && !state.paused && isShooting && state.frame - this.lastShot >= fr) { this.shoot(); this.lastShot = state.frame; }
+                if (state.active && !state.paused && isShooting && state.frame - this.lastShot >= fr && state.mode !== 'minigame_dodge') { this.shoot(); this.lastShot = state.frame; }
                 // Feature 10: Afterburner fire trail
                 if (state.stats.afterburner && this.timers.dash > 0 && state.frame % 2 === 0) { fireTrails.push({ x: this.x, y: this.y, life: 90, maxLife: 90, dmg: 15 * state.stats.dmgMulti }); }
                 // Feature 8: Parry system - reflect enemy bullets during dash
@@ -2304,6 +2307,8 @@
             }
             takeDamage(amt, source) {
                 if (state.mode === 'training' || state.warping) return;
+                if (state.mode === 'minigame_dodge' || state.mode === 'minigame_targets') return; // Minigames handle damage differently
+                if (state.mode === 'minigame_koth') { /* Allow KOTH damage but prevent permadeath below */ }
                 if (this.timers.dash > 0 || state.spawningBoss || this.timers.invuln > 0 || this.timers.shieldGen > 0) return;
                 // Feature 35: Track last damage source for varied death explosion
                 this._lastDmgSource = source || 'bullet';
@@ -2327,6 +2332,7 @@
                     if (this._lastDmgSource === 'boss') deathColor = '#aa00ff';
                     else if (this._lastDmgSource === 'collision') deathColor = '#ffffff';
                     for (let di=0; di<5; di++) { setTimeout(()=>spawnParticles(this.x+(Math.random()-0.5)*40,this.y+(Math.random()-0.5)*40,deathColor,8,4), di*80); }
+                    if (state.mode === 'minigame_koth') { this.hp = state.stats.maxHp; this.timers.invuln = 120; if (mgKoth) mgKoth.stunTimer = 120; return; }
                     gameOver();
                 }
             }
@@ -3510,6 +3516,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
 
         function spawnWave() {
             if (state.mode === 'sandbox') return; // Sandbox: manual spawning only
+            if (state.mode && state.mode.startsWith('minigame_')) return; // Minigames handle their own logic
             // Feature 41: Survival Arena - circular boundary, progressive waves
             if (state.mode === 'survival_arena') {
                 survivalArenaTime++;
@@ -4164,6 +4171,8 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             if (state.active && !state.paused && state.mode === 'tag_team') { try { updateTagTeam(ctx); } catch(e){} }
             // Mode 60: Tournament
             if (state.active && !state.paused && (state.mode === 'tournament' || state.mode === 'tournament_win')) { try { updateTournament(ctx); } catch(e){} }
+            // Minigames
+            if (state.active && !state.paused && state.mode && state.mode.startsWith('minigame_')) { try { updateMinigame(ctx); } catch(e){ console.error('Minigame error:', e); } }
             // One-hit mode: override enemy HP on spawn
             if (state.active && state._oneHitMode) { for (let e of entities.enemies) { if (e && e.hp > 1 && !e._oneHitSet) { e.hp = 1; e.maxHp = 1; e._oneHitSet = true; } } }
             // Bullet hell mode: extreme projectile mayhem
@@ -5488,11 +5497,11 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
         function switchShopTab(tabName) {
             const tabs = document.querySelectorAll('.shop-tab');
             const sections = document.querySelectorAll('.shop-section');
-            tabs.forEach(t => t.classList.remove('active'));
+            tabs.forEach(t => { t.classList.remove('active'); t.style.color = '#ffcc00'; t.style.borderBottomColor = 'transparent'; });
             sections.forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
             const activeTab = document.querySelector(`.shop-tab[onclick*="'${tabName}'"]`);
             const activeSection = document.getElementById('shop-section-' + tabName);
-            if (activeTab) activeTab.classList.add('active');
+            if (activeTab) { activeTab.classList.add('active'); activeTab.style.color = '#fff'; activeTab.style.borderBottomColor = '#ffcc00'; }
             if (activeSection) { activeSection.classList.add('active'); activeSection.style.display = 'flex'; }
         }
         function renderShop() {
@@ -10365,6 +10374,37 @@ function generateSyncCode() {
                     // Host tells us we got hit
                     if (player && data.damage) player.takeDamage(data.damage);
                     break;
+                // --- Minigame messages ---
+                case 'mg-dodge-projectiles':
+                    if (mgDodge) mgDodge.projectiles = data.p;
+                    break;
+                case 'mg-dodge-eliminate':
+                    if (mgDodge) { mgDodge.eliminated[data.pid] = true; mgDodge.elimMsg = data.name + ' ELIMINATED!'; mgDodge.elimTimer = 120; if (data.pid === peer.id) { mgDodge.localDead = true; } }
+                    break;
+                case 'mg-dodge-winner':
+                    if (mgDodge) showMinigameEnd(data.name + ' WINS DODGE BALL!', '#ff00ff');
+                    break;
+                case 'mg-targets-spawn':
+                    if (mgTargets) { mgTargets.currentTarget = data.t; }
+                    break;
+                case 'mg-targets-score':
+                    if (mgTargets) { mgTargets.scores[data.pid] = data.s; if (mpState.isHost) mgTargetsSpawnNext(); }
+                    break;
+                case 'mg-targets-winner':
+                    if (mgTargets) showMinigameEnd(data.name + ' WINS TARGET RACE!', '#00ff88');
+                    break;
+                case 'mg-koth-zone':
+                    if (mgKoth) { mgKoth.zone = data.z; }
+                    break;
+                case 'mg-koth-scores':
+                    if (mgKoth) { mgKoth.scores = data.s; }
+                    break;
+                case 'mg-koth-hit':
+                    if (mgKoth && data.pid === peer.id && player) { player.hp -= 80; mgKoth.stunTimer = 60; if (player.hp <= 0) { player.hp = player.maxHp || 500; mgKoth.stunTimer = 120; } }
+                    break;
+                case 'mg-koth-winner':
+                    if (mgKoth) showMinigameEnd(data.name + ' WINS KING OF THE HILL!', '#ffcc00');
+                    break;
             }
         }
 
@@ -10514,8 +10554,10 @@ function generateSyncCode() {
 
                 document.getElementById('lobby-browser').classList.add('hidden');
                 document.getElementById('lobby-room').classList.remove('hidden');
-                document.getElementById('lobby-mode-title').textContent = mode === 'coop' ? 'CO-OP LOBBY' : 'SURVIVAL RACE LOBBY';
-                document.getElementById('lobby-mode-title').style.webkitTextStroke = mode === 'coop' ? '3px #00ffcc' : '3px #ff8800';
+                const modeTitles = { coop: 'CO-OP LOBBY', race: 'SURVIVAL RACE LOBBY', minigame_dodge: 'DODGE BALL LOBBY', minigame_targets: 'TARGET RACE LOBBY', minigame_koth: 'KING OF HILL LOBBY' };
+                const modeColors = { coop: '#00ffcc', race: '#ff8800', minigame_dodge: '#ff00ff', minigame_targets: '#00ff88', minigame_koth: '#ffcc00' };
+                document.getElementById('lobby-mode-title').textContent = modeTitles[mode] || 'LOBBY';
+                document.getElementById('lobby-mode-title').style.webkitTextStroke = '3px ' + (modeColors[mode] || '#fff');
                 document.getElementById('room-code-display').textContent = mpState.lobbyCode;
                 document.getElementById('lobby-start-btn').style.display = 'inline-block';
                 updateLobbyUI();
@@ -10589,6 +10631,18 @@ function generateSyncCode() {
                 ui.status.innerText = 'SURVIVAL RACE';
                 document.getElementById('race-timer').style.display = 'block';
                 document.getElementById('race-standings').style.display = 'block';
+            } else if (mpState.mode.startsWith('minigame_')) {
+                // Minigame modes: fair base stats, no upgrades
+                state = { active: true, paused: false, mode: mpState.mode, frame: 0, score: 0, combo: 1, xp: 0, level: 1, xpNeeded: 100, runCoins: 0, kills: 0, shake: 0, currentStage: 1, bossesDefeated: 0, difficulty: 1, nextBossLevel: 99, spawningBoss: false, warping: false, warpFrames: 0, hardcore: false, hyper: false, stats: getBaseStats() };
+                state.stats.homing = 0; state.stats.explosive = 0; state.stats.pierce = 0;
+                state.stats.magnetRange = 0; state.stats.bombDrones = 0; state.stats.antimatter = 0;
+                state.stats.laserDrones = 0; state.stats.miniDrones = 0; state.stats.scatterDrones = 0;
+                state.stats.empDrones = 0; state.stats.sawDrones = 0; state.stats.sniperDrones = 0;
+                state.stats.guardian = 0; state.stats.timeDilator = 0; state.stats.tesla = 0;
+                state.stats.nukeDash = 0; state.stats.wisp = false;
+                const modeLabels = { minigame_dodge: 'DODGE BALL', minigame_targets: 'TARGET RACE', minigame_koth: 'KING OF THE HILL' };
+                ui.status.innerText = modeLabels[mpState.mode] || 'MINIGAME';
+                initMinigame(mpState.mode);
             } else {
                 // Co-op: normal game with your upgrades
                 state = { active: true, paused: false, mode: 'coop', frame: 0, score: 0, combo: 1, xp: 0, level: 1, xpNeeded: 100, runCoins: 0, kills: 0, shake: 0, currentStage: 1, bossesDefeated: 0, difficulty: 1.5, nextBossLevel: 5, spawningBoss: false, warping: true, warpFrames: 0, hardcore: false, hyper: false, stats: getBaseStats() };
@@ -10879,6 +10933,365 @@ function generateSyncCode() {
             ui.menuBtns.innerHTML = `<button onclick="returnToMenu()">MAIN MENU</button>`;
 
             mpState.active = false; seededRng = null;
+        }
+
+        // ==================== MINIGAMES ====================
+        let mgDodge = null, mgTargets = null, mgKoth = null;
+
+        function initMinigame(mode) {
+            mgDodge = null; mgTargets = null; mgKoth = null;
+            // Mark all players alive for minigames
+            for (let pid in mpState.players) { mpState.players[pid].alive = true; }
+            if (mode === 'minigame_dodge') {
+                mgDodge = { projectiles: [], eliminated: {}, localDead: false, elimMsg: '', elimTimer: 0, spawnTimer: 0, difficulty: 1, arenaX: 100, arenaY: 80, arenaW: canvas.width - 200, arenaH: canvas.height - 160 };
+            } else if (mode === 'minigame_targets') {
+                mgTargets = { currentTarget: null, scores: {}, localScore: 0, shotCooldown: 0 };
+                for (let pid in mpState.players) mgTargets.scores[pid] = 0;
+                if (mpState.isHost) mgTargetsSpawnNext();
+            } else if (mode === 'minigame_koth') {
+                mgKoth = { zone: { x: canvas.width / 2, y: canvas.height / 2, r: 80 }, scores: {}, zoneMoveTimer: 900, stunTimer: 0, pvpCooldown: 0 };
+                for (let pid in mpState.players) mgKoth.scores[pid] = 0;
+                if (mpState.isHost) mgKothMoveZone();
+            }
+        }
+
+        function showMinigameEnd(msg, color) {
+            state.active = false;
+            document.getElementById('mp-hud').style.display = 'none';
+            ui.mainOverlay.classList.remove('hidden');
+            ui.mainOverlay.classList.remove('win-theme');
+            ui.mainTitle.innerText = 'GAME OVER';
+            ui.mainTitle.style.webkitTextStroke = '3px ' + color;
+            ui.mainTitle.style.textShadow = '0 0 50px ' + color;
+            ui.mainDesc.innerHTML = '<strong style="font-size:28px; color:' + color + ';">' + msg + '</strong>';
+            ui.menuBtns.innerHTML = '<button onclick="returnToMenu()">MAIN MENU</button>';
+            mpState.active = false; seededRng = null;
+            mgDodge = null; mgTargets = null; mgKoth = null;
+        }
+
+        function updateMinigame(ctx) {
+            if (!state.active || !mpState.active) return;
+            if (state.mode === 'minigame_dodge') updateDodgeBall(ctx);
+            else if (state.mode === 'minigame_targets') updateTargetRace(ctx);
+            else if (state.mode === 'minigame_koth') updateKingOfHill(ctx);
+        }
+
+        // ---- DODGE BALL ----
+        function updateDodgeBall(ctx) {
+            if (!mgDodge || !player) return;
+            let mg = mgDodge;
+            let ax = mg.arenaX, ay = mg.arenaY, aw = mg.arenaW, ah = mg.arenaH;
+
+            // Clamp player inside arena
+            if (!mg.localDead) {
+                player.x = Math.max(ax + 15, Math.min(ax + aw - 15, player.x));
+                player.y = Math.max(ay + 15, Math.min(ay + ah - 15, player.y));
+            }
+
+            // Host spawns projectiles
+            if (mpState.isHost) {
+                mg.spawnTimer++;
+                mg.difficulty = 1 + state.frame / 600; // ramps up over 10s
+                let spawnRate = Math.max(8, Math.floor(40 / mg.difficulty));
+                if (mg.spawnTimer >= spawnRate) {
+                    mg.spawnTimer = 0;
+                    let p = mgDodgeSpawnProjectile(ax, ay, aw, ah, mg.difficulty);
+                    mg.projectiles.push(p);
+                }
+                // Update projectiles
+                for (let i = mg.projectiles.length - 1; i >= 0; i--) {
+                    let p = mg.projectiles[i];
+                    p.x += p.vx; p.y += p.vy;
+                    if (p.x < ax - 50 || p.x > ax + aw + 50 || p.y < ay - 50 || p.y > ay + ah + 50) {
+                        mg.projectiles.splice(i, 1);
+                    }
+                }
+                // Cap max projectiles
+                if (mg.projectiles.length > 200) mg.projectiles.splice(0, mg.projectiles.length - 200);
+                // Broadcast projectiles every 3 frames
+                if (state.frame % 3 === 0) {
+                    let pd = mg.projectiles.map(p => ({ x: Math.round(p.x), y: Math.round(p.y), vx: Math.round(p.vx * 10) / 10, vy: Math.round(p.vy * 10) / 10, r: p.r }));
+                    broadcast({ type: 'mg-dodge-projectiles', p: pd });
+                }
+                // Check collisions with all players
+                for (let pid in mpState.players) {
+                    if (mg.eliminated[pid]) continue;
+                    let pp = pid === peer.id ? player : mpState.players[pid];
+                    let px = pid === peer.id ? player.x : (pp.targetX || pp.x);
+                    let py = pid === peer.id ? player.y : (pp.targetY || pp.y);
+                    for (let proj of mg.projectiles) {
+                        let dx = proj.x - px, dy = proj.y - py;
+                        if (Math.sqrt(dx * dx + dy * dy) < proj.r + 12) {
+                            mg.eliminated[pid] = true;
+                            let eName = mpState.players[pid] ? mpState.players[pid].name : '???';
+                            broadcast({ type: 'mg-dodge-eliminate', pid: pid, name: eName });
+                            mg.elimMsg = eName + ' ELIMINATED!';
+                            mg.elimTimer = 120;
+                            if (pid === peer.id) mg.localDead = true;
+                            // Check winner
+                            let alive = Object.keys(mpState.players).filter(id => !mg.eliminated[id]);
+                            if (alive.length <= 1) {
+                                let winName = alive.length === 1 ? (mpState.players[alive[0]] ? mpState.players[alive[0]].name : '???') : 'NOBODY';
+                                broadcast({ type: 'mg-dodge-winner', name: winName });
+                                setTimeout(() => showMinigameEnd(winName + ' WINS DODGE BALL!', '#ff00ff'), 500);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Draw arena boundary
+            ctx.save();
+            ctx.strokeStyle = '#ff00ff'; ctx.lineWidth = 3; ctx.shadowBlur = 15; ctx.shadowColor = '#ff00ff';
+            ctx.strokeRect(ax, ay, aw, ah);
+            ctx.shadowBlur = 0;
+
+            // Draw projectiles
+            ctx.fillStyle = '#ff0055';
+            for (let p of mg.projectiles) {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r || 6, 0, Math.PI * 2);
+                ctx.fill();
+                if (appSettings.graphics !== 'low') { ctx.shadowBlur = 8; ctx.shadowColor = '#ff0055'; }
+            }
+            ctx.shadowBlur = 0;
+
+            // Draw elimination message
+            if (mg.elimTimer > 0) {
+                mg.elimTimer--;
+                ctx.fillStyle = '#ff0055'; ctx.font = 'bold 28px Courier New'; ctx.textAlign = 'center';
+                ctx.globalAlpha = Math.min(1, mg.elimTimer / 30);
+                ctx.fillText(mg.elimMsg, canvas.width / 2, 60);
+                ctx.globalAlpha = 1; ctx.textAlign = 'left';
+            }
+
+            // Draw alive count
+            let aliveCount = Object.keys(mpState.players).filter(id => !mg.eliminated[id]).length;
+            ctx.fillStyle = '#ff00ff'; ctx.font = 'bold 18px Courier New'; ctx.textAlign = 'right';
+            ctx.fillText('ALIVE: ' + aliveCount + '/' + Object.keys(mpState.players).length, canvas.width - 20, 30);
+            ctx.textAlign = 'left';
+
+            // Dim eliminated local player
+            if (mg.localDead) {
+                ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#ff0055'; ctx.font = 'bold 36px Courier New'; ctx.textAlign = 'center';
+                ctx.fillText('ELIMINATED', canvas.width / 2, canvas.height / 2);
+                ctx.font = '18px Courier New'; ctx.fillStyle = '#888';
+                ctx.fillText('Spectating...', canvas.width / 2, canvas.height / 2 + 35);
+                ctx.textAlign = 'left';
+            }
+
+            // Difficulty indicator
+            ctx.fillStyle = '#ff00ff88'; ctx.font = '12px Courier New';
+            ctx.fillText('SPEED: x' + mg.difficulty.toFixed(1), ax + 5, ay - 5);
+            ctx.restore();
+        }
+
+        function mgDodgeSpawnProjectile(ax, ay, aw, ah, diff) {
+            let side = Math.floor(Math.random() * 4);
+            let speed = (2 + Math.random() * 2) * Math.min(diff, 5);
+            let r = 5 + Math.floor(Math.random() * 4);
+            let x, y, vx, vy;
+            if (side === 0) { x = ax; y = ay + Math.random() * ah; vx = speed; vy = (Math.random() - 0.5) * speed; }
+            else if (side === 1) { x = ax + aw; y = ay + Math.random() * ah; vx = -speed; vy = (Math.random() - 0.5) * speed; }
+            else if (side === 2) { x = ax + Math.random() * aw; y = ay; vx = (Math.random() - 0.5) * speed; vy = speed; }
+            else { x = ax + Math.random() * aw; y = ay + ah; vx = (Math.random() - 0.5) * speed; vy = -speed; }
+            return { x, y, vx, vy, r };
+        }
+
+        // ---- TARGET RACE ----
+        function mgTargetsSpawnNext() {
+            if (!mgTargets) return;
+            let t = { x: 120 + Math.random() * (canvas.width - 240), y: 100 + Math.random() * (canvas.height - 200), r: 18 + Math.random() * 12, id: Date.now() };
+            mgTargets.currentTarget = t;
+            broadcast({ type: 'mg-targets-spawn', t: t });
+        }
+
+        function updateTargetRace(ctx) {
+            if (!mgTargets || !player) return;
+            let mg = mgTargets;
+            if (mg.shotCooldown > 0) mg.shotCooldown--;
+
+            // Check if local player's bullets hit the target
+            if (mg.currentTarget) {
+                let t = mg.currentTarget;
+                for (let i = entities.bullets.length - 1; i >= 0; i--) {
+                    let b = entities.bullets[i];
+                    if (!b || b.isEnemy) continue;
+                    let dx = b.x - t.x, dy = b.y - t.y;
+                    if (Math.sqrt(dx * dx + dy * dy) < t.r + (b.radius || 4)) {
+                        // Hit!
+                        mg.localScore++;
+                        mg.scores[peer.id] = mg.localScore;
+                        entities.bullets.splice(i, 1);
+                        spawnParticles(t.x, t.y, '#00ff88', 15);
+                        playSound('hit');
+                        broadcast({ type: 'mg-targets-score', pid: peer.id, s: mg.localScore });
+                        // Check win
+                        if (mg.localScore >= 20) {
+                            let myName = currentUsername;
+                            broadcast({ type: 'mg-targets-winner', name: myName });
+                            setTimeout(() => showMinigameEnd(myName + ' WINS TARGET RACE!', '#00ff88'), 300);
+                        }
+                        // Host spawns next target directly
+                        if (mpState.isHost) mgTargetsSpawnNext();
+                        break;
+                    }
+                }
+            }
+
+            // Draw target
+            if (mg.currentTarget) {
+                let t = mg.currentTarget;
+                ctx.save();
+                // Outer ring
+                ctx.strokeStyle = '#00ff88'; ctx.lineWidth = 3; ctx.shadowBlur = 20; ctx.shadowColor = '#00ff88';
+                ctx.beginPath(); ctx.arc(t.x, t.y, t.r, 0, Math.PI * 2); ctx.stroke();
+                // Inner ring
+                ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.shadowBlur = 0;
+                ctx.beginPath(); ctx.arc(t.x, t.y, t.r * 0.5, 0, Math.PI * 2); ctx.stroke();
+                // Bullseye
+                ctx.fillStyle = '#ff0055';
+                ctx.beginPath(); ctx.arc(t.x, t.y, 4, 0, Math.PI * 2); ctx.fill();
+                ctx.restore();
+            }
+
+            // Draw scoreboard
+            ctx.save();
+            ctx.fillStyle = '#00ff88'; ctx.font = 'bold 16px Courier New'; ctx.textAlign = 'left';
+            let sy = 30;
+            ctx.fillText('TARGET RACE - FIRST TO 20', 15, sy); sy += 25;
+            let sorted = Object.entries(mg.scores).sort((a, b) => b[1] - a[1]);
+            for (let [pid, score] of sorted) {
+                let pn = mpState.players[pid] ? mpState.players[pid].name : '???';
+                let pc = mpState.players[pid] ? mpState.players[pid].color : '#fff';
+                let isMe = pid === peer.id;
+                ctx.fillStyle = pc; ctx.font = (isMe ? 'bold ' : '') + '14px Courier New';
+                ctx.fillText((isMe ? '> ' : '  ') + pn + ': ' + score + '/20', 15, sy);
+                sy += 20;
+            }
+            ctx.textAlign = 'left'; ctx.restore();
+        }
+
+        // ---- KING OF THE HILL ----
+        function mgKothMoveZone() {
+            if (!mgKoth) return;
+            let margin = 120;
+            mgKoth.zone = { x: margin + Math.random() * (canvas.width - margin * 2), y: margin + Math.random() * (canvas.height - margin * 2), r: 70 + Math.random() * 30 };
+            broadcast({ type: 'mg-koth-zone', z: mgKoth.zone });
+        }
+
+        function updateKingOfHill(ctx) {
+            if (!mgKoth || !player) return;
+            let mg = mgKoth;
+
+            if (mg.stunTimer > 0) { mg.stunTimer--; player.timers.invuln = 2; }
+            if (mg.pvpCooldown > 0) mg.pvpCooldown--;
+
+            // Host logic: scoring and zone movement
+            if (mpState.isHost) {
+                mg.zoneMoveTimer--;
+                if (mg.zoneMoveTimer <= 0) {
+                    mg.zoneMoveTimer = 900; // 15 seconds at 60fps
+                    mgKothMoveZone();
+                }
+
+                // Score players inside zone (every 60 frames = 1 second)
+                if (state.frame % 60 === 0) {
+                    let zx = mg.zone.x, zy = mg.zone.y, zr = mg.zone.r;
+                    for (let pid in mpState.players) {
+                        let px, py;
+                        if (pid === peer.id) { px = player.x; py = player.y; }
+                        else { px = mpState.players[pid].targetX || mpState.players[pid].x; py = mpState.players[pid].targetY || mpState.players[pid].y; }
+                        let dx = px - zx, dy = py - zy;
+                        if (Math.sqrt(dx * dx + dy * dy) < zr) {
+                            mg.scores[pid] = (mg.scores[pid] || 0) + 1;
+                        }
+                    }
+                    broadcast({ type: 'mg-koth-scores', s: mg.scores });
+                    // Check winner
+                    for (let pid in mg.scores) {
+                        if (mg.scores[pid] >= 100) {
+                            let winName = mpState.players[pid] ? mpState.players[pid].name : '???';
+                            broadcast({ type: 'mg-koth-winner', name: winName });
+                            setTimeout(() => showMinigameEnd(winName + ' WINS KING OF THE HILL!', '#ffcc00'), 300);
+                            return;
+                        }
+                    }
+                }
+
+                // PvP: check bullets hitting other players
+                for (let i = entities.bullets.length - 1; i >= 0; i--) {
+                    let b = entities.bullets[i];
+                    if (!b || b.isEnemy) continue;
+                    for (let pid in mpState.players) {
+                        if (pid === peer.id) continue; // don't hit self
+                        let pp = mpState.players[pid];
+                        let px = pp.targetX || pp.x, py = pp.targetY || pp.y;
+                        let dx = b.x - px, dy = b.y - py;
+                        if (Math.sqrt(dx * dx + dy * dy) < 18) {
+                            entities.bullets.splice(i, 1);
+                            spawnParticles(px, py, '#ff0055', 8);
+                            broadcast({ type: 'mg-koth-hit', pid: pid });
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Draw zone
+            ctx.save();
+            let zx = mg.zone.x, zy = mg.zone.y, zr = mg.zone.r;
+            let pulse = Math.sin(state.frame * 0.05) * 0.15 + 0.85;
+            // Zone fill
+            ctx.globalAlpha = 0.15 * pulse;
+            ctx.fillStyle = '#ffcc00';
+            ctx.beginPath(); ctx.arc(zx, zy, zr, 0, Math.PI * 2); ctx.fill();
+            // Zone border
+            ctx.globalAlpha = 0.8;
+            ctx.strokeStyle = '#ffcc00'; ctx.lineWidth = 3; ctx.shadowBlur = 20; ctx.shadowColor = '#ffcc00';
+            ctx.beginPath(); ctx.arc(zx, zy, zr, 0, Math.PI * 2); ctx.stroke();
+            ctx.shadowBlur = 0; ctx.globalAlpha = 1;
+            // Zone timer (visual ring)
+            if (mpState.isHost) {
+                let pct = mg.zoneMoveTimer / 900;
+                ctx.strokeStyle = '#ffffff44'; ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.arc(zx, zy, zr + 8, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * pct); ctx.stroke();
+            }
+            // "HILL" label
+            ctx.fillStyle = '#ffcc0088'; ctx.font = 'bold 14px Courier New'; ctx.textAlign = 'center';
+            ctx.fillText('HILL', zx, zy + 5);
+
+            // Stun indicator
+            if (mg.stunTimer > 0) {
+                ctx.fillStyle = 'rgba(255,0,0,0.3)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#ff0055'; ctx.font = 'bold 24px Courier New'; ctx.textAlign = 'center';
+                ctx.fillText('STUNNED!', canvas.width / 2, canvas.height / 2 - 50);
+            }
+
+            // Draw scoreboard at top
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#ffcc00'; ctx.font = 'bold 16px Courier New';
+            ctx.fillText('KING OF THE HILL - FIRST TO 100', canvas.width / 2, 22);
+            let sorted = Object.entries(mg.scores).sort((a, b) => b[1] - a[1]);
+            let sx = canvas.width / 2 - (sorted.length * 70);
+            ctx.font = '13px Courier New'; ctx.textAlign = 'left';
+            for (let [pid, score] of sorted) {
+                let pn = mpState.players[pid] ? mpState.players[pid].name : '???';
+                let pc = mpState.players[pid] ? mpState.players[pid].color : '#fff';
+                let isMe = pid === peer.id;
+                // Score bar
+                let barW = 100, barH = 12, pct = Math.min(1, score / 100);
+                ctx.fillStyle = '#111'; ctx.fillRect(sx, 30, barW, barH);
+                ctx.fillStyle = pc; ctx.globalAlpha = 0.7; ctx.fillRect(sx, 30, barW * pct, barH); ctx.globalAlpha = 1;
+                ctx.strokeStyle = pc; ctx.lineWidth = 1; ctx.strokeRect(sx, 30, barW, barH);
+                ctx.fillStyle = isMe ? '#fff' : pc; ctx.font = (isMe ? 'bold ' : '') + '11px Courier New';
+                ctx.fillText(pn + ' ' + score, sx + 2, 40);
+                sx += 120;
+            }
+            ctx.textAlign = 'left';
+            ctx.restore();
         }
 
         // --- Leaderboards (localStorage-based) ---
@@ -14007,7 +14420,7 @@ function openContracts(){
 var rebirthCount=parseInt(secureLoad('neonVoidRebirths', 0)||0);
 var REBIRTH_BONUSES=[{threshold:1,bonus:'+5% all damage permanently'},{threshold:2,bonus:'+10% coin gain permanently'},{threshold:3,bonus:'+15% XP gain permanently'},{threshold:5,bonus:'Unlock Rebirth ship skin'}];
 function openRebirth(){
-  var ol=document.createElement('div');ol.id='rebirth-overlay';ol.style.cssText='position:fixed;inset:0;background:#06060c;z-index:99999;color:#fff;font-family:monospace;padding:40px;';
+  var ol=document.createElement('div');ol.id='rebirth-overlay';ol.style.cssText='position:fixed;inset:0;background:#06060c;z-index:99999;color:#fff;font-family:monospace;padding:40px;overflow-y:auto;';
   var html='<h2 style="color:#ff6622;text-align:center">REBIRTH</h2><p style="text-align:center;color:#aaa">Rebirths: <b style="color:#ff6622">'+rebirthCount+'</b></p><p style="text-align:center">Resets coins, upgrades, level. Grants permanent bonuses.</p><div style="margin:16px 0">';
   for(var i=0;i<REBIRTH_BONUSES.length;i++){var rb=REBIRTH_BONUSES[i];var done=rebirthCount>=rb.threshold;html+='<div style="padding:6px;color:'+(done?'#ff6622':'#555')+'">'+rb.threshold+'x: '+rb.bonus+(done?' (done)':'')+'</div>';}
   html+='</div><div style="text-align:center"><button onclick="doRebirth()" style="background:#ff6622;color:#000;border:none;padding:10px 28px;cursor:pointer;font-weight:bold;font-size:16px">REBIRTH</button></div>';
@@ -14379,7 +14792,17 @@ document.addEventListener('keydown',function(ev){
   if(ev.key==='Tab'){ev.preventDefault();triggerEmote('wave');}
 });
 
-    
+
+// ==================== MULTIPLAYER MINIGAMES ====================
+var mgDodge=null,mgTargets=null,mgKoth=null;
+function showMinigameEnd(msg,color){state.active=false;state.paused=true;var ol=document.createElement('div');ol.id='mg-end-overlay';ol.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:monospace;color:#fff;';ol.innerHTML='<div style="font-size:clamp(28px,8vw,48px);font-weight:bold;color:'+color+';text-shadow:0 0 20px '+color+';letter-spacing:4px;margin-bottom:20px;">'+msg+'</div><button onclick="document.getElementById(\'mg-end-overlay\').remove();leaveLobby();returnToMenu();" style="border-color:'+color+';color:'+color+';padding:12px 30px;font-size:16px;">BACK TO MENU</button>';document.body.appendChild(ol);mgDodge=null;mgTargets=null;mgKoth=null;}
+function initMinigame(mode){var W=canvas.width,H=canvas.height;entities.enemies=[];entities.eBullets=[];entities.items=[];if(mode==='minigame_dodge'){mgDodge={projectiles:[],eliminated:{},localDead:false,elimMsg:'',elimTimer:0,timer:0,speed:3,spawnRate:40};state.stats.maxHp=1;if(player)player.hp=1;}else if(mode==='minigame_targets'){mgTargets={currentTarget:null,scores:{},myScore:0,targetSize:20};if(mpState.isHost)spawnMGTarget();}else if(mode==='minigame_koth'){mgKoth={zone:{x:W/2,y:H/2,r:80},scores:{},myScore:0,stunTimer:0,zoneTimer:0,zoneMoveInterval:900};if(mpState.isHost){mgKoth.scores[peer.id]=0;Object.keys(mpState.players).forEach(function(p){mgKoth.scores[p]=0;});}}}
+function spawnMGTarget(){if(!mgTargets)return;var t={x:100+Math.random()*(canvas.width-200),y:100+Math.random()*(canvas.height-200)};mgTargets.currentTarget=t;broadcast({type:'mg-targets-spawn',t:t});}
+function updateMinigame(ctx){var W=canvas.width,H=canvas.height;
+if(state.mode==='minigame_dodge'&&mgDodge){mgDodge.timer++;mgDodge.speed=3+mgDodge.timer*0.003;mgDodge.spawnRate=Math.max(8,40-Math.floor(mgDodge.timer/60));if(mpState.isHost){if(mgDodge.timer%mgDodge.spawnRate===0){var side=Math.floor(Math.random()*4),p={x:0,y:0,vx:0,vy:0,r:6};if(side===0){p.x=Math.random()*W;p.y=-10;p.vx=(Math.random()-0.5)*2;p.vy=mgDodge.speed;}else if(side===1){p.x=Math.random()*W;p.y=H+10;p.vx=(Math.random()-0.5)*2;p.vy=-mgDodge.speed;}else if(side===2){p.x=-10;p.y=Math.random()*H;p.vx=mgDodge.speed;p.vy=(Math.random()-0.5)*2;}else{p.x=W+10;p.y=Math.random()*H;p.vx=-mgDodge.speed;p.vy=(Math.random()-0.5)*2;}mgDodge.projectiles.push(p);}for(var i=mgDodge.projectiles.length-1;i>=0;i--){var pr=mgDodge.projectiles[i];pr.x+=pr.vx;pr.y+=pr.vy;if(pr.x<-50||pr.x>W+50||pr.y<-50||pr.y>H+50)mgDodge.projectiles.splice(i,1);}if(player&&!mgDodge.localDead){for(var i=0;i<mgDodge.projectiles.length;i++){var pr=mgDodge.projectiles[i],dx=pr.x-player.x,dy=pr.y-player.y;if(Math.sqrt(dx*dx+dy*dy)<pr.r+12){mgDodge.localDead=true;mgDodge.eliminated[peer.id]=true;broadcast({type:'mg-dodge-eliminate',pid:peer.id,name:currentUsername||'Player'});var alive=[];Object.keys(mpState.players).forEach(function(p){if(!mgDodge.eliminated[p])alive.push(p);});if(alive.length<=1){var wid=alive[0]||peer.id;broadcast({type:'mg-dodge-winner',pid:wid,name:mpState.players[wid]?mpState.players[wid].name:'Host'});}break;}}}if(mgDodge.timer%3===0)broadcast({type:'mg-dodge-projectiles',p:mgDodge.projectiles.slice(-50)});}ctx.fillStyle='#ff00ff';ctx.shadowColor='#ff00ff';ctx.shadowBlur=8;for(var i=0;i<mgDodge.projectiles.length;i++){var pr=mgDodge.projectiles[i];ctx.beginPath();ctx.arc(pr.x,pr.y,pr.r,0,Math.PI*2);ctx.fill();}ctx.shadowBlur=0;ctx.strokeStyle='#ff00ff44';ctx.lineWidth=3;ctx.strokeRect(20,20,W-40,H-40);if(mgDodge.elimTimer>0){mgDodge.elimTimer--;ctx.fillStyle='#ff0055';ctx.font='bold 24px monospace';ctx.textAlign='center';ctx.fillText(mgDodge.elimMsg,W/2,60);ctx.textAlign='left';}if(mgDodge.localDead){ctx.fillStyle='rgba(255,0,0,0.3)';ctx.fillRect(0,0,W,H);ctx.fillStyle='#ff0055';ctx.font='bold 28px monospace';ctx.textAlign='center';ctx.fillText('ELIMINATED',W/2,H/2);ctx.textAlign='left';}ctx.fillStyle='#ff00ff';ctx.font='14px monospace';ctx.fillText('DODGE BALL  '+Math.floor(mgDodge.timer/60)+'s',10,20);}
+if(state.mode==='minigame_targets'&&mgTargets){if(mgTargets.currentTarget){var t=mgTargets.currentTarget;ctx.strokeStyle='#00ff88';ctx.lineWidth=3;ctx.shadowColor='#00ff88';ctx.shadowBlur=12;ctx.beginPath();ctx.arc(t.x,t.y,mgTargets.targetSize,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.arc(t.x,t.y,mgTargets.targetSize*0.5,0,Math.PI*2);ctx.stroke();ctx.fillStyle='#00ff88';ctx.beginPath();ctx.arc(t.x,t.y,4,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;for(var i=entities.pBullets.length-1;i>=0;i--){var b=entities.pBullets[i];if(!b)continue;var dx=b.x-t.x,dy=b.y-t.y;if(Math.sqrt(dx*dx+dy*dy)<mgTargets.targetSize+5){mgTargets.myScore++;entities.pBullets.splice(i,1);broadcast({type:'mg-targets-score',pid:peer.id,s:mgTargets.myScore});if(mgTargets.myScore>=20){broadcast({type:'mg-targets-winner',pid:peer.id,name:currentUsername||'Player'});showMinigameEnd('YOU WIN TARGET RACE!','#00ff88');}else if(mpState.isHost)spawnMGTarget();break;}}}ctx.fillStyle='#00ff88';ctx.font='bold 16px monospace';ctx.fillText('TARGET RACE — You: '+mgTargets.myScore+'/20',10,20);var sy=40;Object.keys(mgTargets.scores).forEach(function(pid){var name=mpState.players[pid]?mpState.players[pid].name:pid.substring(0,6);ctx.fillStyle='#aaa';ctx.font='12px monospace';ctx.fillText(name+': '+mgTargets.scores[pid]+'/20',10,sy);sy+=16;});}
+if(state.mode==='minigame_koth'&&mgKoth){mgKoth.zoneTimer++;if(mpState.isHost&&mgKoth.zoneTimer%mgKoth.zoneMoveInterval===0){mgKoth.zone={x:100+Math.random()*(W-200),y:100+Math.random()*(H-200),r:80};broadcast({type:'mg-koth-zone',z:mgKoth.zone});}if(player&&mgKoth.stunTimer<=0){var dx=player.x-mgKoth.zone.x,dy=player.y-mgKoth.zone.y;if(Math.sqrt(dx*dx+dy*dy)<mgKoth.zone.r){mgKoth.myScore+=1/60;if(mpState.isHost){mgKoth.scores[peer.id]=Math.floor(mgKoth.myScore);if(mgKoth.zoneTimer%30===0)broadcast({type:'mg-koth-scores',s:mgKoth.scores});if(mgKoth.myScore>=100){broadcast({type:'mg-koth-winner',pid:peer.id,name:currentUsername||'Player'});showMinigameEnd('YOU WIN KING OF THE HILL!','#ffcc00');}}}}if(mgKoth.stunTimer>0)mgKoth.stunTimer--;var z=mgKoth.zone;ctx.strokeStyle='#ffcc00';ctx.lineWidth=3;ctx.shadowColor='#ffcc00';ctx.shadowBlur=15;ctx.beginPath();ctx.arc(z.x,z.y,z.r,0,Math.PI*2);ctx.stroke();ctx.fillStyle='rgba(255,204,0,0.08)';ctx.beginPath();ctx.arc(z.x,z.y,z.r,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#ffcc00';ctx.font='10px monospace';ctx.textAlign='center';ctx.fillText('HILL',z.x,z.y+4);ctx.textAlign='left';if(mgKoth.stunTimer>0){ctx.fillStyle='rgba(255,0,0,0.2)';ctx.fillRect(0,0,W,H);ctx.fillStyle='#ff0055';ctx.font='bold 20px monospace';ctx.textAlign='center';ctx.fillText('STUNNED',W/2,H/2);ctx.textAlign='left';}ctx.fillStyle='#ffcc00';ctx.font='bold 16px monospace';ctx.fillText('KING OF THE HILL — You: '+Math.floor(mgKoth.myScore)+'/100',10,20);var sy=40;Object.keys(mgKoth.scores).forEach(function(pid){var name=mpState.players[pid]?mpState.players[pid].name:pid.substring(0,6);ctx.fillStyle='#aaa';ctx.font='12px monospace';ctx.fillText(name+': '+(mgKoth.scores[pid]||0)+'/100',10,sy);sy+=16;});}}
+
 })();
 </script>
 </body>
