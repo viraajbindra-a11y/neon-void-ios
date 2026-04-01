@@ -9805,11 +9805,10 @@ function generateSyncCode() {
             document.getElementById('player-tag').textContent = 'PILOT: ' + currentUsername;
             document.getElementById('player-tag').style.display = 'block';
             playSound('powerup');
+            // Fetch cloud profile FIRST so returning players aren't forced into tutorial
+            try { await fetchCloudProfile(cloudKey || currentUsername); } catch(e) {}
             if (window.needsTutorial && window.needsTutorial()) { window.startTutorialStage(); return; }
             returnToMenu();
-            fetchCloudProfile(cloudKey || currentUsername).then(() => {
-                returnToMenu();
-            }).catch(() => {});
         }
         // ── End Google Sign-In ────────────────────────────────────────────────
 
@@ -9887,13 +9886,10 @@ function generateSyncCode() {
             document.getElementById('player-tag').textContent = 'PILOT: ' + currentUsername;
             document.getElementById('player-tag').style.display = 'block';
             playSound('powerup');
-            // Show menu immediately, cloud sync in background
+            // Fetch cloud profile FIRST so returning players aren't forced into tutorial
+            try { await fetchCloudProfile(userPasswordHash || currentUsername); } catch(e) {}
             if (window.needsTutorial && window.needsTutorial()) { window.startTutorialStage(); return; }
             returnToMenu();
-            // Cloud sync in background - don't block menu
-            fetchCloudProfile(userPasswordHash || currentUsername).then(() => {
-                returnToMenu(); // Refresh with cloud data
-            }).catch(() => {});
         }
 
         function logoutUser() {
