@@ -3661,9 +3661,10 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                                 origClick();
                                 // Wait for all pending level ups to finish before spawning next boss
                                 let _waitForLevels = setInterval(() => {
+                                    if (!state.active) { clearInterval(_waitForLevels); return; }
                                     if (!state.pendingLevels || state.pendingLevels <= 0) {
                                         clearInterval(_waitForLevels);
-                                        setTimeout(() => { activeBoss = new Boss(state.bossesDefeated); state.spawningBoss = false; }, 1000);
+                                        if (state.active) setTimeout(() => { if (state.active) { activeBoss = new Boss(state.bossesDefeated); state.spawningBoss = false; } }, 1000);
                                     }
                                 }, 200);
                             };
@@ -5475,7 +5476,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                     card.innerHTML = `<div style="color:#00ff88;font-weight:bold;font-size:14px;text-align:center;margin-bottom:5px;">${r.desc}</div><div style="color:#888;font-size:11px;text-align:center;margin-bottom:8px;">3x ${r.mat.toUpperCase()} materials</div><div style="color:${have>=r.count?'#00ffcc':'#555'};font-size:16px;text-align:center;margin-bottom:8px;">${have}/${r.count}</div>`;
                     let btn = document.createElement('button'); btn.style.borderColor = '#00ff88'; btn.style.color = '#00ff88';
                     if (done) { btn.innerText = 'FORGED'; btn.style.background='#00ff88'; btn.style.color='#000'; btn.disabled=true; }
-                    else if (have >= r.count) { btn.innerText = 'FORGE!'; btn.onclick = () => { mats[r.mat] = (mats[r.mat]||0)-r.count; secureSave('neonVoidMaterials', mats); secureSave('neonVoidAch_'+r.key, '1'); playSound('buy'); renderShop(); }; }
+                    else if (have >= r.count) { btn.innerText = 'FORGE!'; btn.onclick = () => { mats[r.mat] = (mats[r.mat]||0)-r.count; secureSave('neonVoidMaterials', mats); secureSave('neonVoidAch_'+r.key, '1'); playSound('buy'); cloudSave(); renderShop(); }; }
                     else { btn.innerText = 'NEED MORE'; btn.style.opacity='0.5'; btn.style.cursor='not-allowed'; }
                     card.appendChild(btn); forgeGrid.appendChild(card);
                 });
@@ -5573,7 +5574,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             }
         }
 
-        function initGameBase() { stopMenuMusic(); if (appSettings.music) startMusic(); player = new Player(); activeBoss = null; asteroids = []; exhaustParticles = []; entities = { bullets: [], enemies: [], eBullets: [], particles: [], powerups: [], texts: [], stars: [], trails: [] }; fireTrails = []; weatherTimer = 0; currentWeather = null; victoryPoseTimer = 0; state._rogueWaiting = false; zombieQueue = []; hivemindGroupCounter = 0;
+        function initGameBase() { stopMenuMusic(); if (appSettings.music) startMusic(); player = new Player(); if (typeof _startDiffPatch === 'function') _startDiffPatch(); activeBoss = null; asteroids = []; exhaustParticles = []; entities = { bullets: [], enemies: [], eBullets: [], particles: [], powerups: [], texts: [], stars: [], trails: [] }; fireTrails = []; weatherTimer = 0; currentWeather = null; victoryPoseTimer = 0; state._rogueWaiting = false; zombieQueue = []; hivemindGroupCounter = 0;
             // Feature 48: Load previous ghost run for playback into separate array
             try { let savedGhost = secureLoad('neonVoidGhost', null); if (savedGhost) { ghostPlaybackInputs = Array.isArray(savedGhost) ? savedGhost : JSON.parse(savedGhost); ghostPlayback = true; ghostFrame = 0; } else { ghostPlaybackInputs = []; ghostPlayback = false; } } catch(e) { ghostPlaybackInputs = []; ghostPlayback = false; }
             ghostInputs = [];
@@ -9170,7 +9171,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                 a.update();
                 if (doRender) a.draw(ctx);
                 // Player collision
-                if (Math.hypot(a.x - player.x, a.y - player.y) < a.radius + player.radius) {
+                if (player && Math.hypot(a.x - player.x, a.y - player.y) < a.radius + player.radius) {
                     player.takeDamage(40);
                     spawnParticles(player.x, player.y, a.color, 10);
                 }
@@ -10922,7 +10923,7 @@ function generateSyncCode() {
             } else if (state.mode === 'infinite' || state.mode === 'coop') {
                 addLeaderboardEntry('infinite', lbName, state.score);
             } else if (state.mode === 'mission') {
-                addLeaderboardEntry('infinite', lbName, state.score);
+                addLeaderboardEntry('mission', lbName, state.score);
             }
             stopMusic();
             startMenuBg();
@@ -11956,20 +11957,26 @@ function generateSyncCode() {
             void: { label: 'VOID', color: '#aa00ff', desc: '3x enemy HP, 2x damage, 4x coins, one-shot bosses', hpMult: 3.0, dmgTaken: 2.0, coinMult: 4.0 }
         };
 
-        // Difficulty damage scaling is applied via the update loop — no player monkey-patch needed
-        // We hook into takeDamage lazily when player exists
+        // Difficulty damage scaling — re-patches player.takeDamage every new game
         let _diffPatchApplied = false;
-        let _checkDiffPatch = setInterval(() => {
-            if (player && player.takeDamage && !_diffPatchApplied) {
-                _diffPatchApplied = true;
-                let _origTD = player.takeDamage.bind(player);
-                player.takeDamage = function(amt) {
-                    let diff = DIFFICULTIES[selectedDifficulty] || DIFFICULTIES.normal;
-                    _origTD(Math.ceil(amt * diff.dmgTaken));
-                };
-                clearInterval(_checkDiffPatch);
-            }
-        }, 500);
+        let _checkDiffPatch = null;
+        function _startDiffPatch() {
+            _diffPatchApplied = false;
+            if (_checkDiffPatch) clearInterval(_checkDiffPatch);
+            _checkDiffPatch = setInterval(() => {
+                if (player && player.takeDamage && !_diffPatchApplied) {
+                    _diffPatchApplied = true;
+                    let _origTD = player.takeDamage.bind(player);
+                    player.takeDamage = function(amt) {
+                        let diff = DIFFICULTIES[selectedDifficulty] || DIFFICULTIES.normal;
+                        _origTD(Math.ceil(amt * diff.dmgTaken));
+                    };
+                    clearInterval(_checkDiffPatch);
+                    _checkDiffPatch = null;
+                }
+            }, 500);
+        }
+        _startDiffPatch();
 
         // Add difficulty selector to settings screen
         let settingsBtnContainer = document.querySelector('#settings-screen .btn-container');
