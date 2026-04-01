@@ -66,10 +66,10 @@
         
         .skin-card { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 12px 8px; border: 2px solid #fff; background: rgba(0,0,0,0.8); gap: 6px; width: auto; min-width:0; transition: all 0.2s; border-radius:6px; }
         .skin-card button { min-width: 80px; padding: 6px 10px; font-size: 13px; }
-        .shop-tab-bar { display:flex; gap:3px; width:calc(100% - 12px); max-width:1000px; margin:0 auto 12px; padding:6px; overflow-x:auto; -webkit-overflow-scrolling:touch; background:#1a1200; border:1px solid #ffcc0044; border-radius:10px; }
-        .shop-tab { flex:1; min-width:0!important; padding:10px 2px!important; text-align:center; font-family:'Courier New',monospace; font-size:10px!important; font-weight:bold; letter-spacing:0px; color:#fff!important; background:#2a2000!important; border:1px solid #ffcc0033!important; border-radius:6px!important; box-shadow:none!important; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
-        .shop-tab.active { color:#000!important; background:#ffcc00!important; border-color:#ffcc00!important; }
-        .shop-tab:hover { color:#ffcc00!important; background:#332800!important; }
+        .shop-tab-bar { display:flex; gap:0; width:100%; max-width:1000px; margin:0 auto 10px; padding:0; overflow-x:auto; -webkit-overflow-scrolling:touch; background:none; border:none; border-bottom:2px solid #ffcc0066; }
+        .shop-tab { flex:none!important; min-width:0!important; padding:14px 12px!important; text-align:center; font-family:'Courier New',monospace; font-size:14px!important; font-weight:bold!important; letter-spacing:1px; color:#ffcc00!important; background:none!important; border:none!important; border-bottom:3px solid transparent!important; border-radius:0!important; box-shadow:none!important; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
+        .shop-tab.active { color:#ffcc00!important; border-bottom-color:#ffcc00!important; background:rgba(255,204,0,0.1)!important; }
+        .shop-tab:hover { background:rgba(255,204,0,0.05)!important; }
         .shop-section { display:none; width:100%; }
         .shop-section.active { display:flex; }
         .shop-grid-2col { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; max-width:1000px; margin:0 auto 30px; padding:0 10px; box-sizing:border-box; }
