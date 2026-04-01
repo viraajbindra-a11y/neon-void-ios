@@ -64,8 +64,16 @@
         .win-theme button:hover { background: #00ff00; color: black; }
         .grid-button { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100px; min-width: 150px; }
         
-        .skin-card { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; border: 2px solid #fff; background: rgba(0,0,0,0.8); gap: 10px; width: 200px; transition: all 0.2s;}
-        .skin-card button { min-width: 100px; padding: 10px; font-size: 16px; }
+        .skin-card { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 12px 8px; border: 2px solid #fff; background: rgba(0,0,0,0.8); gap: 6px; width: auto; min-width:0; transition: all 0.2s; border-radius:6px; }
+        .skin-card button { min-width: 80px; padding: 6px 10px; font-size: 13px; }
+        .shop-tab-bar { display:flex; gap:0; width:100%; max-width:1000px; margin:0 auto 15px; overflow-x:auto; -webkit-overflow-scrolling:touch; border-bottom:2px solid #ff005544; }
+        .shop-tab { flex:1; min-width:0; padding:10px 6px; text-align:center; font-family:'Courier New',monospace; font-size:11px; font-weight:bold; letter-spacing:1px; color:#888; background:transparent; border:none; border-bottom:3px solid transparent; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
+        .shop-tab.active { color:#ffcc00; border-bottom-color:#ffcc00; background:rgba(255,204,0,0.08); }
+        .shop-tab:hover { color:#ffcc00aa; }
+        .shop-section { display:none; width:100%; }
+        .shop-section.active { display:flex; }
+        .shop-grid-2col { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; max-width:1000px; margin:0 auto 30px; padding:0 10px; box-sizing:border-box; }
+        @media(min-width:768px) { .shop-grid-2col { grid-template-columns:repeat(3,1fr); } }
         .skin-preview { width: 40px; height: 40px; border-radius: 50%; box-shadow: 0 0 20px currentColor; background: currentColor; margin-bottom: 10px; }
         
         #mobile-controls { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; z-index: 15; pointer-events: none; }
@@ -76,7 +84,9 @@
         .mob-btn { border-radius: 50%; background: rgba(0,0,0,0.4); font-weight: bold; font-family: inherit; text-align: center; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
         .mob-fire { width: 70px; height: 70px; border: 2px solid #00ffcc; color: #00ffcc; font-size: 14px; box-shadow: 0 0 15px rgba(0,255,204,0.25); }
         .mob-dash-btn { width: 60px; height: 60px; border: 2px solid #ffcc00; color: #ffcc00; font-size: 12px; box-shadow: 0 0 15px rgba(255,204,0,0.25); }
-        
+        #ios-pause-btn { display:none; position:fixed; top:calc(12px + env(safe-area-inset-top, 0px)); right:calc(12px + env(safe-area-inset-right, 0px)); width:40px; height:40px; border-radius:50%; background:rgba(0,0,0,0.35); border:2px solid rgba(0,255,204,0.4); color:rgba(0,255,204,0.7); font-size:18px; font-family:inherit; z-index:20; pointer-events:auto; -webkit-tap-highlight-color:transparent; touch-action:manipulation; line-height:36px; text-align:center; padding:0; box-shadow:0 0 10px rgba(0,255,204,0.15); }
+        #ios-pause-btn:active { background:rgba(0,255,204,0.25); }
+
         @keyframes upgradeCardPulse { 0%, 100% { box-shadow: 0 0 20px #ffcc00, 0 0 40px rgba(255, 204, 0, 0); } 50% { box-shadow: 0 0 25px #ffcc00, 0 0 50px rgba(255, 204, 0, 0.15); } }
         @keyframes upgradeCardHoverGlow { 0%, 100% { box-shadow: 0 0 40px #ffcc00, 0 0 80px rgba(255, 204, 0, 0.4), inset 0 0 30px rgba(255, 204, 0, 0.1); } 50% { box-shadow: 0 0 60px #ffcc00, 0 0 120px rgba(255, 204, 0, 0.5), inset 0 0 50px rgba(255, 204, 0, 0.15); } }
         #levelup-screen button { border-color: #ffcc00; color: #ffcc00; width: 280px; height: 160px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 15px; box-shadow: 0 0 20px #ffcc00; animation: upgradeCardPulse 2s ease-in-out infinite; transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease; }
@@ -306,8 +316,8 @@
     </div>
 
     <div id="leaderboard-screen" class="overlay-screen hidden" style="z-index: 22;">
-        <div style="width:100%; height:100%; overflow-y:auto; display:flex; flex-direction:column; align-items:center; padding:50px 0; box-sizing:border-box;">
-            <div class="title-text" style="-webkit-text-stroke: 3px #ffcc00; text-shadow: 0 0 50px #ffcc00; font-size: 60px;">LEADERBOARDS</div>
+        <div style="width:100%; height:100%; overflow-y:auto; display:flex; flex-direction:column; align-items:center; padding:50px 15px; box-sizing:border-box;">
+            <div class="title-text" style="-webkit-text-stroke: 2px #ffcc00; text-shadow: 0 0 50px #ffcc00; font-size: clamp(28px, 8vw, 60px); word-break: break-word; text-align:center; max-width:100%; letter-spacing: 2px;">LEADERBOARDS</div>
             <div style="font-size:11px;color:#00ffcc88;letter-spacing:3px;margin-bottom:15px;display:flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00ffcc88" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> GLOBAL RANKINGS</div>
             <div class="btn-container" style="margin-bottom:20px;flex-wrap:wrap;gap:8px;">
                 <button onclick="showLeaderboard('infinite')" style="border-color:#00ffcc; color:#00ffcc; padding:10px 20px; min-width:100px;">INFINITE</button>
@@ -354,6 +364,7 @@
         </div>
     </div>
 
+    <button id="ios-pause-btn">&#x23F8;</button>
 
     <div id="main-overlay" class="overlay-screen" style="overflow-y:auto;">
         <div id="menu-inner-wrap" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;padding:30px 0 50px;">
@@ -368,11 +379,11 @@
         </div>
     </div>
 
-
     <div id="pause-screen" class="overlay-screen hidden" style="z-index: 25;">
         <div class="title-text" style="-webkit-text-stroke: 3px #00ffcc; text-shadow: 0 0 50px #00ffcc;">PAUSED</div>
         <div id="pause-stats"></div>
         <div class="subtitle-text" style="color: #555; font-size: 14px;">PRESS ESC TO RESUME</div>
+        <button id="ios-resume-btn" onclick="togglePause()" style="border-color: #00ffcc; color: #00ffcc; margin-top: 10px; display:none;">RESUME</button>
         <button onclick="returnToMenu()" style="border-color: #ff0055; color: #ff0055; margin-top: 20px;">ABORT MISSION</button>
     </div>
     
@@ -412,21 +423,43 @@
     </div>
     
     <div id="shop-screen" class="overlay-screen hidden">
-        <div style="width: 100%; height: 100%; overflow-y: auto; display: flex; flex-direction: column; align-items: center; padding: 50px 0; box-sizing: border-box;">
-            <div class="title-text" style="-webkit-text-stroke: 3px #ffcc00; text-shadow: 0 0 50px #ffcc00; font-size: 70px;">THE HANGAR</div>
-            <div class="subtitle-text" id="shop-coin-display" style="color: #ffcc00; font-weight: bold; font-size: 28px;">COINS: 0</div>
-            <h2 style="color: #fff; text-decoration: underline; margin-top: 10px; letter-spacing: 5px;">COSMETICS</h2>
-            <div class="btn-container" id="shop-grid" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; max-width: 1000px; margin-bottom: 30px;"></div>
-            <h2 style="color: #ff0000; text-decoration: underline; margin-top: 20px; letter-spacing: 5px; text-shadow: 0 0 10px #ff0000;">ILLEGAL UPGRADES</h2>
-            <div class="subtitle-text">Purchase these forbidden technologies to permanently buff your ship.</div>
-            <div class="btn-container" id="upgrade-grid" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; max-width: 1000px; margin-bottom: 30px;"></div>
-            <h2 style="color: #ffaa00; text-decoration: underline; margin-top: 20px; letter-spacing: 5px; text-shadow: 0 0 10px #ffaa00;">SKILL TREE</h2>
-            <div class="subtitle-text" style="color:#ffaa0088;">Three paths. Five tiers each. Each tier requires the previous.</div>
-            <div id="skill-tree-container" style="display:flex;flex-wrap:wrap;justify-content:center;gap:30px;max-width:1100px;margin-bottom:30px;"></div>
-            <h2 id="wisp-skins-header" style="color: #00ccff; text-decoration: underline; margin-top: 20px; letter-spacing: 5px; text-shadow: 0 0 10px #00ccff; display: none;">WISP SKINS</h2>
-            <div class="btn-container" id="wisp-skin-grid" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; max-width: 1000px; margin-bottom: 30px;"></div>
-            <h2 style="color: #ff00ff; text-decoration: underline; margin-top: 20px; letter-spacing: 5px; text-shadow: 0 0 20px #ff00ff;">VOID CASINO</h2>
-            <div class="subtitle-text" style="color:#ff00ff88;">Risk your coins for massive rewards. The void always wins... or does it?</div>
+        <div style="width: 100%; height: 100%; overflow-y: auto; display: flex; flex-direction: column; align-items: center; padding: 20px 0 50px; box-sizing: border-box;">
+            <div class="title-text" style="-webkit-text-stroke: 2px #ffcc00; text-shadow: 0 0 50px #ffcc00; font-size: clamp(30px, 9vw, 70px);">THE HANGAR</div>
+            <div class="subtitle-text" id="shop-coin-display" style="color: #ffcc00; font-weight: bold; font-size: 22px; margin-bottom:10px;">COINS: 0</div>
+            <div class="shop-tab-bar">
+                <button class="shop-tab active" onclick="switchShopTab('upgrades')">UPGRADES</button>
+                <button class="shop-tab" onclick="switchShopTab('skins')">SKINS</button>
+                <button class="shop-tab" onclick="switchShopTab('wisps')">WISPS</button>
+                <button class="shop-tab" onclick="switchShopTab('forge')">FORGE</button>
+                <button class="shop-tab" onclick="switchShopTab('skills')">SKILLS</button>
+                <button class="shop-tab" onclick="switchShopTab('casino')">CASINO</button>
+            </div>
+            <div id="shop-section-upgrades" class="shop-section active" style="display:flex;flex-direction:column;align-items:center;">
+                <h2 style="color: #ff0000; text-decoration: underline; margin-top: 10px; letter-spacing: 5px; text-shadow: 0 0 10px #ff0000; font-size:16px;">ILLEGAL UPGRADES</h2>
+                <div class="subtitle-text" style="font-size:12px;">Purchase forbidden technologies to permanently buff your ship.</div>
+                <div class="shop-grid-2col" id="upgrade-grid"></div>
+            </div>
+            <div id="shop-section-skins" class="shop-section" style="display:none;flex-direction:column;align-items:center;">
+                <h2 style="color: #fff; text-decoration: underline; margin-top: 10px; letter-spacing: 5px; font-size:16px;">COSMETICS</h2>
+                <div class="shop-grid-2col" id="shop-grid"></div>
+            </div>
+            <div id="shop-section-wisps" class="shop-section" style="display:none;flex-direction:column;align-items:center;">
+                <h2 id="wisp-skins-header" style="color: #00ccff; text-decoration: underline; margin-top: 10px; letter-spacing: 5px; text-shadow: 0 0 10px #00ccff; font-size:16px;">WISP SKINS</h2>
+                <div class="shop-grid-2col" id="wisp-skin-grid"></div>
+            </div>
+            <div id="shop-section-forge" class="shop-section" style="display:none;flex-direction:column;align-items:center;">
+                <h2 style="color: #00ff88; text-decoration: underline; margin-top: 10px; letter-spacing: 5px; text-shadow: 0 0 10px #00ff88; font-size:16px;">THE FORGE</h2>
+                <div style="color:#888;font-size:12px;margin-bottom:10px;text-align:center;">Combine 3 powerup materials to forge permanent upgrades.</div>
+                <div class="shop-grid-2col" id="forge-grid"></div>
+            </div>
+            <div id="shop-section-skills" class="shop-section" style="display:none;flex-direction:column;align-items:center;">
+                <h2 style="color: #ffaa00; text-decoration: underline; margin-top: 10px; letter-spacing: 5px; text-shadow: 0 0 10px #ffaa00; font-size:16px;">SKILL TREE</h2>
+                <div class="subtitle-text" style="color:#ffaa0088;font-size:12px;">Three paths. Five tiers each. Each tier requires the previous.</div>
+                <div id="skill-tree-container" style="display:flex;flex-wrap:wrap;justify-content:center;gap:30px;max-width:1100px;margin-bottom:30px;"></div>
+            </div>
+            <div id="shop-section-casino" class="shop-section" style="display:none;flex-direction:column;align-items:center;">
+            <h2 style="color: #ff00ff; text-decoration: underline; margin-top: 10px; letter-spacing: 5px; text-shadow: 0 0 20px #ff00ff; font-size:16px;">VOID CASINO</h2>
+            <div class="subtitle-text" style="color:#ff00ff88;font-size:12px;">Risk your coins for massive rewards. The void always wins... or does it?</div>
             <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:20px;max-width:800px;margin-bottom:30px;">
                 <div style="background:rgba(255,0,255,0.05);border:2px solid #ff00ff44;padding:20px;border-radius:8px;text-align:center;width:340px;">
                     <div style="color:#ff00ff;font-size:22px;font-weight:bold;letter-spacing:3px;margin-bottom:8px;">COIN FLIP</div>
@@ -455,14 +488,12 @@
                     </div>
                 </div>
             </div>
-            <h2 style="color: #00ff88; text-decoration: underline; margin-top: 20px; letter-spacing: 5px; text-shadow: 0 0 10px #00ff88;">THE FORGE</h2>
-            <div style="color:#888;font-size:12px;margin-bottom:10px;">Combine 3 powerup materials to forge permanent upgrades. Earn materials by playing runs.</div>
-            <div id="forge-grid" style="display:flex;flex-wrap:wrap;justify-content:center;gap:15px;max-width:900px;margin-bottom:30px;"></div>
-            <h2 style="color: #ff0055; text-decoration: underline; margin-top: 20px; letter-spacing: 5px; text-shadow: 0 0 10px #ff0055;">VOID SERVICES</h2>
-            <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:20px;max-width:800px;margin-bottom:30px;">
-                <button onclick="openLoanShark()" style="border-color:#ff0055;color:#ff0055;box-shadow:0 0 15px #ff0055;padding:15px 30px;font-size:16px;">VOID LENDER<br><span style="font-size:12px">Borrow Coins (2x Repay)</span></button>
-                <button onclick="openVoidSlots()" style="border-color:#aa00ff;color:#aa00ff;box-shadow:0 0 15px #aa00ff;padding:15px 30px;font-size:16px;">VOID SLOT MACHINE<br><span style="font-size:12px">5K per Spin - Jackpot 500K!</span></button>
-                <button onclick="cycleHudTheme()" style="border-color:#44ccff;color:#44ccff;padding:15px 30px;font-size:16px;" id="hud-theme-btn">HUD THEME: DEFAULT<br><span style="font-size:12px">Click to cycle themes</span></button>
+            <h2 style="color: #ff0055; text-decoration: underline; margin-top: 20px; letter-spacing: 5px; text-shadow: 0 0 10px #ff0055; font-size:16px;">VOID SERVICES</h2>
+            <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:15px;max-width:800px;margin-bottom:30px;">
+                <button onclick="openLoanShark()" style="border-color:#ff0055;color:#ff0055;box-shadow:0 0 15px #ff0055;padding:12px 20px;font-size:14px;">VOID LENDER<br><span style="font-size:11px">Borrow Coins (2x Repay)</span></button>
+                <button onclick="openVoidSlots()" style="border-color:#aa00ff;color:#aa00ff;box-shadow:0 0 15px #aa00ff;padding:12px 20px;font-size:14px;">VOID SLOT MACHINE<br><span style="font-size:11px">5K per Spin - Jackpot 500K!</span></button>
+                <button onclick="cycleHudTheme()" style="border-color:#44ccff;color:#44ccff;padding:12px 20px;font-size:14px;" id="hud-theme-btn">HUD THEME: DEFAULT<br><span style="font-size:11px">Click to cycle themes</span></button>
+            </div>
             </div>
             <button onclick="returnToMenu()" style="border-color: #fff; color: #fff; box-shadow: 0 0 20px #fff; margin-bottom: 50px;">BACK TO MENU</button>
         </div>
@@ -500,7 +531,7 @@
 
 
     <div id="levelup-screen" class="overlay-screen hidden" style="z-index: 28;">
-        <div class="title-text" style="-webkit-text-stroke: 3px #ffcc00; text-shadow: 0 0 50px #ffcc00; font-size: 80px;">SYSTEM UPGRADE</div>
+        <div class="title-text" style="-webkit-text-stroke: 2px #cc9900; text-shadow: 0 0 20px rgba(204,153,0,0.5); font-size: clamp(40px,10vw,70px);">SYSTEM UPGRADE</div>
         <div class="subtitle-text" style="color: #ffcc00;">SELECT MODULE TO INSTALL</div>
         <div class="btn-container" id="perk-container"></div>
     </div>
@@ -995,6 +1026,31 @@
 
         // --- Dash button ---
         document.getElementById('mob-dash').addEventListener('touchstart', e => { e.preventDefault(); mobileDash = true; }, {passive: false});
+
+        // --- iOS Pause Button ---
+        (function() {
+            if (!window.isNeonVoidApp) return;
+            var iosPauseBtn = document.getElementById('ios-pause-btn');
+            var iosResumeBtn = document.getElementById('ios-resume-btn');
+            if (iosResumeBtn) iosResumeBtn.style.display = 'inline-block';
+            if (iosPauseBtn) {
+                iosPauseBtn.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (typeof state !== 'undefined' && state.active && !state.paused) {
+                        togglePause();
+                    }
+                }, {passive: false});
+                // Visibility updater: show during active gameplay, hide otherwise
+                setInterval(function() {
+                    if (typeof state !== 'undefined' && state.active && !state.paused) {
+                        iosPauseBtn.style.display = 'block';
+                    } else {
+                        iosPauseBtn.style.display = 'none';
+                    }
+                }, 200);
+            }
+        })();
 
         // --- Mobile auto-detection ---
         if ('ontouchstart' in window && !appSettings.hasOwnProperty('_mobileDetected')) {
@@ -3210,14 +3266,22 @@
             // Expanding ring
             entities.texts.push({ x: player.x, y: player.y, life: 30, draw(ctx) { let progress = 1 - this.life/30; ctx.save(); ctx.strokeStyle = '#00ffcc'; ctx.lineWidth = 3 - progress*3; ctx.globalAlpha = 1 - progress; ctx.beginPath(); ctx.arc(this.x, this.y, progress*120, 0, Math.PI*2); ctx.stroke(); ctx.restore(); }, update() { this.life--; } });
 state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.innerHTML = '';
-            let pool = [...PERKS].sort(() => 0.5 - Math.random()); let choices = []; 
-            while (choices.length < 3) choices.push(pool.pop()); 
-            choices.forEach(p => { 
-                let btn = document.createElement('button'); 
-                btn.innerHTML = `<div style="font-size: 22px; font-weight: 900;">${p.name}</div><div class="perk-desc">${p.desc}</div>`; 
-                btn.onclick = () => { p.apply(); playSound('powerup'); ui.lvlScreen.classList.add('hidden'); if (state.pendingLevels && state.pendingLevels > 0) { state.pendingLevels--; setTimeout(() => triggerLevelUp(), 50); } else { state.paused = false; requestAnimationFrame(update); } }; 
-                ui.perkContainer.appendChild(btn); 
-            }); 
+            let totalPending = (state.pendingLevels || 0) + 1;
+            let currentPick = totalPending - (state.pendingLevels || 0);
+            if (totalPending > 1) {
+                let counter = document.createElement('div');
+                counter.style.cssText = 'color:#00ffcc;font-size:14px;letter-spacing:2px;margin-bottom:8px;';
+                counter.textContent = 'UPGRADE ' + currentPick + ' / ' + totalPending;
+                ui.perkContainer.appendChild(counter);
+            }
+            let pool = [...PERKS].sort(() => 0.5 - Math.random()); let choices = [];
+            while (choices.length < 3) choices.push(pool.pop());
+            choices.forEach(p => {
+                let btn = document.createElement('button');
+                btn.innerHTML = `<div style="font-size: 22px; font-weight: 900;">${p.name}</div><div class="perk-desc">${p.desc}</div>`;
+                btn.onclick = () => { p.apply(); playSound('powerup'); ui.lvlScreen.classList.add('hidden'); if (state.pendingLevels && state.pendingLevels > 0) { state.pendingLevels--; setTimeout(() => triggerLevelUp(), 400); } else { state.paused = false; requestAnimationFrame(update); } };
+                ui.perkContainer.appendChild(btn);
+            });
         }
 
 
@@ -5420,6 +5484,16 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
         }
         function openSettings() { cleanupMenuAnims(); ui.mainOverlay.classList.add('hidden'); document.getElementById('settings-screen').classList.remove('hidden');/* Init new settings UI */let _asld=document.getElementById('autoaim-slider');let _asv=document.getElementById('autoaim-val');if(_asld&&appSettings.autoAimStrength!==undefined){_asld.value=appSettings.autoAimStrength;if(_asv)_asv.textContent=appSettings.autoAimStrength;}let _ssld=document.getElementById('shake-slider');let _ssv=document.getElementById('shake-val');if(_ssld&&appSettings.shakeIntensity!==undefined){_ssld.value=appSettings.shakeIntensity;if(_ssv)_ssv.textContent=appSettings.shakeIntensity;}let _boh=document.getElementById('btn-onehand');if(_boh)_boh.innerText='ONE-HAND MODE: '+(appSettings.oneHandMode?'ON':'OFF');let _bpm=document.getElementById('btn-perfmode');if(_bpm)_bpm.innerText='PERFORMANCE MODE: '+(appSettings.perfMode?'ON':'OFF');if(typeof renderKeybindList==='function')renderKeybindList();let _lm=secureLoad('neonVoidMod', null);let _mst=document.getElementById('mod-status');if(_lm&&_mst){try{let _mp=JSON.parse(_lm);_mst.textContent='Mod active: '+(_mp.enemies||[]).length+' enemies';_mst.style.color='#00ff88';}catch(e){}}}
         
+        function switchShopTab(tabName) {
+            const tabs = document.querySelectorAll('.shop-tab');
+            const sections = document.querySelectorAll('.shop-section');
+            tabs.forEach(t => t.classList.remove('active'));
+            sections.forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
+            const activeTab = document.querySelector(`.shop-tab[onclick*="'${tabName}'"]`);
+            const activeSection = document.getElementById('shop-section-' + tabName);
+            if (activeTab) activeTab.classList.add('active');
+            if (activeSection) { activeSection.classList.add('active'); activeSection.style.display = 'flex'; }
+        }
         function renderShop() {
             document.getElementById('shop-coin-display').innerText = `COINS: ${totalCoins}`; const grid = document.getElementById('shop-grid'); grid.innerHTML = '';
             for (const [id, skin] of Object.entries(SKINS)) {
@@ -5433,7 +5507,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             let sortedUpgrades = Object.entries(PERMANENT_UPGRADES).sort((a,b) => a[1].price - b[1].price);
             for (const [id, upg] of sortedUpgrades) {
                 let card = document.createElement('div'); card.className = 'skin-card'; card.style.borderColor = '#ff8800'; let isUnlocked = purchasedUpgrades.includes(id);
-                card.innerHTML = `<div style="color: #ff8800; font-weight: bold; text-align: center; font-size:18px;">${upg.name}</div><div style="color: #ccc; text-align: center; font-size:12px; margin-bottom:10px;">${upg.desc}</div>`; let btn = document.createElement('button'); btn.style.borderColor = '#ff8800'; btn.style.color = '#ff8800';
+                card.innerHTML = `<div style="color: #ff8800; font-weight: bold; text-align: center; font-size:14px;">${upg.name}</div><div style="color: #ccc; text-align: center; font-size:11px; margin-bottom:6px;">${upg.desc}</div>`; let btn = document.createElement('button'); btn.style.borderColor = '#ff8800'; btn.style.color = '#ff8800';
                 if (isUnlocked) { btn.innerText = "UNLOCKED"; btn.style.background = '#ff8800'; btn.style.color = '#000'; btn.disabled = true; } else { let hasDiscount = secureLoad('neonVoidSlotDiscount', '0') === '1'; let finalPrice = hasDiscount ? Math.floor(upg.price * 0.8) : upg.price; let costText = finalPrice >= 1000000 ? (finalPrice/1000000) + 'M' : (finalPrice >= 1000 ? (finalPrice/1000) + 'K' : finalPrice); btn.innerText = hasDiscount ? `BUY: ${costText} (20% OFF!)` : `BUY: ${costText}`; if (hasDiscount) btn.style.textShadow = '0 0 8px #88ccff'; if (totalCoins >= finalPrice) { btn.onclick = () => { totalCoins -= finalPrice; if (hasDiscount) { secureSave('neonVoidSlotDiscount', '0'); } purchasedUpgrades.push(id); secureSave('neonVoidCoins', totalCoins); secureSave('neonVoidUpgrades', purchasedUpgrades); playSound('buy'); cloudSave(); renderShop(); }; } else { btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed'; } }
                 card.appendChild(btn); upGrid.appendChild(card);
             }
@@ -6031,7 +6105,17 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                 addLeaderboardEntry('survival', state.stats && state.stats.name ? state.stats.name : (secureLoad('neonVoidPlayerName', 'PILOT')||'PILOT'), saSecs);
                 ui.menuBtns.innerHTML = `<button onclick="startSurvivalArena()">Retry Arena</button><button onclick="returnToMenu()">Main Menu</button>`;
             }
-            else ui.menuBtns.innerHTML = `<button onclick="startInfinite()">Retry Infinite</button><button onclick="returnToMenu()">Main Menu</button>`; }
+            else {
+                let retryFn = 'startInfinite()';
+                let retryLabel = 'Retry Infinite';
+                if (state.mode === 'roguelike') { retryFn = 'startRoguelike()'; retryLabel = 'Retry Roguelike'; }
+                else if (state.mode === 'horde_defense') { retryFn = 'startHordeDefense()'; retryLabel = 'Retry Horde'; }
+                else if (state.mode === 'speedrun') { retryFn = 'startSpeedrun()'; retryLabel = 'Retry Speedrun'; }
+                else if (state.mode === 'pacifist') { retryFn = 'startPacifist()'; retryLabel = 'Retry Pacifist'; }
+                else if (state.mode === 'crashed_adventure' || state.mode === 'crashed') { retryFn = 'startCrashedAdventure()'; retryLabel = 'Retry Crashed'; }
+                else if (state.mode === 'training') { retryFn = 'returnToMenu()'; retryLabel = 'Back to Menu'; }
+                ui.menuBtns.innerHTML = `<button onclick="${retryFn}">${retryLabel}</button><button onclick="returnToMenu()">Main Menu</button>`;
+            } }
         
         function stageCleared() {
             // Feature 50: Try to spawn secret item
@@ -6048,8 +6132,8 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
         function openPrestige() {
             let pl = parseInt(secureLoad('neonVoidPrestige', 0) || 0);
             if (pl >= 10) { alert('MAX PRESTIGE REACHED! You have achieved true Void mastery.'); return; }
-            let d = document.createElement('div'); d.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;background:rgba(0,0,0,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:monospace;color:#fff;';
-            d.innerHTML = `<div style="font-size:32px;color:#ffd700;font-weight:bold;margin-bottom:20px;">${'★'.repeat(pl||0)} PRESTIGE ${'★'.repeat(pl||0)}</div><div style="font-size:18px;color:#ccc;margin-bottom:10px;">Current Level: <span style="color:#ffd700;">${pl}</span> / 10</div><div style="font-size:14px;color:#888;margin-bottom:20px;">Bonus: <span style="color:#00ffcc;">${Math.floor((Math.pow(1.1,pl)-1)*100)}% to all stats</span></div><div style="font-size:16px;color:#ff0055;margin-bottom:30px;">WARNING: This will RESET all sector progress but keep your coins and upgrades!</div><div style="font-size:14px;color:#ccc;margin-bottom:30px;">Next level: +${Math.floor((Math.pow(1.1,pl+1)-1)*100)}% to all stats</div><div style="display:flex;gap:20px;"><button onclick="doPrestige();document.querySelector('#prestige-overlay').remove();" style="padding:15px 30px;font-size:16px;font-weight:bold;background:linear-gradient(135deg,#ffd700,#ff8800);color:#000;border:none;cursor:pointer;letter-spacing:3px;border-radius:4px;">PRESTIGE!</button><button onclick="document.querySelector('#prestige-overlay').remove();" style="padding:15px 30px;font-size:16px;background:none;color:#888;border:1px solid #555;cursor:pointer;border-radius:4px;">Cancel</button></div>`;
+            let d = document.createElement('div'); d.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;background:rgba(0,0,0,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:monospace;color:#fff;overflow-y:auto;padding:20px;box-sizing:border-box;';
+            d.innerHTML = `<div style="font-size:clamp(20px,5vw,32px);color:#ffd700;font-weight:bold;margin-bottom:20px;">${'★'.repeat(pl||0)} PRESTIGE ${'★'.repeat(pl||0)}</div><div style="font-size:18px;color:#ccc;margin-bottom:10px;">Current Level: <span style="color:#ffd700;">${pl}</span> / 10</div><div style="font-size:14px;color:#888;margin-bottom:20px;">Bonus: <span style="color:#00ffcc;">${Math.floor((Math.pow(1.1,pl)-1)*100)}% to all stats</span></div><div style="font-size:16px;color:#ff0055;margin-bottom:30px;">WARNING: This will RESET all sector progress but keep your coins and upgrades!</div><div style="font-size:14px;color:#ccc;margin-bottom:30px;">Next level: +${Math.floor((Math.pow(1.1,pl+1)-1)*100)}% to all stats</div><div style="display:flex;gap:20px;"><button onclick="doPrestige();document.querySelector('#prestige-overlay').remove();" style="padding:15px 30px;font-size:16px;font-weight:bold;background:linear-gradient(135deg,#ffd700,#ff8800);color:#000;border:none;cursor:pointer;letter-spacing:3px;border-radius:4px;">PRESTIGE!</button><button onclick="document.querySelector('#prestige-overlay').remove();" style="padding:15px 30px;font-size:16px;background:none;color:#888;border:1px solid #555;cursor:pointer;border-radius:4px;">Cancel</button></div>`;
             d.id = 'prestige-overlay'; document.body.appendChild(d);
         }
         function doPrestige() {
@@ -10982,11 +11066,11 @@ function generateSyncCode() {
             .nv-menu-root { position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;font-family:'Courier New',monospace; }
 
             /* TOP BAR — Clash-style player info bar */
-            .nv-topbar { display:flex;align-items:center;justify-content:space-between;padding:calc(6px + env(safe-area-inset-top, 0px)) calc(12px + env(safe-area-inset-right, 0px)) 6px calc(12px + env(safe-area-inset-left, 0px));background:linear-gradient(180deg,rgba(15,0,25,0.98),rgba(8,0,12,0.95));border-bottom:2px solid #ff005544;z-index:5;flex-shrink:0; }
+            .nv-topbar { display:flex;align-items:center;justify-content:space-between;padding:calc(6px + env(safe-area-inset-top, 0px)) calc(12px + env(safe-area-inset-right, 0px)) 6px calc(12px + env(safe-area-inset-left, 0px));background:linear-gradient(180deg,rgba(15,0,25,0.98),rgba(8,0,12,0.95));border-bottom:2px solid #ff005544;position:sticky;top:0;z-index:10;flex-shrink:0; }
             .nv-topbar-left { display:flex;align-items:center;gap:8px; }
             .nv-topbar-right { display:flex;align-items:center;gap:8px; }
             .nv-pilot-badge { display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#1a0025,#0a0010);border:1.5px solid #ff005566;border-radius:20px;padding:4px 14px 4px 6px;cursor:pointer; }
-            .nv-pilot-avatar { width:30px;height:30px;border-radius:50%;border:2px solid #00ffcc;display:flex;align-items:center;justify-content:center;font-size:16px;background:rgba(0,255,200,0.1); }
+            .nv-pilot-avatar { width:30px;height:30px;border-radius:50%;border:2px solid #00ffcc;display:flex;align-items:center;justify-content:center;font-size:16px;background:rgba(0,255,200,0.1);color:#00ffcc;padding:4px;box-sizing:border-box;overflow:hidden; }
             .nv-pilot-name { color:#00ffcc;font-weight:bold;font-size:13px;letter-spacing:1px; }
             .nv-pilot-rank { font-size:9px;color:#ff005588;letter-spacing:1px; }
             .nv-resource { display:flex;align-items:center;gap:5px;background:linear-gradient(135deg,rgba(255,204,0,0.15),rgba(0,0,0,0.7));border:1.5px solid #ffcc0044;border-radius:16px;padding:4px 14px 4px 8px;font-size:14px;color:#ffcc00;font-weight:bold; }
@@ -11154,12 +11238,74 @@ function generateSyncCode() {
 
         // ==================== CUSTOMIZABLE PFP ====================
         const AVATAR_OPTIONS = [
-            '\u{1F680}','\u{1F6F8}','\u{2604}','\u{1F30C}','\u{1F31F}','\u{1F525}','\u{26A1}','\u{1F4A0}',
-            '\u{1F47E}','\u{1F916}','\u{1F3AE}','\u{1FA90}','\u{2728}','\u{1F4A5}','\u{1F300}','\u{1F30D}',
-            '\u{1F409}','\u{1F985}','\u{1F43A}','\u{1F431}','\u{1F981}','\u{1F577}','\u{1F987}','\u{1F40D}',
-            '\u{2694}','\u{1F6E1}','\u{1F52E}','\u{1F451}','\u{1F48E}','\u{1F3C6}','\u{2620}','\u{1F383}'
+            // 1. Rocket
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 3 0 3 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-3 0-3"/></svg>',
+            // 2. UFO
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="14" rx="9" ry="3"/><path d="M12 14V11c0-2.21 1.79-4 4-4h0"/><path d="M8 11c0-2.21-1.79-4-4-4"/><path d="M12 7V4"/><circle cx="7" cy="17" r="0.5"/><circle cx="12" cy="17.5" r="0.5"/><circle cx="17" cy="17" r="0.5"/></svg>',
+            // 3. Comet
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2l8 8"/><path d="M5 2l5 5"/><path d="M2 5l5 5"/><circle cx="15" cy="15" r="5"/><path d="M12.5 12.5l-5-5"/></svg>',
+            // 4. Galaxy
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(45 12 12)"/></svg>',
+            // 5. Star
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+            // 6. Fire
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14 0-5.5 2-6.5 0 3.5 2.56 4.08 4 6.5 1.14 1.91 1 4.5-1 6.5a4.82 4.82 0 0 1-3 1.5c-1.5 0-2.5-.5-3.5-2.5z"/><path d="M12 22c3.5 0 6-2.5 6-6.5 0-3-1.5-5-3-7"/></svg>',
+            // 7. Lightning
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+            // 8. Diamond shape
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="4.5" width="15" height="15" rx="1" transform="rotate(45 12 12)"/><line x1="12" y1="2" x2="12" y2="7"/><line x1="12" y1="17" x2="12" y2="22"/><line x1="2" y1="12" x2="7" y2="12"/><line x1="17" y1="12" x2="22" y2="12"/></svg>',
+            // 9. Alien
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8 2 5 6 5 11c0 3 1.5 6 3.5 7.5L10 22h4l1.5-3.5C17.5 17 19 14 19 11c0-5-3-9-7-9z"/><circle cx="9.5" cy="10" r="1.5"/><circle cx="14.5" cy="10" r="1.5"/><path d="M10 15h4"/></svg>',
+            // 10. Robot
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="7" width="14" height="12" rx="2"/><path d="M12 7V4"/><circle cx="12" cy="3" r="1"/><rect x="8" y="11" width="2" height="2" rx="0.5"/><rect x="14" y="11" width="2" height="2" rx="0.5"/><path d="M9 16h6"/><path d="M3 11v4"/><path d="M21 11v4"/></svg>',
+            // 11. Controller
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 11h4"/><path d="M8 9v4"/><line x1="15" y1="12" x2="15.01" y2="12"/><line x1="18" y1="10" x2="18.01" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/></svg>',
+            // 12. Satellite
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 7L9 3 3 9l4 4"/><path d="M11 17l4 4 6-6-4-4"/><path d="M8 12l4 4"/><path d="M7 17a5 5 0 0 1-4-4"/><path d="M3 21a9 9 0 0 1-1-8"/></svg>',
+            // 13. Sparkles
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z"/><path d="M5 17l1 2.5L8.5 21 6 20l-1 2.5L4 20l-2.5-1L4 18l1-1z"/><path d="M19 13l1 2.5 2.5 1-2.5 1-1 2.5-1-2.5L15.5 16l2.5-1 1-2z"/></svg>',
+            // 14. Explosion
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 14.5 8 21 8 16 12 18 19 12 15 6 19 8 12 3 8 9.5 8 12 2"/><line x1="12" y1="12" x2="12" y2="22"/><line x1="8" y1="12" x2="4" y2="20"/><line x1="16" y1="12" x2="20" y2="20"/></svg>',
+            // 15. Spiral
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12m-1 0a1 1 0 1 0 2 0 1 1 0 1 0-2 0"/><path d="M12 8a4 4 0 0 1 4 4"/><path d="M12 4a8 8 0 0 1 8 8"/><path d="M12 16a4 4 0 0 1-4-4"/><path d="M12 20a8 8 0 0 1-8-8"/></svg>',
+            // 16. Globe
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/></svg>',
+            // 17. Dragon
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l3-7h4l-1 4 6-10h4"/><path d="M20 4l-2 2-3-1 1 3-2 2"/><path d="M6 8l2-1 1-3"/><path d="M2 14l3-1"/></svg>',
+            // 18. Eagle
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7c4-2 8 0 10 3 2-3 6-5 10-3-2 4-5 6-8 6h-4C7 13 4 11 2 7z"/><path d="M12 10v8"/><path d="M8 18l4 2 4-2"/><circle cx="9" cy="8" r="0.5"/><circle cx="15" cy="8" r="0.5"/></svg>',
+            // 19. Wolf
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l3 8v5c0 2.2 2.2 4 5 4s5-1.8 5-4v-5l3-8-4 3-4-3-4 3-4-3z"/><circle cx="9.5" cy="11" r="1"/><circle cx="14.5" cy="11" r="1"/><path d="M10 15.5c.6.3 1.3.5 2 .5s1.4-.2 2-.5"/></svg>',
+            // 20. Cat
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l2 8v5c0 2.2 2.7 4 6 4s6-1.8 6-4v-5l2-8-3 2h-2L12 3 9 6H7L4 4z"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><path d="M10 16c.7.5 1.3.5 2 .5s1.3 0 2-.5"/></svg>',
+            // 21. Lion
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="6"/><circle cx="12" cy="13" r="9" stroke-dasharray="4 2"/><circle cx="10" cy="12" r="0.5"/><circle cx="14" cy="12" r="0.5"/><path d="M10 15c.6.6 1.3 1 2 1s1.4-.4 2-1"/><path d="M12 12v2"/></svg>',
+            // 22. Spider
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="7" r="2"/><path d="M5 4l4 5"/><path d="M19 4l-4 5"/><path d="M3 10l6 3"/><path d="M21 10l-6 3"/><path d="M4 18l5-4"/><path d="M20 18l-5-4"/><path d="M8 22l2-7"/><path d="M16 22l-2-7"/></svg>',
+            // 23. Bat
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 16c4-2 6-6 6-9 1 2 3 3 4 3s3-1 4-3c0 3 2 7 6 9-3 0-5 1-6 3l-2-2-2 2-2-2-2 2c-1-2-3-3-6-3z"/><circle cx="10" cy="10" r="0.5"/><circle cx="14" cy="10" r="0.5"/></svg>',
+            // 24. Snake
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18c0-3 2-5 5-5h6c3 0 5-2 5-5s-2-5-5-5h-2"/><circle cx="12" cy="3.5" r="0.5"/><path d="M7 3l-2 2 2 2"/><circle cx="4" cy="18" r="1.5"/></svg>',
+            // 25. Swords
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="18" y2="6"/><path d="M18 6l2-2h-4l2 2"/><path d="M4 20l2-2"/><path d="M6 16l-2 2"/><line x1="20" y1="20" x2="6" y2="6"/><path d="M6 6L4 4h4L6 6"/><path d="M20 20l-2-2"/><path d="M18 16l2 2"/></svg>',
+            // 26. Shield
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>',
+            // 27. Crystal ball
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="11" r="8"/><path d="M8 20h8"/><path d="M9 18h6"/><path d="M9 8l3 3-3 3"/></svg>',
+            // 28. Crown
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18l2-12 5 5 3-7 3 7 5-5 2 12H2z"/><path d="M2 18h20v2H2z"/></svg>',
+            // 29. Gem
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 18 3 22 9 12 22 2 9"/><line x1="2" y1="9" x2="22" y2="9"/><line x1="12" y1="22" x2="7" y2="9"/><line x1="12" y1="22" x2="17" y2="9"/><line x1="6" y1="3" x2="9" y2="9"/><line x1="18" y1="3" x2="15" y2="9"/></svg>',
+            // 30. Trophy
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v6a5 5 0 0 1-10 0V4z"/><path d="M7 4H4v3a3 3 0 0 0 3 3"/><path d="M17 4h3v3a3 3 0 0 1-3 3"/></svg>',
+            // 31. Skull
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="8"/><path d="M8 18v4h2v-2h4v2h2v-4"/><circle cx="9" cy="10" r="1.5"/><circle cx="15" cy="10" r="1.5"/><path d="M10 15h4"/></svg>',
+            // 32. Pumpkin
+            '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4C8 4 3 7 3 13s4 8 9 8 9-2 9-8-5-9-9-9z"/><path d="M12 4c-1 0-2-1-1-3"/><path d="M12 4c2 0 2 7 2 9"/><path d="M12 4c-2 0-2 7-2 9"/><path d="M9 14l1.5 2L12 14l1.5 2L15 14"/></svg>'
         ];
-        let playerAvatar = secureLoad('neonVoidAvatar', '\u{1F680}') || '\u{1F680}';
+        let playerAvatarIdx = parseInt(secureLoad('neonVoidAvatarIdx', '0'), 10) || 0;
+        if (playerAvatarIdx < 0 || playerAvatarIdx >= AVATAR_OPTIONS.length) playerAvatarIdx = 0;
+        let playerAvatar = AVATAR_OPTIONS[playerAvatarIdx];
 
         function openAvatarPicker() {
             let existing = document.getElementById('avatar-picker-overlay');
@@ -11173,7 +11319,7 @@ function generateSyncCode() {
             panel.innerHTML = `
                 <div style="font-size:14px;color:#ff0055;font-weight:bold;letter-spacing:3px;margin-bottom:4px;">CHOOSE YOUR AVATAR</div>
                 <div style="font-size:11px;color:#666;margin-bottom:16px;">Select a profile icon</div>
-                <div style="font-size:48px;margin-bottom:16px;" id="avatar-preview">${playerAvatar}</div>
+                <div style="width:48px;height:48px;margin:0 auto 16px;color:#00ffcc;" id="avatar-preview">${playerAvatar}</div>
                 <div id="avatar-grid" style="display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-bottom:20px;"></div>
                 <div style="display:flex;gap:10px;justify-content:center;">
                     <button onclick="document.getElementById('avatar-picker-overlay').remove()" style="background:rgba(255,0,85,0.1);border:1px solid #ff005566;color:#ff0055;padding:8px 24px;font-size:13px;cursor:pointer;font-family:monospace;border-radius:8px;">CANCEL</button>
@@ -11184,16 +11330,16 @@ function generateSyncCode() {
             document.body.appendChild(overlay);
 
             let grid = document.getElementById('avatar-grid');
-            let selectedAvatar = playerAvatar;
-            AVATAR_OPTIONS.forEach(av => {
+            let selectedIdx = playerAvatarIdx;
+            AVATAR_OPTIONS.forEach((av, idx) => {
                 let cell = document.createElement('div');
-                cell.style.cssText = `font-size:24px;padding:6px;border-radius:8px;cursor:pointer;border:2px solid ${av === selectedAvatar ? '#00ffcc' : 'transparent'};background:${av === selectedAvatar ? 'rgba(0,255,204,0.12)' : 'rgba(255,255,255,0.03)'};transition:all 0.15s;text-align:center;`;
-                cell.textContent = av;
+                cell.style.cssText = `padding:6px;border-radius:8px;cursor:pointer;border:2px solid ${idx === selectedIdx ? '#00ffcc' : 'transparent'};background:${idx === selectedIdx ? 'rgba(0,255,204,0.12)' : 'rgba(255,255,255,0.03)'};transition:all 0.15s;text-align:center;color:#00ffcc;`;
+                cell.innerHTML = av;
                 cell.onmouseenter = () => { if (cell.style.borderColor !== 'rgb(0, 255, 204)') cell.style.background = 'rgba(255,255,255,0.08)'; };
                 cell.onmouseleave = () => { if (cell.style.borderColor !== 'rgb(0, 255, 204)') cell.style.background = 'rgba(255,255,255,0.03)'; };
                 cell.onclick = () => {
-                    selectedAvatar = av;
-                    document.getElementById('avatar-preview').textContent = av;
+                    selectedIdx = idx;
+                    document.getElementById('avatar-preview').innerHTML = av;
                     grid.querySelectorAll('div').forEach(d => { d.style.borderColor = 'transparent'; d.style.background = 'rgba(255,255,255,0.03)'; });
                     cell.style.borderColor = '#00ffcc';
                     cell.style.background = 'rgba(0,255,204,0.12)';
@@ -11202,8 +11348,9 @@ function generateSyncCode() {
             });
 
             document.getElementById('avatar-confirm-btn').onclick = () => {
-                playerAvatar = selectedAvatar;
-                secureSave('neonVoidAvatar', playerAvatar);
+                playerAvatarIdx = selectedIdx;
+                playerAvatar = AVATAR_OPTIONS[playerAvatarIdx];
+                secureSave('neonVoidAvatarIdx', String(playerAvatarIdx));
                 overlay.remove();
                 returnToMenu(); // refresh menu to show new avatar
             };
@@ -11450,7 +11597,7 @@ function generateSyncCode() {
                             <div class="nv-prog-pill" onclick="openGemShop()"><span class="pp-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00ffcc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 13L2 9z"/><path d="M2 9h20"/><path d="M12 22L6 9"/><path d="M12 22l6-13"/><path d="M6 3l6 6 6-6"/></svg></span><span class="pp-label" style="color:#00ffcc;">GEM SHOP</span></div>
                             <div class="nv-prog-pill" onclick="openTradePost()"><span class="pp-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff8844" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg></span><span class="pp-label" style="color:#ff8844;">TRADE POST</span></div>
                             <div class="nv-prog-pill" onclick="openBounties()"><span class="pp-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff0055" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span><span class="pp-label" style="color:#ff0055;">BOUNTIES</span></div>
-                            <div class="nv-prog-pill" onclick="openPrestige()"><span class="pp-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff8800" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c-4-3-8-7.5-8-12a8 8 0 0 1 16 0c0 4.5-4 9-8 12z"/><path d="M12 13a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/></svg></span><span class="pp-label" style="color:#ff8800;">REBIRTH</span></div>
+                            <div class="nv-prog-pill" onclick="openRebirth()"><span class="pp-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff8800" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c-4-3-8-7.5-8-12a8 8 0 0 1 16 0c0 4.5-4 9-8 12z"/><path d="M12 13a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/></svg></span><span class="pp-label" style="color:#ff8800;">REBIRTH</span></div>
                             <div class="nv-prog-pill" onclick="openVIP()"><span class="pp-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18l3-8 5 4 2-10 2 10 5-4 3 8z"/><path d="M2 18h20"/></svg></span><span class="pp-label" style="color:#ffd700;">VIP</span></div>
                             <div class="nv-prog-pill" onclick="openAchievements()"><span class="pp-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M12 15l-3 6 3-2 3 2-3-6"/></svg></span><span class="pp-label" style="color:#ffcc00;">ACHIEVEMENTS</span></div>
                             <div class="nv-prog-pill" onclick="openClan()"><span class="pp-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4488ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span class="pp-label" style="color:#4488ff;">CLAN</span></div>
@@ -14057,8 +14204,21 @@ window.openContracts = typeof openContracts==='function'?openContracts:function(
 window.openRebirth = typeof openRebirth==='function'?openRebirth:function(){alert('Rebirth coming soon');};
 window.openGemShop = typeof openGemShop==='function'?openGemShop:function(){alert('Gem Shop coming soon');};
 window.openTradePost = typeof openTradePost==='function'?openTradePost:function(){alert('Trade Post coming soon');};
-window.openBattlePass = typeof openBattlePass==='function'?openBattlePass:function(){alert('Battle Pass coming soon');};
-window.openAchievements = typeof openAchievementsPanel==='function'?openAchievementsPanel:function(){alert('Achievements coming soon');};
+window.openBattlePass = function(){
+  var ol=document.createElement('div');ol.id='bp-overlay';ol.style.cssText='position:fixed;inset:0;background:#06060c;z-index:99999;color:#fff;font-family:monospace;padding:20px;overflow-y:auto;';
+  var bp=JSON.parse(secureLoad('neonVoidBattlePass','null'))||{level:1,xp:0};
+  var html='<h2 style="color:#ffcc00;text-align:center;letter-spacing:3px">BATTLE PASS</h2>';
+  html+='<p style="text-align:center;color:#aaa">Season Level: <b style="color:#ffcc00">'+bp.level+'</b> / 50</p>';
+  html+='<div style="max-width:400px;margin:10px auto;background:#111;border-radius:8px;overflow:hidden;height:16px"><div style="height:100%;background:linear-gradient(90deg,#ffcc00,#ff8800);width:'+(Math.min(bp.xp/100,1)*100)+'%;border-radius:8px"></div></div>';
+  html+='<p style="text-align:center;color:#666;font-size:12px">'+bp.xp+' / 100 XP to next level</p>';
+  var rewards=['500 Coins','Skin: Neon Ghost','1000 Coins','Title: Void Walker','Skin: Plasma Core','2000 Coins','Title: Star Breaker','Skin: Dark Matter','5000 Coins','Title: Cosmic Legend'];
+  html+='<div style="max-width:400px;margin:16px auto">';
+  for(var i=0;i<rewards.length;i++){var unlocked=bp.level>i*5;html+='<div style="display:flex;align-items:center;gap:10px;padding:8px;margin:4px 0;background:'+(unlocked?'rgba(255,204,0,0.08)':'#0a0a0a')+';border:1px solid '+(unlocked?'#ffcc0066':'#222')+';border-radius:6px"><span style="color:'+(unlocked?'#ffcc00':'#444')+';min-width:40px">Lv '+(i*5+5)+'</span><span style="color:'+(unlocked?'#fff':'#666')+'">'+rewards[i]+'</span>'+(unlocked?'<span style="color:#00ffcc;margin-left:auto">✓</span>':'')+'</div>';}
+  html+='</div>';
+  html+='<div style="text-align:center;margin-top:16px"><button onclick="document.getElementById(\'bp-overlay\').remove()" style="background:#333;color:#fff;border:none;padding:10px 28px;cursor:pointer;border-radius:6px;font-family:monospace">CLOSE</button></div>';
+  ol.innerHTML=html;document.body.appendChild(ol);
+};
+window.openAchievements = function(){ window.openAchievementsPanel(); };
 window.openPrestige = typeof openPrestige==='function'?openPrestige:function(){alert('Prestige coming soon');};
 window.openLeaderboardsPanel = openPersonalLeaderboard;
 window.openPersonalLeaderboard = openPersonalLeaderboard;
@@ -14086,6 +14246,7 @@ window.openVIPPanelFn = function(){
   html += '<div style="text-align:center;margin-top:20px"><button onclick="document.getElementById(\'vip-overlay\').remove()" style="background:#555;color:#fff;border:none;padding:8px 24px;cursor:pointer">CLOSE</button></div>';
   ol.innerHTML = html; document.body.appendChild(ol);
 };
+window.openVIP = function(){ if(typeof window.openVIPPanelFn==='function') window.openVIPPanelFn(); };
 window.openPrestigePanel = function(){
   alert('Prestige system: Use REBIRTH in the menu to prestige and earn permanent bonuses!');
 };
