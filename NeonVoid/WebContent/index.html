@@ -9607,16 +9607,21 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
         }
 
         var _pendingCloudSave = false;
+        var _cloudDirty = false; // only save when something actually changed
+        function markCloudDirty() { _cloudDirty = true; }
         async function saveCloudProfile(force) {
             if (!currentUsername) return;
-            if (!force && Date.now() - lastCloudSave < 10000) {
+            // Skip if nothing changed (unless force like logout)
+            if (!force && !_cloudDirty) return;
+            if (!force && Date.now() - lastCloudSave < 30000) {
                 // Queue a deferred save so we don't lose data
                 if (!_pendingCloudSave) {
                     _pendingCloudSave = true;
-                    setTimeout(() => { _pendingCloudSave = false; saveCloudProfile(); }, 10500);
+                    setTimeout(() => { _pendingCloudSave = false; saveCloudProfile(); }, 31000);
                 }
                 return;
             }
+            _cloudDirty = false;
             lastCloudSave = Date.now();
             let saveKey = _cloudKey(userPasswordHash || currentUsername);
             let saveData = {
@@ -9664,11 +9669,11 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             } catch(e) { console.warn('Cloud save failed:', e.message); }
         }
 
-        function cloudSave() { saveCloudProfile(); }
+        function cloudSave() { _cloudDirty = true; saveCloudProfile(); }
 
-        // Auto-save to cloud on page close or tab switch
-        window.addEventListener('beforeunload', () => { if (currentUsername) saveCloudProfile(true); });
-        document.addEventListener('visibilitychange', () => { if (document.hidden && currentUsername) saveCloudProfile(true); });
+        // Auto-save to cloud on page close (force) or tab switch (only if dirty)
+        window.addEventListener('beforeunload', () => { if (currentUsername && _cloudDirty) saveCloudProfile(true); });
+        document.addEventListener('visibilitychange', () => { if (document.hidden && currentUsername && _cloudDirty) saveCloudProfile(); });
 
 
 // ==================== FEATURE 97: ACCESSIBILITY OPTIONS ====================
