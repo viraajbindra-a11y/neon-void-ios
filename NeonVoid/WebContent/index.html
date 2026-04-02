@@ -2104,6 +2104,7 @@
                 if (this.dashCd > 0) this.dashCd--;
                 if ((keys['ShiftLeft'] || mouse.rightDown || mobileDash) && this.dashCd === 0 && (dx!==0 || dy!==0) && !this.noDash) {
                     let _dashCdMult = state.stats.dashCoolantMult || 1.0;
+                    if (typeof playerStats !== 'undefined') playerStats.totalDashes++;
                     // Feature 24: Dodge roll option
                     if (appSettings.dodgeRoll) {
                         this.timers.dash = 20; this.dashCd = Math.floor(100 * state.stats.dashCdMulti * _dashCdMult);
@@ -2235,6 +2236,7 @@
 
             shoot() {
                 if (state._hordeNoShoot || state._pacifistMode) return;
+                if (typeof playerStats !== 'undefined') playerStats.totalBulletsFired++;
                 // Feature 1: Fire charged shot if flag set
                 if (this._fireCharged) { this._fireCharged = false; this._shootCharged(); return; }
                 // Feature 3: Railgun mode
@@ -2808,6 +2810,7 @@
                 let ngMult = (state.stats && state.stats.ngPlus) ? 3.0 : 1.0; let ngSpdMult = (state.stats && state.stats.ngPlus) ? 1.5 : 1.0;
                 this.hp = base.hp * state.difficulty * hpMult * ngMult; this.maxHp = this.hp; this.speed = base.spd * spdMult * ngSpdMult; this.color = (state.stats && state.stats.ngPlus) ? `hsl(${45+Math.random()*15},100%,50%)` : base.color; this.radius = base.r; this.xp = base.xp; this.angle = 0; this.timer = Math.floor(gameRng() * 60); this.frozen = 0; this.alpha = 1.0; this.id = ++enemyIdCounter;
                 this.aliveFrames = 0; this.spawnProtect = 30;
+                if (state.mode === 'daily_challenge' && typeof dailyHasMod === 'function' && dailyHasMod('COIN RUSH')) { this.speed *= 1.5; }
                 if (typeName === 'shapeshifter') { this.disguised = true; }
                 if (typeName === 'hivemind') { this.hivemindGroup = ++hivemindGroupCounter; }
                 if (typeName === 'phase') { this.phaseTimer = 0; this.phaseVisible = true; }
@@ -3258,7 +3261,11 @@
         ];
 
 
-        function addXp(amt) { let xpMult = (state.stats && state.stats.xpMulti) ? state.stats.xpMulti : 1; if (state.stats && state.stats._blueprintDoubleXP) xpMult *= 2; state.xp += amt * state.combo * xpMult; let levelsGained = 0; while (state.xp >= state.xpNeeded) { state.xp -= state.xpNeeded; state.level++; state.xpNeeded = Math.floor(state.xpNeeded * 1.5); levelsGained++; } if (levelsGained > 0) { state.pendingLevels = (state.pendingLevels || 0) + levelsGained - 1; triggerLevelUp(); } }
+        // Weekend Event: 2x XP + 2x Coins (Saturday & Sunday)
+        function isWeekendEvent() { var d = new Date().getDay(); return d === 0 || d === 6; }
+        function getEventMultiplier() { return isWeekendEvent() ? 2 : 1; }
+
+        function addXp(amt) { let xpMult = (state.stats && state.stats.xpMulti) ? state.stats.xpMulti : 1; if (state.stats && state.stats._blueprintDoubleXP) xpMult *= 2; xpMult *= getEventMultiplier(); state.xp += amt * state.combo * xpMult; let levelsGained = 0; while (state.xp >= state.xpNeeded) { state.xp -= state.xpNeeded; state.level++; state.xpNeeded = Math.floor(state.xpNeeded * 1.5); levelsGained++; } if (levelsGained > 0) { state.pendingLevels = (state.pendingLevels || 0) + levelsGained - 1; triggerLevelUp(); } }
         
         function triggerLevelUp() {
             // Defer level up if roguelike floor pick is active
@@ -3300,6 +3307,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                 if (idx === -1) return; 
                 
                 entities.enemies.splice(idx, 1);
+                if (typeof recordBestiaryKill === 'function') recordBestiaryKill(e.type);
                 // Track bounty kills by enemy type
                 if (e.type === 'chaser') bountyProgress.chasers = (bountyProgress.chasers||0) + 1;
                 if (e.type === 'tank') bountyProgress.tanks = (bountyProgress.tanks||0) + 1;
@@ -3322,7 +3330,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                 if (state.kills > 0 && state.kills % 100 === 0) { spawnText(player.x, player.y - 50, `${state.kills} KILLS!`, '#ffcc00', 24); shakeScreen(10); }
                 
                 state.score += e.xp * 10 * state.combo * (state.dailyScoreMulti || 1);
-                state.combo = Math.min(10.0, state.combo + 0.1); resetComboDecay(); 
+                state.combo = Math.min(10.0, state.combo + 0.1); resetComboDecay(); if (typeof playerStats !== 'undefined' && state.combo > (playerStats.highestCombo || 0)) playerStats.highestCombo = Math.round(state.combo * 10) / 10;
                 ui.combo.style.transform = 'scale(1.2)'; 
                 setTimeout(() => ui.combo.style.transform = 'scale(1)', 50); 
                 
@@ -3341,7 +3349,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                 if (state.stats.bloodthirst) state.stats.bloodthirstTimer = 90;
                 if (state.stats.voidSiphon) { let heal = Math.ceil(state.stats.maxHp * 0.03); player.hp = Math.min(state.stats.maxHp, player.hp + heal); spawnParticles(player.x, player.y, '#aa00ff', 5, 0.5); }
 
-                let coinMult = (state.hardcore ? 5 : 1) * (state.stats.coinMulti || 1);
+                let coinMult = (state.hardcore ? 5 : 1) * (state.stats.coinMulti || 1) * getEventMultiplier();
                 state.runCoins += Math.floor(Math.max(5, e.xp * 2) * coinMult);
 
                 // Cryo Snare - freeze nearby enemies on kill
@@ -3352,8 +3360,8 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
 
                 tryKillFlavor(e.x, e.y); enemyDeathEffect(e);
                 if (e.isGold) { spawnText(e.x, e.y - 20, 'GOLDEN!', '#ffcc00', 22); spawnParticles(e.x, e.y, '#ffcc00', 8); }
-                if (Math.random() < 0.15) entities.powerups.push(new Powerup(e.x, e.y));
-                
+                if (Math.random() < 0.15) { var pu = new Powerup(e.x, e.y); if (state.mode === 'daily_challenge' && typeof dailyHasMod === 'function' && dailyHasMod('NO SHIELDS') && pu.type === 'shield') { pu.type = 'heal'; pu.color = '#00ff00'; } entities.powerups.push(pu); }
+
                 // In co-op, only host spawns children — clients get them via enemy-sync
                 if (!mpState.active || mpState.isHost) {
                     if (e.type === 'bad') {
@@ -3420,7 +3428,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
 
         function triggerNuke() { 
             playSound('nuke'); shakeScreen(50); triggerChroma(6); ctx.fillStyle = 'rgba(0, 136, 255, 0.8)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            for (let i = entities.enemies.length - 1; i >= 0; i--) { let e = entities.enemies[i]; if (!e) continue; spawnParticles(e.x, e.y, e.color, 8, 2); state.score += (e.xp * 10) * state.combo * (state.dailyScoreMulti || 1); addXp(e.xp); state.runCoins += Math.floor((e.xp * 2) * (state.stats.coinMulti || 1)); entities.enemies.splice(i, 1); state.kills++; }
+            for (let i = entities.enemies.length - 1; i >= 0; i--) { let e = entities.enemies[i]; if (!e) continue; if (typeof recordBestiaryKill === 'function') recordBestiaryKill(e.type); spawnParticles(e.x, e.y, e.color, 8, 2); state.score += (e.xp * 10) * state.combo * (state.dailyScoreMulti || 1); addXp(e.xp); state.runCoins += Math.floor((e.xp * 2) * (state.stats.coinMulti || 1)); entities.enemies.splice(i, 1); state.kills++; }
             ui.kills.innerText = `KILLS: ${state.kills}`; 
             if (activeBoss && activeBoss.alpha > 0.5) { if (activeBoss.type !== 'TITAN' || !activeBoss.shielded) activeBoss.hp -= 1500 * state.stats.dmgMulti; spawnParticles(activeBoss.x, activeBoss.y, activeBoss.color, 12, 4); spawnText(activeBoss.x, activeBoss.y, "NUKE HIT", '#0088ff', 24); if(activeBoss.hp <= 0 && !activeBoss.isDead) { activeBoss.isDead = true; handleBossDeath(); } } 
         }
@@ -3461,7 +3469,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                 // Neon void particles spiral toward center
                 for (let p = 0; p < 3; p++) spawnParticles(e.x, e.y, '#cc44ff', 3, 2);
                 spawnParticles(e.x, e.y, e.color, 4, 1.5);
-                state.score += (e.xp * 15) * state.combo * (state.dailyScoreMulti || 1); addXp(e.xp * 2); let coinMult = (state.hardcore ? 5 : 1) * (state.stats.coinMulti || 1); state.runCoins += Math.floor(Math.max(10, e.xp * 2) * coinMult); entities.enemies.splice(i, 1); state.kills++; }
+                if (typeof recordBestiaryKill === 'function') recordBestiaryKill(e.type); state.score += (e.xp * 15) * state.combo * (state.dailyScoreMulti || 1); addXp(e.xp * 2); let coinMult = (state.hardcore ? 5 : 1) * (state.stats.coinMulti || 1); state.runCoins += Math.floor(Math.max(10, e.xp * 2) * coinMult); entities.enemies.splice(i, 1); state.kills++; }
             ui.kills.innerText = `KILLS: ${state.kills}`; if (activeBoss && activeBoss.alpha > 0.5) activeBoss.hp -= 3000 * state.stats.dmgMulti; spawnText(canvas.width/2, canvas.height/2, "EVENT HORIZON", '#cc44ff', 36);
             // Extra center explosion particles
             spawnParticles(cx, cy, '#cc44ff', 20, 3); spawnParticles(cx, cy, '#8800ff', 15, 2); spawnParticles(cx, cy, '#ffffff', 10, 1);
@@ -3473,7 +3481,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
         function applyBossVariant(boss) {
             // Boss Rush: 100% chance of a variant. Normal/Infinite: 15% chance.
             let chance = (state.mode === 'boss_rush') ? 1.0 : 0.15;
-            if (state.mode !== 'normal' && state.mode !== 'infinite' && state.mode !== 'boss_rush' && state.mode !== 'mission') return;
+            if (state.mode !== 'normal' && state.mode !== 'infinite' && state.mode !== 'boss_rush' && state.mode !== 'mission' && state.mode !== 'daily_challenge') return;
             if (Math.random() < chance) {
                 boss.variant = BOSS_VARIANTS[Math.floor(Math.random()*BOSS_VARIANTS.length)];
                 // PACIFIST special setup
@@ -3670,6 +3678,8 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                 let newEnemy = new Enemy(x, y, type);
                 tryGoldEnemy(newEnemy);
                 entities.enemies.push(newEnemy);
+                // Daily Challenge: DOUBLE TROUBLE spawns an extra enemy
+                if (state.mode === 'daily_challenge' && typeof dailyHasMod === 'function' && dailyHasMod('DOUBLE TROUBLE')) { var dtE = new Enemy(x + (gameRng()-0.5)*40, y + (gameRng()-0.5)*40, type); entities.enemies.push(dtE); }
                 if (type === 'swarm') { for (let si = 0; si < 4; si++) entities.enemies.push(new Enemy(x + (gameRng()-0.5)*60, y + (gameRng()-0.5)*60, 'swarm')); }
                 // Feature 27: Hivemind group of 6
                 if (type === 'hivemind') { let grpId = ++hivemindGroupCounter; newEnemy.hivemindGroup = grpId; for (let hi=0;hi<5;hi++){let he=new Enemy(x+(Math.random()-0.5)*80,y+(Math.random()-0.5)*80,'hivemind'); he.hivemindGroup=grpId; entities.enemies.push(he);} }
@@ -3785,7 +3795,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             
             try {
                 for(let f = 0; f < framesToRun; f++) {
-                    state.frame++; 
+                    state.frame++; if (typeof playerStats !== 'undefined') { playerStats.totalPlaytime++; if (state.frame % 3600 === 0) savePlayerStats(); }
                     if (f === framesToRun - 1) { ctx.shadowBlur = 0; ctx.shadowColor = 'transparent'; ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; ctx.fillStyle = 'rgba(0, 0, 0, 0.4)'; ctx.fillRect(0, 0, canvas.width, canvas.height); if(appSettings.graphics !== 'low') drawNebulae(ctx); if (appSettings.graphics === 'high') ctx.globalCompositeOperation = 'lighter'; entities.stars.forEach(s => { s.draw(ctx); }); ctx.globalCompositeOperation = 'source-over'; }
                     entities.stars.forEach(s => { s.update(); });
                     
@@ -4077,7 +4087,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             if (state.frame % 30 === 0) checkScoreEggs();
             checkIdle();
             if (appSettings.autoFire && state.active && !state.paused) mouse.down = true;
-            if (state.frame % 3 === 0) { ui.score.innerText = `SCORE: ${Math.floor(state.score)}`; ui.combo.innerText = `COMBO x${state.combo.toFixed(1)}`; ui.lvl.innerText = state.mode === 'training' ? (trainingMode === 'aim' ? 'AIM TRAINER' : trainingMode === 'manual' ? 'MANUAL AIM' : trainingMode === 'boss_practice' ? 'BOSS PRACTICE' : 'FREE PRACTICE') : state.mode === 'boss_rush' ? `BOSS ${Math.min(state.bossesDefeated + 1, 15)}/15 | ${Math.floor(state.frame/3600)}:${(Math.floor(state.frame/60)%60).toString().padStart(2,'0')}` : state.mode === 'sandbox' ? 'SANDBOX' : state.mode === 'arcade' ? `WAVE ${state.level} | ${'❤'.repeat(arcadeLives)}` : `LVL: ${state.level}`; ui.coins.innerText = `COINS: ${totalCoins + state.runCoins}`; }
+            if (state.frame % 3 === 0) { ui.score.innerText = `SCORE: ${Math.floor(state.score)}`; ui.combo.innerText = `COMBO x${state.combo.toFixed(1)}`; ui.lvl.innerText = state.mode === 'training' ? (trainingMode === 'aim' ? 'AIM TRAINER' : trainingMode === 'manual' ? 'MANUAL AIM' : trainingMode === 'boss_practice' ? 'BOSS PRACTICE' : 'FREE PRACTICE') : state.mode === 'boss_rush' ? `BOSS ${Math.min(state.bossesDefeated + 1, 15)}/15 | ${Math.floor(state.frame/3600)}:${(Math.floor(state.frame/60)%60).toString().padStart(2,'0')}` : state.mode === 'sandbox' ? 'SANDBOX' : state.mode === 'arcade' ? `WAVE ${state.level} | ${'❤'.repeat(arcadeLives)}` : `LVL: ${state.level}`; ui.coins.innerText = `COINS: ${totalCoins + state.runCoins}` + (isWeekendEvent() ? ' (2x)' : ''); }
             ui.hp.style.width = `${Math.max(0, (player.hp/state.stats.maxHp)*100)}%`; ui.shield.style.width = `${Math.min(100, player.shield)}%`; ui.xp.style.width = `${(state.xp / state.xpNeeded)*100}%`;
             if (appSettings.render3D && is3DActive) update3D();
             drawTutorialHighlight(ctx);
@@ -5333,6 +5343,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             document.getElementById('mission-select').classList.add('hidden'); document.getElementById('shop-screen').classList.add('hidden'); document.getElementById('settings-screen').classList.add('hidden'); document.getElementById('pause-screen').classList.add('hidden'); document.getElementById('draw-screen').classList.add('hidden');
             // Cleanup game state on menu return
             if (typeof state !== 'undefined') { state.active = false; state.paused = false; state.mirrored = false; state.pendingLevels = 0; }
+            if (typeof dailyState !== 'undefined') dailyState.active = false;
             activeBoss = null; entities.enemies = []; entities.eBullets = []; entities.bullets = [];
             // Cleanup Crashed Adventure / Metroid mode
             if (window._metroidCleanup) { window._metroidCleanup(); window._metroidCleanup = null; }
@@ -5342,12 +5353,13 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             // Reset chaos state
             if (typeof chaosState !== 'undefined' && chaosState.activeMods) { chaosState.activeMods = []; chaosState.modTimers = []; }
             // Remove mode-specific UI overlays
-            ['horde-ui','rogue-pick','prestige-overlay','tut-hud','bp-overlay','title-overlay','lb-overlay','clan-overlay','mentor-overlay','mastery-overlay','ach-overlay','rebirth-overlay','emote-overlay','vip-overlay','gemshop-overlay','blueprints-overlay','bm-overlay','contracts-overlay','trade-overlay','replay-overlay','mg-end-overlay','avatar-picker-overlay'].forEach(id => { let el = document.getElementById(id); if (el) el.remove(); });
+            ['horde-ui','rogue-pick','prestige-overlay','tut-hud','bp-overlay','title-overlay','lb-overlay','clan-overlay','mentor-overlay','mastery-overlay','ach-overlay','rebirth-overlay','emote-overlay','vip-overlay','gemshop-overlay','blueprints-overlay','bm-overlay','contracts-overlay','trade-overlay','replay-overlay','mg-end-overlay','avatar-picker-overlay','bestiary-overlay','stats-overlay','daily-overlay'].forEach(id => { let el = document.getElementById(id); if (el) el.remove(); });
             if (typeof sandboxPanel !== 'undefined' && sandboxPanel) { sandboxPanel.remove(); sandboxPanel = null; }
+            if (typeof bestiaryData !== 'undefined') secureSave('neonVoidBestiary', bestiaryData);
             stopMusic(); startMenuBg(); if (appSettings.music) startMenuMusic();
             ui.mainOverlay.classList.remove('hidden'); ui.mainOverlay.classList.remove('win-theme');
             ui.mainTitle.innerText = "NEON VOID"; ui.mainTitle.style.webkitTextStroke = "2px #ff0055"; ui.mainTitle.style.textShadow = "0 0 20px #ff005560";
-            ui.mainDesc.innerHTML = `<strong>ARROW KEYS / WASD</strong> to Move | <strong>SPACE / MOUSE</strong> to Shoot<br><strong>SHIFT / RIGHT-CLICK</strong> to Dash | <strong>[C]</strong> to Toggle Aim | <strong>[ESC]</strong> to Pause<br><span style="color: #ff0055; font-weight:bold;">THE ULTIMATE UPDATE</span>`;
+            ui.mainDesc.innerHTML = `<strong>ARROW KEYS / WASD</strong> to Move | <strong>SPACE / MOUSE</strong> to Shoot<br><strong>SHIFT / RIGHT-CLICK</strong> to Dash | <strong>[C]</strong> to Toggle Aim | <strong>[ESC]</strong> to Pause<br><span style="color: #ff0055; font-weight:bold;">THE ULTIMATE UPDATE</span>` + (isWeekendEvent() ? '<br><span style="color:#ffcc00;font-weight:bold;font-size:16px;text-shadow:0 0 10px #ffcc00;">WEEKEND EVENT: 2x XP + 2x COINS</span>' : '');
             document.getElementById('menu-coin-display').innerText = `TOTAL COINS: ${totalCoins}`;
 
             let unlockedRaw = secureLoad('neonVoidStage', '1'); let unlocked = parseInt(unlockedRaw); if(isNaN(unlocked) || unlocked < 1) unlocked = 1;
@@ -5376,6 +5388,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
     <button style="border-color:#ff0055;color:#ff0055;font-size:11px;padding:6px 10px;" onclick="startInfection()">Infection<br><span style="font-size:10px">Last Healthy Wins</span></button>
     <button style="border-color:#44ddff;color:#44ddff;font-size:11px;padding:6px 10px;" onclick="startPvP()">PvP 1v1<br><span style="font-size:10px">Best of 3 Rounds</span></button>
     <button style="border-color:#00ffaa;color:#00ffaa;font-size:11px;padding:6px 10px;" onclick="openLevelEditor()">Level Editor<br><span style="font-size:10px">Build Rooms</span></button>
+    <button style="border-color:#ff8800;color:#ff8800;font-size:11px;padding:6px 10px;box-shadow:0 0 12px #ff880040;" onclick="startDailyChallenge()">Daily Challenge<br><span style="font-size:10px">New Mods Every Day</span></button>
   </div>
 </div>
 <div style="width:100%;margin-top:8px;padding-top:6px;border-top:1px solid #333;">
@@ -5396,6 +5409,8 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
     <button style="border-color:#ff9900;color:#ff9900;font-size:11px;padding:5px 9px;" onclick="openClan()">Clan</button>
     <button style="border-color:#c8a0ff;color:#c8a0ff;font-size:11px;padding:5px 9px;" onclick="openPrestigePanel()">Prestige</button>
     <button style="border-color:#00ffcc;color:#00ffcc;font-size:11px;padding:5px 9px;" onclick="openPhotoMode()">Photo Mode</button>
+    <button style="border-color:#88ddff;color:#88ddff;font-size:11px;padding:5px 9px;" onclick="openBestiary()">Bestiary</button>
+    <button style="border-color:#aaddff;color:#aaddff;font-size:11px;padding:5px 9px;" onclick="openStats()">Pilot Stats</button>
   </div>
 </div>`;
             document.getElementById('menu-coin-display').style.display = 'block'; document.getElementById('mobile-controls').style.display = 'none';
@@ -6103,7 +6118,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             }
         }
         
-        function gameOver() { state.active = false; state.paused = false; saveRunCoins(); triggerChroma(6); if (sandboxPanel) { sandboxPanel.remove(); sandboxPanel = null; } let rogPick = document.getElementById('rogue-pick'); if (rogPick) rogPick.remove(); let hordeUI = document.getElementById('horde-ui'); if (hordeUI) hordeUI.remove();
+        function gameOver() { state.active = false; state.paused = false; saveRunCoins(); triggerChroma(6); try { trackModeStat(state.mode, Math.floor(state.score)); playerStats.totalDeaths++; playerStats.gamesPlayed++; playerStats.totalKills += (state.kills || 0); playerStats.totalBossesKilled += (state.bossesDefeated || 0); playerStats.totalCoinsEarned += (state.runCoins || 0); if (state.level > (playerStats.highestLevel || 0)) playerStats.highestLevel = state.level; if (state.frame > (playerStats.longestSurvival || 0)) playerStats.longestSurvival = state.frame; savePlayerStats(); } catch(_e) {} if (sandboxPanel) { sandboxPanel.remove(); sandboxPanel = null; } let rogPick = document.getElementById('rogue-pick'); if (rogPick) rogPick.remove(); let hordeUI = document.getElementById('horde-ui'); if (hordeUI) hordeUI.remove();
             // Feature 18: Nemesis system - save what killed player
             try {
                 if (entities.eBullets.length > 0 && entities.enemies.length > 0) {
@@ -6131,10 +6146,12 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                 else if (state.mode === 'pacifist') { retryFn = 'startPacifist()'; retryLabel = 'Retry Pacifist'; }
                 else if (state.mode === 'crashed_adventure' || state.mode === 'crashed') { retryFn = 'startCrashedAdventure()'; retryLabel = 'Retry Crashed'; }
                 else if (state.mode === 'training') { retryFn = 'returnToMenu()'; retryLabel = 'Back to Menu'; }
+                else if (state.mode === 'daily_challenge') { retryFn = 'startDailyChallenge()'; retryLabel = 'Retry Daily'; var oldBest = parseInt(secureLoad('neonVoidDailyBest_' + dailyState.seed, 0)) || 0; var newRecord = state.score > oldBest; if (newRecord) secureSave('neonVoidDailyBest_' + dailyState.seed, state.score); ui.mainDesc.innerHTML += '<br><span style="color:#ff8800;">DAILY CHALLENGE SCORE: ' + Math.floor(state.score).toLocaleString() + '</span>' + (newRecord ? '<br><span style="color:#ffcc00;">NEW DAILY BEST!</span>' : ''); dailyState.active = false; }
                 ui.menuBtns.innerHTML = `<button onclick="${retryFn}">${retryLabel}</button><button onclick="returnToMenu()">Main Menu</button>`;
             } }
         
         function stageCleared() {
+            try { trackModeStat(state.mode, Math.floor(state.score)); playerStats.totalKills += (state.kills || 0); playerStats.totalBossesKilled += (state.bossesDefeated || 0); playerStats.totalCoinsEarned += (state.runCoins || 0); if (state.level > (playerStats.highestLevel || 0)) playerStats.highestLevel = state.level; savePlayerStats(); } catch(_e) {}
             // Feature 50: Try to spawn secret item
             try { trySpawnSecretItem(state.currentStage); checkSecretBoss(); } catch(e) {}
             // Feature 32: Victory pose
@@ -6830,6 +6847,14 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                 state.runCoins += 500; setTimeout(() => { saveRunCoins(); returnToMenu(); }, 4000);
             }
         }
+
+        // ==================== DAILY CHALLENGE ====================
+        function getDailySeed(){var d=new Date();return d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();}
+        function getDailyModifiers(seed){var rng=seed;function next(){rng=(rng*1103515245+12345)&0x7fffffff;return rng/0x7fffffff;}var allMods=[{name:'GLASS CANNON',desc:'3x damage, 1 HP',apply:function(s){s.dmgMulti*=3;}},{name:'BULLET STORM',desc:'2x fire rate, half damage',apply:function(s){s.fireRateMulti*=2;s.dmgMulti*=0.5;}},{name:'HEAVYWEIGHT',desc:'3x HP, 50% speed',apply:function(s){s.maxHp*=3;s.speedMulti*=0.5;}},{name:'SPEEDSTER',desc:'2x speed, no dash',apply:function(s){s.speedMulti*=2;}},{name:'DOUBLE TROUBLE',desc:'2x enemies, 2x coins',apply:function(s){}},{name:'TINY TERROR',desc:'Tiny ship, tiny hitbox',apply:function(s){}},{name:'NO SHIELDS',desc:'Shield pickups disabled',apply:function(s){}},{name:'COIN RUSH',desc:'5x coins, enemies are faster',apply:function(s){s.coinMulti=(s.coinMulti||1)*5;}},{name:'RICOCHET',desc:'All bullets bounce once',apply:function(s){}},{name:'MEGA BOSS',desc:'Boss every 3 levels',apply:function(s){}}];var count=2+(next()>0.5?1:0);var picked=[];var pool=allMods.slice();for(var i=0;i<count&&pool.length;i++){var idx=Math.floor(next()*pool.length);picked.push(pool.splice(idx,1)[0]);}return picked;}
+        var dailyState={seed:0,mods:[],active:false,bestScore:0};
+        function dailyHasMod(name){return dailyState.active&&dailyState.mods.some(function(m){return m.name===name;});}
+        function startDailyChallenge(){dailyState.seed=getDailySeed();dailyState.mods=getDailyModifiers(dailyState.seed);dailyState.active=true;dailyState.bestScore=parseInt(secureLoad('neonVoidDailyBest_'+dailyState.seed,0))||0;var overlay=document.createElement('div');overlay.id='daily-overlay';overlay.style.cssText='position:fixed;inset:0;background:rgba(6,6,12,0.95);z-index:99999;color:#fff;font-family:monospace;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;';var dateStr=new Date().toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});var modsHtml=dailyState.mods.map(function(m){return'<div style="margin:8px 0;padding:10px 20px;border:1px solid #ff8800;border-radius:4px;"><span style="color:#ff8800;font-weight:bold;">'+m.name+'</span><br><span style="color:#888;font-size:12px;">'+m.desc+'</span></div>';}).join('');var bestHtml=dailyState.bestScore>0?'<div style="color:#ffcc00;margin:10px 0;">YOUR BEST: '+dailyState.bestScore.toLocaleString()+'</div>':'';overlay.innerHTML='<div style="text-align:center;"><div style="color:#ff8800;font-size:24px;font-weight:bold;margin-bottom:5px;">DAILY CHALLENGE</div><div style="color:#888;font-size:14px;margin-bottom:20px;">'+dateStr+'</div><div style="color:#fff;font-size:16px;margin-bottom:15px;">TODAY\'S MODIFIERS:</div>'+modsHtml+bestHtml+'<div style="margin-top:20px;display:flex;gap:10px;justify-content:center;"><button onclick="launchDaily()" style="border:1px solid #ff8800;color:#ff8800;padding:10px 30px;font-size:16px;cursor:pointer;background:transparent;font-family:monospace;">START CHALLENGE</button><button onclick="document.getElementById(\'daily-overlay\').remove();dailyState.active=false;" style="border:1px solid #555;color:#555;padding:10px 20px;cursor:pointer;background:transparent;font-family:monospace;">BACK</button></div></div>';document.body.appendChild(overlay);}
+        function launchDaily(){var el=document.getElementById('daily-overlay');if(el)el.remove();ui.mainOverlay.classList.add('hidden');showClassSelect(function(){showWeaponSelect(function(){state={active:true,paused:false,mode:'daily_challenge',frame:0,score:0,combo:1,xp:0,level:1,xpNeeded:100,runCoins:0,kills:0,shake:0,currentStage:1,bossesDefeated:0,difficulty:1,nextBossLevel:5,spawningBoss:false,warping:true,warpFrames:0,hardcore:false,hyper:false,stats:getBaseStats(),pendingLevels:0};if(selectedWeapon)selectedWeapon.apply();applyClassStats();state.playerClass=selectedClass;for(var i=0;i<dailyState.mods.length;i++){if(dailyState.mods[i].apply)dailyState.mods[i].apply(state.stats);}if(dailyHasMod('MEGA BOSS')){state.nextBossLevel=3;}lastWaveLevel=0;nextMilestoneIdx=0;dashGhosts=[];ui.status.innerText='DAILY CHALLENGE';initGameBase();if(dailyHasMod('GLASS CANNON')){setTimeout(function(){if(player){player.hp=1;player.maxHp=1;state.stats.maxHp=1;}},100);}if(dailyHasMod('TINY TERROR')){setTimeout(function(){if(player){player.radius=4;}},100);}spawnText(canvas.width/2,canvas.height/2,'DAILY CHALLENGE!','#ff8800',22);for(var j=0;j<dailyState.mods.length;j++){spawnText(canvas.width/2,canvas.height/2+30+j*20,dailyState.mods[j].name,'#ffcc00',14);}});});}
 
         // ==================== MODE 54: MIRROR MODE ====================
         function startMirror() {
@@ -7870,7 +7895,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                 card.innerHTML=`<div style="font-size:20px;font-weight:900;letter-spacing:3px;color:${cls.color};">${cls.name}</div><div style="font-size:10px;color:${cls.color}88;letter-spacing:4px;margin:2px 0 10px;">${cls.role}</div><div style="font-size:11px;color:#aaa;margin-bottom:8px;line-height:1.6;">${cls.desc}</div><div style="font-size:10px;color:${cls.color};border-top:1px solid ${cls.color}33;padding-top:8px;">${cls.passive}</div>`;
                 card.onmouseenter=()=>{card.style.boxShadow=`0 0 30px ${cls.color}50`;card.style.transform='scale(1.04)';};
                 card.onmouseleave=()=>{card.style.boxShadow='none';card.style.transform='scale(1)';};
-                card.onclick=()=>{selectedClass=id;playSound('powerup');ov.remove();callback();};
+                card.onclick=()=>{selectedClass=id;playSound('powerup');if(typeof playerStats!=='undefined'){if(!playerStats.favoriteClass)playerStats.favoriteClass={};playerStats.favoriteClass[id]=(playerStats.favoriteClass[id]||0)+1;}ov.remove();callback();};
                 con.appendChild(card);
             }
             ov.appendChild(con);document.body.appendChild(ov);
@@ -11388,7 +11413,7 @@ function generateSyncCode() {
             ui.mainTitle.innerText = "NEON VOID";
             ui.mainTitle.style.webkitTextStroke = "3px #ff0055";
             ui.mainTitle.style.textShadow = "0 0 50px #ff0055";
-            ui.mainDesc.innerHTML = `<strong>ARROW KEYS / WASD</strong> to Move | <strong>SPACE / MOUSE</strong> to Shoot<br><strong>SHIFT / RIGHT-CLICK</strong> to Dash | <strong>[C]</strong> to Toggle Aim | <strong>[ESC]</strong> to Pause<br><span style="color: #ff0055; font-weight:bold;">THE ULTIMATE UPDATE</span>`;
+            ui.mainDesc.innerHTML = `<strong>ARROW KEYS / WASD</strong> to Move | <strong>SPACE / MOUSE</strong> to Shoot<br><strong>SHIFT / RIGHT-CLICK</strong> to Dash | <strong>[C]</strong> to Toggle Aim | <strong>[ESC]</strong> to Pause<br><span style="color: #ff0055; font-weight:bold;">THE ULTIMATE UPDATE</span>` + (isWeekendEvent() ? '<br><span style="color:#ffcc00;font-weight:bold;font-size:16px;text-shadow:0 0 10px #ffcc00;">WEEKEND EVENT: 2x XP + 2x COINS</span>' : '');
             document.getElementById('menu-coin-display').innerText = `TOTAL COINS: ${totalCoins}`;
 
             let unlockedRaw = secureLoad('neonVoidStage', '1');
@@ -11790,7 +11815,7 @@ function generateSyncCode() {
             if (typeof state !== 'undefined') { state.active = false; state.paused = false; state.mirrored = false; state.pendingLevels = 0; }
             activeBoss = null; entities.enemies = []; entities.eBullets = []; entities.bullets = [];
             // Remove mode-specific UI overlays
-            ['horde-ui','rogue-pick','prestige-overlay','tut-hud','bp-overlay','title-overlay','lb-overlay','clan-overlay','mentor-overlay','mastery-overlay','ach-overlay','rebirth-overlay','emote-overlay','vip-overlay','gemshop-overlay','blueprints-overlay','bm-overlay','contracts-overlay','trade-overlay','replay-overlay','mg-end-overlay','avatar-picker-overlay'].forEach(id => { let el = document.getElementById(id); if (el) el.remove(); });
+            ['horde-ui','rogue-pick','prestige-overlay','tut-hud','bp-overlay','title-overlay','lb-overlay','clan-overlay','mentor-overlay','mastery-overlay','ach-overlay','rebirth-overlay','emote-overlay','vip-overlay','gemshop-overlay','blueprints-overlay','bm-overlay','contracts-overlay','trade-overlay','replay-overlay','mg-end-overlay','avatar-picker-overlay','stats-overlay'].forEach(id => { let el = document.getElementById(id); if (el) el.remove(); });
             if (sandboxPanel) { sandboxPanel.remove(); sandboxPanel = null; }
             // Hide all screens
             ['mission-select','shop-screen','settings-screen','pause-screen','draw-screen',
@@ -14303,6 +14328,240 @@ function openClanMenu(){
   }
   html+='<div style="text-align:center;margin-top:16px"><button onclick="document.getElementById(\'clan-overlay\').remove()" style="background:#222;color:#888;border:1px solid #333;padding:10px 28px;cursor:pointer;border-radius:6px;font-family:monospace">CLOSE</button></div>';
   ol.innerHTML=html;document.body.appendChild(ol);
+}
+
+// ---- ENEMY BESTIARY ----
+var bestiaryData = secureLoad('neonVoidBestiary', {});
+function recordBestiaryKill(enemyType) {
+    if (!enemyType) return;
+    if (!bestiaryData[enemyType]) {
+        bestiaryData[enemyType] = { kills: 0, firstSeen: Date.now() };
+    }
+    bestiaryData[enemyType].kills++;
+    if (bestiaryData[enemyType].kills % 10 === 0) {
+        secureSave('neonVoidBestiary', bestiaryData);
+    }
+}
+
+function openBestiary() {
+    var ol = document.createElement('div');
+    ol.id = 'bestiary-overlay';
+    ol.style.cssText = 'position:fixed;inset:0;background:#06060c;z-index:99999;color:#fff;font-family:monospace;overflow-y:auto;padding:20px;padding-top:calc(20px + env(safe-area-inset-top, 0px));';
+
+    var allTypes = typeof ENEMY_TYPES !== 'undefined' ? Object.keys(ENEMY_TYPES) : [];
+    var discovered = Object.keys(bestiaryData);
+
+    var html = '<div style="text-align:center;margin-bottom:20px;">';
+    html += '<div style="color:#88ddff;font-size:22px;font-weight:bold;">ENEMY BESTIARY</div>';
+    html += '<div style="color:#888;font-size:12px;margin-top:5px;">Discovered: ' + discovered.length + '/' + allTypes.length + '</div>';
+    html += '</div>';
+
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;max-width:900px;margin:0 auto;">';
+
+    for (var i = 0; i < allTypes.length; i++) {
+        var type = allTypes[i];
+        var info = ENEMY_TYPES[type];
+        var data = bestiaryData[type];
+        var found = !!data;
+
+        var borderColor = found ? (info.color || '#88ddff') : '#333';
+        var nameColor = found ? '#fff' : '#444';
+        var killText = found ? data.kills + ' kills' : '???';
+
+        var lore = getEnemyLore(type);
+
+        html += '<div style="border:1px solid ' + borderColor + ';padding:12px;border-radius:4px;background:rgba(255,255,255,0.03);">';
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
+        html += '<span style="color:' + nameColor + ';font-weight:bold;font-size:14px;">' + (found ? type.toUpperCase().replace(/_/g,' ') : '? ? ?') + '</span>';
+        html += '<span style="color:' + borderColor + ';font-size:11px;">' + killText + '</span>';
+        html += '</div>';
+
+        if (found) {
+            html += '<div style="color:#888;font-size:11px;margin-top:6px;">' + lore + '</div>';
+            html += '<div style="color:#555;font-size:10px;margin-top:4px;">HP: ' + (info.hp || '?') + ' | SPD: ' + ((info.speed || info.spd || 0).toFixed(1)) + ' | DMG: ' + (info.dmg || '?') + '</div>';
+            if (data.kills >= 100) html += '<div style="color:#ffcc00;font-size:10px;margin-top:2px;">MASTERED</div>';
+            else if (data.kills >= 50) html += '<div style="color:#88ddff;font-size:10px;margin-top:2px;">EXPERT</div>';
+            else if (data.kills >= 10) html += '<div style="color:#00ff88;font-size:10px;margin-top:2px;">FAMILIAR</div>';
+        }
+        html += '</div>';
+    }
+
+    html += '</div>';
+    html += '<div style="text-align:center;margin-top:20px;padding-bottom:40px;">';
+    html += '<button onclick="document.getElementById(\'bestiary-overlay\').remove()" style="background:#333;color:#fff;border:1px solid #555;padding:10px 30px;cursor:pointer;font-family:monospace;font-size:14px;">CLOSE</button>';
+    html += '</div>';
+
+    ol.innerHTML = html;
+    document.body.appendChild(ol);
+}
+
+function getEnemyLore(type) {
+    var lore = {
+        'chaser': 'Basic pursuit drone. Relentless but fragile.',
+        'shooter': 'Armed patrol unit. Fires at regular intervals.',
+        'splitter': 'Divides into smaller units on death. Handle with care.',
+        'rammer': 'Armored charger. Accelerates toward your position.',
+        'sniper': 'Long-range precision unit. Deadly accurate.',
+        'bomber': 'Drops explosive payloads. Keep your distance.',
+        'orbiter': 'Circles a fixed point. Unpredictable trajectory.',
+        'ghost': 'Phases through obstacles. Hard to track.',
+        'swarm': 'Strength in numbers. Individually weak.',
+        'healer': 'Repairs nearby allies. Priority target.',
+        'shielder': 'Projects barriers for allies. Break the shield first.',
+        'heavy_shooter': 'Heavy weapons platform. Slow but devastating.',
+        'pulsar': 'Emits energy waves. Dodge the pulse.',
+        'cloaked': 'Invisible until it strikes. Watch for shimmer.',
+        'tank': 'Extreme armor plating. Sustained fire required.',
+        'leech': 'Drains your energy on contact. Stay clear.',
+        'mine': 'Stationary explosive. Detonates on proximity.',
+        'teleporter': 'Blinks across the field. Never where you expect.',
+        'bad': 'Corrupted data entity. Extremely dangerous.',
+        'shield_drone': 'Protects nearby enemies with energy field.',
+        'shapeshifter': 'Mimics other enemy types. Adapts mid-fight.',
+        'hivemind': 'Linked consciousness. Kill one, alert them all.',
+        'gravity_well_enemy': 'Warps space around it. Pulls you in.',
+        'reflector': 'Bounces your shots back. Angle carefully.',
+        'parasite': 'Attaches and drains. Shake it off fast.',
+        'berserker': 'Gets stronger as it takes damage.',
+        'phase': 'Shifts between dimensions. Only vulnerable when visible.',
+        'magnet_enemy': 'Attracts your bullets. Disrupts aim.',
+        'combo_breaker': 'Appears during streaks. Designed to end your combo.',
+        'zombie': 'Keeps coming back. Persistent threat.'
+    };
+    return lore[type] || 'Unknown entity. Data corrupted.';
+}
+
+// ---- PLAYER STATS DASHBOARD ----
+var playerStats = secureLoad('neonVoidPlayerStats', {
+    totalPlaytime: 0,
+    totalKills: 0,
+    totalDeaths: 0,
+    totalCoinsEarned: 0,
+    totalBossesKilled: 0,
+    totalBulletsFired: 0,
+    totalDamageDone: 0,
+    totalDamageTaken: 0,
+    totalDashes: 0,
+    totalPowerups: 0,
+    highestCombo: 0,
+    highestLevel: 0,
+    longestSurvival: 0,
+    gamesPlayed: 0,
+    favoriteClass: {},
+    modeStats: {},
+    killsByType: {},
+    firstPlayed: Date.now(),
+    lastPlayed: Date.now()
+});
+if (!playerStats.favoriteClass) playerStats.favoriteClass = {};
+if (!playerStats.modeStats) playerStats.modeStats = {};
+if (!playerStats.killsByType) playerStats.killsByType = {};
+if (!playerStats.firstPlayed) playerStats.firstPlayed = Date.now();
+
+function trackStat(key, value) {
+    if (typeof value === 'number') {
+        playerStats[key] = (playerStats[key] || 0) + value;
+    } else {
+        playerStats[key] = value;
+    }
+}
+
+function trackModeStat(mode, score) {
+    if (!playerStats.modeStats[mode]) {
+        playerStats.modeStats[mode] = { plays: 0, bestScore: 0, totalScore: 0 };
+    }
+    playerStats.modeStats[mode].plays++;
+    playerStats.modeStats[mode].totalScore += score;
+    if (score > playerStats.modeStats[mode].bestScore) {
+        playerStats.modeStats[mode].bestScore = score;
+    }
+}
+
+function savePlayerStats() {
+    playerStats.lastPlayed = Date.now();
+    secureSave('neonVoidPlayerStats', playerStats);
+}
+
+function openStats() {
+    var ol = document.createElement('div');
+    ol.id = 'stats-overlay';
+    ol.style.cssText = 'position:fixed;inset:0;background:#06060c;z-index:99999;color:#fff;font-family:monospace;overflow-y:auto;padding:20px;padding-top:calc(20px + env(safe-area-inset-top, 0px));';
+
+    var s = playerStats;
+    var playtimeMin = Math.floor((s.totalPlaytime || 0) / 3600);
+    var playtimeHrs = Math.floor(playtimeMin / 60);
+    var playtimeMinRem = playtimeMin % 60;
+
+    var favClass = 'None';
+    var maxPlays = 0;
+    if (s.favoriteClass) {
+        for (var c in s.favoriteClass) {
+            if (s.favoriteClass[c] > maxPlays) { maxPlays = s.favoriteClass[c]; favClass = c; }
+        }
+    }
+
+    var favMode = 'None';
+    var maxModePlays = 0;
+    if (s.modeStats) {
+        for (var m in s.modeStats) {
+            if (s.modeStats[m].plays > maxModePlays) { maxModePlays = s.modeStats[m].plays; favMode = m; }
+        }
+    }
+
+    var daysSince = Math.floor((Date.now() - (s.firstPlayed || Date.now())) / 86400000);
+
+    var html = '<div style="max-width:700px;margin:0 auto;">';
+    html += '<div style="text-align:center;margin-bottom:20px;">';
+    html += '<div style="color:#aaddff;font-size:22px;font-weight:bold;">PILOT STATISTICS</div>';
+    html += '<div style="color:#555;font-size:11px;margin-top:4px;">Playing for ' + daysSince + ' days</div>';
+    html += '</div>';
+
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px;">';
+
+    var stats = [
+        ['PLAYTIME', playtimeHrs + 'h ' + playtimeMinRem + 'm', '#aaddff'],
+        ['GAMES PLAYED', (s.gamesPlayed || 0).toLocaleString(), '#fff'],
+        ['TOTAL KILLS', (s.totalKills || 0).toLocaleString(), '#ff0055'],
+        ['TOTAL DEATHS', (s.totalDeaths || 0).toLocaleString(), '#ff4444'],
+        ['BOSSES KILLED', (s.totalBossesKilled || 0).toLocaleString(), '#ffcc00'],
+        ['HIGHEST COMBO', (s.highestCombo || 0) + 'x', '#00ffcc'],
+        ['HIGHEST LEVEL', 'Lv.' + (s.highestLevel || 0), '#44ff88'],
+        ['TOTAL COINS EARNED', (s.totalCoinsEarned || 0).toLocaleString(), '#ffcc00'],
+        ['K/D RATIO', (s.totalDeaths > 0 ? (s.totalKills / s.totalDeaths).toFixed(1) : '---'), '#ff8800'],
+        ['FAVORITE CLASS', favClass.toUpperCase(), '#cc44ff'],
+        ['MOST PLAYED MODE', favMode.replace(/_/g,' ').toUpperCase(), '#44ddff'],
+        ['POWERUPS COLLECTED', (s.totalPowerups || 0).toLocaleString(), '#00ff88']
+    ];
+
+    for (var i = 0; i < stats.length; i++) {
+        html += '<div style="border:1px solid #222;padding:10px;text-align:center;">';
+        html += '<div style="color:#666;font-size:10px;letter-spacing:1px;">' + stats[i][0] + '</div>';
+        html += '<div style="color:' + stats[i][2] + ';font-size:18px;font-weight:bold;margin-top:4px;">' + stats[i][1] + '</div>';
+        html += '</div>';
+    }
+    html += '</div>';
+
+    if (s.modeStats && Object.keys(s.modeStats).length > 0) {
+        html += '<div style="color:#aaddff;font-size:14px;font-weight:bold;margin-bottom:8px;border-bottom:1px solid #333;padding-bottom:4px;">MODE BREAKDOWN</div>';
+        html += '<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:20px;">';
+        html += '<tr style="color:#666;"><th style="text-align:left;padding:4px;">Mode</th><th>Plays</th><th>Best Score</th><th>Avg Score</th></tr>';
+        for (var mode in s.modeStats) {
+            var ms = s.modeStats[mode];
+            var avg = ms.plays > 0 ? Math.floor(ms.totalScore / ms.plays) : 0;
+            html += '<tr><td style="padding:4px;color:#fff;">' + mode.replace(/_/g,' ').toUpperCase() + '</td>';
+            html += '<td style="text-align:center;color:#888;">' + ms.plays + '</td>';
+            html += '<td style="text-align:center;color:#ffcc00;">' + ms.bestScore.toLocaleString() + '</td>';
+            html += '<td style="text-align:center;color:#888;">' + avg.toLocaleString() + '</td></tr>';
+        }
+        html += '</table>';
+    }
+
+    html += '<div style="text-align:center;padding-bottom:40px;">';
+    html += '<button onclick="document.getElementById(\'stats-overlay\').remove()" style="background:#333;color:#fff;border:1px solid #555;padding:10px 30px;cursor:pointer;font-family:monospace;font-size:14px;">CLOSE</button>';
+    html += '</div></div>';
+
+    ol.innerHTML = html;
+    document.body.appendChild(ol);
 }
 
 // ---- FEATURE 66: MENTOR SYSTEM ----
