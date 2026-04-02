@@ -49,7 +49,7 @@
         #boss-name { position: absolute; top: 35px; width: 100%; color: #ff0055; text-shadow: 0 0 15px #ff0055; font-size: 24px; font-weight: bold; letter-spacing: 5px; text-transform: uppercase;}
         #boss-alert { position: absolute; top: 20%; width: 100%; text-align: center; font-size: 60px; color: red; font-weight: bold; text-shadow: 0 0 40px red; display: none; animation: flash 0.2s infinite; z-index: 8; letter-spacing: 12px; }
         
-        .overlay-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 20; backdrop-filter: blur(12px); padding-top: env(safe-area-inset-top, 0px); }
+        .overlay-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 20; backdrop-filter: blur(12px); padding-top: env(safe-area-inset-top, 0px); }
         .win-theme { background: radial-gradient(ellipse at center, rgba(0,30,20,0.98) 0%, rgba(0,0,0,0.99) 70%) !important; }
         .hidden { display: none !important; }
         .title-text { font-size: clamp(40px,10vw,80px); font-weight: 900; color: transparent; -webkit-text-stroke: 2px #ff0055; text-shadow: 0 0 20px #ff005560; margin-bottom: 10px; animation: pulse 2s infinite; text-transform: uppercase; letter-spacing: 8px; text-align: center; }
@@ -1197,6 +1197,7 @@
 
         // Returns the closest player (local or remote) to given position — used for enemy AI targeting in co-op
         function getClosestPlayer(ex, ey) {
+            if (!player) return { x: canvas.width/2, y: canvas.height/2, dist: 9999, isLocal: true, peerId: null };
             let best = { x: player.x, y: player.y, dist: Math.hypot(player.x - ex, player.y - ey), isLocal: true, peerId: null };
             if (mpState && mpState.active && peer) {
                 for (const [pid, p] of Object.entries(mpState.players)) {
@@ -3846,9 +3847,11 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                                 let e = arr[i];
                                 if (!e) continue;
                                 if (e.update) e.update();
+                                else { if (e.vx !== undefined) e.x += e.vx; if (e.vy !== undefined) e.y += e.vy; if (e.life !== undefined) e.life--; }
                                 if (f === framesToRun - 1 && e.draw) e.draw(ctx);
-                                if(collisionLogic && collisionLogic(e, i)) continue; 
-                                if(e.life !== undefined && e.life <= 0) arr.splice(i,1); 
+                                else if (f === framesToRun - 1 && !e.draw && e.radius) { ctx.fillStyle = e.color || '#ff0055'; ctx.beginPath(); ctx.arc(e.x, e.y, e.radius, 0, Math.PI*2); ctx.fill(); }
+                                if(collisionLogic && collisionLogic(e, i)) continue;
+                                if(e.life !== undefined && e.life <= 0) arr.splice(i,1);
                                 else if(e.x < -300 || e.x > canvas.width+300 || e.y < -300 || e.y > canvas.height+300) arr.splice(i,1); 
                             } 
                         };
@@ -4087,7 +4090,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             if (state.frame % 30 === 0) checkScoreEggs();
             checkIdle();
             if (appSettings.autoFire && state.active && !state.paused) mouse.down = true;
-            if (state.frame % 3 === 0) { ui.score.innerText = `SCORE: ${Math.floor(state.score)}`; ui.combo.innerText = `COMBO x${state.combo.toFixed(1)}`; ui.lvl.innerText = state.mode === 'training' ? (trainingMode === 'aim' ? 'AIM TRAINER' : trainingMode === 'manual' ? 'MANUAL AIM' : trainingMode === 'boss_practice' ? 'BOSS PRACTICE' : 'FREE PRACTICE') : state.mode === 'boss_rush' ? `BOSS ${Math.min(state.bossesDefeated + 1, 15)}/15 | ${Math.floor(state.frame/3600)}:${(Math.floor(state.frame/60)%60).toString().padStart(2,'0')}` : state.mode === 'sandbox' ? 'SANDBOX' : state.mode === 'arcade' ? `WAVE ${state.level} | ${'❤'.repeat(arcadeLives)}` : `LVL: ${state.level}`; ui.coins.innerText = `COINS: ${totalCoins + state.runCoins}` + (isWeekendEvent() ? ' (2x)' : ''); }
+            if (state.frame % 3 === 0) { ui.score.innerText = `SCORE: ${Math.floor(state.score)}`; ui.combo.innerText = `COMBO x${state.combo.toFixed(1)}`; ui.lvl.innerText = state.mode === 'training' ? (trainingMode === 'aim' ? 'AIM TRAINER' : trainingMode === 'manual' ? 'MANUAL AIM' : trainingMode === 'boss_practice' ? 'BOSS PRACTICE' : 'FREE PRACTICE') : state.mode === 'boss_rush' ? `BOSS ${Math.min(state.bossesDefeated + 1, 15)}/15 | ${Math.floor(state.frame/3600)}:${(Math.floor(state.frame/60)%60).toString().padStart(2,'0')}` : state.mode === 'sandbox' ? 'SANDBOX' : state.mode === 'arcade' ? `WAVE ${state.level} | HP:${arcadeLives}` : `LVL: ${state.level}`; ui.coins.innerText = `COINS: ${totalCoins + state.runCoins}` + (isWeekendEvent() ? ' (2x)' : ''); }
             ui.hp.style.width = `${Math.max(0, (player.hp/state.stats.maxHp)*100)}%`; ui.shield.style.width = `${Math.min(100, player.shield)}%`; ui.xp.style.width = `${(state.xp / state.xpNeeded)*100}%`;
             if (appSettings.render3D && is3DActive) update3D();
             drawTutorialHighlight(ctx);
@@ -5445,7 +5448,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             let el = document.getElementById('flip-result');
             let spinning = 0;
             let interval = setInterval(() => {
-                el.innerText = Math.random() > 0.5 ? '🪙' : '💀';
+                el.innerText = Math.random() > 0.5 ? '[$]' : '[X]';
                 spinning++;
                 if (spinning > 12) {
                     clearInterval(interval);
@@ -5455,7 +5458,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                         el.innerHTML = '🪙 <span style="color:#00ff88;font-size:18px;">+' + bet.toLocaleString() + '!</span>';
                         playSound('powerup');
                     } else {
-                        el.innerHTML = '💀 <span style="color:#ff0055;font-size:18px;">-' + bet.toLocaleString() + '</span>';
+                        el.innerHTML = '[X] <span style="color:#ff0055;font-size:18px;">-' + bet.toLocaleString() + '</span>';
                         playSound('hit');
                     }
                     secureSave('neonVoidCoins', totalCoins);
@@ -5468,7 +5471,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
         function spinSlots(bet) {
             if (totalCoins < bet) { document.getElementById('slot-result').innerHTML = '<span style="color:#ff0055;">NOT ENOUGH COINS</span>'; return; }
             totalCoins -= bet;
-            let symbols = ['💎','🔥','⚡','💰','🎯','☠️','🌟','🍀'];
+            let symbols = ['[D]','[F]','[Z]','[$]','[X]','[!]','[*]','[+]'];
             let reels = document.querySelectorAll('.slot-reel');
             let results = [0, 0, 0];
             let spins = [0, 0, 0];
@@ -5504,7 +5507,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                         el.style.color = '#00ffcc';
                         playSound('powerup');
                     } else {
-                        el.innerHTML = '💀 NO MATCH -' + bet.toLocaleString();
+                        el.innerHTML = '[X] NO MATCH -' + bet.toLocaleString();
                         el.style.color = '#ff0055';
                         playSound('hit');
                     }
@@ -5533,7 +5536,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                 if (id === 'custom' && savedSkinData) { previewHTML = `<img src="${savedSkinData}" style="width: 40px; height: 40px; margin-bottom: 10px; image-rendering: pixelated; box-shadow: 0 0 20px ${skin.color}; border: 1px solid ${skin.color};">`; } else if (id === 'custom') { previewHTML = `<div class="skin-preview" style="color: #555; border: 1px dashed #fff; text-align:center; line-height:40px; font-size:10px;">EMPTY</div>`; } else { previewHTML = `<div class="skin-preview" style="color: ${skin.color}; text-shadow: 0 0 10px ${skin.color};"></div>`; }
                 card.innerHTML = `${previewHTML}<div style="color: ${skin.color}; font-weight: bold; text-align: center;">${skin.name}</div>`; let btn = document.createElement('button'); btn.style.borderColor = skin.color; btn.style.color = skin.color;
                 if (isEquipped) { btn.innerText = "EQUIPPED"; btn.style.background = skin.color; btn.style.color = '#000'; } else if (isUnlocked) { btn.innerText = "EQUIP"; btn.onclick = () => { equippedSkin = id; secureSave('neonVoidEquippedSkin', id); playSound('powerup'); renderShop(); }; } else { let costText = skin.price >= 1000000 ? (skin.price/1000000) + 'M' : (skin.price >= 1000 ? (skin.price/1000) + 'K' : skin.price); btn.innerText = `BUY: ${costText}`; if (totalCoins >= skin.price) { btn.onclick = () => { totalCoins -= skin.price; unlockedSkins.push(id); secureSave('neonVoidCoins', totalCoins); secureSave('neonVoidSkins', unlockedSkins); playSound('buy'); cloudSave(); renderShop(); }; } else { btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed'; } }
-                if (id === 'custom') { let editBtn = document.createElement('button'); editBtn.innerText = "✏️ EDIT"; editBtn.style.marginTop = "5px"; editBtn.style.borderColor = "#fff"; editBtn.style.color = "#fff"; editBtn.onclick = () => { openDrawScreen(); }; card.appendChild(btn); card.appendChild(editBtn); } else { card.appendChild(btn); } grid.appendChild(card);
+                if (id === 'custom') { let editBtn = document.createElement('button'); editBtn.innerText = "EDIT"; editBtn.style.marginTop = "5px"; editBtn.style.borderColor = "#fff"; editBtn.style.color = "#fff"; editBtn.onclick = () => { openDrawScreen(); }; card.appendChild(btn); card.appendChild(editBtn); } else { card.appendChild(btn); } grid.appendChild(card);
             }
             const upGrid = document.getElementById('upgrade-grid'); upGrid.innerHTML = '';
             let sortedUpgrades = Object.entries(PERMANENT_UPGRADES).sort((a,b) => a[1].price - b[1].price);
@@ -5553,8 +5556,8 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                     for (const [id, skin] of Object.entries(WISP_SKINS)) {
                         let card = document.createElement('div'); card.className = 'skin-card'; card.style.borderColor = skin.color;
                         let isUnlocked = unlockedWispSkins.includes(id); let isEquipped = equippedWispSkin === id;
-                        let modelIcons = { spirit: '✦', robot: '⚙', wolf: '🐺', frog: '🐸', bat: '🦇', parrot: '🦜', cat: '🐱', dragon: '🐉' };
-                        let icon = modelIcons[skin.model] || '✦';
+                        let modelIcons = { spirit: '*', robot: '#', wolf: 'W', frog: 'F', bat: 'B', parrot: 'P', cat: 'C', dragon: 'D' };
+                        let icon = modelIcons[skin.model] || '*';
                         card.innerHTML = `<div style="width:36px;height:36px;border-radius:50%;background:radial-gradient(circle,${skin.color}44,${skin.color}11);border:2px solid ${skin.color};box-shadow:0 0 15px ${skin.color};margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:18px;">${icon}</div><div style="color:${skin.color};font-weight:bold;text-align:center;font-size:12px;">${skin.name}</div>`;
                         let btn = document.createElement('button'); btn.style.borderColor = skin.color; btn.style.color = skin.color;
                         if (isEquipped) { btn.innerText = "EQUIPPED"; btn.style.background = skin.color; btn.style.color = '#000'; }
@@ -5594,7 +5597,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             const SKILL_TREE = {
                 OFFENSE: {
                     color: '#ff4444',
-                    icon: '⚔',
+                    icon: '[ATK]',
                     tiers: [
                         { id: 'sk_off_1', name: 'Sharp Rounds', desc: '+15% bullet damage', price: 80000, stat: 'dmgMulti', val: 0.15 },
                         { id: 'sk_off_2', name: 'Burst Coils',  desc: '+20% fire rate',    price: 160000, stat: 'fireRateMulti', val: 0.20 },
@@ -5605,7 +5608,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                 },
                 DEFENSE: {
                     color: '#44aaff',
-                    icon: '🛡',
+                    icon: '[DEF]',
                     tiers: [
                         { id: 'sk_def_1', name: 'Nano Hull',     desc: '+80 max HP',          price: 80000, stat: 'maxHp', val: 80 },
                         { id: 'sk_def_2', name: 'Phase Barrier', desc: '+30 max shield',       price: 160000, stat: 'maxShield', val: 30 },
@@ -5616,7 +5619,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                 },
                 UTILITY: {
                     color: '#44ff88',
-                    icon: '⚡',
+                    icon: '[SPD]',
                     tiers: [
                         { id: 'sk_uti_1', name: 'Thruster Mk2', desc: '+15% move speed',      price: 80000, stat: 'speedMulti', val: 0.15 },
                         { id: 'sk_uti_2', name: 'Dash Coolant', desc: 'Dash charges 30% faster', price: 160000, stat: 'dashCoolantMult', val: 0.7 },
@@ -5660,7 +5663,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                         if (isPurchased) {
                             btn.innerText = '✓ LEARNED'; btn.style.background = path.color; btn.style.color = '#000'; btn.disabled = true;
                         } else if (!prevPurchased) {
-                            btn.innerText = '🔒 LOCKED'; btn.style.opacity = '0.4'; btn.disabled = true;
+                            btn.innerText = '[LOCKED]'; btn.style.opacity = '0.4'; btn.disabled = true;
                         } else if (!canAfford) {
                             btn.innerText = `${costText} - NEED MORE`; btn.style.opacity = '0.5'; btn.disabled = true;
                         } else {
@@ -5866,7 +5869,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                     <div style="font-size:12px;color:#555;letter-spacing:4px;margin-bottom:30px;">SELECT A DRILL</div>
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;">
                         <div onclick="launchTraining('aim')" style="cursor:pointer;padding:22px 16px;border:1px solid rgba(255,204,0,0.3);border-radius:12px;background:rgba(255,204,0,0.04);transition:all 0.3s;" onmouseenter="this.style.borderColor='#ffcc00';this.style.background='rgba(255,204,0,0.1)'" onmouseleave="this.style.borderColor='rgba(255,204,0,0.3)';this.style.background='rgba(255,204,0,0.04)'">
-                            <div style="font-size:32px;margin-bottom:8px;">🎯</div>
+                            <div style="font-size:32px;margin-bottom:8px;">[TGT]</div>
                             <div style="font-family:Orbitron,sans-serif;font-size:14px;color:#ffcc00;letter-spacing:2px;">AIM TRAINER</div>
                             <div style="font-size:11px;color:#666;margin-top:6px;line-height:1.4;">Targets appear and vanish.<br>Track accuracy & reaction time.<br>Forces manual mouse aim.</div>
                         </div>
@@ -6167,7 +6170,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             let pl = parseInt(secureLoad('neonVoidPrestige', 0) || 0);
             if (pl >= 10) { alert('MAX PRESTIGE REACHED! You have achieved true Void mastery.'); return; }
             let d = document.createElement('div'); d.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;background:rgba(0,0,0,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:monospace;color:#fff;overflow-y:auto;padding:20px;box-sizing:border-box;';
-            d.innerHTML = `<div style="font-size:clamp(20px,5vw,32px);color:#ffd700;font-weight:bold;margin-bottom:20px;">${'★'.repeat(pl||0)} PRESTIGE ${'★'.repeat(pl||0)}</div><div style="font-size:18px;color:#ccc;margin-bottom:10px;">Current Level: <span style="color:#ffd700;">${pl}</span> / 10</div><div style="font-size:14px;color:#888;margin-bottom:20px;">Bonus: <span style="color:#00ffcc;">${Math.floor((Math.pow(1.1,pl)-1)*100)}% to all stats</span></div><div style="font-size:16px;color:#ff0055;margin-bottom:30px;">WARNING: This will RESET all sector progress but keep your coins and upgrades!</div><div style="font-size:14px;color:#ccc;margin-bottom:30px;">Next level: +${Math.floor((Math.pow(1.1,pl+1)-1)*100)}% to all stats</div><div style="display:flex;gap:20px;"><button onclick="doPrestige();document.querySelector('#prestige-overlay').remove();" style="padding:15px 30px;font-size:16px;font-weight:bold;background:linear-gradient(135deg,#ffd700,#ff8800);color:#000;border:none;cursor:pointer;letter-spacing:3px;border-radius:4px;">PRESTIGE!</button><button onclick="document.querySelector('#prestige-overlay').remove();" style="padding:15px 30px;font-size:16px;background:none;color:#888;border:1px solid #555;cursor:pointer;border-radius:4px;">Cancel</button></div>`;
+            d.innerHTML = `<div style="font-size:clamp(20px,5vw,32px);color:#ffd700;font-weight:bold;margin-bottom:20px;">${'*'.repeat(pl||0)} PRESTIGE ${'*'.repeat(pl||0)}</div><div style="font-size:18px;color:#ccc;margin-bottom:10px;">Current Level: <span style="color:#ffd700;">${pl}</span> / 10</div><div style="font-size:14px;color:#888;margin-bottom:20px;">Bonus: <span style="color:#00ffcc;">${Math.floor((Math.pow(1.1,pl)-1)*100)}% to all stats</span></div><div style="font-size:16px;color:#ff0055;margin-bottom:30px;">WARNING: This will RESET all sector progress but keep your coins and upgrades!</div><div style="font-size:14px;color:#ccc;margin-bottom:30px;">Next level: +${Math.floor((Math.pow(1.1,pl+1)-1)*100)}% to all stats</div><div style="display:flex;gap:20px;"><button onclick="doPrestige();document.querySelector('#prestige-overlay').remove();" style="padding:15px 30px;font-size:16px;font-weight:bold;background:linear-gradient(135deg,#ffd700,#ff8800);color:#000;border:none;cursor:pointer;letter-spacing:3px;border-radius:4px;">PRESTIGE!</button><button onclick="document.querySelector('#prestige-overlay').remove();" style="padding:15px 30px;font-size:16px;background:none;color:#888;border:1px solid #555;cursor:pointer;border-radius:4px;">Cancel</button></div>`;
             d.id = 'prestige-overlay'; document.body.appendChild(d);
         }
         function doPrestige() {
@@ -6202,10 +6205,10 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
         // Pad to 50
         for (let i = ACHIEVEMENTS.length; i < 50; i++) { ACHIEVEMENTS.push({id:`ach_${i}`,name:`Challenge ${i}`,desc:`Hidden achievement`,condition:()=>false}); }
         function getAchievementCount() { return ACHIEVEMENTS.filter(a=>secureLoad('neonVoidAch_'+a.id,'') === '1').length; }
-        function checkAchievements() { ACHIEVEMENTS.forEach(a=>{ if(secureLoad('neonVoidAch_'+a.id, '')!=='1' && a.condition && a.condition()){ secureSave('neonVoidAch_'+a.id, '1'); if(state.active) spawnText(canvas.width/2, 150, '🏆 '+a.name.toUpperCase(), '#ffd700', 20); else setTimeout(()=>alert(`ACHIEVEMENT UNLOCKED: ${a.name}\n${a.desc}`),500); } }); }
+        function checkAchievements() { ACHIEVEMENTS.forEach(a=>{ if(secureLoad('neonVoidAch_'+a.id, '')!=='1' && a.condition && a.condition()){ secureSave('neonVoidAch_'+a.id, '1'); if(state.active) spawnText(canvas.width/2, 150, '[ACH] '+a.name.toUpperCase(), '#ffd700', 20); else setTimeout(()=>alert(`ACHIEVEMENT UNLOCKED: ${a.name}\n${a.desc}`),500); } }); }
         function openAchievements() {
             let d = document.createElement('div'); d.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;background:rgba(6,6,12,0.97);overflow-y:auto;font-family:monospace;padding:20px;box-sizing:border-box;';
-            let rows = ACHIEVEMENTS.map(a=>{ let done=secureLoad('neonVoidAch_'+a.id,'')==='1'; return `<div style="display:flex;align-items:center;padding:10px;border:1px solid ${done?'#ffd700':'#222'};border-radius:6px;margin-bottom:6px;background:${done?'rgba(255,215,0,0.05)':'rgba(255,255,255,0.02)'}"><span style="font-size:20px;margin-right:10px;">${done?'🏆':'🔒'}</span><div><div style="color:${done?'#ffd700':'#555'};font-weight:bold;">${a.name}</div><div style="color:#666;font-size:11px;">${a.desc}</div></div></div>`; }).join('');
+            let rows = ACHIEVEMENTS.map(a=>{ let done=secureLoad('neonVoidAch_'+a.id,'')==='1'; return `<div style="display:flex;align-items:center;padding:10px;border:1px solid ${done?'#ffd700':'#222'};border-radius:6px;margin-bottom:6px;background:${done?'rgba(255,215,0,0.05)':'rgba(255,255,255,0.02)'}"><span style="font-size:20px;margin-right:10px;">${done?'[+]':'[-]'}</span><div><div style="color:${done?'#ffd700':'#555'};font-weight:bold;">${a.name}</div><div style="color:#666;font-size:11px;">${a.desc}</div></div></div>`; }).join('');
             d.innerHTML = `<div style="max-width:600px;margin:0 auto;"><div style="color:#ffd700;font-size:24px;font-weight:bold;text-align:center;margin-bottom:20px;">ACHIEVEMENTS (${getAchievementCount()}/50)</div>${rows}<button onclick="this.closest('[style]').remove()" style="display:block;margin:20px auto;padding:12px 30px;background:none;color:#888;border:1px solid #555;cursor:pointer;font-family:monospace;font-size:16px;border-radius:4px;">CLOSE</button></div>`;
             d.querySelector('button').onclick = () => d.remove(); document.body.appendChild(d);
         }
@@ -6236,10 +6239,10 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
         // ==================== FEATURE 28: VOID SLOTS ====================
         function openVoidSlots() {
             let d = document.createElement('div'); d.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:99999;background:rgba(6,6,12,0.97);border:2px solid #aa00ff;border-radius:12px;padding:30px;font-family:monospace;color:#fff;text-align:center;min-width:380px;';
-            let symbols = ['💀','⭐','💎','7️⃣','🔥','❄️'];
+            let symbols = ['[!]','[*]','[D]','[7]','[F]','[I]'];
             let reels = [0,1,2]; let spinning = false;
             d.id = 'void-slots-overlay';
-            d.innerHTML = `<div style="font-size:22px;color:#aa00ff;font-weight:bold;margin-bottom:15px;">VOID SLOTS</div><div style="font-size:12px;color:#888;margin-bottom:15px;">Cost: 5,000 coins per spin</div><div id="slots-display" style="font-size:48px;letter-spacing:20px;margin:20px 0;background:rgba(170,0,255,0.1);padding:15px;border-radius:8px;border:1px solid #aa00ff;">⭐ 💎 💀</div><div id="slots-result" style="min-height:40px;font-size:16px;color:#ffcc00;margin-bottom:15px;"></div><div style="font-size:11px;color:#555;margin-bottom:15px;">3x 💀 = Random Skin | 3x ⭐ = 50K Coins | 3x 💎 = Upgrade Discount | 3x 7️⃣ = JACKPOT 500K</div><button id="spin-btn" style="padding:12px 30px;font-size:16px;font-weight:bold;background:linear-gradient(135deg,#aa00ff,#ff00aa);color:#fff;border:none;cursor:pointer;border-radius:4px;margin-right:10px;" onclick="voidSpinSlots()">SPIN (5K)</button><button onclick="document.getElementById('void-slots-overlay').remove()" style="padding:12px 20px;background:none;color:#888;border:1px solid #555;cursor:pointer;border-radius:4px;">CLOSE</button>`;
+            d.innerHTML = `<div style="font-size:22px;color:#aa00ff;font-weight:bold;margin-bottom:15px;">VOID SLOTS</div><div style="font-size:12px;color:#888;margin-bottom:15px;">Cost: 5,000 coins per spin</div><div id="slots-display" style="font-size:48px;letter-spacing:20px;margin:20px 0;background:rgba(170,0,255,0.1);padding:15px;border-radius:8px;border:1px solid #aa00ff;">[*] [D] [!]</div><div id="slots-result" style="min-height:40px;font-size:16px;color:#ffcc00;margin-bottom:15px;"></div><div style="font-size:11px;color:#555;margin-bottom:15px;">3x [!] = Random Skin | 3x [*] = 50K Coins | 3x [D] = Upgrade Discount | 3x [7] = JACKPOT 500K</div><button id="spin-btn" style="padding:12px 30px;font-size:16px;font-weight:bold;background:linear-gradient(135deg,#aa00ff,#ff00aa);color:#fff;border:none;cursor:pointer;border-radius:4px;margin-right:10px;" onclick="voidSpinSlots()">SPIN (5K)</button><button onclick="document.getElementById('void-slots-overlay').remove()" style="padding:12px 20px;background:none;color:#888;border:1px solid #555;cursor:pointer;border-radius:4px;">CLOSE</button>`;
             document.body.appendChild(d);
             window.voidSpinSlots = function() {
                 if (totalCoins < 5000) { d.querySelector('#slots-result').innerText = 'NOT ENOUGH COINS!'; d.querySelector('#slots-result').style.color='#ff0055'; return; }
@@ -7248,7 +7251,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             tournamentState.opponentHp = entities.enemies.reduce((s,e)=>s+e.hp,0);
             tournamentState.opponentMaxHp = tournamentState.opponentHp;
             spawnText(canvas.width/2, canvas.height/2-20, `ROUND ${tournamentState.round}`, '#ff0055', 30);
-            spawnText(canvas.width/2, canvas.height/2+20, `DIFFICULTY: ${'★'.repeat(tournamentState.round)}`, '#ffcc00', 18);
+            spawnText(canvas.width/2, canvas.height/2+20, `DIFFICULTY: ${'*'.repeat(tournamentState.round)}`, '#ffcc00', 18);
             playSound('hit');
         }
 
@@ -8190,16 +8193,16 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
 
         // ==================== WEAPON SELECT ====================
         const WEAPONS = [
-            { id: 'standard', name: 'PULSE BLASTER', desc: 'Balanced all-rounder. Good damage, good speed.', color: '#00ffcc', stats: 'DMG: ★★★ | RATE: ★★★ | PROJ: 1', apply: () => {} },
-            { id: 'shotgun', name: 'SCATTER SHOT', desc: 'Fires 3 projectiles in a spread. Lower damage per shot.', color: '#ff8800', stats: 'DMG: ★★ | RATE: ★★ | PROJ: 3', apply: () => { state.stats.projCount += 2; state.stats.dmgMulti *= 0.65; } },
-            { id: 'railgun', name: 'RAILGUN', desc: 'Devastating single shots. Slow but pierces enemies.', color: '#ff0055', stats: 'DMG: ★★★★★ | RATE: ★ | PROJ: 1', apply: () => { state.stats.dmgMulti *= 2.5; state.stats.fireRateMulti *= 0.4; state.stats.pierce += 2; } },
-            { id: 'minigun', name: 'MINIGUN', desc: 'Extreme fire rate. Spray and pray.', color: '#ffcc00', stats: 'DMG: ★ | RATE: ★★★★★ | PROJ: 1', apply: () => { state.stats.fireRateMulti *= 2.5; state.stats.dmgMulti *= 0.45; } },
-            { id: 'laser', name: 'VOID LASER', desc: 'Rapid piercing beam. Melts through targets.', color: '#ff00ff', stats: 'DMG: ★★ | RATE: ★★★★★ | PROJ: 1', apply: () => { state.stats.dmgMulti *= 0.35; state.stats.fireRateMulti *= 5; state.stats.pierce += 10; } },
-            { id: 'seeker', name: 'SEEKER SWARM', desc: 'Slow homing missiles. They never miss.', color: '#00ff88', stats: 'DMG: ★★★★ | RATE: ★★ | PROJ: 2', apply: () => { state.stats.homing = true; state.stats.projCount += 1; state.stats.dmgMulti *= 1.3; state.stats.fireRateMulti *= 0.6; } },
-            { id: 'plasma', name: 'PLASMA STORM', desc: 'Explosive plasma. Wide area damage.', color: '#4488ff', stats: 'DMG: ★★★ | RATE: ★★ | PROJ: 3', apply: () => { state.stats.explosive = true; state.stats.projCount += 2; state.stats.dmgMulti *= 0.7; state.stats.fireRateMulti *= 0.7; } },
-            { id: 'lance', name: 'VOID LANCE', desc: 'Ultra-long range piercing spear. One shot, one kill.', color: '#ffffff', stats: 'DMG: ★★★★★ | RATE: ★ | PROJ: 1', apply: () => { state.stats.dmgMulti *= 3.5; state.stats.fireRateMulti *= 0.25; state.stats.pierce += 5; } },
-            { id: 'flak', name: 'FLAK CANNON', desc: 'Explosive burst rounds. Medium range chaos.', color: '#ff8844', stats: 'DMG: ★★★ | RATE: ★★★ | PROJ: 2', apply: () => { state.stats.explosive = true; state.stats.projCount += 1; state.stats.dmgMulti *= 0.85; } },
-            { id: 'tesla', name: 'TESLA COIL', desc: 'Chain lightning. Arcs between targets.', color: '#88ffcc', stats: 'DMG: ★★ | RATE: ★★★★ | PROJ: 1', apply: () => { state.stats.fireRateMulti *= 1.8; state.stats.dmgMulti *= 0.6; state.stats.pierce += 3; } }
+            { id: 'standard', name: 'PULSE BLASTER', desc: 'Balanced all-rounder. Good damage, good speed.', color: '#00ffcc', stats: 'DMG: *** | RATE: *** | PROJ: 1', apply: () => {} },
+            { id: 'shotgun', name: 'SCATTER SHOT', desc: 'Fires 3 projectiles in a spread. Lower damage per shot.', color: '#ff8800', stats: 'DMG: ** | RATE: ** | PROJ: 3', apply: () => { state.stats.projCount += 2; state.stats.dmgMulti *= 0.65; } },
+            { id: 'railgun', name: 'RAILGUN', desc: 'Devastating single shots. Slow but pierces enemies.', color: '#ff0055', stats: 'DMG: ***** | RATE: * | PROJ: 1', apply: () => { state.stats.dmgMulti *= 2.5; state.stats.fireRateMulti *= 0.4; state.stats.pierce += 2; } },
+            { id: 'minigun', name: 'MINIGUN', desc: 'Extreme fire rate. Spray and pray.', color: '#ffcc00', stats: 'DMG: * | RATE: ***** | PROJ: 1', apply: () => { state.stats.fireRateMulti *= 2.5; state.stats.dmgMulti *= 0.45; } },
+            { id: 'laser', name: 'VOID LASER', desc: 'Rapid piercing beam. Melts through targets.', color: '#ff00ff', stats: 'DMG: ** | RATE: ***** | PROJ: 1', apply: () => { state.stats.dmgMulti *= 0.35; state.stats.fireRateMulti *= 5; state.stats.pierce += 10; } },
+            { id: 'seeker', name: 'SEEKER SWARM', desc: 'Slow homing missiles. They never miss.', color: '#00ff88', stats: 'DMG: **** | RATE: ** | PROJ: 2', apply: () => { state.stats.homing = true; state.stats.projCount += 1; state.stats.dmgMulti *= 1.3; state.stats.fireRateMulti *= 0.6; } },
+            { id: 'plasma', name: 'PLASMA STORM', desc: 'Explosive plasma. Wide area damage.', color: '#4488ff', stats: 'DMG: *** | RATE: ** | PROJ: 3', apply: () => { state.stats.explosive = true; state.stats.projCount += 2; state.stats.dmgMulti *= 0.7; state.stats.fireRateMulti *= 0.7; } },
+            { id: 'lance', name: 'VOID LANCE', desc: 'Ultra-long range piercing spear. One shot, one kill.', color: '#ffffff', stats: 'DMG: ***** | RATE: * | PROJ: 1', apply: () => { state.stats.dmgMulti *= 3.5; state.stats.fireRateMulti *= 0.25; state.stats.pierce += 5; } },
+            { id: 'flak', name: 'FLAK CANNON', desc: 'Explosive burst rounds. Medium range chaos.', color: '#ff8844', stats: 'DMG: *** | RATE: *** | PROJ: 2', apply: () => { state.stats.explosive = true; state.stats.projCount += 1; state.stats.dmgMulti *= 0.85; } },
+            { id: 'tesla', name: 'TESLA COIL', desc: 'Chain lightning. Arcs between targets.', color: '#88ffcc', stats: 'DMG: ** | RATE: **** | PROJ: 1', apply: () => { state.stats.fireRateMulti *= 1.8; state.stats.dmgMulti *= 0.6; state.stats.pierce += 3; } }
         ];
         let selectedWeapon = null;
 
@@ -11426,7 +11429,7 @@ function generateSyncCode() {
 
             let arcadeLabel = arcadeHighScore > 0 ? `High: ${arcadeHighScore.toLocaleString()}` : 'Classic Lives';
             let prestigeLevel = parseInt(secureLoad('neonVoidPrestige', 0) || 0);
-            let prestigeBtn = unlocked > 15 ? `<button style="border-color:#ffd700; color:#ffd700; box-shadow: 0 0 20px #ffd700;" onclick="openPrestige()">PRESTIGE ${'★'.repeat(prestigeLevel)||'☆'}<br><span style="font-size:12px">Reset + ${Math.floor((Math.pow(1.1,prestigeLevel+1)-1)*100)}% Boost</span></button>` : '';
+            let prestigeBtn = unlocked > 15 ? `<button style="border-color:#ffd700; color:#ffd700; box-shadow: 0 0 20px #ffd700;" onclick="openPrestige()">PRESTIGE ${'*'.repeat(prestigeLevel)||'-'}<br><span style="font-size:12px">Reset + ${Math.floor((Math.pow(1.1,prestigeLevel+1)-1)*100)}% Boost</span></button>` : '';
             let bountyBtn = `<button style="border-color:#ff4488; color:#ff4488;" onclick="openBountyBoard()">BOUNTY BOARD<br><span style="font-size:12px">3 Active Bounties</span></button>`;
             let achieveBtn = `<button style="border-color:#aa88ff; color:#aa88ff;" onclick="openAchievements()">ACHIEVEMENTS<br><span style="font-size:12px">${getAchievementCount()}/50</span></button>`;
             let survivalBtn = `<button style="border-color:#ff6600; color:#ff6600;" onclick="startSurvivalArena()">SURVIVAL ARENA<br><span style="font-size:12px">How Long Can You Last?</span></button>`;
