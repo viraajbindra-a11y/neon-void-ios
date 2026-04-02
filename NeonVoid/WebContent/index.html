@@ -52,12 +52,12 @@
         .overlay-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 20; backdrop-filter: blur(12px); padding-top: env(safe-area-inset-top, 0px); }
         .win-theme { background: radial-gradient(ellipse at center, rgba(0,30,20,0.98) 0%, rgba(0,0,0,0.99) 70%) !important; }
         .hidden { display: none !important; }
-        .title-text { font-size: clamp(40px,10vw,80px); font-weight: 900; color: transparent; -webkit-text-stroke: 2px #ff0055; text-shadow: 0 0 20px #ff005560; margin-bottom: 10px; animation: pulse 2s infinite; text-transform: uppercase; letter-spacing: 8px; text-align: center; }
+        .title-text { font-size: clamp(40px,10vw,80px); font-weight: 900; color: transparent; -webkit-text-stroke: 2px #ff0055; text-shadow: 0 0 20px rgba(255,0,85,0.38); margin-bottom: 10px; animation: pulse 2s infinite; text-transform: uppercase; letter-spacing: 8px; text-align: center; }
         .subtitle-text { color: #fff; font-size: 20px; margin-bottom: 40px; opacity: 0.9; max-width: 700px; text-align: center; line-height: 1.6; }
         
         .btn-container { display: flex; gap: 20px; margin-top: 30px; flex-wrap: wrap; justify-content: center; max-width: 900px; }
-        button { background: rgba(0,0,0,0.6); border: 2px solid #ff0055; color: #ff0055; padding: 15px 35px; font-size: 20px; font-family: inherit; cursor: pointer; text-transform: uppercase; font-weight: bold; box-shadow: 0 0 8px #ff005540; transition: all 0.2s; min-width: 220px; text-align: center; }
-        button:hover { background: #ff0055; color: white; box-shadow: 0 0 20px #ff005580; transform: scale(1.05); }
+        button { background: rgba(0,0,0,0.6); border: 2px solid #ff0055; color: #ff0055; padding: 15px 35px; font-size: 20px; font-family: inherit; cursor: pointer; text-transform: uppercase; font-weight: bold; box-shadow: 0 0 8px rgba(255,0,85,0.25); transition: all 0.2s; min-width: 220px; text-align: center; }
+        button:hover { background: #ff0055; color: white; box-shadow: 0 0 20px rgba(255,0,85,0.5); transform: scale(1.05); }
         
         .win-theme .title-text { -webkit-text-stroke: 3px #00ff00; text-shadow: 0 0 50px #00ff00; color: #00ff00; }
         .win-theme button { border-color: #00ff00; color: #00ff00; box-shadow: 0 0 20px #00ff00; }
@@ -66,7 +66,7 @@
         
         .skin-card { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 12px 8px; border: 2px solid #fff; background: rgba(0,0,0,0.8); gap: 6px; width: auto; min-width:0; transition: all 0.2s; border-radius:6px; }
         .skin-card button { min-width: 80px; padding: 6px 10px; font-size: 13px; }
-        .shop-tab-bar { display:flex; gap:0; width:100%; max-width:1000px; margin:0 auto 10px; padding:0; overflow-x:auto; -webkit-overflow-scrolling:touch; background:none; border:none; border-bottom:2px solid #ffcc0066; }
+        .shop-tab-bar { display:flex; gap:0; width:100%; max-width:1000px; margin:0 auto 10px; padding:0; overflow-x:auto; -webkit-overflow-scrolling:touch; background:none; border:none; border-bottom:2px solid rgba(255,204,0,0.4); }
         .shop-tab { flex:none!important; min-width:0!important; padding:14px 12px!important; text-align:center; font-family:'Courier New',monospace; font-size:14px!important; font-weight:bold!important; letter-spacing:1px; color:#ffcc00!important; background:none!important; border:none!important; border-bottom:3px solid transparent!important; border-radius:0!important; box-shadow:none!important; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
         .shop-tab.active { color:#ffcc00!important; border-bottom-color:#ffcc00!important; background:rgba(255,204,0,0.1)!important; }
         .shop-tab:hover { background:rgba(255,204,0,0.05)!important; }
@@ -211,7 +211,7 @@
                 // Main hull
                 let hg=ctx.createLinearGradient(-10,-10,10,10);hg.addColorStop(0,'#ff2266');hg.addColorStop(1,'#cc0044');
                 ctx.fillStyle=hg;ctx.beginPath();ctx.moveTo(18,0);ctx.lineTo(-6,-8);ctx.lineTo(-12,-14);ctx.lineTo(-8,-6);ctx.lineTo(-10,0);ctx.lineTo(-8,6);ctx.lineTo(-12,14);ctx.lineTo(-6,8);ctx.closePath();ctx.fill();
-                ctx.strokeStyle='#ff005566';ctx.lineWidth=0.6;ctx.stroke();
+                ctx.strokeStyle='rgba(255,0,85,0.4)';ctx.lineWidth=0.6;ctx.stroke();
                 // Panel lines
                 ctx.strokeStyle='rgba(255,255,255,0.1)';ctx.lineWidth=0.4;
                 ctx.beginPath();ctx.moveTo(16,0);ctx.lineTo(-9,0);ctx.stroke();
@@ -266,17 +266,17 @@
             loop();
         })();
         </script>
-        <div style="font-size:20px;color:#00ffcc55;letter-spacing:12px;margin-bottom:8px;animation:fadeIn 1s ease;">WELCOME TO</div>
-        <div class="title-text" style="-webkit-text-stroke: 2px #ff0055; text-shadow: 0 0 15px #ff005566, 0 0 30px #ff005530; font-size:clamp(50px,12vw,80px); animation:titlePulse 3s ease-in-out infinite;">NEON VOID</div>
-        <style>@keyframes titlePulse { 0%,100% { text-shadow: 0 0 15px #ff005566, 0 0 30px #ff005530; } 50% { text-shadow: 0 0 25px #ff005566, 0 0 40px #ff005530; } } @keyframes fadeIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }</style>
+        <div style="font-size:20px;color:rgba(0,255,204,0.33);letter-spacing:12px;margin-bottom:8px;animation:fadeIn 1s ease;">WELCOME TO</div>
+        <div class="title-text" style="-webkit-text-stroke: 2px #ff0055; text-shadow: 0 0 15px rgba(255,0,85,0.4), 0 0 30px rgba(255,0,85,0.19); font-size:clamp(50px,12vw,80px); animation:titlePulse 3s ease-in-out infinite;">NEON VOID</div>
+        <style>@keyframes titlePulse { 0%,100% { text-shadow: 0 0 15px rgba(255,0,85,0.4), 0 0 30px rgba(255,0,85,0.19); } 50% { text-shadow: 0 0 25px rgba(255,0,85,0.4), 0 0 40px #ff005530; } } @keyframes fadeIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }</style>
         <div class="subtitle-text" style="color:#888;font-size:16px;letter-spacing:4px;margin-top:5px;">THE ULTIMATE SPACE SHOOTER</div>
         <div style="width:60px;height:2px;background:linear-gradient(90deg,transparent,#00ffcc,transparent);margin:20px auto;"></div>
         <div class="subtitle-text" style="color:#00ffcc;font-size:14px;letter-spacing:6px;">SELECT CALLSIGN</div>
         <div class="login-form" style="margin-top:15px;">
-            <input type="text" id="username-input" class="nv-input" placeholder="ENTER PILOT NAME" maxlength="16" autocomplete="off" style="width:320px;font-size:20px;padding:15px 25px;border-radius:4px;background:rgba(0,255,204,0.05);border:2px solid #00ffcc40;transition:all 0.3s;">
-            <input type="password" id="password-input" class="nv-input" placeholder="PASSWORD (FOR CLOUD SYNC)" maxlength="32" autocomplete="off" style="width:320px;font-size:16px;padding:12px 25px;border-radius:4px;background:rgba(0,255,204,0.05);border:2px solid #00ffcc20;transition:all 0.3s;">
+            <input type="text" id="username-input" class="nv-input" placeholder="ENTER PILOT NAME" maxlength="16" autocomplete="off" style="width:320px;font-size:20px;padding:15px 25px;border-radius:4px;background:rgba(0,255,204,0.05);border:2px solid rgba(0,255,204,0.25);transition:all 0.3s;">
+            <input type="password" id="password-input" class="nv-input" placeholder="PASSWORD (FOR CLOUD SYNC)" maxlength="32" autocomplete="off" style="width:320px;font-size:16px;padding:12px 25px;border-radius:4px;background:rgba(0,255,204,0.05);border:2px solid rgba(0,255,204,0.13);transition:all 0.3s;">
             <div style="color:#555;font-size:10px;margin-top:-8px;">Same name + password = same save on any device</div>
-            <button id="login-btn" onclick="loginUser()" style="border-color:#00ffcc; color:#000; background:linear-gradient(135deg,#00ffcc,#00aa88); box-shadow: 0 0 30px #00ffcc80; padding:12px 50px; font-size:18px; font-weight:900; letter-spacing:4px; cursor:pointer; transition:all 0.3s; border-radius:4px;">DEPLOY</button>
+            <button id="login-btn" onclick="loginUser()" style="border-color:#00ffcc; color:#000; background:linear-gradient(135deg,#00ffcc,#00aa88); box-shadow: 0 0 30px rgba(0,255,204,0.5); padding:12px 50px; font-size:18px; font-weight:900; letter-spacing:4px; cursor:pointer; transition:all 0.3s; border-radius:4px;">DEPLOY</button>
             <!-- Google/Apple Sign-In buttons: removed for now -->
             <div id="login-error" style="color: #ff0055; font-size: 14px; height: 20px;"></div>
             <div style="color:#555;font-size:11px;margin-top:10px;">ARROW KEYS / WASD + SPACE / MOUSE TO FIGHT</div>
@@ -321,7 +321,7 @@
     <div id="leaderboard-screen" class="overlay-screen hidden" style="z-index: 22;">
         <div style="width:100%; height:100%; overflow-y:auto; display:flex; flex-direction:column; align-items:center; padding:calc(50px + env(safe-area-inset-top, 0px)) 15px; box-sizing:border-box;">
             <div class="title-text" style="-webkit-text-stroke: 2px #ffcc00; text-shadow: 0 0 50px #ffcc00; font-size: clamp(28px, 8vw, 60px); word-break: break-word; text-align:center; max-width:100%; letter-spacing: 2px;">LEADERBOARDS</div>
-            <div style="font-size:11px;color:#00ffcc88;letter-spacing:3px;margin-bottom:15px;display:flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00ffcc88" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> GLOBAL RANKINGS</div>
+            <div style="font-size:11px;color:rgba(0,255,204,0.53);letter-spacing:3px;margin-bottom:15px;display:flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(0,255,204,0.53)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> GLOBAL RANKINGS</div>
             <div class="btn-container" style="margin-bottom:20px;flex-wrap:wrap;gap:8px;">
                 <button onclick="showLeaderboard('infinite')" style="border-color:#00ffcc; color:#00ffcc; padding:10px 20px; min-width:100px;">INFINITE</button>
                 <button onclick="showLeaderboard('boss_rush')" style="border-color:#ff0055; color:#ff0055; padding:10px 20px; min-width:100px;">BOSS RUSH</button>
@@ -364,7 +364,7 @@
         <div class="action-btns">
             <button id="mob-shoot" class="mob-btn mob-fire">FIRE</button>
             <button id="mob-dash" class="mob-btn mob-dash-btn">DASH</button>
-            <button id="mob-emote" class="mob-btn" onclick="openEmoteWheel()" style="width:44px;height:44px;border:2px solid #ff880088;color:#ff8800;font-size:10px;box-shadow:0 0 8px rgba(255,136,0,0.15);border-radius:50%;background:rgba(0,0,0,0.4);margin-top:6px;">EMOTE</button>
+            <button id="mob-emote" class="mob-btn" onclick="openEmoteWheel()" style="width:44px;height:44px;border:2px solid rgba(255,136,0,0.53);color:#ff8800;font-size:10px;box-shadow:0 0 8px rgba(255,136,0,0.15);border-radius:50%;background:rgba(0,0,0,0.4);margin-top:6px;">EMOTE</button>
         </div>
     </div>
 
@@ -458,14 +458,14 @@
             </div>
             <div id="shop-section-skills" class="shop-section" style="display:none;flex-direction:column;align-items:center;">
                 <h2 style="color: #ffaa00; text-decoration: underline; margin-top: 10px; letter-spacing: 5px; text-shadow: 0 0 10px #ffaa00; font-size:16px;">SKILL TREE</h2>
-                <div class="subtitle-text" style="color:#ffaa0088;font-size:12px;">Three paths. Five tiers each. Each tier requires the previous.</div>
+                <div class="subtitle-text" style="color:rgba(255,170,0,0.53);font-size:12px;">Three paths. Five tiers each. Each tier requires the previous.</div>
                 <div id="skill-tree-container" style="display:flex;flex-wrap:wrap;justify-content:center;gap:30px;max-width:1100px;margin-bottom:30px;"></div>
             </div>
             <div id="shop-section-casino" class="shop-section" style="display:none;flex-direction:column;align-items:center;">
             <h2 style="color: #ff00ff; text-decoration: underline; margin-top: 10px; letter-spacing: 5px; text-shadow: 0 0 20px #ff00ff; font-size:16px;">VOID CASINO</h2>
-            <div class="subtitle-text" style="color:#ff00ff88;font-size:12px;">Risk your coins for massive rewards. The void always wins... or does it?</div>
+            <div class="subtitle-text" style="color:rgba(255,0,255,0.53);font-size:12px;">Risk your coins for massive rewards. The void always wins... or does it?</div>
             <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:20px;max-width:800px;margin-bottom:30px;">
-                <div style="background:rgba(255,0,255,0.05);border:2px solid #ff00ff44;padding:20px;border-radius:8px;text-align:center;width:340px;">
+                <div style="background:rgba(255,0,255,0.05);border:2px solid rgba(255,0,255,0.27);padding:20px;border-radius:8px;text-align:center;width:340px;">
                     <div style="color:#ff00ff;font-size:22px;font-weight:bold;letter-spacing:3px;margin-bottom:8px;">COIN FLIP</div>
                     <div style="color:#888;font-size:13px;margin-bottom:12px;">Double or nothing. 50/50 odds.</div>
                     <div id="flip-result" style="font-size:40px;height:50px;line-height:50px;margin-bottom:10px;"></div>
@@ -476,13 +476,13 @@
                         <button onclick="coinFlip(100000)" style="border-color:#ff0055;color:#ff0055;padding:6px 14px;font-size:13px;">BET 100K</button>
                     </div>
                 </div>
-                <div style="background:rgba(255,0,255,0.05);border:2px solid #ff00ff44;padding:20px;border-radius:8px;text-align:center;width:340px;">
+                <div style="background:rgba(255,0,255,0.05);border:2px solid rgba(255,0,255,0.27);padding:20px;border-radius:8px;text-align:center;width:340px;">
                     <div style="color:#ffcc00;font-size:22px;font-weight:bold;letter-spacing:3px;margin-bottom:8px;">VOID SLOTS</div>
                     <div style="color:#888;font-size:13px;margin-bottom:12px;">Match 3 for big wins. Jackpot = 50x!</div>
                     <div id="slot-reels" style="display:flex;gap:10px;justify-content:center;margin-bottom:10px;">
-                        <div class="slot-reel" style="font-size:36px;width:50px;height:50px;line-height:50px;border:2px solid #ffcc0066;border-radius:4px;">?</div>
-                        <div class="slot-reel" style="font-size:36px;width:50px;height:50px;line-height:50px;border:2px solid #ffcc0066;border-radius:4px;">?</div>
-                        <div class="slot-reel" style="font-size:36px;width:50px;height:50px;line-height:50px;border:2px solid #ffcc0066;border-radius:4px;">?</div>
+                        <div class="slot-reel" style="font-size:36px;width:50px;height:50px;line-height:50px;border:2px solid rgba(255,204,0,0.4);border-radius:4px;">?</div>
+                        <div class="slot-reel" style="font-size:36px;width:50px;height:50px;line-height:50px;border:2px solid rgba(255,204,0,0.4);border-radius:4px;">?</div>
+                        <div class="slot-reel" style="font-size:36px;width:50px;height:50px;line-height:50px;border:2px solid rgba(255,204,0,0.4);border-radius:4px;">?</div>
                     </div>
                     <div id="slot-result" style="color:#ffcc00;font-size:16px;height:24px;margin-bottom:8px;"></div>
                     <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
@@ -1412,7 +1412,7 @@
                 if (appSettings.graphics === 'high') { ctx.shadowBlur = 6; ctx.shadowColor = '#00ff00'; }
                 ctx.fillStyle = '#00ff00';
                 ctx.beginPath(); ctx.moveTo(0, -8); ctx.lineTo(6, 0); ctx.lineTo(0, 8); ctx.lineTo(-6, 0); ctx.closePath(); ctx.fill();
-                ctx.strokeStyle = '#00ff0066'; ctx.lineWidth = 1;
+                ctx.strokeStyle = 'rgba(0,255,0,0.4)'; ctx.lineWidth = 1;
                 ctx.beginPath(); ctx.moveTo(0, -8); ctx.lineTo(0, -18); ctx.stroke();
                 ctx.fillStyle = '#88ff8888';
                 ctx.beginPath(); ctx.arc(0, 0, 3, 0, Math.PI*2); ctx.fill();
@@ -5391,7 +5391,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
     <button style="border-color:#ff0055;color:#ff0055;font-size:11px;padding:6px 10px;" onclick="startInfection()">Infection<br><span style="font-size:10px">Last Healthy Wins</span></button>
     <button style="border-color:#44ddff;color:#44ddff;font-size:11px;padding:6px 10px;" onclick="startPvP()">PvP 1v1<br><span style="font-size:10px">Best of 3 Rounds</span></button>
     <button style="border-color:#00ffaa;color:#00ffaa;font-size:11px;padding:6px 10px;" onclick="openLevelEditor()">Level Editor<br><span style="font-size:10px">Build Rooms</span></button>
-    <button style="border-color:#ff8800;color:#ff8800;font-size:11px;padding:6px 10px;box-shadow:0 0 12px #ff880040;" onclick="startDailyChallenge()">Daily Challenge<br><span style="font-size:10px">New Mods Every Day</span></button>
+    <button style="border-color:#ff8800;color:#ff8800;font-size:11px;padding:6px 10px;box-shadow:0 0 12px rgba(255,136,0,0.25);" onclick="startDailyChallenge()">Daily Challenge<br><span style="font-size:10px">New Mods Every Day</span></button>
   </div>
 </div>
 <div style="width:100%;margin-top:8px;padding-top:6px;border-top:1px solid #333;">
@@ -7336,9 +7336,9 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                     <button onclick="editorLoad()" style="border-color:#44ff88;color:#44ff88;padding:4px 10px;font-size:12px;">LOAD CODE</button>
                     <button onclick="document.getElementById('level-editor-overlay').style.display='none'" style="border-color:#fff;color:#fff;padding:4px 10px;font-size:12px;">CLOSE</button>
                 </div>
-                <canvas id="editor-canvas" width="600" height="360" style="border:2px solid #00ffcc44;cursor:crosshair;max-width:100%;"></canvas>
+                <canvas id="editor-canvas" width="600" height="360" style="border:2px solid rgba(0,255,204,0.27);cursor:crosshair;max-width:100%;"></canvas>
                 <div id="editor-code-area" style="margin-top:10px;width:100%;max-width:600px;display:none;">
-                    <textarea id="editor-code" style="width:100%;height:80px;background:#0a0a0a;color:#00ffcc;border:1px solid #00ffcc44;font-family:monospace;font-size:11px;"></textarea>
+                    <textarea id="editor-code" style="width:100%;height:80px;background:#0a0a0a;color:#00ffcc;border:1px solid rgba(0,255,204,0.27);font-family:monospace;font-size:11px;"></textarea>
                 </div>
             `;
             editorRender();
@@ -7963,7 +7963,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             let el = document.createElement('div');
             el.id = 'tut-hud';
             el.style.cssText = 'position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:9998;pointer-events:none;text-align:center;font-family:monospace;transition:opacity 0.5s,transform 0.5s;';
-            el.innerHTML = '<div style="background:rgba(6,6,12,0.85);border:1px solid #ffcc0044;border-radius:8px;padding:14px 30px;min-width:300px;"><div id="tut-title" style="font-size:20px;font-weight:bold;color:#ffcc00;text-shadow:0 0 15px #ffcc0044;letter-spacing:4px;"></div><div id="tut-desc" style="font-size:13px;color:#aaa;margin-top:6px;letter-spacing:1px;"></div><div id="tut-dots" style="margin-top:10px;display:flex;gap:5px;justify-content:center;"></div></div>';
+            el.innerHTML = '<div style="background:rgba(6,6,12,0.85);border:1px solid rgba(255,204,0,0.27);border-radius:8px;padding:14px 30px;min-width:300px;"><div id="tut-title" style="font-size:20px;font-weight:bold;color:#ffcc00;text-shadow:0 0 15px rgba(255,204,0,0.27);letter-spacing:4px;"></div><div id="tut-desc" style="font-size:13px;color:#aaa;margin-top:6px;letter-spacing:1px;"></div><div id="tut-dots" style="margin-top:10px;display:flex;gap:5px;justify-content:center;"></div></div>';
             document.body.appendChild(el);
             ui.status.innerText = 'SYSTEM: TUTORIAL';
         }
@@ -11446,14 +11446,14 @@ function generateSyncCode() {
             let infectionBtn = `<button style="border-color:#ff0055; color:#ff0055;" onclick="startInfection()">INFECTION MODE<br><span style="font-size:12px">MP: Last Healthy Wins</span></button>`;
             let hordeBtn = `<button style="border-color:#ff6600; color:#ff6600;" onclick="startHordeDefense()">HORDE DEFENSE<br><span style="font-size:12px">Place Turrets, 20 Waves</span></button>`;
             let speedrunBtn = `<button style="border-color:#ffd700; color:#ffd700;" onclick="startSpeedrun()">SPEEDRUN MODE<br><span style="font-size:12px">${speedrunBest ? 'Best: '+parseFloat(speedrunBest).toFixed(1)+'s' : 'Sectors 1-20 Timer'}</span></button>`;
-            let mirrorBtn = `<button style="border-color:#cc44ff; color:#cc44ff;" onclick="startMirror()" title="Everything is horizontally flipped - controls are reversed!">MIRROR MODE<br><span style="font-size:12px">Everything Reversed</span><br><span style="font-size:10px;color:#cc44ff88;">Controls flipped!</span></button>`;
+            let mirrorBtn = `<button style="border-color:#cc44ff; color:#cc44ff;" onclick="startMirror()" title="Everything is horizontally flipped - controls are reversed!">MIRROR MODE<br><span style="font-size:12px">Everything Reversed</span><br><span style="font-size:10px;color:rgba(204,68,255,0.53);">Controls flipped!</span></button>`;
             let chaosBtn = `<button style="border-color:#ff8800; color:#ff8800;" onclick="startChaos()">CHAOS MODE<br><span style="font-size:12px">Random Modifiers 30s</span></button>`;
             let oneHitBtn = `<button style="border-color:#ff0055; color:#ff0055;" onclick="startOneHit()">ONE HIT MODE<br><span style="font-size:12px">1 HP - Pure Skill</span></button>`;
             let bulletHellBtn = `<button style="border-color:#ff4400; color:#ff4400;" onclick="startBulletHell()">BULLET HELL<br><span style="font-size:12px">10x Enemy Fire Rate</span></button>`;
             let pacifistBtn = `<button style="border-color:#00ff88; color:#00ff88;" onclick="startPacifist()">PACIFIST MODE<br><span style="font-size:12px">No Shooting, 120s</span></button>`;
             let tagTeamBtn = `<button style="border-color:#8844ff; color:#8844ff;" onclick="startTagTeam()">TAG TEAM<br><span style="font-size:12px">MP: Swap Every 30s</span></button>`;
             let tournamentBtn = `<button style="border-color:#ffd700; color:#ffd700;" onclick="startTournament()">TOURNAMENT<br><span style="font-size:12px">3-Round AI Bracket</span></button>`;
-            let battlePassBtn = `<button style="border-color:#ffe04b; color:#ffe04b; box-shadow: 0 0 20px #ffe04b88; animation: pulse 2s infinite;" onclick="openBattlePass()">BATTLE PASS<br><span style="font-size:12px">Earn Tier Rewards</span></button>`;
+            let battlePassBtn = `<button style="border-color:#ffe04b; color:#ffe04b; box-shadow: 0 0 20px rgba(255,224,75,0.53); animation: pulse 2s infinite;" onclick="openBattlePass()">BATTLE PASS<br><span style="font-size:12px">Earn Tier Rewards</span></button>`;
             ui.menuBtns.innerHTML = `<button onclick="openMissionSelect()">Mission Mode<br><span style="font-size:12px">20 Sectors</span></button><button class="btn-infinite" onclick="startInfinite()">Infinite Mode<br><span style="font-size:12px">Endless Scaling</span></button><button style="border-color:#ff0055; color:#ff0055; box-shadow: 0 0 20px #ff0055;" onclick="startBossRush()">Boss Rush<br><span style="font-size:12px">${rushLabel}</span></button><button style="border-color:#ffcc00; color:#ffcc00; box-shadow: 0 0 20px #ffcc00; animation: pulse 2s infinite;" onclick="startArcade()">Arcade Mode<br><span style="font-size:12px">${arcadeLabel}</span></button><button style="border-color:#44ccff; color:#44ccff; box-shadow: 0 0 20px #44ccff;" onclick="startSandbox()">Sandbox<br><span style="font-size:12px">God Mode</span></button>${secretBtn}${paradoxBtn}${prestigeBtn}<button style="border-color:#00ff00; color:#00ff00; box-shadow: 0 0 20px #00ff00;" onclick="startTraining()">Training Camp<br><span style="font-size:12px">Test Weapons</span></button><button style="border-color:#00ffcc; color:#00ffcc; box-shadow: 0 0 20px #00ffcc;" onclick="openMultiplayer()">Multiplayer<br><span style="font-size:12px">Co-Op & Race</span></button><button style="border-color:#ffcc00; color:#ffcc00; box-shadow: 0 0 20px #ffcc00;" onclick="openShop()">The Hangar<br><span style="font-size:12px">Black Market</span></button><button style="border-color:#aa00ff; color:#aa00ff; box-shadow: 0 0 20px #aa00ff;" onclick="openLeaderboard()">Leaderboards<br><span style="font-size:12px">Top Pilots</span></button>${bountyBtn}${achieveBtn}${survivalBtn}${rogueBtn}${escortBtn}${raceBtn}${pvpBtn}${ctfBtn}${editorBtn}${infectionBtn}${hordeBtn}${speedrunBtn}${mirrorBtn}${chaosBtn}${oneHitBtn}${bulletHellBtn}${pacifistBtn}${tagTeamBtn}${tournamentBtn}${battlePassBtn}<button style="border-color:#fff; color:#fff;" onclick="openSettings()">Settings<br><span style="font-size:12px">Sys Config</span></button>`;
             document.getElementById('menu-coin-display').style.display = 'block';
             document.getElementById('mobile-controls').style.display = 'none';
@@ -11526,11 +11526,11 @@ function generateSyncCode() {
             .nv-topbar { display:flex;align-items:center;justify-content:space-between;padding:calc(6px + env(safe-area-inset-top, 0px)) calc(12px + env(safe-area-inset-right, 0px)) 6px calc(12px + env(safe-area-inset-left, 0px));background:linear-gradient(180deg,rgba(15,0,25,0.98),rgba(8,0,12,0.95));border-bottom:2px solid #ff005544;position:sticky;top:0;z-index:10;flex-shrink:0; }
             .nv-topbar-left { display:flex;align-items:center;gap:8px; }
             .nv-topbar-right { display:flex;align-items:center;gap:8px; }
-            .nv-pilot-badge { display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#1a0025,#0a0010);border:1.5px solid #ff005566;border-radius:20px;padding:4px 14px 4px 6px;cursor:pointer; }
+            .nv-pilot-badge { display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#1a0025,#0a0010);border:1.5px solid rgba(255,0,85,0.4);border-radius:20px;padding:4px 14px 4px 6px;cursor:pointer; }
             .nv-pilot-avatar { width:30px;height:30px;border-radius:50%;border:2px solid #00ffcc;display:flex;align-items:center;justify-content:center;font-size:16px;background:rgba(0,255,200,0.1);color:#00ffcc;padding:4px;box-sizing:border-box;overflow:hidden; }
             .nv-pilot-name { color:#00ffcc;font-weight:bold;font-size:13px;letter-spacing:1px; }
             .nv-pilot-rank { font-size:9px;color:#ff005588;letter-spacing:1px; }
-            .nv-resource { display:flex;align-items:center;gap:5px;background:linear-gradient(135deg,rgba(255,204,0,0.15),rgba(0,0,0,0.7));border:1.5px solid #ffcc0044;border-radius:16px;padding:4px 14px 4px 8px;font-size:14px;color:#ffcc00;font-weight:bold; }
+            .nv-resource { display:flex;align-items:center;gap:5px;background:linear-gradient(135deg,rgba(255,204,0,0.15),rgba(0,0,0,0.7));border:1.5px solid rgba(255,204,0,0.27);border-radius:16px;padding:4px 14px 4px 8px;font-size:14px;color:#ffcc00;font-weight:bold; }
             .nv-settings-btn { width:32px;height:32px;border-radius:50%;border:1px solid #555;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all 0.2s; }
             .nv-settings-btn:hover { border-color:#fff;background:rgba(255,255,255,0.15);transform:rotate(90deg); }
 
@@ -11559,7 +11559,7 @@ function generateSyncCode() {
             .nv-battle-btn:active { transform:scale(0.96); }
             .nv-battle-text { font-size:32px;font-weight:900;letter-spacing:8px;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.5),0 0 20px rgba(255,170,0,0.5);z-index:1; }
             .nv-battle-shimmer { position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(90deg,transparent 0%,rgba(255,255,200,0.2) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 2.5s infinite; }
-            .nv-battle-sub { font-size:10px;color:#ffaa0088;letter-spacing:3px;margin-top:4px; }
+            .nv-battle-sub { font-size:10px;color:rgba(255,170,0,0.53);letter-spacing:3px;margin-top:4px; }
 
             /* MODE SELECTOR ROW — horizontal scroll below battle */
             .nv-modes-row { display:flex;gap:8px;overflow-x:auto;overflow-y:visible;padding:8px 4px 4px;-webkit-overflow-scrolling:touch;flex-shrink:0; }
@@ -11652,7 +11652,7 @@ function generateSyncCode() {
             /* INTEL BRIEF CARD */
             .nv-intel { margin:8px 16px;padding:12px 14px;border-radius:12px;background:linear-gradient(135deg,rgba(0,255,200,0.05),rgba(0,0,0,0.7));border:1px solid #00ffcc33;flex-shrink:0; }
             .nv-intel-title { font-size:10px;color:#00ffcc;font-weight:bold;letter-spacing:2px;margin-bottom:4px; }
-            .nv-intel-text { font-size:11px;color:#00ffcc88;line-height:1.4; }
+            .nv-intel-text { font-size:11px;color:rgba(0,255,204,0.53);line-height:1.4; }
 
             /* SECTION TABS — 3 equal tabs above bottom nav */
             .nv-section-tabs { display:flex;flex-shrink:0;border-top:1px solid #ffffff11; }
@@ -11772,15 +11772,15 @@ function generateSyncCode() {
             overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:1000;display:flex;align-items:center;justify-content:center;font-family:monospace;backdrop-filter:blur(6px);';
             overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
             let panel = document.createElement('div');
-            panel.style.cssText = 'background:linear-gradient(135deg,#1a0025,#0a0015);border:2px solid #ff005566;border-radius:16px;padding:24px;max-width:360px;width:90%;text-align:center;';
+            panel.style.cssText = 'background:linear-gradient(135deg,#1a0025,#0a0015);border:2px solid rgba(255,0,85,0.4);border-radius:16px;padding:24px;max-width:360px;width:90%;text-align:center;';
             panel.innerHTML = `
                 <div style="font-size:14px;color:#ff0055;font-weight:bold;letter-spacing:3px;margin-bottom:4px;">CHOOSE YOUR AVATAR</div>
                 <div style="font-size:11px;color:#666;margin-bottom:16px;">Select a profile icon</div>
                 <div style="width:48px;height:48px;margin:0 auto 16px;color:#00ffcc;" id="avatar-preview">${playerAvatar}</div>
                 <div id="avatar-grid" style="display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-bottom:20px;"></div>
                 <div style="display:flex;gap:10px;justify-content:center;">
-                    <button onclick="document.getElementById('avatar-picker-overlay').remove()" style="background:rgba(255,0,85,0.1);border:1px solid #ff005566;color:#ff0055;padding:8px 24px;font-size:13px;cursor:pointer;font-family:monospace;border-radius:8px;">CANCEL</button>
-                    <button id="avatar-confirm-btn" style="background:rgba(0,255,204,0.15);border:1px solid #00ffcc66;color:#00ffcc;padding:8px 24px;font-size:13px;cursor:pointer;font-family:monospace;font-weight:bold;border-radius:8px;">CONFIRM</button>
+                    <button onclick="document.getElementById('avatar-picker-overlay').remove()" style="background:rgba(255,0,85,0.1);border:1px solid rgba(255,0,85,0.4);color:#ff0055;padding:8px 24px;font-size:13px;cursor:pointer;font-family:monospace;border-radius:8px;">CANCEL</button>
+                    <button id="avatar-confirm-btn" style="background:rgba(0,255,204,0.15);border:1px solid rgba(0,255,204,0.4);color:#00ffcc;padding:8px 24px;font-size:13px;cursor:pointer;font-family:monospace;font-weight:bold;border-radius:8px;">CONFIRM</button>
                 </div>
             `;
             overlay.appendChild(panel);
@@ -11857,11 +11857,11 @@ function generateSyncCode() {
             let mc = (color) => hexToRgb(color); // shorthand
 
             // Secret/Paradox mode chips
-            let secretChip = unlocked > 14 ? `<div class="nv-mode-chip nv-secret-chip" style="--gc:${mc('#00ff00')};border-color:#00ff0066;background:rgba(0,255,0,0.06);" onclick="startMission(15)">
+            let secretChip = unlocked > 14 ? `<div class="nv-mode-chip nv-secret-chip" style="--gc:${mc('#00ff00')};border-color:rgba(0,255,0,0.4);background:rgba(0,255,0,0.06);" onclick="startMission(15)">
                 <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00ff00" stroke-width="2" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>
                 <div><div class="nv-chip-label" style="color:#00ff00;">THE GLITCH</div></div>
             </div>` : '';
-            let paradoxChip = unlocked > 15 ? `<div class="nv-mode-chip nv-secret-chip" style="--gc:${mc('#ff00ff')};border-color:#ff00ff66;background:rgba(255,0,255,0.06);" onclick="startSecretBoss()">
+            let paradoxChip = unlocked > 15 ? `<div class="nv-mode-chip nv-secret-chip" style="--gc:${mc('#ff00ff')};border-color:rgba(255,0,255,0.4);background:rgba(255,0,255,0.06);" onclick="startSecretBoss()">
                 <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff00ff" stroke-width="2" stroke-linecap="round"><path d="M5 4h14M5 20h14M12 4v3a5 5 0 0 1-5 5v0a5 5 0 0 1 5 5v3M12 4v3a5 5 0 0 0 5 5v0a5 5 0 0 0-5 5v3"/></svg></span>
                 <div><div class="nv-chip-label" style="color:#ff00ff;">SECTOR ???</div></div>
             </div>` : '';
@@ -11921,7 +11921,7 @@ function generateSyncCode() {
 
                     <!-- GAME MODES HORIZONTAL SCROLL -->
                     <div class="nv-modes-row" style="padding:4px 16px 8px;">
-                        <div class="nv-mode-chip" style="--gc:${mc('#ff0055')};border-color:#ff005566;background:rgba(255,0,85,0.06);" onclick="startInfinite()">
+                        <div class="nv-mode-chip" style="--gc:${mc('#ff0055')};border-color:rgba(255,0,85,0.4);background:rgba(255,0,85,0.06);" onclick="startInfinite()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff0055" stroke-width="2.5" stroke-linecap="round"><path d="M6 12c0-2.2 1.8-4 4-4s4 1.8 4 4-1.8 4-4 4-4-1.8-4-4zM14 12c0-2.2 1.8-4 4-4s4 1.8 4 4-1.8 4-4 4-4-1.8-4-4z"/></svg></span>
                             <div><div class="nv-chip-label" style="color:#ff0055;">INFINITE</div><div class="nv-chip-sub" style="color:#ff005588;">Endless</div></div>
                         </div>
@@ -11937,7 +11937,7 @@ function generateSyncCode() {
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00ccff" stroke-width="2" stroke-linecap="round"><path d="M16 3.13a4 4 0 0 1 0 7.75M21 21v-2a4 4 0 0 0-3-3.87M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg></span>
                             <div><div class="nv-chip-label" style="color:#00ccff;">CO-OP</div><div class="nv-chip-sub" style="color:#00ccff88;">Multiplayer</div></div>
                         </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#ffcc00')};border-color:#ffcc0066;background:rgba(255,204,0,0.06);animation:pulse 2s infinite;" onclick="startArcade()">
+                        <div class="nv-mode-chip" style="--gc:${mc('#ffcc00')};border-color:rgba(255,204,0,0.4);background:rgba(255,204,0,0.06);animation:pulse 2s infinite;" onclick="startArcade()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span>
                             <div><div class="nv-chip-label" style="color:#ffcc00;">ARCADE</div><div class="nv-chip-sub" style="color:#ffcc0088;">${arcadeHighScore > 0 ? 'Best: ' + arcadeHighScore.toLocaleString() : '3 Lives'}</div></div>
                         </div>
@@ -11955,7 +11955,7 @@ function generateSyncCode() {
                         </div>
                         <div class="nv-mode-chip" style="--gc:${mc('#cc44ff')};border-color:#cc44ff66;background:rgba(204,68,255,0.06);" onclick="startMirror()" title="Everything is horizontally flipped - controls are reversed!">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#cc44ff" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M3 9l4 3-4 3M21 9l-4 3 4 3"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#cc44ff;">MIRROR</div><div class="nv-chip-sub" style="color:#cc44ff88;">All Inverted!</div></div>
+                            <div><div class="nv-chip-label" style="color:#cc44ff;">MIRROR</div><div class="nv-chip-sub" style="color:rgba(204,68,255,0.53);">All Inverted!</div></div>
                         </div>
                         <div class="nv-mode-chip" style="--gc:${mc('#88ff88')};border-color:#88ff8866;background:rgba(136,255,136,0.06);" onclick="startOG()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#88ff88" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 22v-4h6v4M12 18h.01"/></svg></span>
@@ -11965,7 +11965,7 @@ function generateSyncCode() {
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff8800" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></span>
                             <div><div class="nv-chip-label" style="color:#ff8800;">CHAOS</div><div class="nv-chip-sub" style="color:#ff880088;">Modifiers</div></div>
                         </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#ff0055')};border-color:#ff005566;background:rgba(255,0,85,0.06);" onclick="startOneHit()">
+                        <div class="nv-mode-chip" style="--gc:${mc('#ff0055')};border-color:rgba(255,0,85,0.4);background:rgba(255,0,85,0.06);" onclick="startOneHit()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff0055" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></span>
                             <div><div class="nv-chip-label" style="color:#ff0055;">ONE HIT</div><div class="nv-chip-sub" style="color:#ff005588;">1 HP</div></div>
                         </div>
@@ -11999,7 +11999,7 @@ function generateSyncCode() {
                         </div>
                         <div class="nv-mode-chip" style="--gc:${mc('#ffaa00')};border-color:#ffaa0066;background:rgba(255,170,0,0.06);" onclick="startTagTeam()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffaa00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 11.5L17 8l-4 3-2-2-6 6"/><path d="M3.5 12.5L7 16l4-3 2 2 6-6"/><path d="M2 8l4-4M18 20l4-4"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#ffaa00;">TAG TEAM</div><div class="nv-chip-sub" style="color:#ffaa0088;">Co-op Swap</div></div>
+                            <div><div class="nv-chip-label" style="color:#ffaa00;">TAG TEAM</div><div class="nv-chip-sub" style="color:rgba(255,170,0,0.53);">Co-op Swap</div></div>
                         </div>
                         <div class="nv-mode-chip" style="--gc:${mc('#ff2244')};border-color:#ff224466;background:rgba(255,34,68,0.06);" onclick="startInfection()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff2244" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="6"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="10" cy="10" r="1" fill="#ff2244"/><circle cx="14" cy="14" r="1" fill="#ff2244"/><circle cx="13" cy="10" r="0.5" fill="#ff2244"/></svg></span>
@@ -12176,7 +12176,7 @@ function generateSyncCode() {
                         actx.save(); actx.translate(sx,sy);
                         // Engine glow
                         let eg=actx.createRadialGradient(0,12,1,0,12,18);
-                        eg.addColorStop(0,'#00ffcc66'); eg.addColorStop(1,'transparent');
+                        eg.addColorStop(0,'rgba(0,255,204,0.4)'); eg.addColorStop(1,'transparent');
                         actx.fillStyle=eg; actx.fillRect(-15,5,30,25);
                         // Hull
                         actx.beginPath(); actx.moveTo(0,-14); actx.lineTo(10,8); actx.lineTo(16,14); actx.lineTo(6,10); actx.lineTo(0,16); actx.lineTo(-6,10); actx.lineTo(-16,14); actx.lineTo(-10,8); actx.closePath();
@@ -12298,7 +12298,7 @@ function generateSyncCode() {
                             t.x += t.vx; t.y += t.vy; t.life -= 0.035; t.size *= 0.97;
                             if (t.life <= 0) { saTrail.splice(i, 1); continue; }
                             sac.globalAlpha = t.life * 0.6;
-                            sac.fillStyle = t.life > 0.5 ? '#00ffcc' : '#00ffcc66';
+                            sac.fillStyle = t.life > 0.5 ? '#00ffcc' : 'rgba(0,255,204,0.4)';
                             sac.beginPath();
                             sac.arc(t.x, t.y, t.size, 0, Math.PI*2);
                             sac.fill();
@@ -12393,7 +12393,7 @@ function generateSyncCode() {
                         sac.beginPath();
                         sac.ellipse(-6, 10, 2.5, 4, 0, 0, Math.PI*2);
                         sac.fill();
-                        sac.fillStyle = '#00ffcc44';
+                        sac.fillStyle = 'rgba(0,255,204,0.27)';
                         sac.beginPath();
                         sac.ellipse(6, 12, 1.5, 1 + Math.random()*0.5, 0, 0, Math.PI*2);
                         sac.fill();
@@ -12408,12 +12408,12 @@ function generateSyncCode() {
                         sac.lineTo(-4, 0);
                         sac.closePath();
                         let cpGrad = sac.createLinearGradient(0, -12, 0, 6);
-                        cpGrad.addColorStop(0, '#00ffcc66');
+                        cpGrad.addColorStop(0, 'rgba(0,255,204,0.4)');
                         cpGrad.addColorStop(0.5, '#00ffccaa');
-                        cpGrad.addColorStop(1, '#00ffcc44');
+                        cpGrad.addColorStop(1, 'rgba(0,255,204,0.27)');
                         sac.fillStyle = cpGrad;
                         sac.fill();
-                        sac.strokeStyle = '#00ffcc44';
+                        sac.strokeStyle = 'rgba(0,255,204,0.27)';
                         sac.lineWidth = 0.5;
                         sac.stroke();
                         // Cockpit inner shine
@@ -12683,7 +12683,7 @@ function generateSyncCode() {
         let _origComboSet = null;
         // Monitor combo changes via the update loop
         let lastComboValue = 1;
-        let _comboCheckInterval = setInterval(() => {
+        window._comboCheckInterval = setInterval(() => {
             if (!state.active) return;
             let c = state.combo;
             if (c !== lastComboValue) {
@@ -14145,7 +14145,7 @@ if(mp.grappleHook){let gh=mp.grappleHook;mx.strokeStyle=COLORS.neon;mx.lineWidth
             if (cs) {
                 let boxW = 360, boxH = 70, boxX = W/2-boxW/2, boxY = 60;
                 ctx.fillStyle = 'rgba(6,6,12,0.85)'; ctx.fillRect(boxX, boxY, boxW, boxH);
-                ctx.strokeStyle = '#ffcc0044'; ctx.lineWidth = 1; ctx.strokeRect(boxX, boxY, boxW, boxH);
+                ctx.strokeStyle = 'rgba(255,204,0,0.27)'; ctx.lineWidth = 1; ctx.strokeRect(boxX, boxY, boxW, boxH);
                 ctx.fillStyle = '#ffcc00'; ctx.font = 'bold 18px monospace'; ctx.textAlign = 'center';
                 ctx.fillText(cs.msg, W/2, boxY+28);
                 ctx.fillStyle = '#888'; ctx.font = '12px monospace';
@@ -14951,7 +14951,7 @@ window.openBattlePass = function(){
   html+='<p style="text-align:center;color:#666;font-size:12px">'+bp.xp+' / 100 XP to next level</p>';
   var rewards=['500 Coins','Skin: Neon Ghost','1000 Coins','Title: Void Walker','Skin: Plasma Core','2000 Coins','Title: Star Breaker','Skin: Dark Matter','5000 Coins','Title: Cosmic Legend'];
   html+='<div style="max-width:400px;margin:16px auto">';
-  for(var i=0;i<rewards.length;i++){var unlocked=bp.level>i*5;html+='<div style="display:flex;align-items:center;gap:10px;padding:8px;margin:4px 0;background:'+(unlocked?'rgba(255,204,0,0.08)':'#0a0a0a')+';border:1px solid '+(unlocked?'#ffcc0066':'#222')+';border-radius:6px"><span style="color:'+(unlocked?'#ffcc00':'#444')+';min-width:40px">Lv '+(i*5+5)+'</span><span style="color:'+(unlocked?'#fff':'#666')+'">'+rewards[i]+'</span>'+(unlocked?'<span style="color:#00ffcc;margin-left:auto">[OK]</span>':'')+'</div>';}
+  for(var i=0;i<rewards.length;i++){var unlocked=bp.level>i*5;html+='<div style="display:flex;align-items:center;gap:10px;padding:8px;margin:4px 0;background:'+(unlocked?'rgba(255,204,0,0.08)':'#0a0a0a')+';border:1px solid '+(unlocked?'rgba(255,204,0,0.4)':'#222')+';border-radius:6px"><span style="color:'+(unlocked?'#ffcc00':'#444')+';min-width:40px">Lv '+(i*5+5)+'</span><span style="color:'+(unlocked?'#fff':'#666')+'">'+rewards[i]+'</span>'+(unlocked?'<span style="color:#00ffcc;margin-left:auto">[OK]</span>':'')+'</div>';}
   html+='</div>';
   html+='<div style="text-align:center;margin-top:16px"><button onclick="document.getElementById(\'bp-overlay\').remove()" style="background:#333;color:#fff;border:none;padding:10px 28px;cursor:pointer;border-radius:6px;font-family:monospace">CLOSE</button></div>';
   ol.innerHTML=html;document.body.appendChild(ol);
@@ -15076,7 +15076,7 @@ function showMinigameEnd(msg,color){state.active=false;state.paused=true;var ol=
 function initMinigame(mode){var W=canvas.width,H=canvas.height;entities.enemies=[];entities.eBullets=[];entities.items=[];if(mode==='minigame_dodge'){mgDodge={projectiles:[],eliminated:{},localDead:false,elimMsg:'',elimTimer:0,timer:0,speed:3,spawnRate:40};state.stats.maxHp=1;if(player)player.hp=1;}else if(mode==='minigame_targets'){mgTargets={currentTarget:null,scores:{},myScore:0,targetSize:20};if(mpState.isHost)spawnMGTarget();}else if(mode==='minigame_koth'){mgKoth={zone:{x:W/2,y:H/2,r:80},scores:{},myScore:0,stunTimer:0,zoneTimer:0,zoneMoveInterval:900};if(mpState.isHost){mgKoth.scores[peer.id]=0;Object.keys(mpState.players).forEach(function(p){mgKoth.scores[p]=0;});}}}
 function spawnMGTarget(){if(!mgTargets)return;var t={x:100+Math.random()*(canvas.width-200),y:100+Math.random()*(canvas.height-200)};mgTargets.currentTarget=t;broadcast({type:'mg-targets-spawn',t:t});}
 function updateMinigame(ctx){var W=canvas.width,H=canvas.height;
-if(state.mode==='minigame_dodge'&&mgDodge){mgDodge.timer++;mgDodge.speed=3+mgDodge.timer*0.003;mgDodge.spawnRate=Math.max(8,40-Math.floor(mgDodge.timer/60));if(mpState.isHost){if(mgDodge.timer%mgDodge.spawnRate===0){var side=Math.floor(Math.random()*4),p={x:0,y:0,vx:0,vy:0,r:6};if(side===0){p.x=Math.random()*W;p.y=-10;p.vx=(Math.random()-0.5)*2;p.vy=mgDodge.speed;}else if(side===1){p.x=Math.random()*W;p.y=H+10;p.vx=(Math.random()-0.5)*2;p.vy=-mgDodge.speed;}else if(side===2){p.x=-10;p.y=Math.random()*H;p.vx=mgDodge.speed;p.vy=(Math.random()-0.5)*2;}else{p.x=W+10;p.y=Math.random()*H;p.vx=-mgDodge.speed;p.vy=(Math.random()-0.5)*2;}mgDodge.projectiles.push(p);}for(var i=mgDodge.projectiles.length-1;i>=0;i--){var pr=mgDodge.projectiles[i];pr.x+=pr.vx;pr.y+=pr.vy;if(pr.x<-50||pr.x>W+50||pr.y<-50||pr.y>H+50)mgDodge.projectiles.splice(i,1);}if(player&&!mgDodge.localDead){for(var i=0;i<mgDodge.projectiles.length;i++){var pr=mgDodge.projectiles[i],dx=pr.x-player.x,dy=pr.y-player.y;if(Math.sqrt(dx*dx+dy*dy)<pr.r+12){mgDodge.localDead=true;mgDodge.eliminated[peer.id]=true;broadcast({type:'mg-dodge-eliminate',pid:peer.id,name:currentUsername||'Player'});var alive=[];Object.keys(mpState.players).forEach(function(p){if(!mgDodge.eliminated[p])alive.push(p);});if(alive.length<=1){var wid=alive[0]||peer.id;broadcast({type:'mg-dodge-winner',pid:wid,name:mpState.players[wid]?mpState.players[wid].name:'Host'});}break;}}}if(mgDodge.timer%3===0)broadcast({type:'mg-dodge-projectiles',p:mgDodge.projectiles.slice(-50)});}ctx.fillStyle='#ff00ff';ctx.shadowColor='#ff00ff';ctx.shadowBlur=8;for(var i=0;i<mgDodge.projectiles.length;i++){var pr=mgDodge.projectiles[i];ctx.beginPath();ctx.arc(pr.x,pr.y,pr.r,0,Math.PI*2);ctx.fill();}ctx.shadowBlur=0;ctx.strokeStyle='#ff00ff44';ctx.lineWidth=3;ctx.strokeRect(20,20,W-40,H-40);if(mgDodge.elimTimer>0){mgDodge.elimTimer--;ctx.fillStyle='#ff0055';ctx.font='bold 24px monospace';ctx.textAlign='center';ctx.fillText(mgDodge.elimMsg,W/2,60);ctx.textAlign='left';}if(mgDodge.localDead){ctx.fillStyle='rgba(255,0,0,0.3)';ctx.fillRect(0,0,W,H);ctx.fillStyle='#ff0055';ctx.font='bold 28px monospace';ctx.textAlign='center';ctx.fillText('ELIMINATED',W/2,H/2);ctx.textAlign='left';}ctx.fillStyle='#ff00ff';ctx.font='14px monospace';ctx.fillText('DODGE BALL  '+Math.floor(mgDodge.timer/60)+'s',10,20);}
+if(state.mode==='minigame_dodge'&&mgDodge){mgDodge.timer++;mgDodge.speed=3+mgDodge.timer*0.003;mgDodge.spawnRate=Math.max(8,40-Math.floor(mgDodge.timer/60));if(mpState.isHost){if(mgDodge.timer%mgDodge.spawnRate===0){var side=Math.floor(Math.random()*4),p={x:0,y:0,vx:0,vy:0,r:6};if(side===0){p.x=Math.random()*W;p.y=-10;p.vx=(Math.random()-0.5)*2;p.vy=mgDodge.speed;}else if(side===1){p.x=Math.random()*W;p.y=H+10;p.vx=(Math.random()-0.5)*2;p.vy=-mgDodge.speed;}else if(side===2){p.x=-10;p.y=Math.random()*H;p.vx=mgDodge.speed;p.vy=(Math.random()-0.5)*2;}else{p.x=W+10;p.y=Math.random()*H;p.vx=-mgDodge.speed;p.vy=(Math.random()-0.5)*2;}mgDodge.projectiles.push(p);}for(var i=mgDodge.projectiles.length-1;i>=0;i--){var pr=mgDodge.projectiles[i];pr.x+=pr.vx;pr.y+=pr.vy;if(pr.x<-50||pr.x>W+50||pr.y<-50||pr.y>H+50)mgDodge.projectiles.splice(i,1);}if(player&&!mgDodge.localDead){for(var i=0;i<mgDodge.projectiles.length;i++){var pr=mgDodge.projectiles[i],dx=pr.x-player.x,dy=pr.y-player.y;if(Math.sqrt(dx*dx+dy*dy)<pr.r+12){mgDodge.localDead=true;mgDodge.eliminated[peer.id]=true;broadcast({type:'mg-dodge-eliminate',pid:peer.id,name:currentUsername||'Player'});var alive=[];Object.keys(mpState.players).forEach(function(p){if(!mgDodge.eliminated[p])alive.push(p);});if(alive.length<=1){var wid=alive[0]||peer.id;broadcast({type:'mg-dodge-winner',pid:wid,name:mpState.players[wid]?mpState.players[wid].name:'Host'});}break;}}}if(mgDodge.timer%3===0)broadcast({type:'mg-dodge-projectiles',p:mgDodge.projectiles.slice(-50)});}ctx.fillStyle='#ff00ff';ctx.shadowColor='#ff00ff';ctx.shadowBlur=8;for(var i=0;i<mgDodge.projectiles.length;i++){var pr=mgDodge.projectiles[i];ctx.beginPath();ctx.arc(pr.x,pr.y,pr.r,0,Math.PI*2);ctx.fill();}ctx.shadowBlur=0;ctx.strokeStyle='rgba(255,0,255,0.27)';ctx.lineWidth=3;ctx.strokeRect(20,20,W-40,H-40);if(mgDodge.elimTimer>0){mgDodge.elimTimer--;ctx.fillStyle='#ff0055';ctx.font='bold 24px monospace';ctx.textAlign='center';ctx.fillText(mgDodge.elimMsg,W/2,60);ctx.textAlign='left';}if(mgDodge.localDead){ctx.fillStyle='rgba(255,0,0,0.3)';ctx.fillRect(0,0,W,H);ctx.fillStyle='#ff0055';ctx.font='bold 28px monospace';ctx.textAlign='center';ctx.fillText('ELIMINATED',W/2,H/2);ctx.textAlign='left';}ctx.fillStyle='#ff00ff';ctx.font='14px monospace';ctx.fillText('DODGE BALL  '+Math.floor(mgDodge.timer/60)+'s',10,20);}
 if(state.mode==='minigame_targets'&&mgTargets){if(mgTargets.currentTarget){var t=mgTargets.currentTarget;ctx.strokeStyle='#00ff88';ctx.lineWidth=3;ctx.shadowColor='#00ff88';ctx.shadowBlur=12;ctx.beginPath();ctx.arc(t.x,t.y,mgTargets.targetSize,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.arc(t.x,t.y,mgTargets.targetSize*0.5,0,Math.PI*2);ctx.stroke();ctx.fillStyle='#00ff88';ctx.beginPath();ctx.arc(t.x,t.y,4,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;for(var i=entities.pBullets.length-1;i>=0;i--){var b=entities.pBullets[i];if(!b)continue;var dx=b.x-t.x,dy=b.y-t.y;if(Math.sqrt(dx*dx+dy*dy)<mgTargets.targetSize+5){mgTargets.myScore++;entities.pBullets.splice(i,1);broadcast({type:'mg-targets-score',pid:peer.id,s:mgTargets.myScore});if(mgTargets.myScore>=20){broadcast({type:'mg-targets-winner',pid:peer.id,name:currentUsername||'Player'});showMinigameEnd('YOU WIN TARGET RACE!','#00ff88');}else if(mpState.isHost)spawnMGTarget();break;}}}ctx.fillStyle='#00ff88';ctx.font='bold 16px monospace';ctx.fillText('TARGET RACE — You: '+mgTargets.myScore+'/20',10,20);var sy=40;Object.keys(mgTargets.scores).forEach(function(pid){var name=mpState.players[pid]?mpState.players[pid].name:pid.substring(0,6);ctx.fillStyle='#aaa';ctx.font='12px monospace';ctx.fillText(name+': '+mgTargets.scores[pid]+'/20',10,sy);sy+=16;});}
 if(state.mode==='minigame_koth'&&mgKoth){mgKoth.zoneTimer++;if(mpState.isHost&&mgKoth.zoneTimer%mgKoth.zoneMoveInterval===0){mgKoth.zone={x:100+Math.random()*(W-200),y:100+Math.random()*(H-200),r:80};broadcast({type:'mg-koth-zone',z:mgKoth.zone});}if(player&&mgKoth.stunTimer<=0){var dx=player.x-mgKoth.zone.x,dy=player.y-mgKoth.zone.y;if(Math.sqrt(dx*dx+dy*dy)<mgKoth.zone.r){mgKoth.myScore+=1/60;if(mpState.isHost){mgKoth.scores[peer.id]=Math.floor(mgKoth.myScore);if(mgKoth.zoneTimer%30===0)broadcast({type:'mg-koth-scores',s:mgKoth.scores});if(mgKoth.myScore>=100){broadcast({type:'mg-koth-winner',pid:peer.id,name:currentUsername||'Player'});showMinigameEnd('YOU WIN KING OF THE HILL!','#ffcc00');}}}}if(mgKoth.stunTimer>0)mgKoth.stunTimer--;var z=mgKoth.zone;ctx.strokeStyle='#ffcc00';ctx.lineWidth=3;ctx.shadowColor='#ffcc00';ctx.shadowBlur=15;ctx.beginPath();ctx.arc(z.x,z.y,z.r,0,Math.PI*2);ctx.stroke();ctx.fillStyle='rgba(255,204,0,0.08)';ctx.beginPath();ctx.arc(z.x,z.y,z.r,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#ffcc00';ctx.font='10px monospace';ctx.textAlign='center';ctx.fillText('HILL',z.x,z.y+4);ctx.textAlign='left';if(mgKoth.stunTimer>0){ctx.fillStyle='rgba(255,0,0,0.2)';ctx.fillRect(0,0,W,H);ctx.fillStyle='#ff0055';ctx.font='bold 20px monospace';ctx.textAlign='center';ctx.fillText('STUNNED',W/2,H/2);ctx.textAlign='left';}ctx.fillStyle='#ffcc00';ctx.font='bold 16px monospace';ctx.fillText('KING OF THE HILL — You: '+Math.floor(mgKoth.myScore)+'/100',10,20);var sy=40;Object.keys(mgKoth.scores).forEach(function(pid){var name=mpState.players[pid]?mpState.players[pid].name:pid.substring(0,6);ctx.fillStyle='#aaa';ctx.font='12px monospace';ctx.fillText(name+': '+(mgKoth.scores[pid]||0)+'/100',10,sy);sy+=16;});}}
 
