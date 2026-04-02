@@ -9709,16 +9709,18 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
 
         var _pendingCloudSave = false;
         var _cloudDirty = false; // only save when something actually changed
+        var _cloudBackoff = false; // true when rate limited — stop all saves until page reload
         function markCloudDirty() { _cloudDirty = true; }
         async function saveCloudProfile(force) {
             if (!currentUsername) return;
+            if (_cloudBackoff && !force) return; // rate limited, don't waste requests
             // Skip if nothing changed (unless force like logout)
             if (!force && !_cloudDirty) return;
-            if (!force && Date.now() - lastCloudSave < 60000) {
+            if (!force && Date.now() - lastCloudSave < 120000) {
                 // Queue a deferred save so we don't lose data
                 if (!_pendingCloudSave) {
                     _pendingCloudSave = true;
-                    setTimeout(() => { _pendingCloudSave = false; saveCloudProfile(); }, 61000);
+                    setTimeout(() => { _pendingCloudSave = false; saveCloudProfile(); }, 121000);
                 }
                 return;
             }
@@ -9765,7 +9767,11 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             };
             try {
                 let res = await fetch(`${CLOUD_API}/save/${saveKey}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(saveData) });
-                if (!res.ok) { console.warn('Cloud save HTTP ' + res.status); return; }
+                if (!res.ok) {
+                    console.warn('Cloud save HTTP ' + res.status);
+                    if (res.status === 429 || res.status >= 500) { _cloudBackoff = true; console.warn('Cloud save backing off — rate limited'); }
+                    return;
+                }
                 console.log('Cloud save successful');
             } catch(e) { console.warn('Cloud save failed:', e.message); }
         }
