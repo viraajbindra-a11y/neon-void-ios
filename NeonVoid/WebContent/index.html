@@ -5376,7 +5376,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             // Reset chaos state
             if (typeof chaosState !== 'undefined' && chaosState.activeMods) { chaosState.activeMods = []; chaosState.modTimers = []; }
             // Remove mode-specific UI overlays
-            ['horde-ui','rogue-pick','prestige-overlay','tut-hud','bp-overlay','title-overlay','lb-overlay','clan-overlay','mentor-overlay','mastery-overlay','ach-overlay','rebirth-overlay','emote-overlay','vip-overlay','gemshop-overlay','blueprints-overlay','bm-overlay','contracts-overlay','trade-overlay','replay-overlay','mg-end-overlay','avatar-picker-overlay','bestiary-overlay','stats-overlay','daily-overlay'].forEach(id => { let el = document.getElementById(id); if (el) el.remove(); });
+            ['horde-ui','rogue-pick','prestige-overlay','tut-hud','bp-overlay','title-overlay','lb-overlay','clan-overlay','mentor-overlay','mastery-overlay','ach-overlay','rebirth-overlay','emote-overlay','vip-overlay','gemshop-overlay','blueprints-overlay','bm-overlay','contracts-overlay','trade-overlay','replay-overlay','mg-end-overlay','avatar-picker-overlay','bestiary-overlay','stats-overlay','daily-overlay','admin-overlay'].forEach(id => { let el = document.getElementById(id); if (el) el.remove(); });
             if (typeof sandboxPanel !== 'undefined' && sandboxPanel) { sandboxPanel.remove(); sandboxPanel = null; }
             if (typeof bestiaryData !== 'undefined') secureSave('neonVoidBestiary', bestiaryData);
             stopMusic(); startMenuBg(); if (appSettings.music) startMenuMusic();
@@ -5435,7 +5435,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
     <button style="border-color:#88ddff;color:#88ddff;font-size:11px;padding:5px 9px;" onclick="openBestiary()">Bestiary</button>
     <button style="border-color:#aaddff;color:#aaddff;font-size:11px;padding:5px 9px;" onclick="openStats()">Pilot Stats</button>
   </div>
-</div>`;
+</div>` + (isAdmin() ? '<div style="width:100%;margin-top:8px;padding-top:6px;border-top:1px solid #ff0055;"><button style="border-color:#ff0055;color:#ff0055;font-size:13px;padding:8px 20px;box-shadow:0 0 15px rgba(255,0,85,0.3);width:100%;" onclick="openAdminPanel()">[ADMIN] CONTROL PANEL</button></div>' : '');
             document.getElementById('menu-coin-display').style.display = 'block'; document.getElementById('mobile-controls').style.display = 'none';
         }
 
@@ -10060,13 +10060,118 @@ function generateSyncCode() {
                 userPasswordHash = secureLoad('neonVoidPassHash', '') || '';
             }
             document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('player-tag').textContent = 'PILOT: ' + currentUsername;
+            document.getElementById('player-tag').textContent = (isAdmin() ? '[ADMIN] ' : '') + 'PILOT: ' + currentUsername;
             document.getElementById('player-tag').style.display = 'block';
+            if (isAdmin()) document.getElementById('player-tag').style.color = '#ff0055';
             playSound('powerup');
+            startGlobalMsgPoll();
             // Fetch cloud profile FIRST so returning players aren't forced into tutorial
             try { await fetchCloudProfile(userPasswordHash || currentUsername); } catch(e) {}
             if (window.needsTutorial && window.needsTutorial()) { window.startTutorialStage(); return; }
             returnToMenu();
+        }
+
+        // ==================== ADMIN SYSTEM ====================
+        var ADMIN_USERS = ['FEIN', 'VIRAAJ', 'BOBERTTTT', 'SALIM_SHADY'];
+        function isAdmin() { return ADMIN_USERS.includes((currentUsername || '').toUpperCase()); }
+
+        // Global message system
+        var globalMessages = [];
+        var _globalMsgPollTimer = null;
+
+        async function sendGlobalMessage(msg) {
+            if (!isAdmin()) return;
+            msg = msg.replace(/[<>"'&]/g, '').substring(0, 200);
+            try {
+                await fetch(CLOUD_API + '/global-msg', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ from: currentUsername, msg: msg, time: Date.now() }) });
+            } catch(e) { console.warn('Global msg send failed'); }
+        }
+
+        async function fetchGlobalMessages() {
+            try {
+                let res = await fetch(CLOUD_API + '/global-msg');
+                if (res.ok) {
+                    let data = await res.json();
+                    if (data && data.messages) {
+                        let newMsgs = data.messages.filter(m => !globalMessages.some(g => g.time === m.time));
+                        newMsgs.forEach(m => {
+                            globalMessages.push(m);
+                            showGlobalBanner(m.from, m.msg);
+                        });
+                    }
+                }
+            } catch(e) {}
+        }
+
+        function showGlobalBanner(from, msg) {
+            let banner = document.createElement('div');
+            banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:999999;background:linear-gradient(90deg,rgba(255,0,85,0.9),rgba(255,136,0,0.9));color:#fff;font-family:monospace;font-size:14px;font-weight:bold;text-align:center;padding:10px 20px;animation:slideDown 0.3s ease;';
+            banner.innerHTML = '<span style="color:#ffcc00;">[ADMIN ' + (from || 'SYSTEM').replace(/[<>"'&]/g, '') + ']</span> ' + (msg || '').replace(/[<>"'&]/g, '');
+            document.body.appendChild(banner);
+            setTimeout(() => { banner.style.opacity = '0'; banner.style.transition = 'opacity 1s'; setTimeout(() => banner.remove(), 1000); }, 8000);
+        }
+
+        // Admin panel
+        function openAdminPanel() {
+            if (!isAdmin()) return;
+            let ol = document.createElement('div');
+            ol.id = 'admin-overlay';
+            ol.style.cssText = 'position:fixed;inset:0;background:rgba(6,6,12,0.95);z-index:99999;color:#fff;font-family:monospace;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;';
+            ol.innerHTML = '<div style="max-width:500px;width:100%;text-align:center;">' +
+                '<div style="color:#ff0055;font-size:24px;font-weight:bold;margin-bottom:5px;">ADMIN PANEL</div>' +
+                '<div style="color:#888;font-size:12px;margin-bottom:20px;">Logged in as ' + currentUsername + '</div>' +
+                '<div style="text-align:left;margin-bottom:15px;">' +
+                '<div style="color:#ffcc00;font-size:13px;margin-bottom:5px;">GLOBAL BROADCAST</div>' +
+                '<input id="admin-msg-input" type="text" maxlength="200" placeholder="Message to all players..." style="width:100%;padding:10px;background:#0a0a12;color:#fff;border:1px solid #ff0055;font-family:monospace;font-size:14px;box-sizing:border-box;border-radius:4px;">' +
+                '<button onclick="let m=document.getElementById(\'admin-msg-input\').value.trim();if(m){sendGlobalMessage(m);showGlobalBanner(currentUsername,m);document.getElementById(\'admin-msg-input\').value=\'\';}" style="width:100%;margin-top:8px;border-color:#ff0055;color:#ff0055;padding:10px;cursor:pointer;background:transparent;font-family:monospace;font-weight:bold;">SEND GLOBAL MESSAGE</button>' +
+                '</div>' +
+                '<div style="text-align:left;margin-bottom:15px;">' +
+                '<div style="color:#ffcc00;font-size:13px;margin-bottom:5px;">PLAYER MANAGEMENT</div>' +
+                '<input id="admin-gift-user" type="text" maxlength="16" placeholder="Player name..." style="width:100%;padding:8px;background:#0a0a12;color:#fff;border:1px solid #555;font-family:monospace;font-size:13px;box-sizing:border-box;border-radius:4px;margin-bottom:5px;">' +
+                '<input id="admin-gift-coins" type="number" placeholder="Coins to gift..." style="width:100%;padding:8px;background:#0a0a12;color:#fff;border:1px solid #555;font-family:monospace;font-size:13px;box-sizing:border-box;border-radius:4px;margin-bottom:5px;">' +
+                '<button onclick="adminGiftCoins()" style="width:100%;border-color:#ffcc00;color:#ffcc00;padding:8px;cursor:pointer;background:transparent;font-family:monospace;">GIFT COINS</button>' +
+                '</div>' +
+                '<div style="text-align:left;margin-bottom:15px;">' +
+                '<div style="color:#ffcc00;font-size:13px;margin-bottom:5px;">SERVER ACTIONS</div>' +
+                '<button onclick="sendGlobalMessage(\'SERVER MAINTENANCE IN 10 MINUTES\')" style="width:100%;border-color:#ff8800;color:#ff8800;padding:8px;cursor:pointer;background:transparent;font-family:monospace;margin-bottom:5px;">MAINTENANCE WARNING</button>' +
+                '<button onclick="sendGlobalMessage(\'DOUBLE XP EVENT IS NOW LIVE!\')" style="width:100%;border-color:#00ff88;color:#00ff88;padding:8px;cursor:pointer;background:transparent;font-family:monospace;margin-bottom:5px;">ANNOUNCE EVENT</button>' +
+                '<button onclick="sendGlobalMessage(\'Server updated — refresh for latest version!\')" style="width:100%;border-color:#44ddff;color:#44ddff;padding:8px;cursor:pointer;background:transparent;font-family:monospace;">PUSH UPDATE NOTICE</button>' +
+                '</div>' +
+                '<button onclick="document.getElementById(\'admin-overlay\').remove()" style="border-color:#555;color:#555;padding:10px 30px;cursor:pointer;background:transparent;font-family:monospace;margin-top:10px;">CLOSE</button>' +
+                '</div>';
+            document.body.appendChild(ol);
+        }
+
+        async function adminGiftCoins() {
+            let target = (document.getElementById('admin-gift-user').value || '').trim().toUpperCase();
+            let amount = parseInt(document.getElementById('admin-gift-coins').value) || 0;
+            if (!target || !amount) return;
+            // If gifting to self
+            if (target === currentUsername) {
+                totalCoins += amount; _nvSec.save('neonVoidCoins', totalCoins); cloudSave();
+                showGlobalBanner('SYSTEM', target + ' received ' + amount.toLocaleString() + ' coins');
+                return;
+            }
+            // Gift via cloud — load their profile, add coins, save back
+            try {
+                let key = _cloudKey(target);
+                let res = await fetch(CLOUD_API + '/save/' + key);
+                if (res.ok) {
+                    let data = await res.json();
+                    if (data.found && data.profile) {
+                        data.profile.coins = (data.profile.coins || 0) + amount;
+                        await fetch(CLOUD_API + '/save/' + key, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data.profile) });
+                        showGlobalBanner('SYSTEM', target + ' gifted ' + amount.toLocaleString() + ' coins by ' + currentUsername);
+                    } else { showGlobalBanner('SYSTEM', 'Player ' + target + ' not found in cloud saves'); }
+                }
+            } catch(e) { showGlobalBanner('SYSTEM', 'Gift failed: ' + e.message); }
+        }
+
+        // Poll for global messages every 30s when logged in
+        function startGlobalMsgPoll() {
+            if (_globalMsgPollTimer) return;
+            fetchGlobalMessages();
+            _globalMsgPollTimer = setInterval(fetchGlobalMessages, 30000);
         }
 
         function logoutUser() {
