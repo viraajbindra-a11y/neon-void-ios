@@ -3181,7 +3181,7 @@
                     if (!this.gauntletPhase) { this.gauntletPhase = 0; this.gauntletTimer = 0; this.gauntletHpBudget = this.maxHp * 0.2; }
                     this.gauntletTimer += hyperMult;
                     if (this.hp <= 0 && this.gauntletPhase < 4) {
-                        this.gauntletPhase++; this.hp = this.maxHp * 0.2; this.maxHp = this.maxHp * 0.2;
+                        this.gauntletPhase++; if (!this._gauntletOrigMaxHp) this._gauntletOrigMaxHp = this.maxHp; this.maxHp = this._gauntletOrigMaxHp * 0.2; this.hp = this.maxHp;
                         this.color = ['#ff4400','#aa00ff','#ffcc00','#00ffcc','#ff0055'][this.gauntletPhase];
                         spawnText(this.x, this.y-80, 'MINI-BOSS '+(this.gauntletPhase+1)+'/5', this.color, 24); shakeScreen(30);
                     }
@@ -3654,11 +3654,11 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                 return;
             }
             if (state.mode === 'training') { updateManualTraining(); updateBossPractice(); if (trainingMode === 'dummies') { if (entities.enemies.length < 5 && state.frame % 120 === 0) { entities.enemies.push(new Enemy((gameRng() * (canvas.width - 200)) + 100, (gameRng() * (canvas.height - 200)) + 100, 'dummy')); } } return; }
-            if (state.mode === 'boss_rush') { if (mpState.active && mpState.mode === 'coop' && !mpState.isHost) return; if (!activeBoss && !state.spawningBoss && state.bossesDefeated < 15) { state.spawningBoss = true; setTimeout(() => { if (!state.active) { state.spawningBoss = false; return; } activeBoss = new Boss(state.bossesDefeated); activeBoss.bossIdx = state.bossesDefeated;
+            if (state.mode === 'boss_rush') { if (mpState.active && mpState.mode === 'coop' && !mpState.isHost) return; if (!activeBoss && !state.spawningBoss && state.bossesDefeated < 20) { state.spawningBoss = true; setTimeout(() => { if (!state.active) { state.spawningBoss = false; return; } activeBoss = new Boss(state.bossesDefeated); activeBoss.bossIdx = state.bossesDefeated;
                 // Feature 17: Boss Rush Modifiers
                 let bossModifiers = ['2x_speed','regen','clone','enraged','shielded']; let bm = bossModifiers[Math.floor(Math.random()*bossModifiers.length)]; activeBoss.rushModifier = bm;
                 if(bm==='2x_speed'){if(activeBoss.speed)activeBoss.speed*=2;}
-                if(bm==='regen'){activeBoss.regen=activeBoss.hp*0.001;}
+                if(bm==='regen'){activeBoss._regenRate=activeBoss.hp*0.001;}
                 if(bm==='enraged'){activeBoss.hp*=1.5;activeBoss.maxHp=activeBoss.hp;}
                 if(bm==='shielded'){activeBoss.bossShield=activeBoss.hp*0.3;}
                 if(bm==='clone'){activeBoss.rushClone=true;} // Clone: spawn mini-copy when boss dies
@@ -3694,6 +3694,17 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
         }
 
 
+        // Shield absorb for boss rush shielded modifier
+        function damageBoss(amt) {
+            if (!activeBoss) return;
+            if (activeBoss.bossShield > 0) {
+                let absorbed = Math.min(activeBoss.bossShield, amt);
+                activeBoss.bossShield -= absorbed;
+                amt -= absorbed;
+                if (amt <= 0) { spawnParticles(activeBoss.x, activeBoss.y, '#4488ff', 3, 1); return; }
+            }
+            activeBoss.hp -= amt;
+        }
         function handleBossDeath() {
             // Broadcast boss death to co-op clients
             if (mpState.active && mpState.mode === 'coop' && mpState.isHost) {
@@ -3839,7 +3850,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                     } else {
                         player.update(); if (state.stats.nanoRepair && state.frame % 120 === 0 && player.hp < state.stats.maxHp) { player.hp = Math.min(state.stats.maxHp, player.hp + 1); spawnParticles(player.x, player.y, '#00ff88', 3, 0.3); } updateVanguardAura(); if (state.frame % 5 === 0) updateCorruptionZones(); if (state.frame % 2 === 0) updateGravityWells(); if (state.frame % 2 === 0) updateHullFragments(); if (state.frame % 3 === 0) updateVoidPortals(); if (f === framesToRun - 1) { drawCorruptionZones(ctx); drawVoidPortals(ctx); player.draw(ctx); drawVanguardAura(ctx); drawGravityWells(ctx); drawHullFragments(ctx); drawComboMorph(ctx); }
                         spawnWave(); 
-                        if (activeBoss) { activeBoss.update(); if (f === framesToRun - 1) activeBoss.draw(ctx); } 
+                        if (activeBoss) { activeBoss.update(); if (activeBoss._regenRate && activeBoss.hp < activeBoss.maxHp) activeBoss.hp = Math.min(activeBoss.maxHp, activeBoss.hp + activeBoss._regenRate); if (activeBoss.bossShield > 0 && activeBoss._shieldActive) { /* shield absorb handled in damage */ } if (f === framesToRun - 1) activeBoss.draw(ctx); } 
                         if (activeOrbitalStrike) { activeOrbitalStrike.update(); if (f === framesToRun - 1) activeOrbitalStrike.draw(ctx); if (activeOrbitalStrike.life <= 0) activeOrbitalStrike = null; }
                         
                         const updateArr = (arr, collisionLogic = null) => {
@@ -3912,10 +3923,19 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                                         if (b.isCrit) { playSound('crit'); spawnText(b.x, b.y, "CRIT " + Math.floor(b.dmg), '#ff0000', 24); } else { spawnText(b.x, b.y, Math.floor(b.dmg), player.baseColor, 16); } 
                                         spawnParticles(b.x, b.y, activeBoss.color, 5); if (state.stats.explosive || b.isBomb) triggerExplosion(b.x, b.y, b.dmg * (b.isBomb?2:1)); 
                                         if (activeBoss.hp <= 0 && !activeBoss.isDead) { if (activeBoss.variant === 'gauntlet' && (!activeBoss.gauntletPhase || activeBoss.gauntletPhase < 4)) { /* gauntlet phase reset handled in boss.update() */ } else { activeBoss.isDead = true; handleBossDeath(); } } 
-                                        if (b.pierce <= 0) dead = true; else b.pierce--; 
-                                    } 
-                                } 
-                            } 
+                                        if (b.pierce <= 0) dead = true; else b.pierce--;
+                                    }
+                                }
+                                // Duo boss pair collision
+                                if (!dead && activeBoss.duoPair && !activeBoss.duoPair.dead) {
+                                    let dp = activeBoss.duoPair;
+                                    if (Math.hypot(b.x-dp.x, b.y-dp.y) < activeBoss.radius) {
+                                        dp.hp -= b.dmg; spawnParticles(b.x, b.y, activeBoss.color, 3);
+                                        spawnText(b.x, b.y, Math.floor(b.dmg), '#ff8800', 14);
+                                        if (b.pierce <= 0) dead = true; else b.pierce--;
+                                    }
+                                }
+                            }
                             if(!dead) {
                                 for (let j=entities.enemies.length-1; j>=0; j--) {
                                     let e = entities.enemies[j];
@@ -6333,6 +6353,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
 
         function updateRaceMode() {
             if (!state.active || state.mode !== 'race_solo') return;
+            if (player && player._raceInvuln > 0) player._raceInvuln--;
             raceTimer -= 1/60;
             if (raceTimer <= 0) {
                 spawnText(canvas.width/2, canvas.height/2, 'TIME\'S UP!', '#ff0055', 28);
@@ -6365,9 +6386,10 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                     ob.x += ob.vx; ob.y += ob.vy;
                     if (ob.x < 0 || ob.x > canvas.width) ob.vx *= -1;
                     if (ob.y < 0 || ob.y > canvas.height) ob.vy *= -1;
-                    if (Math.hypot(player.x-ob.x, player.y-ob.y) < ob.r + 8) {
-                        player.hp -= 5;
-                        state.shake = 5;
+                    if (Math.hypot(player.x-ob.x, player.y-ob.y) < ob.r + 8 && !(player._raceInvuln > 0)) {
+                        player.hp -= 15;
+                        player._raceInvuln = 45; // 0.75s invuln after hit
+                        state.shake = 8;
                         spawnParticles(player.x, player.y, '#ff8800', 6, 2);
                         if (player.hp <= 0) { gameOver(); return; }
                     }
@@ -6465,7 +6487,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
         function spawnRoguelikeFloor() {
             entities.enemies = []; let floorTypes = ['chaser','shooter','sniper','tank','rammer','heavy_shooter','pulsar','ghost','mine','teleporter'];
             let count = 5 + roguelikeFloor * 2; let type = floorTypes[Math.min(roguelikeFloor-1, floorTypes.length-1)];
-            for (let i=0; i<count; i++) { entities.enemies.push(new Enemy(Math.random()*canvas.width, Math.random()*canvas.height, type)); }
+            for (let i=0; i<count; i++) { let ex, ey, tries=0; do { ex=Math.random()*canvas.width; ey=Math.random()*canvas.height; tries++; } while (player && Math.hypot(ex-player.x, ey-player.y) < 120 && tries < 20); entities.enemies.push(new Enemy(ex, ey, type)); }
             spawnText(canvas.width/2, canvas.height/2, `FLOOR ${roguelikeFloor}`, '#8844ff', 28); playSound('hit');
         }
 
@@ -9744,11 +9766,11 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             if (_cloudBackoff && !force) return; // rate limited, don't waste requests
             // Skip if nothing changed (unless force like logout)
             if (!force && !_cloudDirty) return;
-            if (!force && Date.now() - lastCloudSave < 120000) {
+            if (!force && Date.now() - lastCloudSave < 45000) {
                 // Queue a deferred save so we don't lose data
                 if (!_pendingCloudSave) {
                     _pendingCloudSave = true;
-                    setTimeout(() => { _pendingCloudSave = false; saveCloudProfile(); }, 121000);
+                    setTimeout(() => { _pendingCloudSave = false; saveCloudProfile(); }, 46000);
                 }
                 return;
             }
@@ -9797,7 +9819,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                 let res = await fetch(`${CLOUD_API}/save/${saveKey}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(saveData) });
                 if (!res.ok) {
                     console.warn('Cloud save HTTP ' + res.status);
-                    if (res.status === 429 || res.status >= 500) { _cloudBackoff = true; console.warn('Cloud save backing off — rate limited'); }
+                    if (res.status === 429 || res.status >= 500) { _cloudBackoff = true; console.warn('Cloud save backing off — rate limited'); setTimeout(() => { _cloudBackoff = false; }, 120000); }
                     return;
                 }
                 console.log('Cloud save successful');
@@ -9807,8 +9829,22 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
         function cloudSave() { _cloudDirty = true; saveCloudProfile(); }
 
         // Auto-save to cloud on page close (force) or tab switch (only if dirty)
-        window.addEventListener('beforeunload', () => { if (currentUsername && _cloudDirty) saveCloudProfile(true); });
-        document.addEventListener('visibilitychange', () => { if (document.hidden && currentUsername && _cloudDirty) saveCloudProfile(); });
+        window.addEventListener('beforeunload', () => {
+            // Save run coins locally if mid-game
+            if (typeof state !== 'undefined' && state.active && state.runCoins > 0 && !state._coinsSaved) {
+                totalCoins += state.runCoins; _nvSec.save('neonVoidCoins', totalCoins); state._coinsSaved = true;
+            }
+            if (currentUsername && _cloudDirty) saveCloudProfile(true);
+        });
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // Save run coins when tab is hidden / app backgrounded
+                if (typeof state !== 'undefined' && state.active && state.runCoins > 0) {
+                    _nvSec.save('neonVoidCoins', totalCoins + state.runCoins);
+                }
+                if (currentUsername && _cloudDirty) saveCloudProfile();
+            }
+        });
 
 
 // ==================== FEATURE 97: ACCESSIBILITY OPTIONS ====================
