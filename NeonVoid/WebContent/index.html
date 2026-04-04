@@ -160,7 +160,7 @@
         #wave-announce .wave-sub { font-size: 16px; color: #888; margin-top: 5px; }
         #combo-bar-container { position: absolute; bottom: 0; left: 0; width: 100%; height: 4px; z-index: 5; pointer-events: none; background: rgba(0,0,0,0.3); }
         #combo-bar { height: 100%; background: #ffcc00; box-shadow: 0 0 10px #ffcc00; transition: width 0.1s, background 0.3s; width: 0%; }
-        #weapon-select { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 25; background: rgba(0,0,0,0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
+        #weapon-select { position: fixed; inset: 0; z-index: 25; background: rgba(0,0,0,0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
         .weapon-card { border: 2px solid #555; padding: 20px 30px; min-width: 250px; text-align: center; cursor: pointer; background: rgba(0,0,0,0.8); transition: all 0.2s; }
         .weapon-card:hover { border-color: #00ffcc; box-shadow: 0 0 25px rgba(0,255,204,0.4); transform: scale(1.05); }
         .weapon-card .wep-name { font-size: 22px; font-weight: 900; letter-spacing: 3px; }
@@ -223,7 +223,7 @@
                 ctx.beginPath();ctx.arc(-11,13,1.2,0,Math.PI*2);ctx.fill();
                 // Weapon hardpoints
                 ctx.fillStyle='#333';ctx.fillRect(-3,-9,2,3);ctx.fillRect(-3,6,2,3);
-                ctx.fillStyle='#ff005588';ctx.fillRect(-2.5,-8.5,1,1.5);ctx.fillRect(-2.5,6.5,1,1.5);
+                ctx.fillStyle='rgba(255,0,85,0.53)';ctx.fillRect(-2.5,-8.5,1,1.5);ctx.fillRect(-2.5,6.5,1,1.5);
                 // Engine nacelles
                 ctx.fillStyle='#0a0a1e';ctx.beginPath();ctx.ellipse(-8,-5,2,3.5,0,0,Math.PI*2);ctx.fill();
                 ctx.beginPath();ctx.ellipse(-8,5,2,3.5,0,0,Math.PI*2);ctx.fill();
@@ -231,9 +231,9 @@
                 ctx.beginPath();ctx.ellipse(-10,-5,1.2,1+Math.random()*0.5,0,0,Math.PI*2);ctx.fill();
                 ctx.beginPath();ctx.ellipse(-10,5,1.2,1+Math.random()*0.5,0,0,Math.PI*2);ctx.fill();
                 // Cockpit
-                let cg=ctx.createLinearGradient(4,-4,8,4);cg.addColorStop(0,'#00ffcc55');cg.addColorStop(0.5,'#00ffcc99');cg.addColorStop(1,'#00ffcc33');
+                let cg=ctx.createLinearGradient(4,-4,8,4);cg.addColorStop(0,'rgba(0,255,204,0.33)');cg.addColorStop(0.5,'rgba(0,255,204,0.6)');cg.addColorStop(1,'rgba(0,255,204,0.2)');
                 ctx.fillStyle=cg;ctx.beginPath();ctx.moveTo(12,0);ctx.lineTo(4,-3.5);ctx.lineTo(2,0);ctx.lineTo(4,3.5);ctx.closePath();ctx.fill();
-                ctx.fillStyle='#00ffcccc';ctx.beginPath();ctx.moveTo(10,0);ctx.lineTo(6,-2);ctx.lineTo(5,0);ctx.lineTo(6,2);ctx.closePath();ctx.fill();
+                ctx.fillStyle='rgba(0,255,204,0.8)';ctx.beginPath();ctx.moveTo(10,0);ctx.lineTo(6,-2);ctx.lineTo(5,0);ctx.lineTo(6,2);ctx.closePath();ctx.fill();
                 // Nose highlight
                 ctx.fillStyle='rgba(255,255,255,0.3)';ctx.beginPath();ctx.arc(17,0,1,0,Math.PI*2);ctx.fill();
                 ctx.restore();
@@ -268,7 +268,7 @@
         </script>
         <div style="font-size:20px;color:rgba(0,255,204,0.33);letter-spacing:12px;margin-bottom:8px;animation:fadeIn 1s ease;">WELCOME TO</div>
         <div class="title-text" style="-webkit-text-stroke: 2px #ff0055; text-shadow: 0 0 15px rgba(255,0,85,0.4), 0 0 30px rgba(255,0,85,0.19); font-size:clamp(50px,12vw,80px); animation:titlePulse 3s ease-in-out infinite;">NEON VOID</div>
-        <style>@keyframes titlePulse { 0%,100% { text-shadow: 0 0 15px rgba(255,0,85,0.4), 0 0 30px rgba(255,0,85,0.19); } 50% { text-shadow: 0 0 25px rgba(255,0,85,0.4), 0 0 40px #ff005530; } } @keyframes fadeIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }</style>
+        <style>@keyframes titlePulse { 0%,100% { text-shadow: 0 0 15px rgba(255,0,85,0.4), 0 0 30px rgba(255,0,85,0.19); } 50% { text-shadow: 0 0 25px rgba(255,0,85,0.4), 0 0 40px rgba(255,0,85,0.19); } } @keyframes fadeIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }</style>
         <div class="subtitle-text" style="color:#888;font-size:16px;letter-spacing:4px;margin-top:5px;">THE ULTIMATE SPACE SHOOTER</div>
         <div style="width:60px;height:2px;background:linear-gradient(90deg,transparent,#00ffcc,transparent);margin:20px auto;"></div>
         <div class="subtitle-text" style="color:#00ffcc;font-size:14px;letter-spacing:6px;">SELECT CALLSIGN</div>
@@ -1400,7 +1400,7 @@
                 ctx.fillStyle = '#cc3300';
                 ctx.fillRect(-3, -7, 6, 3); // barrel
                 ctx.fillRect(-3, 4, 6, 3);
-                ctx.fillStyle = '#ff660088';
+                ctx.fillStyle = 'rgba(255,102,0,0.53)';
                 ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI*2); ctx.fill();
                 ctx.restore();
             }
@@ -1414,7 +1414,7 @@
                 ctx.beginPath(); ctx.moveTo(0, -8); ctx.lineTo(6, 0); ctx.lineTo(0, 8); ctx.lineTo(-6, 0); ctx.closePath(); ctx.fill();
                 ctx.strokeStyle = 'rgba(0,255,0,0.4)'; ctx.lineWidth = 1;
                 ctx.beginPath(); ctx.moveTo(0, -8); ctx.lineTo(0, -18); ctx.stroke();
-                ctx.fillStyle = '#88ff8888';
+                ctx.fillStyle = 'rgba(136,255,136,0.53)';
                 ctx.beginPath(); ctx.arc(0, 0, 3, 0, Math.PI*2); ctx.fill();
                 ctx.restore();
             }
@@ -1431,7 +1431,7 @@
                     let a = (state.frame * 0.3) + (i * Math.PI * 2 / 3);
                     ctx.beginPath(); ctx.moveTo(Math.cos(a)*3, Math.sin(a)*3); ctx.lineTo(Math.cos(a)*12, Math.sin(a)*12); ctx.stroke();
                 }
-                ctx.fillStyle = '#ffff0088';
+                ctx.fillStyle = 'rgba(255,255,0,0.53)';
                 ctx.beginPath(); ctx.arc(0, 0, 2.5, 0, Math.PI*2); ctx.fill();
                 ctx.restore();
             }
@@ -1450,7 +1450,7 @@
                     ctx.lineTo(Math.cos(a2) * 4, Math.sin(a2) * 4);
                 }
                 ctx.closePath(); ctx.fill();
-                ctx.fillStyle = '#ff88ff88';
+                ctx.fillStyle = 'rgba(255,136,255,0.53)';
                 ctx.beginPath(); ctx.arc(0, 0, 3, 0, Math.PI*2); ctx.fill();
                 ctx.restore();
             }
@@ -1479,7 +1479,7 @@
                 ctx.fillRect(-2, -12, 4, 24); // barrel
                 ctx.fillStyle = '#aaa';
                 ctx.fillRect(-4, -2, 8, 4); // body
-                ctx.fillStyle = '#ff000088';
+                ctx.fillStyle = 'rgba(255,0,0,0.53)';
                 ctx.beginPath(); ctx.arc(0, -12, 2, 0, Math.PI*2); ctx.fill(); // laser dot
                 ctx.restore();
             }
@@ -1805,7 +1805,7 @@
                     ctx.arc(this.owner.x + 30, this.owner.y - 20, 6, 0, Math.PI * 2);
                     ctx.fill();
                     ctx.globalAlpha = 1;
-                    ctx.fillStyle = '#ffffff88';
+                    ctx.fillStyle = 'rgba(255,255,255,0.53)';
                     ctx.font = 'bold 10px Courier New';
                     ctx.textAlign = 'center';
                     ctx.fillText(secs + 's', this.owner.x + 30, this.owner.y - 30);
@@ -1863,7 +1863,7 @@
                     // Mech drone - boxy body + antenna + thruster
                     ctx.fillStyle = color; ctx.globalAlpha = pulse;
                     ctx.fillRect(-6, -5, 12, 10); // main hull
-                    ctx.fillStyle = '#ffffff44'; ctx.fillRect(-5, -4, 10, 4); // visor
+                    ctx.fillStyle = 'rgba(255,255,255,0.27)'; ctx.fillRect(-5, -4, 10, 4); // visor
                     ctx.globalAlpha = 1; ctx.fillStyle = atk ? '#ff0044' : '#00ffcc';
                     ctx.fillRect(-3, -3, 3, 2); ctx.fillRect(1, -3, 3, 2); // eyes
                     ctx.fillStyle = color; ctx.globalAlpha = 0.7;
@@ -1872,7 +1872,7 @@
                     ctx.fillStyle = atk ? '#ff4400' : color; ctx.globalAlpha = 0.4 + Math.sin(state.frame * 0.3) * 0.3;
                     ctx.beginPath(); ctx.arc(0, -9 + wF * 2, 1.5, 0, Math.PI * 2); ctx.fill(); // antenna tip
                     // Thrusters
-                    ctx.globalAlpha = 0.5; ctx.fillStyle = '#ff880088';
+                    ctx.globalAlpha = 0.5; ctx.fillStyle = 'rgba(255,136,0,0.53)';
                     ctx.fillRect(-5, 5, 3, 2 + Math.random() * 2); ctx.fillRect(2, 5, 3, 2 + Math.random() * 2);
 
                 } else if (model === 'wolf') {
@@ -1898,7 +1898,7 @@
                     // Frog - round body + big eyes + legs
                     ctx.fillStyle = color; ctx.globalAlpha = pulse;
                     ctx.beginPath(); ctx.ellipse(0, 1, 8, 6, 0, 0, Math.PI * 2); ctx.fill(); // body
-                    ctx.fillStyle = '#ffffff22'; ctx.beginPath(); ctx.ellipse(0, -1, 5, 3, 0, 0, Math.PI); ctx.fill(); // belly highlight
+                    ctx.fillStyle = 'rgba(255,255,255,0.13)'; ctx.beginPath(); ctx.ellipse(0, -1, 5, 3, 0, 0, Math.PI); ctx.fill(); // belly highlight
                     // Big bulging eyes
                     ctx.fillStyle = '#fff'; ctx.globalAlpha = 1;
                     ctx.beginPath(); ctx.arc(4, -5, 3.5, 0, Math.PI * 2); ctx.fill();
@@ -1963,7 +1963,7 @@
                     ctx.beginPath(); ctx.moveTo(-3, -5); ctx.lineTo(-5, -12 + wF * 1.5); ctx.lineTo(-1, -6); ctx.closePath(); ctx.fill();
                     ctx.beginPath(); ctx.moveTo(3, -5); ctx.lineTo(5, -12 + wF * 1.5); ctx.lineTo(1, -6); ctx.closePath(); ctx.fill();
                     // Inner ears
-                    ctx.fillStyle = '#ff88aa44'; ctx.beginPath(); ctx.moveTo(-2.5, -5.5); ctx.lineTo(-4, -10 + wF * 1.5); ctx.lineTo(-1.2, -6.2); ctx.closePath(); ctx.fill();
+                    ctx.fillStyle = 'rgba(255,136,170,0.27)'; ctx.beginPath(); ctx.moveTo(-2.5, -5.5); ctx.lineTo(-4, -10 + wF * 1.5); ctx.lineTo(-1.2, -6.2); ctx.closePath(); ctx.fill();
                     ctx.beginPath(); ctx.moveTo(3.2, -5.5); ctx.lineTo(4.5, -10 + wF * 1.5); ctx.lineTo(1.2, -6.2); ctx.closePath(); ctx.fill();
                     // Eyes
                     ctx.fillStyle = atk ? '#ff0044' : '#aaff00'; ctx.globalAlpha = 1;
@@ -1975,7 +1975,7 @@
                     // Nose + mouth
                     ctx.fillStyle = '#ff88aa'; ctx.beginPath(); ctx.moveTo(5.5, 0.5); ctx.lineTo(6.5, 0); ctx.lineTo(5.5, -0.5); ctx.closePath(); ctx.fill();
                     // Whiskers
-                    ctx.strokeStyle = '#ffffff55'; ctx.lineWidth = 0.7; ctx.globalAlpha = 0.5;
+                    ctx.strokeStyle = 'rgba(255,255,255,0.33)'; ctx.lineWidth = 0.7; ctx.globalAlpha = 0.5;
                     ctx.beginPath(); ctx.moveTo(5, 1); ctx.lineTo(12, -1); ctx.stroke();
                     ctx.beginPath(); ctx.moveTo(5, 2); ctx.lineTo(12, 3); ctx.stroke();
                     ctx.beginPath(); ctx.moveTo(5, 0); ctx.lineTo(11, -3); ctx.stroke();
@@ -2009,7 +2009,7 @@
                     if (atk) {
                         ctx.globalAlpha = 0.5 + Math.random() * 0.3;
                         let grd = ctx.createLinearGradient(9, 0, 22, 0);
-                        grd.addColorStop(0, '#ffcc00'); grd.addColorStop(0.5, '#ff4400'); grd.addColorStop(1, '#ff000000');
+                        grd.addColorStop(0, '#ffcc00'); grd.addColorStop(0.5, '#ff4400'); grd.addColorStop(1, 'rgba(255,0,0,0)');
                         ctx.fillStyle = grd;
                         ctx.beginPath(); ctx.moveTo(9, -2); ctx.quadraticCurveTo(16, -1 + Math.random() * 2, 20 + Math.random() * 4, 0);
                         ctx.quadraticCurveTo(16, 1 + Math.random() * 2, 9, 2); ctx.closePath(); ctx.fill();
@@ -2026,11 +2026,11 @@
 
                 // State indicator ring
                 if (this.state === 'ATTACK') {
-                    ctx.strokeStyle = '#ff004466'; ctx.lineWidth = 1.5;
+                    ctx.strokeStyle = 'rgba(255,0,68,0.4)'; ctx.lineWidth = 1.5;
                     ctx.globalAlpha = 0.4 + Math.sin(state.frame * 0.2) * 0.2;
                     ctx.beginPath(); ctx.arc(0, 0, 14 + Math.sin(state.frame * 0.25) * 2, 0, Math.PI * 2); ctx.stroke();
                 } else if (this.state === 'FETCH') {
-                    ctx.strokeStyle = '#00ff8855'; ctx.lineWidth = 1; ctx.globalAlpha = 0.35;
+                    ctx.strokeStyle = 'rgba(0,255,136,0.33)'; ctx.lineWidth = 1; ctx.globalAlpha = 0.35;
                     ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.arc(0, 0, 13, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
                 }
 
@@ -2038,7 +2038,7 @@
                 if (this.hp < this.maxHp) {
                     ctx.globalAlpha = 1; ctx.shadowBlur = 0;
                     let barW = 24, barH = 3, hpPct = Math.max(0, this.hp / this.maxHp);
-                    ctx.fillStyle = '#00000099'; ctx.fillRect(-barW / 2, -15, barW, barH);
+                    ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fillRect(-barW / 2, -15, barW, barH);
                     ctx.fillStyle = hpPct > 0.5 ? '#00ff88' : (hpPct > 0.25 ? '#ffcc00' : '#ff0055');
                     ctx.fillRect(-barW / 2, -15, barW * hpPct, barH);
                 }
@@ -2557,7 +2557,7 @@
                     ctx.fillStyle = col;
                     ctx.beginPath(); ctx.ellipse(0, 0, this.radius * 1.4, this.radius * 0.8, 0, 0, Math.PI*2); ctx.fill();
                     // Warhead tip
-                    ctx.fillStyle = '#ffffff88';
+                    ctx.fillStyle = 'rgba(255,255,255,0.53)';
                     ctx.beginPath(); ctx.ellipse(this.radius * 0.8, 0, 3, 2, 0, 0, Math.PI*2); ctx.fill();
                     ctx.restore();
                     ctx.shadowBlur = 0;
@@ -2594,7 +2594,7 @@
                     let er=this.radius;
                     ctx.fillRect(this.x-er,this.y-er,er*2,er*2);
                     // Hot center
-                    ctx.fillStyle = '#ffffff66';
+                    ctx.fillStyle = 'rgba(255,255,255,0.4)';
                     ctx.fillRect(this.x-1,this.y-1,2,2);
                     ctx.shadowBlur = 0;
                     if (this.ghost) ctx.globalAlpha = 1;
@@ -2731,7 +2731,7 @@
                     let bWid = this.radius * 0.7;
                     ctx.fillStyle = col;
                     ctx.beginPath(); ctx.ellipse(0, 0, bLen, bWid, 0, 0, Math.PI*2); ctx.fill();
-                    ctx.fillStyle = '#ffffffcc';
+                    ctx.fillStyle = 'rgba(255,255,255,0.8)';
                     ctx.beginPath(); ctx.ellipse(bLen * 0.15, 0, bLen * 0.5, bWid * 0.35, 0, 0, Math.PI*2); ctx.fill();
                     ctx.fillStyle = '#ffffff';
                     ctx.beginPath(); ctx.arc(bLen * 0.7, 0, 1.2, 0, Math.PI*2); ctx.fill();
@@ -5376,12 +5376,12 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             // Reset chaos state
             if (typeof chaosState !== 'undefined' && chaosState.activeMods) { chaosState.activeMods = []; chaosState.modTimers = []; }
             // Remove mode-specific UI overlays
-            ['horde-ui','rogue-pick','prestige-overlay','tut-hud','bp-overlay','title-overlay','lb-overlay','clan-overlay','mentor-overlay','mastery-overlay','ach-overlay','rebirth-overlay','emote-overlay','vip-overlay','gemshop-overlay','blueprints-overlay','bm-overlay','contracts-overlay','trade-overlay','replay-overlay','mg-end-overlay','avatar-picker-overlay','bestiary-overlay','stats-overlay','daily-overlay','admin-overlay'].forEach(id => { let el = document.getElementById(id); if (el) el.remove(); });
+            ['horde-ui','rogue-pick','prestige-overlay','tut-hud','bp-overlay','title-overlay','lb-overlay','clan-overlay','mentor-overlay','mastery-overlay','ach-overlay','rebirth-overlay','emote-overlay','vip-overlay','gemshop-overlay','blueprints-overlay','bm-overlay','contracts-overlay','trade-overlay','replay-overlay','mg-end-overlay','avatar-picker-overlay','bestiary-overlay','stats-overlay','daily-overlay','admin-overlay','bgtheme-overlay','glow-overlay'].forEach(id => { let el = document.getElementById(id); if (el) el.remove(); });
             if (typeof sandboxPanel !== 'undefined' && sandboxPanel) { sandboxPanel.remove(); sandboxPanel = null; }
             if (typeof bestiaryData !== 'undefined') secureSave('neonVoidBestiary', bestiaryData);
             stopMusic(); startMenuBg(); if (appSettings.music) startMenuMusic();
             ui.mainOverlay.classList.remove('hidden'); ui.mainOverlay.classList.remove('win-theme');
-            ui.mainTitle.innerText = "NEON VOID"; ui.mainTitle.style.webkitTextStroke = "2px #ff0055"; ui.mainTitle.style.textShadow = "0 0 20px #ff005560";
+            ui.mainTitle.innerText = "NEON VOID"; ui.mainTitle.style.webkitTextStroke = "2px #ff0055"; ui.mainTitle.style.textShadow = "0 0 20px rgba(255,0,85,0.38)";
             ui.mainDesc.innerHTML = `<strong>ARROW KEYS / WASD</strong> to Move | <strong>SPACE / MOUSE</strong> to Shoot<br><strong>SHIFT / RIGHT-CLICK</strong> to Dash | <strong>[C]</strong> to Toggle Aim | <strong>[ESC]</strong> to Pause<br><span style="color: #ff0055; font-weight:bold;">THE ULTIMATE UPDATE</span>` + (isWeekendEvent() ? '<br><span style="color:#ffcc00;font-weight:bold;font-size:16px;text-shadow:0 0 10px #ffcc00;">WEEKEND EVENT: 2x XP + 2x COINS</span>' : '');
             document.getElementById('menu-coin-display').innerText = `TOTAL COINS: ${totalCoins}`;
 
@@ -6153,7 +6153,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             if (state.mode === 'arcade') { let isNew = state.score > arcadeHighScore; if (isNew) { arcadeHighScore = Math.floor(state.score); secureSave('neonVoidArcadeHigh', arcadeHighScore); } }
             let elapsed = Math.floor(state.frame / 60); let mins = Math.floor(elapsed / 60); let secs = elapsed % 60;
             let kpm = elapsed > 0 ? ((state.kills / elapsed) * 60).toFixed(1) : '0';
-            ui.mainOverlay.classList.remove('hidden'); ui.mainOverlay.classList.remove('win-theme'); ui.boss.style.display = 'none'; document.getElementById('mobile-controls').style.display = 'none'; document.getElementById('menu-coin-display').style.display = 'none'; ui.mainTitle.innerText = "YOU DIED"; ui.mainTitle.style.color = "transparent"; ui.mainTitle.style.webkitTextStroke = "2px #ff0055"; ui.mainTitle.style.textShadow = "0 0 20px #ff005560"; ui.mainDesc.innerHTML = `THE VOID CLAIMED YOU. YOUR FAMILY IS LOST FOREVER.<br><br><table style="margin:10px auto; border:1px solid rgba(255,0,85,0.3); border-collapse:collapse; font-size:16px;"><tr><td style="padding:6px 20px; color:#666; text-align:left;">SCORE</td><td style="padding:6px 20px; color:#00ffcc; font-size:22px; text-align:right;">${Math.floor(state.score).toLocaleString()}</td></tr><tr><td style="padding:6px 20px; color:#666; text-align:left;">KILLS</td><td style="padding:6px 20px; color:#ff8800; font-size:22px; text-align:right;">${state.kills}</td></tr><tr><td style="padding:6px 20px; color:#666; text-align:left;">LEVEL</td><td style="padding:6px 20px; color:#aa00ff; font-size:22px; text-align:right;">${state.level}</td></tr><tr><td style="padding:6px 20px; color:#666; text-align:left;">BOSSES</td><td style="padding:6px 20px; color:#ff0055; font-size:22px; text-align:right;">${state.bossesDefeated}</td></tr><tr><td style="padding:6px 20px; color:#666; text-align:left;">TIME</td><td style="padding:6px 20px; color:#fff; font-size:20px; text-align:right;">${mins}m ${secs.toString().padStart(2,'0')}s</td></tr><tr><td style="padding:6px 20px; color:#666; text-align:left;">KILLS/MIN</td><td style="padding:6px 20px; color:#ff8800; font-size:18px; text-align:right;">${kpm}</td></tr><tr><td style="padding:6px 20px; color:#666; text-align:left;">COINS</td><td style="padding:6px 20px; color:#ffcc00; font-size:22px; text-align:right;">+${state.runCoins.toLocaleString()}</td></tr></table>`; if (state.mode === 'mission') ui.menuBtns.innerHTML = `<button onclick="startMission(${state.currentStage})">Retry Sector</button><button onclick="returnToMenu()">Main Menu</button>`; else if (state.mode === 'boss_rush') ui.menuBtns.innerHTML = `<button onclick="startBossRush()">Retry Boss Rush</button><button onclick="returnToMenu()">Main Menu</button>`; else if (state.mode === 'coop') ui.menuBtns.innerHTML = `<button onclick="leaveLobby()">Leave Game</button><button onclick="returnToMenu()">Main Menu</button>`; else if (state.mode === 'arcade') ui.menuBtns.innerHTML = `<button onclick="startArcade()">Retry Arcade</button><button onclick="returnToMenu()">Main Menu</button>`; else if (state.mode === 'sandbox') ui.menuBtns.innerHTML = `<button onclick="startSandbox()">Restart Sandbox</button><button onclick="returnToMenu()">Main Menu</button>`;
+            ui.mainOverlay.classList.remove('hidden'); ui.mainOverlay.classList.remove('win-theme'); ui.boss.style.display = 'none'; document.getElementById('mobile-controls').style.display = 'none'; document.getElementById('menu-coin-display').style.display = 'none'; ui.mainTitle.innerText = "YOU DIED"; ui.mainTitle.style.color = "transparent"; ui.mainTitle.style.webkitTextStroke = "2px #ff0055"; ui.mainTitle.style.textShadow = "0 0 20px rgba(255,0,85,0.38)"; ui.mainDesc.innerHTML = `THE VOID CLAIMED YOU. YOUR FAMILY IS LOST FOREVER.<br><br><table style="margin:10px auto; border:1px solid rgba(255,0,85,0.3); border-collapse:collapse; font-size:16px;"><tr><td style="padding:6px 20px; color:#666; text-align:left;">SCORE</td><td style="padding:6px 20px; color:#00ffcc; font-size:22px; text-align:right;">${Math.floor(state.score).toLocaleString()}</td></tr><tr><td style="padding:6px 20px; color:#666; text-align:left;">KILLS</td><td style="padding:6px 20px; color:#ff8800; font-size:22px; text-align:right;">${state.kills}</td></tr><tr><td style="padding:6px 20px; color:#666; text-align:left;">LEVEL</td><td style="padding:6px 20px; color:#aa00ff; font-size:22px; text-align:right;">${state.level}</td></tr><tr><td style="padding:6px 20px; color:#666; text-align:left;">BOSSES</td><td style="padding:6px 20px; color:#ff0055; font-size:22px; text-align:right;">${state.bossesDefeated}</td></tr><tr><td style="padding:6px 20px; color:#666; text-align:left;">TIME</td><td style="padding:6px 20px; color:#fff; font-size:20px; text-align:right;">${mins}m ${secs.toString().padStart(2,'0')}s</td></tr><tr><td style="padding:6px 20px; color:#666; text-align:left;">KILLS/MIN</td><td style="padding:6px 20px; color:#ff8800; font-size:18px; text-align:right;">${kpm}</td></tr><tr><td style="padding:6px 20px; color:#666; text-align:left;">COINS</td><td style="padding:6px 20px; color:#ffcc00; font-size:22px; text-align:right;">+${state.runCoins.toLocaleString()}</td></tr></table>`; if (state.mode === 'mission') ui.menuBtns.innerHTML = `<button onclick="startMission(${state.currentStage})">Retry Sector</button><button onclick="returnToMenu()">Main Menu</button>`; else if (state.mode === 'boss_rush') ui.menuBtns.innerHTML = `<button onclick="startBossRush()">Retry Boss Rush</button><button onclick="returnToMenu()">Main Menu</button>`; else if (state.mode === 'coop') ui.menuBtns.innerHTML = `<button onclick="leaveLobby()">Leave Game</button><button onclick="returnToMenu()">Main Menu</button>`; else if (state.mode === 'arcade') ui.menuBtns.innerHTML = `<button onclick="startArcade()">Retry Arcade</button><button onclick="returnToMenu()">Main Menu</button>`; else if (state.mode === 'sandbox') ui.menuBtns.innerHTML = `<button onclick="startSandbox()">Restart Sandbox</button><button onclick="returnToMenu()">Main Menu</button>`;
             else if (state.mode === 'survival_arena') {
                 // Feature 41: Save survival arena score to leaderboard
                 let saSecs = Math.floor(survivalArenaTime/60);
@@ -7395,7 +7395,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             for (let r = 0; r < 12; r++) for (let c = 0; c < 20; c++) {
                 let t = room[r][c], td = EDITOR_TILES[t] || EDITOR_TILES[0];
                 ctx.fillStyle = td.color; ctx.fillRect(c*tW, r*tH, tW, tH);
-                ctx.strokeStyle = '#00ffcc22'; ctx.lineWidth = 0.5;
+                ctx.strokeStyle = 'rgba(0,255,204,0.13)'; ctx.lineWidth = 0.5;
                 ctx.strokeRect(c*tW, r*tH, tW, tH);
             }
         }
@@ -7911,7 +7911,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             // Classes only shown in multiplayer modes; single-player uses default 'striker'
             if (!showUI) { selectedClass = 'striker'; callback(); return; }
             let ov=document.createElement('div');ov.id='class-select';
-            ov.style.cssText='position:absolute;top:0;left:0;width:100%;height:100%;z-index:26;background:rgba(0,0,0,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:15px;';
+            ov.style.cssText='position:fixed;inset:0;z-index:26;background:rgba(0,0,0,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:15px;';
             ov.innerHTML='<div style="font-size:36px;font-weight:900;color:#00ffcc;text-shadow:0 0 30px #00ffcc;letter-spacing:8px;margin-bottom:5px;">SELECT CLASS</div><div style="color:#888;font-size:13px;margin-bottom:10px;">Choose your combat specialization</div>';
             let con=document.createElement('div');con.style.cssText='display:flex;gap:18px;flex-wrap:wrap;justify-content:center;';
             for(let[id,cls]of Object.entries(CLASS_DEFS)){
@@ -9774,7 +9774,6 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                 }
                 return;
             }
-            _cloudDirty = false;
             lastCloudSave = Date.now();
             let saveKey = _cloudKey(userPasswordHash || currentUsername);
             let saveData = {
@@ -9816,14 +9815,18 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                 forgeSpd: _nvSec.load('neonVoidAch_forge_spd', '')
             };
             try {
-                let res = await fetch(`${CLOUD_API}/save/${saveKey}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(saveData) });
+                let fetchOpts = { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(saveData) };
+                if (force) fetchOpts.keepalive = true; // Survive page unload
+                let res = await fetch(`${CLOUD_API}/save/${saveKey}`, fetchOpts);
                 if (!res.ok) {
                     console.warn('Cloud save HTTP ' + res.status);
+                    _cloudDirty = true; // Re-mark dirty so we retry
                     if (res.status === 429 || res.status >= 500) { _cloudBackoff = true; console.warn('Cloud save backing off — rate limited'); setTimeout(() => { _cloudBackoff = false; }, 120000); }
                     return;
                 }
+                _cloudDirty = false; // Only clear after confirmed success
                 console.log('Cloud save successful');
-            } catch(e) { console.warn('Cloud save failed:', e.message); }
+            } catch(e) { _cloudDirty = true; console.warn('Cloud save failed:', e.message); }
         }
 
         function cloudSave() { _cloudDirty = true; saveCloudProfile(); }
@@ -9834,15 +9837,16 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             if (typeof state !== 'undefined' && state.active && state.runCoins > 0 && !state._coinsSaved) {
                 totalCoins += state.runCoins; _nvSec.save('neonVoidCoins', totalCoins); state._coinsSaved = true;
             }
-            if (currentUsername && _cloudDirty) saveCloudProfile(true);
+            // Always force cloud save on unload (keepalive ensures it survives page close)
+            if (currentUsername) { _cloudDirty = true; saveCloudProfile(true); }
         });
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 // Save run coins when tab is hidden / app backgrounded
-                if (typeof state !== 'undefined' && state.active && state.runCoins > 0) {
-                    _nvSec.save('neonVoidCoins', totalCoins + state.runCoins);
+                if (typeof state !== 'undefined' && state.active && state.runCoins > 0 && !state._coinsSaved) {
+                    totalCoins += state.runCoins; _nvSec.save('neonVoidCoins', totalCoins); state._coinsSaved = true;
                 }
-                if (currentUsername && _cloudDirty) saveCloudProfile();
+                if (currentUsername) { _cloudDirty = true; saveCloudProfile(true); }
             }
         });
 
@@ -9923,7 +9927,7 @@ function generateSyncCode() {
             let data = {};
             for (let i = 0; i < localStorage.length; i++) {
                 let key = localStorage.key(i);
-                if (key.startsWith('neonVoid') && key !== 'neonVoidUsername') data[key] = localStorage.getItem(key);
+                if (key.startsWith('neonVoid') && key !== 'neonVoidUsername' && key !== 'neonVoidPassHash' && key !== 'neonVoidPassHash_sig') data[key] = localStorage.getItem(key);
             }
             let json = JSON.stringify(data);
             let code = btoa(unescape(encodeURIComponent(json)));
@@ -10145,7 +10149,7 @@ function generateSyncCode() {
         async function adminGiftCoins() {
             let target = (document.getElementById('admin-gift-user').value || '').trim().toUpperCase();
             let amount = parseInt(document.getElementById('admin-gift-coins').value) || 0;
-            if (!target || !amount) return;
+            if (!target || amount <= 0) return;
             // If gifting to self
             if (target === currentUsername) {
                 totalCoins += amount; _nvSec.save('neonVoidCoins', totalCoins); cloudSave();
@@ -10177,6 +10181,9 @@ function generateSyncCode() {
         function logoutUser() {
             // Force cloud save before wiping credentials
             saveCloudProfile(true);
+            // Stop global message polling
+            if (_globalMsgPollTimer) { clearInterval(_globalMsgPollTimer); _globalMsgPollTimer = null; }
+            globalMessages = [];
             localStorage.removeItem('neonVoidUsername');
             localStorage.removeItem('neonVoidUsername_sig');
             localStorage.removeItem('neonVoidPassHash');
@@ -10401,11 +10408,12 @@ function generateSyncCode() {
         }
 
         function _sanitizeName(n) { if (typeof n !== 'string') return 'PILOT'; return n.replace(/[<>"'&]/g, '').substring(0, 20) || 'PILOT'; }
+        function _sanitizeColor(c) { if (typeof c !== 'string') return '#ffffff'; return /^#[0-9a-fA-F]{3,8}$/.test(c) ? c : '#ffffff'; }
         function handlePeerData(conn, data) {
             if (!validatePeerData(data, conn)) return;
             switch(data.type) {
                 case 'join-request':
-                    mpState.players[conn.peer] = { name: _sanitizeName(data.name), x: canvas.width/2, y: canvas.height/2, angle: 0, hp: 500, maxHp: 500, alive: true, color: data.color || '#ffffff', raceTime: 0, targetX: canvas.width/2, targetY: canvas.height/2, targetAngle: 0, displayX: canvas.width/2, displayY: canvas.height/2, displayAngle: 0 };
+                    mpState.players[conn.peer] = { name: _sanitizeName(data.name), x: canvas.width/2, y: canvas.height/2, angle: 0, hp: 500, maxHp: 500, alive: true, color: _sanitizeColor(data.color), raceTime: 0, targetX: canvas.width/2, targetY: canvas.height/2, targetAngle: 0, displayX: canvas.width/2, displayY: canvas.height/2, displayAngle: 0 };
                     broadcastLobbyUpdate();
                     updateLobbyUI();
                     break;
@@ -10414,11 +10422,14 @@ function generateSyncCode() {
                     mpState.mode = data.mode;
                     mpState.hostPeerId = data.hostPeerId;
                     mpState.players = data.players;
+                    // Sanitize all player names/colors from host
+                    if (mpState.players) { Object.keys(mpState.players).forEach(k => { if (mpState.players[k]) { mpState.players[k].name = _sanitizeName(mpState.players[k].name); mpState.players[k].color = _sanitizeColor(mpState.players[k].color); } }); }
                     mpState.players[peer.id] = { name: currentUsername, x: canvas.width/2, y: canvas.height/2, angle: 0, hp: 500, maxHp: 500, alive: true, color: (SKINS[equippedSkin] || SKINS['default']).color, raceTime: 0, targetX: canvas.width/2, targetY: canvas.height/2, targetAngle: 0, displayX: canvas.width/2, displayY: canvas.height/2, displayAngle: 0 };
                     updateLobbyUI();
                     break;
                 case 'lobby-update':
                     mpState.players = data.players;
+                    if (mpState.players) { Object.keys(mpState.players).forEach(k => { if (mpState.players[k]) { mpState.players[k].name = _sanitizeName(mpState.players[k].name); mpState.players[k].color = _sanitizeColor(mpState.players[k].color); } }); }
                     updateLobbyUI();
                     break;
                 case 'game-start':
@@ -10981,12 +10992,12 @@ function generateSyncCode() {
                     if (appSettings.graphics === 'high') { ctx.shadowBlur = 8; ctx.shadowColor = wc; }
                     ctx.fillStyle = wc; ctx.globalAlpha = 0.8;
                     ctx.beginPath(); ctx.ellipse(0, 0, 9, 6, 0, 0, Math.PI * 2); ctx.fill();
-                    ctx.globalAlpha = 1; ctx.fillStyle = '#ffffffcc';
+                    ctx.globalAlpha = 1; ctx.fillStyle = 'rgba(255,255,255,0.8)';
                     ctx.beginPath(); ctx.arc(2, -1, 2, 0, Math.PI * 2); ctx.fill();
                     // HP bar for remote wisp
                     if (p.wisp.hp < p.wisp.mhp) {
                         ctx.shadowBlur = 0; let hpP = Math.max(0, p.wisp.hp / p.wisp.mhp);
-                        ctx.fillStyle = '#00000099'; ctx.fillRect(-12, -14, 24, 3);
+                        ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fillRect(-12, -14, 24, 3);
                         ctx.fillStyle = hpP > 0.5 ? '#00ff88' : '#ff0055'; ctx.fillRect(-12, -14, 24 * hpP, 3);
                     }
                     ctx.shadowBlur = 0; ctx.restore();
@@ -11266,7 +11277,7 @@ function generateSyncCode() {
             }
 
             // Difficulty indicator
-            ctx.fillStyle = '#ff00ff88'; ctx.font = '12px Courier New';
+            ctx.fillStyle = 'rgba(255,0,255,0.53)'; ctx.font = '12px Courier New';
             ctx.fillText('SPEED: x' + mg.difficulty.toFixed(1), ax + 5, ay - 5);
             ctx.restore();
         }
@@ -11439,11 +11450,11 @@ function generateSyncCode() {
             // Zone timer (visual ring)
             if (mpState.isHost) {
                 let pct = mg.zoneMoveTimer / 900;
-                ctx.strokeStyle = '#ffffff44'; ctx.lineWidth = 2;
+                ctx.strokeStyle = 'rgba(255,255,255,0.27)'; ctx.lineWidth = 2;
                 ctx.beginPath(); ctx.arc(zx, zy, zr + 8, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * pct); ctx.stroke();
             }
             // "HILL" label
-            ctx.fillStyle = '#ffcc0088'; ctx.font = 'bold 14px Courier New'; ctx.textAlign = 'center';
+            ctx.fillStyle = 'rgba(255,204,0,0.53)'; ctx.font = 'bold 14px Courier New'; ctx.textAlign = 'center';
             ctx.fillText('HILL', zx, zy + 5);
 
             // Stun indicator
@@ -11512,7 +11523,7 @@ function generateSyncCode() {
                 let isYou = e.name === currentUsername;
                 let scoreText = mode === 'race' ? Math.floor(e.score/60) + 'm ' + (e.score%60) + 's' : Math.floor(e.score).toLocaleString();
                 let color = i === 0 ? '#ffcc00' : i === 1 ? '#cccccc' : i === 2 ? '#cc8833' : '#888';
-                let rowBg = isYou ? 'background:rgba(0,255,204,0.08);border:1px solid #00ffcc33;' : '';
+                let rowBg = isYou ? 'background:rgba(0,255,204,0.08);border:1px solid rgba(0,255,204,0.2);' : '';
                 let safeName = (e.name || 'PILOT').replace(/[<>"'&]/g, '').substring(0, 20);
                 html += `<div class="lb-row" style="${rowBg}"><span class="lb-rank" style="color:${color}">${i+1}</span><span class="lb-name" style="${isYou ? 'color:#00ffcc;' : ''}">${safeName}${isYou ? ' (YOU)' : ''}</span><span class="lb-score">${scoreText}</span></div>`;
             });
@@ -11624,7 +11635,7 @@ function generateSyncCode() {
                     state.active = false;
                     ui.mainOverlay.classList.remove('hidden'); ui.mainOverlay.classList.remove('win-theme');
                     ui.boss.style.display = 'none'; document.getElementById('mobile-controls').style.display = 'none';
-                    ui.mainTitle.innerText = "YOU DIED"; ui.mainTitle.style.webkitTextStroke = "2px #ff0055"; ui.mainTitle.style.textShadow = "0 0 20px #ff005560";
+                    ui.mainTitle.innerText = "YOU DIED"; ui.mainTitle.style.webkitTextStroke = "2px #ff0055"; ui.mainTitle.style.textShadow = "0 0 20px rgba(255,0,85,0.38)";
                     ui.mainDesc.innerHTML = `YOUR CO-OP PARTNER FIGHTS ON.<br><br>SCORE: <span style="color:#00ffcc">${Math.floor(state.score).toLocaleString()}</span><br>KILLS: <span style="color:#ff8800">${state.kills}</span><br>COINS EARNED: <span style="color:#ffcc00">+${state.runCoins.toLocaleString()}</span>`;
                     ui.menuBtns.innerHTML = `<button onclick="leaveLobby()">Leave Game</button>`;
                     return;
@@ -11652,7 +11663,7 @@ function generateSyncCode() {
         let menuStyleTag = document.createElement('style');
         menuStyleTag.textContent = `
             @keyframes menuFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
-            @keyframes menuGlow { 0%,100%{filter:drop-shadow(0 0 8px #ff005580)} 50%{filter:drop-shadow(0 0 20px #ff0055cc)} }
+            @keyframes menuGlow { 0%,100%{filter:drop-shadow(0 0 8px rgba(255,0,85,0.5))} 50%{filter:drop-shadow(0 0 20px rgba(255,0,85,0.8))} }
             @keyframes battlePulse { 0%,100%{transform:scale(1);box-shadow:0 6px 30px rgba(255,170,0,0.5),inset 0 2px 0 rgba(255,255,200,0.3)} 50%{transform:scale(1.02);box-shadow:0 8px 40px rgba(255,170,0,0.7),inset 0 2px 0 rgba(255,255,200,0.5)} }
             @keyframes shimmer { 0%{background-position:-200% center} 100%{background-position:200% center} }
             @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
@@ -11664,13 +11675,13 @@ function generateSyncCode() {
             .nv-menu-root { position:fixed;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;overflow:hidden;font-family:'Courier New',monospace;z-index:20; }
 
             /* TOP BAR — Clash-style player info bar */
-            .nv-topbar { display:flex;align-items:center;justify-content:space-between;padding:calc(6px + env(safe-area-inset-top, 0px)) calc(12px + env(safe-area-inset-right, 0px)) 6px calc(12px + env(safe-area-inset-left, 0px));background:linear-gradient(180deg,rgba(15,0,25,0.98),rgba(8,0,12,0.95));border-bottom:2px solid #ff005544;position:sticky;top:0;z-index:10;flex-shrink:0; }
+            .nv-topbar { display:flex;align-items:center;justify-content:space-between;padding:calc(6px + env(safe-area-inset-top, 0px)) calc(12px + env(safe-area-inset-right, 0px)) 6px calc(12px + env(safe-area-inset-left, 0px));background:linear-gradient(180deg,rgba(15,0,25,0.98),rgba(8,0,12,0.95));border-bottom:2px solid rgba(255,0,85,0.27);position:sticky;top:0;z-index:10;flex-shrink:0; }
             .nv-topbar-left { display:flex;align-items:center;gap:8px; }
             .nv-topbar-right { display:flex;align-items:center;gap:8px; }
             .nv-pilot-badge { display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#1a0025,#0a0010);border:1.5px solid rgba(255,0,85,0.4);border-radius:20px;padding:4px 14px 4px 6px;cursor:pointer; }
             .nv-pilot-avatar { width:30px;height:30px;border-radius:50%;border:2px solid #00ffcc;display:flex;align-items:center;justify-content:center;font-size:16px;background:rgba(0,255,200,0.1);color:#00ffcc;padding:4px;box-sizing:border-box;overflow:hidden; }
             .nv-pilot-name { color:#00ffcc;font-weight:bold;font-size:13px;letter-spacing:1px; }
-            .nv-pilot-rank { font-size:9px;color:#ff005588;letter-spacing:1px; }
+            .nv-pilot-rank { font-size:9px;color:rgba(255,0,85,0.53);letter-spacing:1px; }
             .nv-resource { display:flex;align-items:center;gap:5px;background:linear-gradient(135deg,rgba(255,204,0,0.15),rgba(0,0,0,0.7));border:1.5px solid rgba(255,204,0,0.27);border-radius:16px;padding:4px 14px 4px 8px;font-size:14px;color:#ffcc00;font-weight:bold; }
             .nv-settings-btn { width:32px;height:32px;border-radius:50%;border:1px solid #555;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all 0.2s; }
             .nv-settings-btn:hover { border-color:#fff;background:rgba(255,255,255,0.15);transform:rotate(90deg); }
@@ -11680,9 +11691,9 @@ function generateSyncCode() {
             .nv-arena-canvas { width:100%;height:100%;display:block; }
             .nv-arena-overlay { position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:flex-start; }
             .nv-arena-title { margin-top:12px;text-align:center; }
-            .nv-logo { font-size:clamp(28px,8vw,52px);font-weight:900;letter-spacing:8px;color:transparent;-webkit-text-stroke:2px #ff0055;text-shadow:0 0 40px #ff005588;animation:menuGlow 3s infinite;text-transform:uppercase;margin:0;line-height:1; }
-            .nv-logo-sub { font-size:10px;letter-spacing:5px;color:#ff005577;text-transform:uppercase;margin-top:2px; }
-            .nv-sector-badge { display:inline-flex;align-items:center;gap:6px;margin-top:8px;background:linear-gradient(135deg,rgba(255,0,85,0.2),rgba(0,0,0,0.8));border:1.5px solid #ff005555;border-radius:20px;padding:5px 16px; }
+            .nv-logo { font-size:clamp(28px,8vw,52px);font-weight:900;letter-spacing:8px;color:transparent;-webkit-text-stroke:2px #ff0055;text-shadow:0 0 40px rgba(255,0,85,0.53);animation:menuGlow 3s infinite;text-transform:uppercase;margin:0;line-height:1; }
+            .nv-logo-sub { font-size:10px;letter-spacing:5px;color:rgba(255,0,85,0.47);text-transform:uppercase;margin-top:2px; }
+            .nv-sector-badge { display:inline-flex;align-items:center;gap:6px;margin-top:8px;background:linear-gradient(135deg,rgba(255,0,85,0.2),rgba(0,0,0,0.8));border:1.5px solid rgba(255,0,85,0.33);border-radius:20px;padding:5px 16px; }
             .nv-sector-badge span { font-size:12px;color:#ff0055;font-weight:bold;letter-spacing:2px; }
 
             /* CHEST SLOTS — CR-style reward slots */
@@ -11705,7 +11716,7 @@ function generateSyncCode() {
             /* MODE SELECTOR ROW — horizontal scroll below battle */
             .nv-modes-row { display:flex;gap:8px;overflow-x:auto;overflow-y:visible;padding:8px 4px 4px;-webkit-overflow-scrolling:touch;flex-shrink:0; }
             .nv-modes-row::-webkit-scrollbar { height:3px; }
-            .nv-modes-row::-webkit-scrollbar-thumb { background:#ff005544;border-radius:2px; }
+            .nv-modes-row::-webkit-scrollbar-thumb { background:rgba(255,0,85,0.27);border-radius:2px; }
             .nv-mode-chip { display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:12px;border:1.5px solid;cursor:pointer;white-space:nowrap;transition:all 0.2s;flex-shrink:0;-webkit-tap-highlight-color:transparent; }
             .nv-mode-chip:hover { transform:translateY(-2px);filter:brightness(1.3); }
             .nv-mode-chip:active { transform:scale(0.95); }
@@ -11714,7 +11725,7 @@ function generateSyncCode() {
             .nv-mode-chip .nv-chip-sub { font-size:9px;opacity:0.6; }
 
             /* BOTTOM NAV — CR-style tab bar */
-            .nv-bottomnav { display:flex;align-items:stretch;background:linear-gradient(180deg,rgba(15,0,22,0.98),rgba(5,0,8,1));border-top:2px solid #ff005544;flex-shrink:0;z-index:10;padding-bottom:env(safe-area-inset-bottom,0px); }
+            .nv-bottomnav { display:flex;align-items:stretch;background:linear-gradient(180deg,rgba(15,0,22,0.98),rgba(5,0,8,1));border-top:2px solid rgba(255,0,85,0.27);flex-shrink:0;z-index:10;padding-bottom:env(safe-area-inset-bottom,0px); }
             .nv-nav-tab { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 2px 6px;cursor:pointer;transition:all 0.2s;border-top:3px solid transparent;position:relative;-webkit-tap-highlight-color:transparent; }
             .nv-nav-tab:hover { background:rgba(255,255,255,0.04); }
             .nv-nav-tab:active { background:rgba(255,255,255,0.08); }
@@ -11726,12 +11737,12 @@ function generateSyncCode() {
             .nv-nav-tab .nav-notif { position:absolute;top:4px;right:calc(50% - 18px);width:8px;height:8px;border-radius:50%;background:#ff0055;box-shadow:0 0 8px #ff0055; }
 
             /* EVENT BANNER */
-            .nv-event-banner { background:linear-gradient(135deg,rgba(255,136,0,0.12),rgba(0,0,0,0.7));border:1.5px solid #ff880044;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.2s; }
+            .nv-event-banner { background:linear-gradient(135deg,rgba(255,136,0,0.12),rgba(0,0,0,0.7));border:1.5px solid rgba(255,136,0,0.27);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.2s; }
             .nv-event-banner:hover { border-color:#ff8800;transform:translateY(-1px); }
             .nv-event-icon { font-size:28px;flex-shrink:0; }
             .nv-event-info { flex:1;min-width:0; }
             .nv-event-title { font-size:13px;font-weight:bold;color:#ff8800;letter-spacing:1px; }
-            .nv-event-desc { font-size:10px;color:#ff880088;margin-top:2px; }
+            .nv-event-desc { font-size:10px;color:rgba(255,136,0,0.53);margin-top:2px; }
             .nv-event-badge { font-size:9px;color:#000;background:#ff8800;border-radius:8px;padding:2px 8px;font-weight:bold;flex-shrink:0; }
 
             /* QUICK ACCESS GRID */
@@ -11750,16 +11761,16 @@ function generateSyncCode() {
 
             /* NEON TITLE SECTION — centered glow title */
             .nv-title-section { display:flex;flex-direction:column;align-items:center;padding:18px 16px 6px;flex-shrink:0; }
-            .nv-title-logo { font-size:clamp(32px,9vw,56px);font-weight:900;letter-spacing:8px;color:transparent;-webkit-text-stroke:2px #ff0055;text-shadow:0 0 40px #ff005588,0 0 80px #ff005544;animation:menuGlow 3s infinite;text-transform:uppercase;line-height:1; }
+            .nv-title-logo { font-size:clamp(32px,9vw,56px);font-weight:900;letter-spacing:8px;color:transparent;-webkit-text-stroke:2px #ff0055;text-shadow:0 0 40px rgba(255,0,85,0.53),0 0 80px rgba(255,0,85,0.27);animation:menuGlow 3s infinite;text-transform:uppercase;line-height:1; }
 
             /* SHIP ICON — centered player ship */
             .nv-ship-icon { display:flex;align-items:center;justify-content:center;padding:8px 0 4px;flex-shrink:0; }
-            .nv-ship-triangle { width:0;height:0;border-left:16px solid transparent;border-right:16px solid transparent;border-bottom:32px solid #ff0055;filter:drop-shadow(0 0 8px #ff005588) drop-shadow(0 0 16px #ff005544); }
+            .nv-ship-triangle { width:0;height:0;border-left:16px solid transparent;border-right:16px solid transparent;border-bottom:32px solid #ff0055;filter:drop-shadow(0 0 8px rgba(255,0,85,0.53)) drop-shadow(0 0 16px rgba(255,0,85,0.27)); }
 
             /* SECTOR PROGRESS — bar with gradient fill */
             .nv-sector-progress { display:flex;flex-direction:column;align-items:center;padding:4px 24px 10px;flex-shrink:0;width:100%;box-sizing:border-box; }
             .nv-sector-label { font-size:11px;color:#ff0055;font-weight:bold;letter-spacing:3px;margin-bottom:6px; }
-            .nv-progress-bar { width:min(300px,80vw);height:10px;border-radius:6px;background:rgba(255,255,255,0.08);border:1px solid #ff005533;overflow:hidden;position:relative; }
+            .nv-progress-bar { width:min(300px,80vw);height:10px;border-radius:6px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,0,85,0.2);overflow:hidden;position:relative; }
             .nv-progress-fill { height:100%;border-radius:6px;background:linear-gradient(90deg,#ff0055,#ff8800,#ffcc00);transition:width 0.5s ease; }
 
             /* DUAL CARDS — HANGAR + RANKS side by side */
@@ -11783,20 +11794,20 @@ function generateSyncCode() {
             .nv-prog-pill .pp-label { font-size:9px;font-weight:bold;letter-spacing:0.5px; }
 
             /* SHIP PREVIEW CARD */
-            .nv-ship-preview { margin:8px 16px;padding:14px;border-radius:14px;background:linear-gradient(135deg,rgba(20,0,30,0.95),rgba(5,0,10,0.95));border:1.5px solid #ff005533;display:flex;align-items:center;gap:14px;flex-shrink:0; }
-            .nv-ship-sprite { width:56px;height:56px;display:flex;align-items:center;justify-content:center;background:rgba(255,0,85,0.08);border-radius:12px;border:1px solid #ff005533; }
-            .nv-ship-sprite .ship-shape { width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-bottom:24px solid #ff0055;filter:drop-shadow(0 0 6px #ff005588); }
+            .nv-ship-preview { margin:8px 16px;padding:14px;border-radius:14px;background:linear-gradient(135deg,rgba(20,0,30,0.95),rgba(5,0,10,0.95));border:1.5px solid rgba(255,0,85,0.2);display:flex;align-items:center;gap:14px;flex-shrink:0; }
+            .nv-ship-sprite { width:56px;height:56px;display:flex;align-items:center;justify-content:center;background:rgba(255,0,85,0.08);border-radius:12px;border:1px solid rgba(255,0,85,0.2); }
+            .nv-ship-sprite .ship-shape { width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-bottom:24px solid #ff0055;filter:drop-shadow(0 0 6px rgba(255,0,85,0.53)); }
             .nv-ship-info { flex:1;min-width:0; }
             .nv-ship-name { font-size:14px;font-weight:bold;color:#00ffcc;letter-spacing:1px; }
-            .nv-ship-rank-label { font-size:10px;color:#ff005588;letter-spacing:2px;margin-top:2px; }
+            .nv-ship-rank-label { font-size:10px;color:rgba(255,0,85,0.53);letter-spacing:2px;margin-top:2px; }
 
             /* INTEL BRIEF CARD */
-            .nv-intel { margin:8px 16px;padding:12px 14px;border-radius:12px;background:linear-gradient(135deg,rgba(0,255,200,0.05),rgba(0,0,0,0.7));border:1px solid #00ffcc33;flex-shrink:0; }
+            .nv-intel { margin:8px 16px;padding:12px 14px;border-radius:12px;background:linear-gradient(135deg,rgba(0,255,200,0.05),rgba(0,0,0,0.7));border:1px solid rgba(0,255,204,0.2);flex-shrink:0; }
             .nv-intel-title { font-size:10px;color:#00ffcc;font-weight:bold;letter-spacing:2px;margin-bottom:4px; }
             .nv-intel-text { font-size:11px;color:rgba(0,255,204,0.53);line-height:1.4; }
 
             /* SECTION TABS — 3 equal tabs above bottom nav */
-            .nv-section-tabs { display:flex;flex-shrink:0;border-top:1px solid #ffffff11; }
+            .nv-section-tabs { display:flex;flex-shrink:0;border-top:1px solid rgba(255,255,255,0.07); }
             .nv-section-tab { flex:1;display:flex;align-items:center;justify-content:center;padding:10px 4px;font-size:10px;font-weight:bold;letter-spacing:2px;color:#666;cursor:pointer;transition:all 0.2s;-webkit-tap-highlight-color:transparent;background:rgba(10,0,15,0.9); }
             .nv-section-tab:hover { color:#ccc;background:rgba(255,255,255,0.04); }
             .nv-section-tab:active { background:rgba(255,255,255,0.08); }
@@ -11804,7 +11815,7 @@ function generateSyncCode() {
             /* SCROLLABLE BODY between topbar and bottomnav */
             .nv-body-scroll { flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column; }
             .nv-body-scroll::-webkit-scrollbar { width:3px; }
-            .nv-body-scroll::-webkit-scrollbar-thumb { background:#ff005533;border-radius:2px; }
+            .nv-body-scroll::-webkit-scrollbar-thumb { background:rgba(255,0,85,0.2);border-radius:2px; }
         `;
         document.head.appendChild(menuStyleTag);
 
@@ -12064,121 +12075,121 @@ function generateSyncCode() {
                     <div class="nv-modes-row" style="padding:4px 16px 8px;">
                         <div class="nv-mode-chip" style="--gc:${mc('#ff0055')};border-color:rgba(255,0,85,0.4);background:rgba(255,0,85,0.06);" onclick="startInfinite()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff0055" stroke-width="2.5" stroke-linecap="round"><path d="M6 12c0-2.2 1.8-4 4-4s4 1.8 4 4-1.8 4-4 4-4-1.8-4-4zM14 12c0-2.2 1.8-4 4-4s4 1.8 4 4-1.8 4-4 4-4-1.8-4-4z"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#ff0055;">INFINITE</div><div class="nv-chip-sub" style="color:#ff005588;">Endless</div></div>
+                            <div><div class="nv-chip-label" style="color:#ff0055;">INFINITE</div><div class="nv-chip-sub" style="color:rgba(255,0,85,0.53);">Endless</div></div>
                         </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#ff4400')};border-color:#ff440066;background:rgba(255,68,0,0.06);" onclick="startBossRush()">
+                        <div class="nv-mode-chip" style="--gc:${mc('#ff4400')};border-color:rgba(255,68,0,0.4);background:rgba(255,68,0,0.06);" onclick="startBossRush()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff4400" stroke-width="2" stroke-linecap="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5M13 7l4-4 4 4-4 4"/><path d="M3 3l7.586 7.586M11 14l7 7M8 6.5L1.5 13"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#ff4400;">BOSS RUSH</div><div class="nv-chip-sub" style="color:#ff440088;">${rushLabel}</div></div>
+                            <div><div class="nv-chip-label" style="color:#ff4400;">BOSS RUSH</div><div class="nv-chip-sub" style="color:rgba(255,68,0,0.53);">${rushLabel}</div></div>
                         </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#00ff88')};border-color:#00ff8866;background:rgba(0,255,136,0.06);" onclick="startTraining()">
+                        <div class="nv-mode-chip" style="--gc:${mc('#00ff88')};border-color:rgba(0,255,136,0.4);background:rgba(0,255,136,0.06);" onclick="startTraining()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#00ff88;">TRAINING</div><div class="nv-chip-sub" style="color:#00ff8888;">Practice</div></div>
+                            <div><div class="nv-chip-label" style="color:#00ff88;">TRAINING</div><div class="nv-chip-sub" style="color:rgba(0,255,136,0.53);">Practice</div></div>
                         </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#00ccff')};border-color:#00ccff66;background:rgba(0,204,255,0.06);" onclick="openMultiplayer()">
+                        <div class="nv-mode-chip" style="--gc:${mc('#00ccff')};border-color:rgba(0,204,255,0.4);background:rgba(0,204,255,0.06);" onclick="openMultiplayer()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00ccff" stroke-width="2" stroke-linecap="round"><path d="M16 3.13a4 4 0 0 1 0 7.75M21 21v-2a4 4 0 0 0-3-3.87M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#00ccff;">CO-OP</div><div class="nv-chip-sub" style="color:#00ccff88;">Multiplayer</div></div>
+                            <div><div class="nv-chip-label" style="color:#00ccff;">CO-OP</div><div class="nv-chip-sub" style="color:rgba(0,204,255,0.53);">Multiplayer</div></div>
                         </div>
                         <div class="nv-mode-chip" style="--gc:${mc('#ffcc00')};border-color:rgba(255,204,0,0.4);background:rgba(255,204,0,0.06);animation:pulse 2s infinite;" onclick="startArcade()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#ffcc00;">ARCADE</div><div class="nv-chip-sub" style="color:#ffcc0088;">${arcadeHighScore > 0 ? 'Best: ' + arcadeHighScore.toLocaleString() : '3 Lives'}</div></div>
+                            <div><div class="nv-chip-label" style="color:#ffcc00;">ARCADE</div><div class="nv-chip-sub" style="color:rgba(255,204,0,0.53);">${arcadeHighScore > 0 ? 'Best: ' + arcadeHighScore.toLocaleString() : '3 Lives'}</div></div>
                         </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#44ccff')};border-color:#44ccff66;background:rgba(68,204,255,0.06);" onclick="startSandbox()">
+                        <div class="nv-mode-chip" style="--gc:${mc('#44ccff')};border-color:rgba(68,204,255,0.4);background:rgba(68,204,255,0.06);" onclick="startSandbox()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#44ccff" stroke-width="2" stroke-linecap="round"><path d="M12 3l9 4.5v9L12 21l-9-4.5v-9L12 3z"/><path d="M12 12l9-4.5M12 12v9M12 12L3 7.5"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#44ccff;">SANDBOX</div><div class="nv-chip-sub" style="color:#44ccff88;">God Mode</div></div>
+                            <div><div class="nv-chip-label" style="color:#44ccff;">SANDBOX</div><div class="nv-chip-sub" style="color:rgba(68,204,255,0.53);">God Mode</div></div>
                         </div>
-                        ${parseInt(secureLoad('neonVoidStage','1')||'1') >= 16 ? `<div class="nv-mode-chip" style="--gc:\${mc('#00ff88')};border-color:#00ff8866;background:rgba(0,255,136,0.08);animation:pulse 1.5s infinite;" onclick="startCrashedAdventure()">
+                        ${parseInt(secureLoad('neonVoidStage','1')||'1') >= 16 ? `<div class="nv-mode-chip" style="--gc:\${mc('#00ff88')};border-color:rgba(0,255,136,0.4);background:rgba(0,255,136,0.08);animation:pulse 1.5s infinite;" onclick="startCrashedAdventure()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#00ff88;">CRASHED</div><div class="nv-chip-sub" style="color:#00ff8888;">Crashed Adventure</div></div>
+                            <div><div class="nv-chip-label" style="color:#00ff88;">CRASHED</div><div class="nv-chip-sub" style="color:rgba(0,255,136,0.53);">Crashed Adventure</div></div>
                         </div>` : ''}
-                        <div class="nv-mode-chip" style="--gc:${mc('#ffd700')};border-color:#ffd70066;background:rgba(255,215,0,0.06);" onclick="startSpeedrun()">
+                        <div class="nv-mode-chip" style="--gc:${mc('#ffd700')};border-color:rgba(255,215,0,0.4);background:rgba(255,215,0,0.06);" onclick="startSpeedrun()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#ffd700;">SPEEDRUN</div><div class="nv-chip-sub" style="color:#ffd70088;">Timer</div></div>
+                            <div><div class="nv-chip-label" style="color:#ffd700;">SPEEDRUN</div><div class="nv-chip-sub" style="color:rgba(255,215,0,0.53);">Timer</div></div>
                         </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#cc44ff')};border-color:#cc44ff66;background:rgba(204,68,255,0.06);" onclick="startMirror()" title="Everything is horizontally flipped - controls are reversed!">
+                        <div class="nv-mode-chip" style="--gc:${mc('#cc44ff')};border-color:rgba(204,68,255,0.4);background:rgba(204,68,255,0.06);" onclick="startMirror()" title="Everything is horizontally flipped - controls are reversed!">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#cc44ff" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M3 9l4 3-4 3M21 9l-4 3 4 3"/></svg></span>
                             <div><div class="nv-chip-label" style="color:#cc44ff;">MIRROR</div><div class="nv-chip-sub" style="color:rgba(204,68,255,0.53);">All Inverted!</div></div>
                         </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#88ff88')};border-color:#88ff8866;background:rgba(136,255,136,0.06);" onclick="startOG()">
+                        <div class="nv-mode-chip" style="--gc:${mc('#88ff88')};border-color:rgba(136,255,136,0.4);background:rgba(136,255,136,0.06);" onclick="startOG()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#88ff88" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 22v-4h6v4M12 18h.01"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#88ff88;">OG</div><div class="nv-chip-sub" style="color:#88ff8888;">Classic</div></div>
+                            <div><div class="nv-chip-label" style="color:#88ff88;">OG</div><div class="nv-chip-sub" style="color:rgba(136,255,136,0.53);">Classic</div></div>
                         </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#ff8800')};border-color:#ff880066;background:rgba(255,136,0,0.06);" onclick="startChaos()">
+                        <div class="nv-mode-chip" style="--gc:${mc('#ff8800')};border-color:rgba(255,136,0,0.4);background:rgba(255,136,0,0.06);" onclick="startChaos()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff8800" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#ff8800;">CHAOS</div><div class="nv-chip-sub" style="color:#ff880088;">Modifiers</div></div>
+                            <div><div class="nv-chip-label" style="color:#ff8800;">CHAOS</div><div class="nv-chip-sub" style="color:rgba(255,136,0,0.53);">Modifiers</div></div>
                         </div>
                         <div class="nv-mode-chip" style="--gc:${mc('#ff0055')};border-color:rgba(255,0,85,0.4);background:rgba(255,0,85,0.06);" onclick="startOneHit()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff0055" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#ff0055;">ONE HIT</div><div class="nv-chip-sub" style="color:#ff005588;">1 HP</div></div>
+                            <div><div class="nv-chip-label" style="color:#ff0055;">ONE HIT</div><div class="nv-chip-sub" style="color:rgba(255,0,85,0.53);">1 HP</div></div>
                         </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#ff4400')};border-color:#ff440066;background:rgba(255,68,0,0.06);" onclick="startBulletHell()">
+                        <div class="nv-mode-chip" style="--gc:${mc('#ff4400')};border-color:rgba(255,68,0,0.4);background:rgba(255,68,0,0.06);" onclick="startBulletHell()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff4400" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#ff4400;">BULLET HELL</div><div class="nv-chip-sub" style="color:#ff440088;">10x Fire</div></div>
+                            <div><div class="nv-chip-label" style="color:#ff4400;">BULLET HELL</div><div class="nv-chip-sub" style="color:rgba(255,68,0,0.53);">10x Fire</div></div>
                         </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#00ff88')};border-color:#00ff8866;background:rgba(0,255,136,0.06);" onclick="startPacifist()">
+                        <div class="nv-mode-chip" style="--gc:${mc('#00ff88')};border-color:rgba(0,255,136,0.4);background:rgba(0,255,136,0.06);" onclick="startPacifist()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M4.22 4.22l15.56 15.56"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#00ff88;">PACIFIST</div><div class="nv-chip-sub" style="color:#00ff8888;">No Guns</div></div>
+                            <div><div class="nv-chip-label" style="color:#00ff88;">PACIFIST</div><div class="nv-chip-sub" style="color:rgba(0,255,136,0.53);">No Guns</div></div>
                         </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#ffd700')};border-color:#ffd70066;background:rgba(255,215,0,0.06);" onclick="startTournament()">
+                        <div class="nv-mode-chip" style="--gc:${mc('#ffd700')};border-color:rgba(255,215,0,0.4);background:rgba(255,215,0,0.06);" onclick="startTournament()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2" stroke-linecap="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V22M14 14.66V22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#ffd700;">TOURNAMENT</div><div class="nv-chip-sub" style="color:#ffd70088;">AI Bracket</div></div>
+                            <div><div class="nv-chip-label" style="color:#ffd700;">TOURNAMENT</div><div class="nv-chip-sub" style="color:rgba(255,215,0,0.53);">AI Bracket</div></div>
                         </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#44ff88')};border-color:#44ff8866;background:rgba(68,255,136,0.06);" onclick="startSurvivalArena()">
+                        <div class="nv-mode-chip" style="--gc:${mc('#44ff88')};border-color:rgba(68,255,136,0.4);background:rgba(68,255,136,0.06);" onclick="startSurvivalArena()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#44ff88" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 7l4-4 4 4-4 4"/><path d="M3 3l7.586 7.586"/><path d="M14.5 6.5l-8 8L3 21l6.5-3.5 8-8"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#44ff88;">SURVIVAL</div><div class="nv-chip-sub" style="color:#44ff8888;">Arena</div></div>
+                            <div><div class="nv-chip-label" style="color:#44ff88;">SURVIVAL</div><div class="nv-chip-sub" style="color:rgba(68,255,136,0.53);">Arena</div></div>
                         </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#44ccff')};border-color:#44ccff66;background:rgba(68,204,255,0.06);" onclick="startRaceMode()">
+                        <div class="nv-mode-chip" style="--gc:${mc('#44ccff')};border-color:rgba(68,204,255,0.4);background:rgba(68,204,255,0.06);" onclick="startRaceMode()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#44ccff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="3"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#44ccff;">RACE</div><div class="nv-chip-sub" style="color:#44ccff88;">Checkpoints</div></div>
+                            <div><div class="nv-chip-label" style="color:#44ccff;">RACE</div><div class="nv-chip-sub" style="color:rgba(68,204,255,0.53);">Checkpoints</div></div>
                         </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#88ff44')};border-color:#88ff4466;background:rgba(136,255,68,0.06);" onclick="startEscort()">
+                        <div class="nv-mode-chip" style="--gc:${mc('#88ff44')};border-color:rgba(136,255,68,0.4);background:rgba(136,255,68,0.06);" onclick="startEscort()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#88ff44" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#88ff44;">ESCORT</div><div class="nv-chip-sub" style="color:#88ff4488;">Protect Cargo</div></div>
+                            <div><div class="nv-chip-label" style="color:#88ff44;">ESCORT</div><div class="nv-chip-sub" style="color:rgba(136,255,68,0.53);">Protect Cargo</div></div>
                         </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#ff8844')};border-color:#ff884466;background:rgba(255,136,68,0.06);" onclick="startHordeDefense()">
+                        <div class="nv-mode-chip" style="--gc:${mc('#ff8844')};border-color:rgba(255,136,68,0.4);background:rgba(255,136,68,0.06);" onclick="startHordeDefense()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff8844" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l4-4v18"/><path d="M9 21V3l6 4v14"/><path d="M15 21V7l4 4v10"/><path d="M7 9h0M7 13h0M7 17h0M11 9h0M11 13h0M11 17h0M17 13h0M17 17h0"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#ff8844;">HORDE</div><div class="nv-chip-sub" style="color:#ff884488;">Tower Defense</div></div>
+                            <div><div class="nv-chip-label" style="color:#ff8844;">HORDE</div><div class="nv-chip-sub" style="color:rgba(255,136,68,0.53);">Tower Defense</div></div>
                         </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#ffaa00')};border-color:#ffaa0066;background:rgba(255,170,0,0.06);" onclick="startTagTeam()">
+                        <div class="nv-mode-chip" style="--gc:${mc('#ffaa00')};border-color:rgba(255,170,0,0.4);background:rgba(255,170,0,0.06);" onclick="startTagTeam()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffaa00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 11.5L17 8l-4 3-2-2-6 6"/><path d="M3.5 12.5L7 16l4-3 2 2 6-6"/><path d="M2 8l4-4M18 20l4-4"/></svg></span>
                             <div><div class="nv-chip-label" style="color:#ffaa00;">TAG TEAM</div><div class="nv-chip-sub" style="color:rgba(255,170,0,0.53);">Co-op Swap</div></div>
                         </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#ff2244')};border-color:#ff224466;background:rgba(255,34,68,0.06);" onclick="startInfection()">
+                        <div class="nv-mode-chip" style="--gc:${mc('#ff2244')};border-color:rgba(255,34,68,0.4);background:rgba(255,34,68,0.06);" onclick="startInfection()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff2244" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="6"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="10" cy="10" r="1" fill="#ff2244"/><circle cx="14" cy="14" r="1" fill="#ff2244"/><circle cx="13" cy="10" r="0.5" fill="#ff2244"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#ff2244;">INFECTION</div><div class="nv-chip-sub" style="color:#ff224488;">Co-op Tag</div></div>
+                            <div><div class="nv-chip-label" style="color:#ff2244;">INFECTION</div><div class="nv-chip-sub" style="color:rgba(255,34,68,0.53);">Co-op Tag</div></div>
                         </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#aa44ff')};border-color:#aa44ff66;background:rgba(170,68,255,0.06);" onclick="startRoguelike()">
+                        <div class="nv-mode-chip" style="--gc:${mc('#aa44ff')};border-color:rgba(170,68,255,0.4);background:rgba(170,68,255,0.06);" onclick="startRoguelike()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#aa44ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1" fill="#aa44ff"/><circle cx="16" cy="8" r="1" fill="#aa44ff"/><circle cx="12" cy="12" r="1" fill="#aa44ff"/><circle cx="8" cy="16" r="1" fill="#aa44ff"/><circle cx="16" cy="16" r="1" fill="#aa44ff"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#aa44ff;">ROGUELIKE</div><div class="nv-chip-sub" style="color:#aa44ff88;">10 Floors</div></div>
+                            <div><div class="nv-chip-label" style="color:#aa44ff;">ROGUELIKE</div><div class="nv-chip-sub" style="color:rgba(170,68,255,0.53);">10 Floors</div></div>
                         </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#ff4488')};border-color:#ff448866;background:rgba(255,68,136,0.06);" onclick="startPvP()">
+                        <div class="nv-mode-chip" style="--gc:${mc('#ff4488')};border-color:rgba(255,68,136,0.4);background:rgba(255,68,136,0.06);" onclick="startPvP()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff4488" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#ff4488;">1v1 PVP</div><div class="nv-chip-sub" style="color:#ff448888;">Duel</div></div>
+                            <div><div class="nv-chip-label" style="color:#ff4488;">1v1 PVP</div><div class="nv-chip-sub" style="color:rgba(255,68,136,0.53);">Duel</div></div>
                         </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#4488ff')};border-color:#4488ff66;background:rgba(68,136,255,0.06);" onclick="startCaptureTheFlag()">
+                        <div class="nv-mode-chip" style="--gc:${mc('#4488ff')};border-color:rgba(68,136,255,0.4);background:rgba(68,136,255,0.06);" onclick="startCaptureTheFlag()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4488ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="3"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#4488ff;">CTF</div><div class="nv-chip-sub" style="color:#4488ff88;">Capture Flag</div></div>
+                            <div><div class="nv-chip-label" style="color:#4488ff;">CTF</div><div class="nv-chip-sub" style="color:rgba(68,136,255,0.53);">Capture Flag</div></div>
                         </div>
-                        <div class="nv-mode-chip" style="--gc:${mc('#88ffcc')};border-color:#88ffcc66;background:rgba(136,255,204,0.06);" onclick="openLevelEditor()">
+                        <div class="nv-mode-chip" style="--gc:${mc('#88ffcc')};border-color:rgba(136,255,204,0.4);background:rgba(136,255,204,0.06);" onclick="openLevelEditor()">
                             <span class="nv-chip-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#88ffcc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
-                            <div><div class="nv-chip-label" style="color:#88ffcc;">EDITOR</div><div class="nv-chip-sub" style="color:#88ffcc88;">Level Design</div></div>
+                            <div><div class="nv-chip-label" style="color:#88ffcc;">EDITOR</div><div class="nv-chip-sub" style="color:rgba(136,255,204,0.53);">Level Design</div></div>
                         </div>
                         ${secretChip}${paradoxChip}
                     </div>
 
                     <!-- DUAL CARDS: HANGAR + RANKS -->
                     <div class="nv-dual-cards">
-                        <div class="nv-dual-card" style="border-color:#ff880055;background:linear-gradient(135deg,rgba(255,136,0,0.08),rgba(0,0,0,0.75));" onclick="openShop()">
+                        <div class="nv-dual-card" style="border-color:rgba(255,136,0,0.33);background:linear-gradient(135deg,rgba(255,136,0,0.08),rgba(0,0,0,0.75));" onclick="openShop()">
                             <div class="dc-icon" style="background:rgba(255,136,0,0.15);display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff8800" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
                             <div class="dc-info">
                                 <div class="dc-title" style="color:#ff8800;">HANGAR</div>
-                                <div class="dc-sub" style="color:#ff880088;">Black Market</div>
+                                <div class="dc-sub" style="color:rgba(255,136,0,0.53);">Black Market</div>
                             </div>
                         </div>
-                        <div class="nv-dual-card" style="border-color:#ffd70055;background:linear-gradient(135deg,rgba(255,215,0,0.08),rgba(0,0,0,0.75));" onclick="openLeaderboard()">
+                        <div class="nv-dual-card" style="border-color:rgba(255,215,0,0.33);background:linear-gradient(135deg,rgba(255,215,0,0.08),rgba(0,0,0,0.75));" onclick="openLeaderboard()">
                             <div class="dc-icon" style="background:rgba(255,215,0,0.15);display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V22M14 14.66V22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></div>
                             <div class="dc-info">
                                 <div class="dc-title" style="color:#ffd700;">RANKS</div>
-                                <div class="dc-sub" style="color:#ffd70088;">Leaderboards</div>
+                                <div class="dc-sub" style="color:rgba(255,215,0,0.53);">Leaderboards</div>
                             </div>
                         </div>
                     </div>
@@ -12279,7 +12290,7 @@ function generateSyncCode() {
                         actx.fillStyle = bg; actx.fillRect(0,0,aw,ah);
 
                         // Grid lines (perspective feel)
-                        actx.strokeStyle = '#ff005512'; actx.lineWidth = 0.5;
+                        actx.strokeStyle = 'rgba(255,0,85,0.07)'; actx.lineWidth = 0.5;
                         for(let gy=0;gy<ah;gy+=40){ actx.beginPath(); actx.moveTo(0,gy); actx.lineTo(aw,gy); actx.stroke(); }
                         for(let gx=0;gx<aw;gx+=40){ actx.beginPath(); actx.moveTo(gx,0); actx.lineTo(gx,ah); actx.stroke(); }
 
@@ -12324,7 +12335,7 @@ function generateSyncCode() {
                         actx.fillStyle=skinColor; actx.shadowBlur=15; actx.shadowColor=skinColor; actx.fill();
                         actx.shadowBlur=0;
                         // Cockpit
-                        actx.fillStyle='#00ffcc88'; actx.beginPath(); actx.moveTo(0,-10); actx.lineTo(3,0); actx.lineTo(0,4); actx.lineTo(-3,0); actx.closePath(); actx.fill();
+                        actx.fillStyle='rgba(0,255,204,0.53)'; actx.beginPath(); actx.moveTo(0,-10); actx.lineTo(3,0); actx.lineTo(0,4); actx.lineTo(-3,0); actx.closePath(); actx.fill();
                         actx.restore();
 
                         // Bottom fade for chest slots
@@ -12359,7 +12370,7 @@ function generateSyncCode() {
                     for (let i = 0; i < starCount; i++) saStars.push({ x: Math.random()*saW, y: Math.random()*saH, s: 0.4+Math.random()*1.0, sp: 0.3+Math.random()*1.0, b: Math.random() });
                     // Floating debris
                     let saDebris = [];
-                    for (let i = 0; i < 4; i++) saDebris.push({ x: Math.random()*saW, y: Math.random()*saH, s: 1.5+Math.random()*2.5, sp: 0.2+Math.random()*0.5, r: Math.random()*Math.PI*2, rv: (Math.random()-0.5)*0.02, c: ['#ff005522','#00ffcc22','#ffcc0022','#aa00ff22'][Math.floor(Math.random()*4)] });
+                    for (let i = 0; i < 4; i++) saDebris.push({ x: Math.random()*saW, y: Math.random()*saH, s: 1.5+Math.random()*2.5, sp: 0.2+Math.random()*0.5, r: Math.random()*Math.PI*2, rv: (Math.random()-0.5)*0.02, c: ['rgba(255,0,85,0.13)','rgba(0,255,204,0.13)','rgba(255,204,0,0.13)','rgba(170,0,255,0.13)'][Math.floor(Math.random()*4)] });
                     // Ship position — scale relative to canvas height
                     let shipScale = saH / 120; // base design was 120px tall
                     let shipX = saW * 0.5, shipY = saH * 0.42;
@@ -12449,8 +12460,8 @@ function generateSyncCode() {
 
                         // Engine glow
                         let eGlow = sac.createRadialGradient(curX, curY + 10*shipScale, 1, curX, curY + 10*shipScale, 18*shipScale);
-                        eGlow.addColorStop(0, '#00ffcc88');
-                        eGlow.addColorStop(0.4, '#00ffcc33');
+                        eGlow.addColorStop(0, 'rgba(0,255,204,0.53)');
+                        eGlow.addColorStop(0.4, 'rgba(0,255,204,0.2)');
                         eGlow.addColorStop(1, 'transparent');
                         sac.fillStyle = eGlow;
                         sac.fillRect(curX - 22*shipScale, curY, 44*shipScale, 28*shipScale);
@@ -12550,7 +12561,7 @@ function generateSyncCode() {
                         sac.closePath();
                         let cpGrad = sac.createLinearGradient(0, -12, 0, 6);
                         cpGrad.addColorStop(0, 'rgba(0,255,204,0.4)');
-                        cpGrad.addColorStop(0.5, '#00ffccaa');
+                        cpGrad.addColorStop(0.5, 'rgba(0,255,204,0.67)');
                         cpGrad.addColorStop(1, 'rgba(0,255,204,0.27)');
                         sac.fillStyle = cpGrad;
                         sac.fill();
@@ -12564,10 +12575,10 @@ function generateSyncCode() {
                         sac.lineTo(0, 2);
                         sac.lineTo(-2, -1);
                         sac.closePath();
-                        sac.fillStyle = '#00ffccdd';
+                        sac.fillStyle = 'rgba(0,255,204,0.87)';
                         sac.fill();
                         // Nose tip highlight
-                        sac.fillStyle = '#ffffff44';
+                        sac.fillStyle = 'rgba(255,255,255,0.27)';
                         sac.beginPath(); sac.arc(0, -15, 1, 0, Math.PI*2); sac.fill();
                         sac.restore();
 
@@ -12733,7 +12744,7 @@ function generateSyncCode() {
         if (settingsBtnContainer) {
             let diffBtn = document.createElement('button');
             diffBtn.id = 'btn-toggle-difficulty';
-            diffBtn.style.cssText = 'width:100%;border-color:#ffcc00;color:#ffcc00;box-shadow:0 0 20px #ffcc0040;';
+            diffBtn.style.cssText = 'width:100%;border-color:#ffcc00;color:#ffcc00;box-shadow:0 0 20px rgba(255,204,0,0.25);';
             diffBtn.onclick = function() {
                 let keys = Object.keys(DIFFICULTIES);
                 let idx = keys.indexOf(selectedDifficulty);
@@ -12760,7 +12771,7 @@ function generateSyncCode() {
             // Also add minimap toggle
             let mmBtn = document.createElement('button');
             mmBtn.id = 'btn-toggle-minimap';
-            mmBtn.style.cssText = 'width:100%;border-color:#55ddaa;color:#55ddaa;box-shadow:0 0 20px #55ddaa40;';
+            mmBtn.style.cssText = 'width:100%;border-color:#55ddaa;color:#55ddaa;box-shadow:0 0 20px rgba(85,221,170,0.25);';
             mmBtn.innerText = 'MINIMAP: ' + (appSettings.minimap !== false ? 'ON' : 'OFF');
             mmBtn.onclick = function() {
                 appSettings.minimap = appSettings.minimap === false ? true : false;
@@ -12814,8 +12825,8 @@ function generateSyncCode() {
             @keyframes comboRainbow { 0%{color:#ff0055} 16%{color:#ff8800} 33%{color:#ffcc00} 50%{color:#00ff88} 66%{color:#00ccff} 83%{color:#aa00ff} 100%{color:#ff0055} }
             @keyframes comboShake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-2px)} 75%{transform:translateX(2px)} }
             @keyframes comboPop { 0%{transform:scale(1)} 50%{transform:scale(1.3)} 100%{transform:scale(1)} }
-            .combo-fire { text-shadow:0 0 10px #ff8800,0 0 20px #ff440066 !important; }
-            .combo-max { animation:comboRainbow 1s infinite,comboShake 0.1s infinite !important;text-shadow:0 0 15px #ff00ff,0 0 30px #aa00ff66 !important;font-size:22px !important; }
+            .combo-fire { text-shadow:0 0 10px #ff8800,0 0 20px rgba(255,68,0,0.4) !important; }
+            .combo-max { animation:comboRainbow 1s infinite,comboShake 0.1s infinite !important;text-shadow:0 0 15px #ff00ff,0 0 30px rgba(170,0,255,0.4) !important;font-size:22px !important; }
         `;
         document.head.appendChild(comboStyle);
 
@@ -13960,7 +13971,7 @@ let dx=gh.attachX-(mp.x+mp.w/2),dy=gh.attachY-(mp.y+mp.h/2);let dist=Math.hypot(
                 }let hr=e.hp/e.maxHp;if(hr<0.3&&e.phase<2){e.phase=2;spawnText(e.x+e.w/2,e.y-20,'ENRAGED!',COLORS.pink);shake(10);}else if(hr<0.6&&e.phase<1){e.phase=1;spawnText(e.x+e.w/2,e.y-20,'PHASE 2',COLORS.boss);shake(8);}e.dir=mp.x<e.x?-1:1;if(e.charging){e.x+=e.chargeVx;e.y+=e.chargeVy;e.chargeTimer--;spawnParticles(e.x+e.w/2,e.y+e.h/2,COLORS.boss,2,2,10);if(e.x<TILE||e.x+e.w>(ROOM_W-1)*TILE){e.chargeVx*=-1;shake(6);}if(e.y<TILE||e.y+e.h>(ROOM_H-2)*TILE){e.chargeVy*=-1;shake(6);}if(mp.invuln<=0&&rectsOverlap(mp,e)){hurtPlayer(20);shake(8);}if(e.chargeTimer<=0){e.charging=false;e.attackTimer=e.phase>=2?40:70;}}else if(e.shieldUp){e.shieldTimer--;if(e.shieldTimer<=0){e.shieldUp=false;e.attackTimer=50;}e.y=e.baseY+Math.sin(e.floatAngle)*15;}else{let tx2=mp.x+(e.dir*-150),ty2=mp.y-40+Math.sin(e.floatAngle)*30;e.x+=(tx2-e.x)*0.02;e.y+=(ty2-e.y)*0.02;e.x=Math.max(2*TILE,Math.min((ROOM_W-3)*TILE,e.x));e.y=Math.max(2*TILE,Math.min((ROOM_H-4)*TILE,e.y));if(e.attackTimer<=0){e.pattern=(e.pattern+1)%(e.phase>=2?4:3);if(e.pattern===0){let shots=e.phase>=1?5:3;for(let s=0;s<shots;s++){let a=Math.atan2(mp.y+mp.h/2-(e.y+e.h/2),mp.x+mp.w/2-(e.x+e.w/2));a+=(s-Math.floor(shots/2))*0.2;mState.enemyBullets.push({x:e.x+e.w/2,y:e.y+e.h/2,vx:Math.cos(a)*4,vy:Math.sin(a)*4,w:8,h:8,life:120,damage:12,color:COLORS.boss});}mSound('mboss_charge');e.attackTimer=e.phase>=2?30:60;}else if(e.pattern===1){e.charging=true;let a=Math.atan2(mp.y+mp.h/2-(e.y+e.h/2),mp.x+mp.w/2-(e.x+e.w/2));e.chargeVx=Math.cos(a)*(e.phase>=2?10:7);e.chargeVy=Math.sin(a)*(e.phase>=2?10:7);e.chargeTimer=50;mSound('mboss_charge');spawnText(e.x+e.w/2,e.y-20,'CHARGE!',COLORS.pink);}else if(e.pattern===2){e.shieldUp=true;e.shieldTimer=e.phase>=2?60:90;let rc=e.phase>=1?12:8;for(let s=0;s<rc;s++){let a=(s/rc)*Math.PI*2;mState.enemyBullets.push({x:e.x+e.w/2,y:e.y+e.h/2,vx:Math.cos(a)*3,vy:Math.sin(a)*3,w:6,h:6,life:100,damage:10,color:COLORS.bossAccent});}mSound('mboss_charge');}else if(e.pattern===3){for(let s=0;s<8;s++){setTimeout(()=>{if(!e.alive||!mState.running)return;let a=Math.atan2(mp.y+mp.h/2-(e.y+e.h/2),mp.x+mp.w/2-(e.x+e.w/2));mState.enemyBullets.push({x:e.x+e.w/2,y:e.y+e.h/2,vx:Math.cos(a)*5,vy:Math.sin(a)*5,w:8,h:8,life:90,damage:10,color:COLORS.boss});},s*100);}e.attackTimer=100;}}if(mp.invuln<=0&&rectsOverlap(mp,e))hurtPlayer(15);}}}for(let d of doors){if(d.room!==room||d.locked)continue;let dr={x:d.x*TILE,y:d.yMin*TILE,w:TILE,h:(d.yMax-d.yMin+1)*TILE};if(rectsOverlap(mp,dr)){if(d.targetRoom===4&&!mState.bossKeyDoorOpen&&!mState.bossDefeated){spawnText(mp.x+mp.w/2,mp.y-40,'NEED ALL 3 KEYS!','#ff3333');continue;}mState.transitionDir=1;mState.transitionTarget={room:d.targetRoom,x:d.spawnX,y:d.spawnY};mSound('mdoor');}}for(let p of mState.pickups){if(p.collected)continue;p.bobAngle+=0.05;if(rectsOverlap(mp,p)){p.collected=true;mSound('mpickup');if(p.type==='health'){let h=20;mp.hp=Math.min(mp.maxHp,mp.hp+h);spawnText(p.x,p.y-10,'+'+h+' HP',COLORS.health);spawnParticles(p.x+8,p.y+8,COLORS.health,10,3,20);}else{let g=10;mp.ammo=Math.min(mp.maxAmmo,mp.ammo+g);spawnText(p.x,p.y-10,'+'+g+' AMMO',COLORS.ammo);spawnParticles(p.x+8,p.y+8,COLORS.ammo,10,3,20);}}}let _ssTx=Math.floor(mp.x/32),_ssTy=Math.floor((mp.y+mp.h-1)/32);if(_ssTy>=0&&_ssTy<20&&rooms[room][_ssTy]&&rooms[room][_ssTy][_ssTx]===7||rooms[room][_ssTy]&&rooms[room][_ssTy][Math.floor((mp.x+mp.w-1)/32)]===7){  let sv={room:room,hp:mp.hp,ammo:mp.ammo,x:mp.x,y:mp.y};_crashedSave=sv;  secureSave('neonVoidCrashedSave', sv);  if(!mState._lastSaveMsg||mState.frameCount-mState._lastSaveMsg>120){mState._lastSaveMsg=mState.frameCount;spawnText(mp.x+mp.w/2,mp.y-30,'GAME SAVED',COLORS.neon);}}for(let _ob of mOrbs){if(_ob.collected||_ob.room!==room)continue;  let _od={x:_ob.x,y:_ob.y,w:_ob.w,h:_ob.h};  if(rectsOverlap(mp,_od)){_ob.collected=true;_crashedOrbs.push(_ob.id);secureSave('neonVoidCrashedOrbs', _crashedOrbs);    if(_ob.type==='hp'){mp.maxHp+=10;mp.hp=Math.min(mp.hp+10,mp.maxHp);spawnText(_ob.x,_ob.y-20,'MAX HP +10!',COLORS.health);}    else{mp.maxAmmo+=5;mp.ammo=Math.min(mp.ammo+5,mp.maxAmmo);spawnText(_ob.x,_ob.y-20,'MAX AMMO +5!',COLORS.ammo);}    mSound('mpickup');spawnParticles(_ob.x,_ob.y,'#ffff00',20,4,30);  }}for(let _k of mKeys91){if(_k.collected||_k.room!==room)continue;  if(rectsOverlap(mp,{x:_k.x,y:_k.y,w:_k.w,h:_k.h})){_k.collected=true;mState.bossKeyInventory.push(_k.id);mSound('mpickup');    spawnText(_k.x,_k.y-20,'KEY: '+_k.id.toUpperCase()+'!',_k.color);spawnParticles(_k.x,_k.y,_k.color,20,4,30);    if(mState.bossKeyInventory.length>=3){mState.bossKeyDoorOpen=true;spawnText(mp.x+mp.w/2,mp.y-50,'ALL KEYS - SANCTUM UNLOCKED!',COLORS.neon);}  }}mState.npcDialogue=null;for(let _npc of mNPCs){if(_npc.room!==room)continue;  let _dd=Math.sqrt((mp.x+mp.w/2-_npc.x-7)**2+(mp.y+mp.h/2-_npc.y-13)**2);  if(_dd<50){mState.npcDialogue=_npc.dialogue;break;}}if(mState._inWater&&mState.frameCount%8===0){mState.bubbles.push({x:mp.x+Math.random()*mp.w,y:mp.y+mp.h,vx:(Math.random()-0.5)*0.5,vy:-1-Math.random(),life:40});}for(let i=mState.bubbles.length-1;i>=0;i--){let _b=mState.bubbles[i];_b.x+=_b.vx;_b.y+=_b.vy;_b.life--;if(_b.life<=0)mState.bubbles.splice(i,1);}for(let i=mState.particles.length-1;i>=0;i--){let p=mState.particles[i];p.x+=p.vx;p.y+=p.vy;p.vx*=0.96;p.vy*=0.96;p.life--;if(p.life<=0)mState.particles.splice(i,1);}for(let i=mState.texts.length-1;i>=0;i--){let t=mState.texts[i];t.y-=0.5;t.life--;if(t.life<=0)mState.texts.splice(i,1);}let tcx=mp.x+mp.w/2-mc.width/2,tcy=mp.y+mp.h/2-mc.height/2;tcx=Math.max(0,Math.min(ROOM_W*TILE-mc.width,tcx));tcy=Math.max(0,Math.min(ROOM_H*TILE-mc.height,tcy));mState.cameraX+=(tcx-mState.cameraX)*0.1;mState.cameraY+=(tcy-mState.cameraY)*0.1;}function renderMetroid(){if(!mState.running)return;let sc=crashedPlayerColor||COLORS.neon;let px=mp.x,py=mp.y;let dP=!mp.dead||(mp.dead&&Math.floor(mp.invuln/3)%2===0);let cw=mc.width,ch=mc.height,room=mState.room;let camX=Math.round(mState.cameraX+mState.shakeX),camY=Math.round(mState.cameraY+mState.shakeY);mx.fillStyle=COLORS.bg;mx.fillRect(0,0,cw,ch);let bgGrad=mx.createRadialGradient(cw*0.5,ch*0.4,0,cw*0.5,ch*0.4,ch);bgGrad.addColorStop(0,room===2?'rgba(40,0,60,0.3)':'rgba(0,20,30,0.2)');bgGrad.addColorStop(1,'transparent');mx.fillStyle=bgGrad;mx.fillRect(0,0,cw,ch);mx.strokeStyle='rgba(0,255,204,0.025)';mx.lineWidth=1;let gx0=-(camX%64);for(let gx=gx0;gx<cw;gx+=64){mx.beginPath();mx.moveTo(gx,0);mx.lineTo(gx,ch);mx.stroke();}let gy0=-(camY%64);for(let gy=gy0;gy<ch;gy+=64){mx.beginPath();mx.moveTo(0,gy);mx.lineTo(cw,gy);mx.stroke();}for(let i=0;i<60;i++){let sx=((i*137+50)%(ROOM_W*TILE))-camX*0.2,sy=((i*211+30)%(ROOM_H*TILE))-camY*0.2;sx=((sx%cw)+cw)%cw;sy=((sy%ch)+ch)%ch;let twink=0.08+Math.sin(mState.frameCount*0.02+i)*0.08;mx.fillStyle=i%3===0?'rgba(0,255,204,'+twink+')':i%3===1?'rgba(255,0,85,'+twink*0.5+')':'rgba(255,255,255,'+twink+')';mx.fillRect(sx,sy,i%5===0?2:1,i%5===0?2:1);}mx.save();mx.translate(-camX,-camY);let stx=Math.max(0,Math.floor(camX/TILE)),etx=Math.min(ROOM_W,Math.ceil((camX+cw)/TILE)+1);let sty=Math.max(0,Math.floor(camY/TILE)),ety=Math.min(ROOM_H,Math.ceil((camY+ch)/TILE)+1);for(let ty=sty;ty<ety;ty++){for(let tx=stx;tx<etx;tx++){let t=rooms[room][ty][tx],px=tx*TILE,py=ty*TILE;if(t===1){let tg=mx.createLinearGradient(px,py,px,py+TILE);tg.addColorStop(0,'#161630');tg.addColorStop(1,'#0c0c1e');mx.fillStyle=tg;mx.fillRect(px,py,TILE,TILE);mx.strokeStyle='#222244';mx.lineWidth=1;mx.strokeRect(px+0.5,py+0.5,TILE-1,TILE-1);mx.fillStyle='rgba(20,20,40,0.5)';mx.fillRect(px+2,py+2,TILE-4,TILE-4);if(ty>0&&!isSolid(room,tx,ty-1)){mx.fillStyle='rgba(0,255,204,0.18)';mx.fillRect(px,py,TILE,3);mx.fillStyle='rgba(0,255,204,0.06)';mx.fillRect(px,py+3,TILE,5);}if(ty<ROOM_H-1&&!isSolid(room,tx,ty+1)){mx.fillStyle='rgba(0,255,204,0.1)';mx.fillRect(px,py+TILE-2,TILE,2);}if(tx>0&&!isSolid(room,tx-1,ty)){mx.fillStyle='rgba(0,255,204,0.06)';mx.fillRect(px,py,2,TILE);}if(tx<ROOM_W-1&&!isSolid(room,tx+1,ty)){mx.fillStyle='rgba(0,255,204,0.06)';mx.fillRect(px+TILE-2,py,2,TILE);}}else if(t===2){mx.fillStyle=COLORS.tileBorder;mx.fillRect(px,py,TILE,6);mx.fillStyle=COLORS.neon;mx.globalAlpha=0.3;mx.fillRect(px,py,TILE,2);mx.globalAlpha=1;}else if(t===3){mx.fillStyle=COLORS.door;mx.fillRect(px,py,TILE,TILE);mx.fillStyle='rgba(255,0,85,0.3)';mx.fillRect(px+4,py+4,TILE-8,TILE-8);let pulse=0.4+Math.sin(mState.frameCount*0.08)*0.3;mx.shadowColor=COLORS.door;mx.shadowBlur=10*pulse;mx.fillStyle='rgba(255,0,85,'+(pulse*0.5)+')';mx.fillRect(px+8,py+8,TILE-16,TILE-16);mx.shadowBlur=0;}else if(t===4){mx.fillStyle='rgba(0,255,204,0.15)';mx.fillRect(px,py,TILE,TILE);mx.strokeStyle=COLORS.doorOpen;mx.lineWidth=1;mx.globalAlpha=0.4+Math.sin(mState.frameCount*0.05)*0.2;mx.strokeRect(px+2,py+2,TILE-4,TILE-4);mx.globalAlpha=1;}else if(t===5){mx.fillStyle=COLORS.pink;for(let sx=0;sx<TILE;sx+=8){mx.beginPath();mx.moveTo(px+sx,py+TILE);mx.lineTo(px+sx+4,py+8);mx.lineTo(px+sx+8,py+TILE);mx.fill();}mx.shadowColor=COLORS.pink;mx.shadowBlur=6;mx.fillStyle='rgba(255,0,85,0.3)';mx.fillRect(px,py+10,TILE,TILE-10);mx.shadowBlur=0;}else if(t===6){mx.fillStyle='rgba(0,255,204,0.25)';mx.fillRect(px,py,TILE,TILE);mx.strokeStyle='#00ffcc';mx.lineWidth=2;for(let ai=0;ai<3;ai++){let ax=px+4+ai*9;mx.beginPath();mx.moveTo(ax,py+TILE-4);mx.lineTo(ax+6,py+TILE/2);mx.lineTo(ax,py+4);mx.stroke();}mx.shadowColor='#00ffcc';mx.shadowBlur=6+Math.sin(mState.frameCount*0.1+t)*3;mx.strokeStyle='rgba(0,255,204,0.6)';mx.strokeRect(px+1,py+1,TILE-2,TILE-2);mx.shadowBlur=0;}else if(t===7){/* Save station */mx.fillStyle='rgba(0,255,100,0.25)';mx.fillRect(px,py,TILE,TILE);mx.shadowColor='#00ff66';mx.shadowBlur=8+Math.sin(mState.frameCount*0.08)*4;mx.strokeStyle='#00ff66';mx.lineWidth=2;mx.strokeRect(px+2,py+2,TILE-4,TILE-4);mx.fillStyle='#00ff66';mx.font='bold 9px monospace';mx.textAlign='center';mx.textBaseline='middle';mx.fillText('SAVE',px+TILE/2,py+TILE/2);mx.shadowBlur=0;}else if(t===8){/* Breakable wall - looks like normal wall with cracks */let _bk=room+'_'+tx+'_'+ty,_bh=mState.breakableWallHits[_bk]||0;if(_bh<5){let tg=mx.createLinearGradient(px,py,px,py+TILE);tg.addColorStop(0,'#1a1030');tg.addColorStop(1,'#0d0818');mx.fillStyle=tg;mx.fillRect(px,py,TILE,TILE);mx.strokeStyle='#443355';mx.lineWidth=1;mx.strokeRect(px+0.5,py+0.5,TILE-1,TILE-1);mx.strokeStyle='rgba(200,150,255,0.5)';mx.lineWidth=1;mx.setLineDash([2,3]);mx.beginPath();mx.moveTo(px+6,py+4);mx.lineTo(px+10,py+TILE-4);mx.stroke();mx.beginPath();mx.moveTo(px+TILE-8,py+6);mx.lineTo(px+TILE-12,py+TILE-6);mx.stroke();if(_bh>2){mx.beginPath();mx.moveTo(px+4,py+TILE-8);mx.lineTo(px+TILE-4,py+8);mx.stroke();}mx.setLineDash([]);mx.fillStyle='rgba(150,100,255,0.2)';mx.font='8px monospace';mx.textAlign='center';mx.textBaseline='middle';mx.fillText(_bh+'/5',px+TILE/2,py+TILE/2);}}else if(t===9){/* Water tile */mx.fillStyle='rgba(0,80,200,0.35)';mx.fillRect(px,py,TILE,TILE);mx.fillStyle='rgba(0,120,255,'+(0.1+Math.sin(mState.frameCount*0.05+tx)*0.1)+')';mx.fillRect(px,py,TILE,4);mx.strokeStyle='rgba(100,200,255,0.15)';mx.lineWidth=1;mx.strokeRect(px,py,TILE,TILE);}else if(t===10){/* Gravity flip zone */mx.fillStyle='rgba(120,0,200,0.2)';mx.fillRect(px,py,TILE,TILE);let _gp=0.3+Math.sin(mState.frameCount*0.08+tx+ty)*0.2;mx.strokeStyle='rgba(180,0,255,'+_gp+')';mx.lineWidth=1;mx.strokeRect(px,py,TILE,TILE);if(ty%3===0&&tx%3===0){mx.fillStyle='rgba(180,0,255,0.4)';mx.font='9px monospace';mx.textAlign='center';mx.textBaseline='middle';mx.fillText('G',px+TILE/2,py+TILE/2);}}else if(t===11){/* Weapon pickup tile */mx.fillStyle='rgba(255,200,0,0.2)';mx.fillRect(px,py,TILE,TILE);mx.shadowColor='#ffcc00';mx.shadowBlur=8+Math.sin(mState.frameCount*0.1)*4;mx.strokeStyle='#ffcc00';mx.lineWidth=2;mx.strokeRect(px+2,py+2,TILE-4,TILE-4);mx.fillStyle='#ffcc00';mx.font='bold 8px monospace';mx.textAlign='center';mx.textBaseline='middle';let _wmap2={0:'SHG',1:'LSR',2:'RKT'};mx.fillText(_wmap2[(room*3+tx)%3]||'WPN',px+TILE/2,py+TILE/2);mx.shadowBlur=0;}}}for(let _ob of mOrbs){if(_ob.collected||_ob.room!==room)continue;let _oa=mState.frameCount*0.05,_or=8+Math.sin(mState.frameCount*0.1)*2;mx.save();mx.translate(_ob.x+8,_ob.y+8);mx.rotate(_oa);mx.shadowColor=_ob.type==='hp'?'#00ff88':'#ffcc00';mx.shadowBlur=14;mx.strokeStyle=_ob.type==='hp'?'#00ff88':'#ffcc00';mx.lineWidth=2;for(let _oi=0;_oi<4;_oi++){mx.rotate(Math.PI/2);mx.beginPath();mx.moveTo(-_or*0.5,0);mx.lineTo(0,_or);mx.lineTo(_or*0.5,0);mx.stroke();}mx.fillStyle=_ob.type==='hp'?'rgba(0,255,136,0.5)':'rgba(255,204,0,0.5)';mx.beginPath();mx.arc(0,0,5,0,Math.PI*2);mx.fill();mx.restore();mx.shadowBlur=0;}for(let _k of mKeys91){if(_k.collected||_k.room!==room)continue;mx.save();mx.translate(_k.x+7,_k.y+7);mx.shadowColor=_k.color;mx.shadowBlur=12;mx.fillStyle=_k.color;mx.strokeStyle='#fff';mx.lineWidth=1;mx.beginPath();mx.moveTo(0,-8);mx.lineTo(8,0);mx.lineTo(0,8);mx.lineTo(-8,0);mx.closePath();mx.fill();mx.stroke();mx.restore();mx.shadowBlur=0;}for(let _npc of mNPCs){if(_npc.room!==room)continue;mx.save();mx.translate(_npc.x-camX,_npc.y-camY);mx.fillStyle='#aaaaff';mx.shadowColor='#aaaaff';mx.shadowBlur=6;mx.beginPath();mx.arc(7,4,5,0,Math.PI*2);mx.fill();mx.fillRect(3,9,8,12);mx.fillRect(1,11,3,10);mx.fillRect(10,11,3,10);mx.fillRect(3,21,4,5);mx.fillRect(9,21,4,5);mx.fillStyle='#ffff00';mx.font='10px monospace';mx.textAlign='center';let _nd=Math.sqrt((mp.x+mp.w/2-_npc.x-7)**2+(mp.y+mp.h/2-_npc.y-13)**2);if(_nd<80){let _pulse=0.5+Math.sin(mState.frameCount*0.15)*0.5;mx.globalAlpha=_pulse;mx.fillText('!',7,-4);}mx.globalAlpha=1;mx.restore();mx.shadowBlur=0;}if(mState._inWater){mx.fillStyle='rgba(0,80,200,0.15)';mx.fillRect(0,0,cw,ch);for(let _bb of mState.bubbles){mx.fillStyle='rgba(150,200,255,0.5)';mx.beginPath();mx.arc(_bb.x-camX,_bb.y-camY,2,0,Math.PI*2);mx.fill();}}for(let p of mState.pickups){if(p.collected)continue;let bob=Math.sin(p.bobAngle)*3,px=p.x,py=p.y+bob;mx.shadowColor=p.type==='health'?COLORS.health:COLORS.ammo;mx.shadowBlur=10;if(p.type==='health'){mx.fillStyle=COLORS.health;mx.fillRect(px+3,py+6,10,4);mx.fillRect(px+6,py+3,4,10);}else{mx.fillStyle=COLORS.ammo;mx.fillRect(px+2,py+4,12,8);mx.fillStyle='#fff';mx.fillRect(px+5,py+6,6,4);}mx.shadowBlur=0;}if(mState.puzzleSwitches&&room===3){for(let ps of mState.puzzleSwitches){let psx=ps.x-camX,psy=ps.y-camY;mx.save();mx.strokeStyle=ps.hit?'#555':COLORS.neon;mx.lineWidth=2;mx.shadowColor=COLORS.neon;mx.shadowBlur=ps.hit?0:12;mx.beginPath();mx.arc(psx,psy,12,0,Math.PI*2);mx.stroke();if(!ps.hit){let pulse=0.5+Math.sin(mState.frameCount*0.1)*0.5;mx.globalAlpha=pulse*0.5;mx.fillStyle=COLORS.neon;mx.beginPath();mx.arc(psx,psy,12,0,Math.PI*2);mx.fill();mx.globalAlpha=1;}mx.fillStyle=ps.hit?'#555':'#fff';mx.font='bold 9px monospace';mx.textAlign='center';mx.textBaseline='middle';mx.fillText(ps.hit?'[OK]':'!',psx,psy);mx.restore();}}for(let e of enemies){if(!e.alive)continue;let fl=e.flash>0;let frozenVis=e.frozen>0;let burningVis=e.dotTimer>0;if(e.type==='crawler'){mx.fillStyle=fl?'#fff':frozenVis?'#88ddff':burningVis?'#ff6600':COLORS.enemy;if(appSettings.graphics==='high'){mx.shadowColor=COLORS.enemy;mx.shadowBlur=8;}mx.fillRect(e.x+2,e.y+4,e.w-4,e.h-4);let lo=Math.sin(e.animTimer*0.15)*3;mx.fillRect(e.x,e.y+e.h-4+lo,4,4);mx.fillRect(e.x+e.w-4,e.y+e.h-4-lo,4,4);mx.fillRect(e.x+8,e.y+e.h-4-lo,4,4);mx.fillRect(e.x+e.w-12,e.y+e.h-4+lo,4,4);mx.fillStyle=fl?'#fff':COLORS.neon;mx.fillRect(e.x+(e.dir>0?e.w-8:4),e.y+6,4,4);mx.shadowBlur=0;}if(e.type==='flyer'){mx.fillStyle=fl?'#fff':frozenVis?'#88ddff':burningVis?'#ff6600':COLORS.enemy;mx.shadowColor=COLORS.enemy;mx.shadowBlur=10;mx.beginPath();mx.moveTo(e.x+e.w/2,e.y);mx.lineTo(e.x+e.w,e.y+e.h/2);mx.lineTo(e.x+e.w/2,e.y+e.h);mx.lineTo(e.x,e.y+e.h/2);mx.closePath();mx.fill();let wf=Math.sin(e.animTimer*0.2)*5;mx.fillStyle=fl?'#fff':'rgba(255,51,102,0.6)';mx.fillRect(e.x-6,e.y+e.h/2-2+wf,6,4);mx.fillRect(e.x+e.w,e.y+e.h/2-2-wf,6,4);mx.fillStyle=COLORS.neon;mx.beginPath();mx.arc(e.x+e.w/2,e.y+e.h/2,3,0,Math.PI*2);mx.fill();mx.shadowBlur=0;}if(e.type==='boss'){let bx=e.x,by=e.y;mx.shadowColor=COLORS.boss;mx.shadowBlur=20;if(e.shieldUp){mx.strokeStyle=COLORS.boss;mx.lineWidth=2;mx.globalAlpha=0.4+Math.sin(mState.frameCount*0.1)*0.2;mx.beginPath();mx.arc(bx+e.w/2,by+e.h/2,e.w*0.8,0,Math.PI*2);mx.stroke();mx.globalAlpha=1;}mx.fillStyle=fl?'#fff':COLORS.boss;mx.beginPath();mx.arc(bx+e.w/2,by+12,14,0,Math.PI*2);mx.fill();mx.fillRect(bx+10,by+24,e.w-20,e.h-36);mx.fillRect(bx+2,by+28,10,24);mx.fillRect(bx+e.w-12,by+28,10,24);mx.fillRect(bx+12,by+e.h-14,8,14);mx.fillRect(bx+e.w-20,by+e.h-14,8,14);mx.fillStyle=fl?'#fff':'#220033';mx.fillRect(bx+16,by+28,e.w-32,e.h-42);let ep=3+Math.sin(mState.frameCount*0.08)*2;mx.fillStyle=e.phase>=2?COLORS.pink:(e.phase>=1?COLORS.yellow:'#ff00ff');mx.shadowColor=mx.fillStyle;mx.shadowBlur=15;mx.beginPath();mx.arc(bx+e.w/2-5,by+10,ep,0,Math.PI*2);mx.fill();mx.beginPath();mx.arc(bx+e.w/2+5,by+10,ep,0,Math.PI*2);mx.fill();mx.strokeStyle=COLORS.pink;mx.lineWidth=1;mx.beginPath();mx.arc(bx+e.w/2,by+16,3,0,Math.PI);mx.stroke();mx.fillStyle='rgba(255,0,255,0.15)';for(let tl=0;tl<4;tl++){let ta=mState.frameCount*0.03+tl*Math.PI/2,tr=40+Math.sin(mState.frameCount*0.05)*5;mx.beginPath();mx.arc(bx+e.w/2+Math.cos(ta)*tr,by+e.h/2+Math.sin(ta)*tr,6,0,Math.PI*2);mx.fill();}if(mState.frameCount%6===0)spawnParticles(bx+Math.random()*e.w,by+Math.random()*e.h,e.phase>=2?COLORS.pink:COLORS.boss,1,1,15);mx.shadowBlur=0;let bW=80,bH=6,bX=bx+e.w/2-bW/2,bY=by-14;mx.fillStyle='rgba(0,0,0,0.7)';mx.fillRect(bX-1,bY-1,bW+2,bH+2);mx.fillStyle=e.phase>=2?COLORS.pink:COLORS.boss;mx.fillRect(bX,bY,bW*(e.hp/e.maxHp),bH);}}mx.shadowBlur=0;for(let b of mState.bullets){mx.fillStyle=b.color;if(appSettings.graphics==='high'){mx.shadowColor=b.color;mx.shadowBlur=8;}mx.fillRect(b.x-b.w/2,b.y-b.h/2,b.w,b.h);mx.globalAlpha=0.4;mx.fillRect(b.x-b.w/2-b.vx*0.5,b.y-b.h/2,b.w*0.7,b.h*0.7);mx.globalAlpha=0.2;mx.fillRect(b.x-b.w/2-b.vx,b.y-b.h/2,b.w*0.4,b.h*0.4);mx.globalAlpha=1;mx.shadowBlur=0;}mx.shadowBlur=0;for(let b of mState.enemyBullets){mx.fillStyle=b.color||COLORS.pink;if(appSettings.graphics==='high'){mx.shadowColor=b.color||COLORS.pink;mx.shadowBlur=6;}mx.beginPath();mx.arc(b.x,b.y,4,0,Math.PI*2);mx.fill();mx.shadowBlur=0;}if(!mp.dead){let dP=mp.invuln<=0||Math.floor(mp.invuln/3)%2===0;if(dP){let px=mp.x,py=mp.y;let sc=crashedPlayerColor||COLORS.neon;if(appSettings.graphics==='high'){mx.shadowColor=sc;mx.shadowBlur=14;}mx.fillStyle=sc;mx.beginPath();mx.arc(px+mp.w/2,py+8,8,0,Math.PI*2);mx.fill();mx.fillStyle='#061a14';mx.beginPath();mx.arc(px+mp.w/2+(mp.facing*3),py+7,3.5,0,Math.PI*2);mx.fill();mx.fillStyle='#fff';mx.beginPath();mx.arc(px+mp.w/2+(mp.facing*4),py+6,1.5,0,Math.PI*2);mx.fill();mx.fillStyle=sc;mx.fillRect(px+3,py+15,mp.w-6,mp.h-23);let grd=mx.createLinearGradient(px,py+15,px+mp.w,py+15);grd.addColorStop(0,'rgba(0,200,160,0.7)');grd.addColorStop(0.5,sc);grd.addColorStop(1,'rgba(0,200,160,0.7)');mx.fillStyle=grd;mx.fillRect(px+5,py+17,mp.w-10,mp.h-27);mx.fillStyle='#061a14';mx.fillRect(px+7,py+19,mp.w-14,4);mx.fillRect(px+7,py+25,mp.w-14,2);let ay=py+mp.h/2-2;mx.fillStyle=sc;mx.fillRect(px+(mp.facing>0?mp.w-2:-10),ay-1,12,5);mx.fillRect(px+(mp.facing>0?mp.w+8:-14),ay,5,3);if(mp.shootCooldown>5){mx.fillStyle='#fff';mx.shadowBlur=22;mx.beginPath();mx.arc(px+(mp.facing>0?mp.w+15:-16),ay+1.5,3+Math.random()*2,0,Math.PI*2);mx.fill();}let la=mp.grounded&&Math.abs(mp.vx)>1?Math.sin(mp.animTimer*0.4)*4:0;mx.fillStyle='#0a4a3a';mx.fillRect(px+4,py+mp.h-10+la,6,10);mx.fillRect(px+mp.w-10,py+mp.h-10-la,6,10);mx.fillStyle=sc;mx.fillRect(px+3,py+mp.h-2+la,8,2);mx.fillRect(px+mp.w-11,py+mp.h-2-la,8,2);if(!mp.grounded&&mp.vy<-2){spawnParticles(px+mp.w/2,py+mp.h,sc,2,2,10);mx.fillStyle='rgba(0,255,204,0.25)';mx.beginPath();mx.arc(px+mp.w/2,py+mp.h+5,6+Math.random()*3,0,Math.PI*2);mx.fill();}mx.shadowBlur=0;}}// Feature 17: Draw grapple hook line
 if(mp.grappleHook){let gh=mp.grappleHook;mx.strokeStyle=COLORS.neon;mx.lineWidth=2;mx.globalAlpha=0.8;mx.beginPath();mx.moveTo(mp.x+mp.w/2-camX,mp.y+mp.h/3-camY);mx.lineTo(gh.x-camX,gh.y-camY);mx.stroke();mx.fillStyle=COLORS.neon;mx.beginPath();mx.arc(gh.x-camX,gh.y-camY,4,0,Math.PI*2);mx.fill();mx.globalAlpha=1;}if(mp2&&!mp2.dead){let d2P=mp2.invuln<=0||Math.floor(mp2.invuln/3)%2===0;if(d2P){let p2x=mp2.x,p2y=mp2.y,p2c=mp2.color||crashedP2Color;mx.shadowColor=p2c;mx.shadowBlur=14;mx.fillStyle=p2c;mx.beginPath();mx.arc(p2x+mp2.w/2,p2y+8,8,0,Math.PI*2);mx.fill();mx.fillStyle='#061a14';mx.beginPath();mx.arc(p2x+mp2.w/2+(mp2.facing*3),p2y+7,3.5,0,Math.PI*2);mx.fill();mx.fillStyle=p2c;mx.fillRect(p2x+3,p2y+15,mp2.w-6,mp2.h-23);mx.fillStyle='#061a14';mx.fillRect(p2x+7,p2y+19,mp2.w-14,4);let a2y=p2y+mp2.h/2-2;mx.fillStyle=p2c;mx.fillRect(p2x+(mp2.facing>0?mp2.w-2:-10),a2y-1,12,5);let la2=mp2.grounded&&Math.abs(mp2.vx)>1?Math.sin(mp2.animTimer*0.4)*4:0;mx.fillStyle='#0a4a3a';mx.fillRect(p2x+4,p2y+mp2.h-10+la2,6,10);mx.fillRect(p2x+mp2.w-10,p2y+mp2.h-10-la2,6,10);mx.fillStyle=p2c;mx.fillRect(p2x+3,p2y+mp2.h-2+la2,8,2);mx.fillRect(p2x+mp2.w-11,p2y+mp2.h-2-la2,8,2);mx.shadowBlur=0;mx.fillStyle=p2c;mx.font='bold 9px monospace';mx.textAlign='center';mx.fillText('P2',p2x+mp2.w/2,p2y-5);}}if(!mp.dead){let dP=mp.invuln<=0||Math.floor(mp.invuln/3)%2===0;if(dP){let aimX=mMouse.x-camX,aimY=mMouse.y-camY;mx.strokeStyle=sc;mx.globalAlpha=0.15;mx.lineWidth=1;mx.setLineDash([4,6]);mx.beginPath();mx.moveTo(px+mp.w/2-camX,py+mp.h/2-camY);mx.lineTo(aimX,aimY);mx.stroke();mx.setLineDash([]);mx.globalAlpha=0.5;mx.strokeStyle=sc;mx.lineWidth=1;mx.beginPath();mx.arc(aimX,aimY,8,0,Math.PI*2);mx.stroke();mx.beginPath();mx.moveTo(aimX-12,aimY);mx.lineTo(aimX-5,aimY);mx.moveTo(aimX+5,aimY);mx.lineTo(aimX+12,aimY);mx.moveTo(aimX,aimY-12);mx.lineTo(aimX,aimY-5);mx.moveTo(aimX,aimY+5);mx.lineTo(aimX,aimY+12);mx.stroke();mx.globalAlpha=1;}}for(let p of mState.particles){let a=p.life/p.maxLife;mx.globalAlpha=a;mx.fillStyle=p.color;mx.fillRect(p.x-p.size/2,p.y-p.size/2,p.size*a,p.size*a);}mx.globalAlpha=1;mx.shadowBlur=0;for(let t of mState.texts){let a=t.life/t.maxLife;mx.globalAlpha=a;mx.fillStyle=t.color;mx.font='bold 14px monospace';mx.textAlign='center';mx.shadowColor=t.color;mx.shadowBlur=6;mx.fillText(t.text,t.x,t.y);}mx.globalAlpha=1;mx.shadowBlur=0;mx.restore();/* Feature 94: gravity flip zone outer glow */if(mState.gravityFlipped){  mx.save();mx.strokeStyle='rgba(180,0,255,'+(0.3+Math.sin(mState.frameCount*0.1)*0.2)+')';  mx.lineWidth=4;mx.shadowColor='#aa00ff';mx.shadowBlur=20;  mx.strokeRect(2,2,cw-4,ch-4);mx.restore();}let hp2=16,bw=180,bh=14;mx.fillStyle=COLORS.hudBg;mx.fillRect(hp2-2,hp2-2,bw+4,bh+4);mx.fillStyle='#1a0011';mx.fillRect(hp2,hp2,bw,bh);let hpR=mp.hp/mp.maxHp,hpC=hpR>0.5?COLORS.neon:(hpR>0.25?COLORS.yellow:COLORS.pink);mx.fillStyle=hpC;mx.shadowColor=hpC;mx.shadowBlur=6;mx.fillRect(hp2,hp2,bw*hpR,bh);mx.shadowBlur=0;mx.fillStyle=COLORS.white;mx.font='bold 11px monospace';mx.textAlign='left';mx.fillText('HP '+mp.hp+'/'+mp.maxHp,hp2+4,hp2+11);mx.fillStyle=COLORS.hudBg;mx.fillRect(hp2-2,hp2+bh+6,bw+4,bh+4);mx.fillStyle='#1a1a00';mx.fillRect(hp2,hp2+bh+8,bw,bh);mx.fillStyle=COLORS.ammo;mx.shadowColor=COLORS.ammo;mx.shadowBlur=6;mx.fillRect(hp2,hp2+bh+8,bw*(mp.ammo/mp.maxAmmo),bh);mx.shadowBlur=0;mx.fillStyle=COLORS.white;let ammoTypeColor=mState.ammoType==='fire'?'#ff8800':mState.ammoType==='ice'?'#88ddff':'#00ffcc';mx.fillStyle=ammoTypeColor;mx.fillText('[1]NRM [2]FIRE [3]ICE | '+mState.ammoType.toUpperCase(),hp2+4,hp2+bh+35);let _hudY=hp2+bh+48;mx.fillStyle=COLORS.white;mx.font='10px monospace';mx.textAlign='left';let _kLabels=[{id:'keyR',c:'#ff3333',n:'R'},{id:'keyB',c:'#3333ff',n:'B'},{id:'keyG',c:'#33ff33',n:'G'}];mx.fillText('KEYS:',hp2+4,_hudY);for(let _ki=0;_ki<3;_ki++){let _kl=_kLabels[_ki];let _kh=mState.bossKeyInventory.includes(_kl.id);  mx.fillStyle=_kh?_kl.c:'#444';mx.fillText(_kl.n,hp2+44+_ki*14,_hudY);}let _oC=mOrbs.filter(o=>o.collected).length;mx.fillStyle=COLORS.neon;mx.fillText('ORBS:'+_oC+'/5',hp2+88,_hudY);if(mp.specialWeapon){mx.fillStyle='#ffcc00';mx.fillText('[C]:'+mp.specialWeapon+(mp.activeWeapon!=='default'?'(ON)':'(OFF)'),hp2+4,_hudY+12);}if(mState.gravityFlipped){mx.fillStyle='#aa00ff';mx.font='bold 11px monospace';mx.textAlign='center';mx.fillText('GRAVITY FLIPPED',cw/2,hp2+12);}if(mState._inWater){mx.fillStyle='#4488ff';mx.font='10px monospace';mx.textAlign='left';mx.fillText('UNDERWATER',hp2+4,_hudY+24);}mx.fillStyle=COLORS.white;mx.fillText('AMMO '+mp.ammo+'/'+mp.maxAmmo,hp2+4,hp2+bh+19);if(mp2){let p2y=hp2+bh*2+20;mx.fillStyle=COLORS.hudBg;mx.fillRect(hp2-2,p2y-2,bw+4,bh+4);mx.fillStyle='#1a0011';mx.fillRect(hp2,p2y,bw,bh);let p2c=mp2.color||crashedP2Color;mx.fillStyle=p2c;mx.fillRect(hp2,p2y,bw*(mp2.hp/mp2.maxHp),bh);mx.fillStyle=COLORS.white;mx.font='bold 11px monospace';mx.textAlign='left';mx.fillText('P2 HP '+mp2.hp+'/'+mp2.maxHp,hp2+4,p2y+11);mx.fillStyle=COLORS.hudBg;mx.fillRect(hp2-2,p2y+bh+4,bw+4,bh+4);mx.fillStyle='#1a1a00';mx.fillRect(hp2,p2y+bh+6,bw,bh);mx.fillStyle=COLORS.ammo;mx.fillRect(hp2,p2y+bh+6,bw*(mp2.ammo/mp2.maxAmmo),bh);mx.fillStyle=COLORS.white;mx.fillText('P2 AMMO '+mp2.ammo+'/'+mp2.maxAmmo,hp2+4,p2y+bh+17);}let rn=['CRASH SITE','ALIEN CAVERNS','LAVA DEPTHS','VOID CORRIDOR','VALE\'S SANCTUM'];mx.fillStyle=COLORS.neon;mx.font='bold 13px monospace';mx.textAlign='right';mx.shadowColor=COLORS.neon;mx.shadowBlur=8;mx.fillText(rn[room],cw-hp2,hp2+12);mx.shadowBlur=0;let mmW=120,mmH=40,mmX=cw-hp2-mmW,mmY=hp2+22;mx.fillStyle='rgba(6,6,12,0.8)';mx.fillRect(mmX,mmY,mmW,mmH);mx.strokeStyle='rgba(0,255,204,0.3)';mx.lineWidth=1;mx.strokeRect(mmX,mmY,mmW,mmH);let msx=mmW/(ROOM_W*TILE),msy=mmH/(ROOM_H*TILE);mx.fillStyle='rgba(0,0,0,0.6)';mx.fillRect(mmX,mmY,mmW,mmH);mx.fillStyle='rgba(0,255,204,0.2)';for(let ty=0;ty<ROOM_H;ty+=2)for(let tx=0;tx<ROOM_W;tx+=2){let _ek=room+'_'+tx+'_'+ty;if(mState.exploredTiles[_ek]&&rooms[room][ty][tx]===1)mx.fillRect(mmX+tx*TILE*msx,mmY+ty*TILE*msy,2,2);}mx.fillStyle=COLORS.neon;mx.fillRect(mmX+mp.x*msx-1,mmY+mp.y*msy-1,3,3);if(mp2){mx.fillStyle=mp2.color||crashedP2Color;mx.fillRect(mmX+mp2.x*msx-1,mmY+mp2.y*msy-1,3,3);}for(let e of enemies){if(!e.alive)continue;mx.fillStyle=e.type==='boss'?COLORS.boss:COLORS.enemy;mx.fillRect(mmX+e.x*msx-1,mmY+e.y*msy-1,2,2);}if(mState.introTimer>0){let a=Math.min(1,mState.introTimer/30);mx.globalAlpha=a;let bxW=420,bxH=120;mx.fillStyle=COLORS.hudBg;mx.fillRect(cw/2-bxW/2,ch/2-bxH/2-40,bxW,bxH);mx.strokeStyle=COLORS.neon;mx.lineWidth=1;mx.strokeRect(cw/2-bxW/2,ch/2-bxH/2-40,bxW,bxH);mx.fillStyle=COLORS.pink;mx.font='bold 18px monospace';mx.textAlign='center';mx.fillText('C R A S H E D   A D V E N T U R E',cw/2,ch/2-90);mx.fillStyle=COLORS.neon;mx.font='13px monospace';let storyLines=['[VALE]: Pilot! Your ship took critical damage from the Glitch shockwave!','[YOU]: The controls are dead. I\'m going down.','[VALE]: Scanners show hostile lifeforms... and something massive in the core.','[YOU]: I didn\'t survive 15 sectors to die on some rock.','[VALE]: The core\'s energy could power a distress beacon. You have to reach it.','[YOU]: ...You sound nervous, Vale. What aren\'t you telling me?','[VALE]: Just... be careful down there. Please.'];let visibleLines=Math.min(storyLines.length,Math.floor((180-mState.introTimer)/18)+1);for(let sl=0;sl<visibleLines;sl++){let line=storyLines[sl];mx.fillStyle=line.startsWith('[VALE]')?COLORS.neon:COLORS.white;mx.font=line.startsWith('[YOU]')?'bold 13px monospace':'13px monospace';mx.fillText(line,cw/2,ch/2-56+sl*18);}mx.fillStyle='#555';mx.font='11px monospace';mx.fillText('ARROWS/WASD: Move  |  Z/SPACE: Jump  |  X: Shoot',cw/2,ch/2+80);mx.fillStyle='#555';mx.fillText('Shoot red doors to open. Wall-jump off walls.',cw/2,ch/2+96);mx.globalAlpha=1;}if(room===4&&mState.bossSpawned&&!mState.bossDefeated){let boss=enemies.find(e=>e.type==='boss'&&e.alive);if(boss){let bbW=300,bbH=18,bbX=cw/2-bbW/2,bbY=ch-60;mx.fillStyle=COLORS.hudBg;mx.fillRect(bbX-2,bbY-22,bbW+4,bbH+26);mx.strokeStyle=COLORS.boss;mx.lineWidth=1;mx.strokeRect(bbX-2,bbY-22,bbW+4,bbH+26);mx.fillStyle=COLORS.boss;mx.font='bold 12px monospace';mx.textAlign='center';mx.fillText('COMMANDER VALE - THE BETRAYER',cw/2,bbY-8);if(mState.bossRevealTimer>0){mState.bossRevealTimer--;let brt=300-mState.bossRevealTimer;let bossDialogue=['[VALE]: You made it. I knew you would.','[YOU]: Vale... you\'re the core? YOU did all this?','[VALE]: I had to open the Void Gate. Your family was the price.','[VALE]: But I can bring them back. I just need YOUR neural pattern.','[YOU]: You destroyed everything I loved... for POWER?','[VALE]: For SALVATION. You\'ll understand when you\'re part of it.','[YOU]: Then I\'ll stop you. Even if it kills me.','[VALE]: ...It will.'];let bidx=Math.min(bossDialogue.length-1,Math.floor(brt/35));mx.fillStyle=bossDialogue[bidx].startsWith('[VALE]')?COLORS.boss:COLORS.white;mx.font='bold 12px monospace';mx.fillText(bossDialogue[bidx],cw/2,bbY-24);}mx.fillStyle='#1a001a';mx.fillRect(bbX,bbY,bbW,bbH);let bhr=boss.hp/boss.maxHp,bc=boss.phase>=2?COLORS.pink:COLORS.boss;mx.fillStyle=bc;mx.shadowColor=bc;mx.shadowBlur=8;mx.fillRect(bbX,bbY,bbW*bhr,bbH);mx.shadowBlur=0;}}if(mState.winTimer>0){let a=Math.min(1,(180-mState.winTimer)/60);mx.globalAlpha=a;mx.fillStyle='rgba(6,6,12,0.7)';mx.fillRect(0,0,cw,ch);mx.fillStyle=COLORS.neon;mx.font='bold 32px monospace';mx.textAlign='center';mx.shadowColor=COLORS.neon;mx.shadowBlur=20;mx.fillText('THE FINAL SACRIFICE',cw/2,ch/2-20);mx.font='16px monospace';mx.fillStyle=COLORS.white;mx.shadowBlur=0;mx.fillText('You saved them. You kept your promise. Rest now, pilot.',cw/2,ch/2+20);mx.globalAlpha=1;}if(mp.dead){mx.fillStyle='rgba(255,0,85,0.15)';mx.fillRect(0,0,cw,ch);mx.fillStyle=COLORS.pink;mx.font='bold 28px monospace';mx.textAlign='center';mx.shadowColor=COLORS.pink;mx.shadowBlur=15;mx.fillText('SYSTEMS CRITICAL',cw/2,ch/2-10);mx.font='14px monospace';mx.fillStyle=COLORS.white;mx.shadowBlur=0;mx.fillText('Rebooting...',cw/2,ch/2+15);}if(mState.showMap){  mx.fillStyle='rgba(6,6,12,0.92)';mx.fillRect(0,0,cw,ch);  mx.strokeStyle=COLORS.neon;mx.lineWidth=2;mx.strokeRect(20,20,cw-40,ch-40);  mx.fillStyle=COLORS.neon;mx.font='bold 18px monospace';mx.textAlign='center';  mx.fillText('SYSTEM MAP - [M] TO CLOSE',cw/2,48);  let _rNames=['CRASH SITE','ALIEN CAVERNS','LAVA DEPTHS','VOID CORRIDOR','VALE\'S SANCTUM'];  let _rX=[cw*0.15,cw*0.35,cw*0.35,cw*0.55,cw*0.75],_rY=[ch*0.4,ch*0.3,ch*0.6,ch*0.4,ch*0.4];  let _rW=120,_rH=60;  for(let _mi=0;_mi<5;_mi++){let _vis=mState.visitedRooms.includes(_mi);    mx.fillStyle=_mi===room?'rgba(0,255,204,0.3)':_vis?'rgba(0,100,80,0.3)':'rgba(30,30,50,0.5)';    mx.strokeStyle=_mi===room?COLORS.neon:_vis?'#00aa88':'#334';    mx.lineWidth=_mi===room?3:1;    mx.fillRect(_rX[_mi]-_rW/2,_rY[_mi]-_rH/2,_rW,_rH);    mx.strokeRect(_rX[_mi]-_rW/2,_rY[_mi]-_rH/2,_rW,_rH);    mx.fillStyle=_vis?(_mi===room?COLORS.neon:'#00aa88'):'#333';    mx.font='bold 11px monospace';mx.textAlign='center';    mx.fillText(_rNames[_mi],_rX[_mi],_rY[_mi]);    if(_mi===room){let _bp=mState.frameCount%40<20;if(_bp){mx.fillStyle=COLORS.pink;mx.beginPath();mx.arc(_rX[_mi],_rY[_mi]-10,5,0,Math.PI*2);mx.fill();}}}  let _conn=[[0,1],[1,2],[1,3],[3,4]];  for(let [_ca,_cb] of _conn){    mx.strokeStyle='rgba(0,255,204,0.3)';mx.lineWidth=1;    mx.beginPath();mx.moveTo(_rX[_ca],_rY[_ca]+_rH/2);mx.lineTo(_rX[_cb],_rY[_cb]);mx.stroke();}}if(mState.npcDialogue){  let _dw=Math.min(500,cw-80),_dh=60,_dx=cw/2-_dw/2,_dy=ch-_dh-30;  mx.fillStyle='rgba(6,6,12,0.92)';mx.fillRect(_dx,_dy,_dw,_dh);  mx.strokeStyle='#aaaaff';mx.lineWidth=1;mx.strokeRect(_dx,_dy,_dw,_dh);  mx.fillStyle='#aaaaff';mx.font='bold 12px monospace';mx.textAlign='left';  mx.fillText('[NPC]: '+mState.npcDialogue,_dx+10,_dy+22);  mx.fillStyle='#555';mx.font='10px monospace';mx.fillText('(approach to talk)',_dx+10,_dy+46);}if(mState.transitionAlpha>0){mx.fillStyle=COLORS.bg;mx.globalAlpha=mState.transitionAlpha;mx.fillRect(0,0,cw,ch);mx.globalAlpha=1;}}let mAnimFrame;function metroidLoop(){if(!mState.running)return;try{updateMetroid();}catch(e){console.error('Crashed Adventure updateMetroid error:',e);}try{renderMetroid();}catch(e){console.error('Crashed Adventure renderMetroid error:',e);}mAnimFrame=requestAnimationFrame(metroidLoop);}metroidLoop();window._metroidCleanup=function(){mState.running=false;if(mAnimFrame)cancelAnimationFrame(mAnimFrame);window.removeEventListener('keydown',mKeyDown);window.removeEventListener('keyup',mKeyUp);window.removeEventListener('resize',resizeMetroid);mc.removeEventListener('mousemove',mMouseMove);mc.removeEventListener('mousedown',mMouseDown);mc.removeEventListener('mouseup',mMouseUp);if(mc.parentNode)mc.parentNode.removeChild(mc);canvas.style.display='';document.querySelectorAll('.hud-text, #hp-bar, #shield-bar, #xp-bar, #boss-hud, #boss-alert, #kill-display, #dash-display, #combo-display, #score-display, #level-display, #status-display, #coin-display').forEach(el=>{if(el)el.style.visibility='';});};}
 
-        function endMetroidMode(){if(window._metroidCleanup){window._metroidCleanup();window._metroidCleanup=null;}ui.mainOverlay.classList.remove('hidden');ui.mainOverlay.classList.remove('win-theme');ui.mainTitle.innerText="THE FINAL SACRIFICE";ui.mainTitle.style.webkitTextStroke="2px #ff0055";ui.mainTitle.style.textShadow="0 0 20px #ff005560";ui.mainDesc.innerHTML='<div style="max-width:600px;margin:0 auto;text-align:center;line-height:1.8;">'+'<span style="color:#ff0055;font-size:16px;">Vale is gone. The core is destabilizing.</span><br><br>'+'<span style="color:#888;font-style:italic;">"The beacon... it needs a neural pattern to broadcast."</span><br>'+'<span style="color:#888;font-style:italic;">"Your family\'s patterns are still in the core data."</span><br>'+'<span style="color:#888;font-style:italic;">"But someone has to stay connected to transmit them."</span><br><br>'+'<span style="color:#ffffff;font-size:15px;">You plug in. You feel their memories flood through you.</span><br>'+'<span style="color:#ffffff;font-size:15px;">Your daughter\'s laugh. Your partner\'s warmth. All of it.</span><br>'+'<span style="color:#ffffff;font-size:15px;">You hold on as the core burns through your mind.</span><br><br>'+'<span style="color:#00ffcc;font-size:18px;">The beacon fires. Across the galaxy, they wake up.</span><br>'+'<span style="color:#00ffcc;font-size:18px;">Your family is safe. They\'re free.</span><br><br>'+'<span style="color:#ff0055;font-size:14px;">You smile. You kept your promise.</span><br>'+'<span style="color:#555;font-size:13px;">The core goes dark.</span><br><br>'+'<span style="color:#ffcc00;font-size:12px;">ACHIEVEMENT UNLOCKED: THE PILOT WHO NEVER CAME HOME</span>'+'</div>';ui.menuBtns.innerHTML='<button onclick="returnToMenu()" style="border-color:#ff0055;color:#ff0055;">...Return to the Void</button>';}
+        function endMetroidMode(){if(window._metroidCleanup){window._metroidCleanup();window._metroidCleanup=null;}ui.mainOverlay.classList.remove('hidden');ui.mainOverlay.classList.remove('win-theme');ui.mainTitle.innerText="THE FINAL SACRIFICE";ui.mainTitle.style.webkitTextStroke="2px #ff0055";ui.mainTitle.style.textShadow="0 0 20px rgba(255,0,85,0.38)";ui.mainDesc.innerHTML='<div style="max-width:600px;margin:0 auto;text-align:center;line-height:1.8;">'+'<span style="color:#ff0055;font-size:16px;">Vale is gone. The core is destabilizing.</span><br><br>'+'<span style="color:#888;font-style:italic;">"The beacon... it needs a neural pattern to broadcast."</span><br>'+'<span style="color:#888;font-style:italic;">"Your family\'s patterns are still in the core data."</span><br>'+'<span style="color:#888;font-style:italic;">"But someone has to stay connected to transmit them."</span><br><br>'+'<span style="color:#ffffff;font-size:15px;">You plug in. You feel their memories flood through you.</span><br>'+'<span style="color:#ffffff;font-size:15px;">Your daughter\'s laugh. Your partner\'s warmth. All of it.</span><br>'+'<span style="color:#ffffff;font-size:15px;">You hold on as the core burns through your mind.</span><br><br>'+'<span style="color:#00ffcc;font-size:18px;">The beacon fires. Across the galaxy, they wake up.</span><br>'+'<span style="color:#00ffcc;font-size:18px;">Your family is safe. They\'re free.</span><br><br>'+'<span style="color:#ff0055;font-size:14px;">You smile. You kept your promise.</span><br>'+'<span style="color:#555;font-size:13px;">The core goes dark.</span><br><br>'+'<span style="color:#ffcc00;font-size:12px;">ACHIEVEMENT UNLOCKED: THE PILOT WHO NEVER CAME HOME</span>'+'</div>';ui.menuBtns.innerHTML='<button onclick="returnToMenu()" style="border-color:#ff0055;color:#ff0055;">...Return to the Void</button>';}
 
         // ==================== FUNCTION ALIASES ====================
         // These expose functions defined in later script blocks so main-script menu buttons can call them.
@@ -14215,7 +14226,7 @@ if(mp.grappleHook){let gh=mp.grappleHook;mx.strokeStyle=COLORS.neon;mx.lineWidth
             if (ship.dashing) { ctx.globalAlpha = 0.5; }
             ctx.fillStyle = '#ff0055'; if(appSettings.graphics!=='low'){ctx.shadowColor = '#ff0055'; ctx.shadowBlur = 12;}
             ctx.beginPath(); ctx.moveTo(15,0); ctx.lineTo(-10,-9); ctx.lineTo(-6,0); ctx.lineTo(-10,9); ctx.closePath(); ctx.fill();
-            ctx.fillStyle = '#00ffcc88'; ctx.beginPath(); ctx.moveTo(8,0); ctx.lineTo(-2,-3); ctx.lineTo(-2,3); ctx.closePath(); ctx.fill();
+            ctx.fillStyle = 'rgba(0,255,204,0.53)'; ctx.beginPath(); ctx.moveTo(8,0); ctx.lineTo(-2,-3); ctx.lineTo(-2,3); ctx.closePath(); ctx.fill();
             ctx.shadowBlur = 0; ctx.globalAlpha = 1;
             // Engine trail
             ctx.fillStyle = '#00ffcc'; ctx.globalAlpha = 0.6;
@@ -14445,14 +14456,14 @@ function openClanMenu(){
   if(clanData){
     html+='<div style="max-width:400px;margin:0 auto;text-align:center">';
     html+='<div style="font-size:28px;color:#ff9900;font-weight:bold;margin:16px 0">['+clanData.tag+'] '+clanData.name+'</div>';
-    html+='<div style="background:#111;border:1px solid #ff990033;border-radius:8px;padding:16px;margin:12px 0">';
+    html+='<div style="background:#111;border:1px solid rgba(255,153,0,0.2);border-radius:8px;padding:16px;margin:12px 0">';
     html+='<div style="color:#888;font-size:12px;letter-spacing:2px;margin-bottom:8px">MEMBERS ('+clanData.members.length+')</div>';
     for(var i=0;i<clanData.members.length;i++){
       var isLeader=clanData.members[i]===clanData.leader;
       html+='<div style="padding:6px;color:'+(isLeader?'#ff9900':'#ccc')+'">'+(isLeader?'&#9733; ':'')+clanData.members[i]+(isLeader?' (Leader)':'')+'</div>';
     }
     html+='</div>';
-    html+='<div style="background:#111;border:1px solid #ff990033;border-radius:8px;padding:12px;margin:12px 0;display:flex;justify-content:space-around">';
+    html+='<div style="background:#111;border:1px solid rgba(255,153,0,0.2);border-radius:8px;padding:12px;margin:12px 0;display:flex;justify-content:space-around">';
     html+='<div><div style="color:#888;font-size:10px">CLAN XP</div><div style="color:#ff9900;font-size:20px;font-weight:bold">'+clanData.xp+'</div></div>';
     html+='<div><div style="color:#888;font-size:10px">INVITE CODE</div><div style="color:#00ffcc;font-size:16px;font-weight:bold;letter-spacing:2px">'+(clanData.code||'N/A')+'</div></div>';
     html+='</div>';
@@ -14460,13 +14471,13 @@ function openClanMenu(){
     html+='</div>';
   } else {
     html+='<div style="max-width:360px;margin:0 auto;text-align:center">';
-    html+='<div style="background:#111;border:1px solid #ff990033;border-radius:8px;padding:20px;margin:16px 0">';
+    html+='<div style="background:#111;border:1px solid rgba(255,153,0,0.2);border-radius:8px;padding:20px;margin:16px 0">';
     html+='<div style="color:#ff9900;font-size:14px;font-weight:bold;letter-spacing:2px;margin-bottom:12px">CREATE A CLAN</div>';
     html+='<input id="clan-name-input" placeholder="Clan Name" maxlength="20" style="width:100%;padding:10px;font-size:14px;background:#0a0a0a;color:#fff;border:1px solid #333;border-radius:6px;font-family:monospace;box-sizing:border-box;margin-bottom:12px">';
     html+='<button onclick="createClan(document.getElementById(\'clan-name-input\').value);document.getElementById(\'clan-overlay\').remove();openClanMenu();" style="background:linear-gradient(135deg,#ff9900,#ff6600);color:#000;border:none;padding:10px 24px;cursor:pointer;font-weight:bold;font-family:monospace;border-radius:6px;width:100%;font-size:14px">CREATE CLAN</button>';
     html+='</div>';
     html+='<div style="color:#555;margin:8px 0">OR</div>';
-    html+='<div style="background:#111;border:1px solid #00ffcc33;border-radius:8px;padding:20px;margin:16px 0">';
+    html+='<div style="background:#111;border:1px solid rgba(0,255,204,0.2);border-radius:8px;padding:20px;margin:16px 0">';
     html+='<div style="color:#00ffcc;font-size:14px;font-weight:bold;letter-spacing:2px;margin-bottom:12px">JOIN A CLAN</div>';
     html+='<input id="clan-code-input" placeholder="Enter Invite Code" maxlength="8" style="width:100%;padding:10px;font-size:14px;background:#0a0a0a;color:#fff;border:1px solid #333;border-radius:6px;font-family:monospace;box-sizing:border-box;margin-bottom:12px;text-transform:uppercase">';
     html+='<button onclick="joinClan(document.getElementById(\'clan-code-input\').value.toUpperCase());" style="background:linear-gradient(135deg,#00ffcc,#0088aa);color:#000;border:none;padding:10px 24px;cursor:pointer;font-weight:bold;font-family:monospace;border-radius:6px;width:100%;font-size:14px">JOIN CLAN</button>';

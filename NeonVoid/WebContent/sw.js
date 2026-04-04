@@ -1,4 +1,4 @@
-const CACHE_NAME = 'neon-void-v59';
+const CACHE_NAME = 'neon-void-v60';
 const ASSETS = [
   '/',
   '/index.html',
