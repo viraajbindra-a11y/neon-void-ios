@@ -3061,7 +3061,7 @@
                     this.timer += (state.hyper ? 1.5 : 1.0);
                     if (this.y < this.targetY) this.y += 3;
                     // Update boss HUD
-                    let hpPct = this.hp / this.maxHp;
+                    let hpPct = Math.max(0, this.hp / this.maxHp);
                     ui.bossHp.style.width = (hpPct * 100) + '%';
                     if (this.type !== 'VTSG' && this.type !== 'BAD_BOSS' && this.type !== 'SECRET' && this.type !== 'GLITCH') { ui.bossHp.style.background = hpPct > 0.6 ? '#00ff00' : (hpPct > 0.3 ? '#ffff00' : '#ff0000'); ui.bossHp.style.boxShadow = `0 0 20px ${ui.bossHp.style.background}`; }
                     return;
@@ -3070,9 +3070,9 @@
                 let hyperMult = state.hyper ? 1.5 : 1.0; if (this.y < this.targetY) this.y += 3 * hyperMult; this.timer += hyperMult; this.angle += 0.04 * hyperMult; let oldPhase = this.phase; this.phase = this.hp < this.maxHp * 0.3 ? 3 : (this.hp < this.maxHp * 0.6 ? 2 : 1);
                 if (this.phase !== oldPhase && oldPhase > 0) { shakeScreen(25); triggerChroma(5); spawnParticles(this.x, this.y, this.color, 12, 3); spawnText(this.x, this.y - this.radius - 20, this.phase === 2 ? 'PHASE 2' : 'ENRAGED!', this.phase === 2 ? '#ffff00' : '#ff0000', 24); playSound('hit'); }
                 
-                let hpPct = this.hp / this.maxHp;
+                let hpPct = Math.max(0, this.hp / this.maxHp);
                 if (this.type !== 'VTSG' && this.type !== 'BAD_BOSS' && this.type !== 'SECRET' && this.type !== 'GLITCH') { ui.bossHp.style.background = hpPct > 0.6 ? '#00ff00' : (hpPct > 0.3 ? '#ffff00' : '#ff0000'); ui.bossHp.style.boxShadow = `0 0 20px ${ui.bossHp.style.background}`; }
-                
+
                 if (this.type === 'SECRET') { this.color = `hsl(${Math.floor(this.timer * 2) % 360}, 100%, 50%)`; ui.bossHp.style.background = this.color; ui.bossHp.style.boxShadow = `0 0 30px ${this.color}`; }
                 if (this.cannons) { for (let k = this.cannons.length - 1; k >= 0; k--) { if (this.cannons[k].hp <= 0) { spawnParticles(this.x + this.cannons[k].x, this.y + this.cannons[k].y, '#ff0000', 10); playSound('hit'); this.cannons.splice(k, 1); } } }
                 
@@ -3919,9 +3919,9 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                                 } 
                                 if (!dead && Math.hypot(b.x-activeBoss.x, b.y-activeBoss.y) < activeBoss.radius) { 
                                     if (!b.hitList.includes(activeBoss)) { 
-                                        activeBoss.hp -= b.dmg; b.hitList.push(activeBoss); 
-                                        if (b.isCrit) { playSound('crit'); spawnText(b.x, b.y, "CRIT " + Math.floor(b.dmg), '#ff0000', 24); } else { spawnText(b.x, b.y, Math.floor(b.dmg), player.baseColor, 16); } 
-                                        spawnParticles(b.x, b.y, activeBoss.color, 5); if (state.stats.explosive || b.isBomb) triggerExplosion(b.x, b.y, b.dmg * (b.isBomb?2:1)); 
+                                        damageBoss(b.dmg); b.hitList.push(activeBoss);
+                                        if (b.isCrit) { playSound('crit'); spawnText(b.x, b.y, "CRIT " + Math.floor(b.dmg), '#ff0000', 24); } else { spawnText(b.x, b.y, Math.floor(b.dmg), player.baseColor, 16); }
+                                        spawnParticles(b.x, b.y, activeBoss.color, 5); if (state.stats.explosive || b.isBomb) triggerExplosion(b.x, b.y, b.dmg * (b.isBomb?2:1));
                                         if (activeBoss.hp <= 0 && !activeBoss.isDead) { if (activeBoss.variant === 'gauntlet' && (!activeBoss.gauntletPhase || activeBoss.gauntletPhase < 4)) { /* gauntlet phase reset handled in boss.update() */ } else { activeBoss.isDead = true; handleBossDeath(); } } 
                                         if (b.pierce <= 0) dead = true; else b.pierce--;
                                     }
@@ -3956,7 +3956,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                                             if (e.type === 'reflector' && Math.random() < 0.4) { b.vx = -b.vx; b.vy = -b.vy; b.isEnemy = true; b.hitList = []; entities.eBullets.push(new Projectile(b.x, b.y, b.vx, b.vy, '#88ffff', state.hardcore?40:20, true)); dead = true; break; }
                                             // Feature 27: Hivemind - split damage across group (INSTEAD of normal damage)
                                             if (e.type === 'hivemind' && e.hivemindGroup) { let hmGroup = entities.enemies.filter(he=>he&&he!==e&&he.type==='hivemind'&&he.hivemindGroup===e.hivemindGroup); let splitDmg = actualDmg / (hmGroup.length + 1); e.hp -= splitDmg; hmGroup.forEach(he=>{he.hp-=splitDmg; flashEnemy(he);}); b.hitList.push(e); if(b.pierce<=0){dead=true;break;}else{b.pierce--;} continue; }
-                                            if (e.type === 'shielder' && e.shieldHp > 0) { e.shieldHp -= actualDmg; if (e.shieldHp <= 0) e.shieldHp = 0; } else { e.hp -= actualDmg; }
+                                            if (e.type === 'shielder' && e.shieldHp > 0) { let overflow = Math.max(0, actualDmg - e.shieldHp); e.shieldHp = Math.max(0, e.shieldHp - actualDmg); if (overflow > 0) e.hp -= overflow; } else { e.hp -= actualDmg; }
                                             if (b.slows) { e.frozen = Math.max(e.frozen || 0, 60); }
                                             b.hitList.push(e); flashEnemy(e);
                                             if (b.isCrit) { playSound('crit'); spawnText(b.x, b.y, "CRIT " + Math.floor(b.dmg), '#ff0000', 24); knockbackEnemy(e, b.x, b.y, 6); } else { spawnText(b.x, b.y, Math.floor(b.dmg), player.baseColor, 16); knockbackEnemy(e, b.x, b.y, 2); }
@@ -5364,7 +5364,12 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
 
 
         function returnToMenu() {
+            canvas.style.display = '';
             document.getElementById('mission-select').classList.add('hidden'); document.getElementById('shop-screen').classList.add('hidden'); document.getElementById('settings-screen').classList.add('hidden'); document.getElementById('pause-screen').classList.add('hidden'); document.getElementById('draw-screen').classList.add('hidden');
+            // Cleanup cutscene if running
+            document.getElementById('cutscene-screen').classList.add('hidden'); if (typeof typeInterval !== 'undefined' && typeInterval) clearInterval(typeInterval); if (typeof stopCutsceneAnim === 'function') stopCutsceneAnim(); if (typeof currentCutscene !== 'undefined') currentCutscene = null; if (typeof isTyping !== 'undefined') isTyping = false;
+            // Clear leaked intervals
+            if (window._comboCheckInterval) { clearInterval(window._comboCheckInterval); window._comboCheckInterval = null; }
             // Cleanup game state on menu return
             if (typeof state !== 'undefined') { state.active = false; state.paused = false; state.mirrored = false; state.pendingLevels = 0; }
             if (typeof dailyState !== 'undefined') dailyState.active = false;
@@ -6173,6 +6178,14 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                 else if (state.mode === 'crashed_adventure' || state.mode === 'crashed') { retryFn = 'startCrashedAdventure()'; retryLabel = 'Retry Crashed'; }
                 else if (state.mode === 'training') { retryFn = 'returnToMenu()'; retryLabel = 'Back to Menu'; }
                 else if (state.mode === 'daily_challenge') { retryFn = 'startDailyChallenge()'; retryLabel = 'Retry Daily'; var oldBest = parseInt(secureLoad('neonVoidDailyBest_' + dailyState.seed, 0)) || 0; var newRecord = state.score > oldBest; if (newRecord) secureSave('neonVoidDailyBest_' + dailyState.seed, state.score); ui.mainDesc.innerHTML += '<br><span style="color:#ff8800;">DAILY CHALLENGE SCORE: ' + Math.floor(state.score).toLocaleString() + '</span>' + (newRecord ? '<br><span style="color:#ffcc00;">NEW DAILY BEST!</span>' : ''); dailyState.active = false; }
+                else if (state.mode === 'one_hit') { retryFn = 'startOneHit()'; retryLabel = 'Retry One Hit'; }
+                else if (state.mode === 'bullet_hell') { retryFn = 'startBulletHell()'; retryLabel = 'Retry Bullet Hell'; }
+                else if (state.mode === 'mirror') { retryFn = 'startMirror()'; retryLabel = 'Retry Mirror'; }
+                else if (state.mode === 'chaos') { retryFn = 'startChaos()'; retryLabel = 'Retry Chaos'; }
+                else if (state.mode === 'tag_team') { retryFn = 'startTagTeam()'; retryLabel = 'Retry Tag Team'; }
+                else if (state.mode === 'tournament') { retryFn = 'startTournament()'; retryLabel = 'Retry Tournament'; }
+                else if (state.mode === 'race') { retryFn = 'startRace()'; retryLabel = 'Retry Race'; }
+                else if (state.mode === 'escort') { retryFn = 'startEscort()'; retryLabel = 'Retry Escort'; }
                 ui.menuBtns.innerHTML = `<button onclick="${retryFn}">${retryLabel}</button><button onclick="returnToMenu()">Main Menu</button>`;
             } }
         
