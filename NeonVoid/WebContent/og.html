@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Neon Void: God Mode Update</title>
+    <title>Last Pilot — Classic</title>
     <style>
         body { 
             margin: 0; overflow: hidden; background: #000; 
@@ -82,7 +82,7 @@
 
 
     <div id="ui-layer">
-        <h1>NEON VOID</h1>
+        <h1>LAST PILOT</h1>
         <div class="hud-text" id="level-display">LVL: 1</div>
         <div class="hud-text" id="score-display">SCORE: 0</div>
         <div id="combo-display">COMBO x1.0</div>
@@ -109,7 +109,7 @@
 
 
     <div id="main-overlay" class="overlay-screen">
-        <div class="title-text" id="main-title">NEON VOID</div>
+        <div class="title-text" id="main-title">LAST PILOT</div>
         <div class="subtitle-text" id="main-desc">
             <strong>ARROW KEYS / WASD</strong> to Move | <strong>SPACE / MOUSE</strong> to Shoot<br>
             <strong>SHIFT / RIGHT-CLICK</strong> to Dash | <strong>[C]</strong> to Toggle Aim | <strong>[ESC]</strong> to Pause<br>
@@ -118,7 +118,7 @@
         </div>
         <div class="subtitle-text" id="menu-coin-display" style="color: #ffcc00; font-weight: bold; font-size: 24px;">TOTAL COINS: 0</div>
         <div class="btn-container" id="menu-btns"></div>
-        <button onclick="window.location.href='index.html'" style="border-color:#88ff88; color:#88ff88; margin-top:20px; box-shadow:0 0 15px #88ff88; font-size:14px;">BACK TO NEW NEON VOID</button>
+        <button onclick="window.location.href='index.html'" style="border-color:#88ff88; color:#88ff88; margin-top:20px; box-shadow:0 0 15px #88ff88; font-size:14px;">BACK TO LAST PILOT</button>
     </div>
 
 
@@ -1317,7 +1317,7 @@
         function returnToMenu() {
             document.getElementById('mission-select').classList.add('hidden'); document.getElementById('shop-screen').classList.add('hidden'); document.getElementById('settings-screen').classList.add('hidden'); document.getElementById('pause-screen').classList.add('hidden'); document.getElementById('draw-screen').classList.add('hidden');
             ui.mainOverlay.classList.remove('hidden'); ui.mainOverlay.classList.remove('win-theme'); 
-            ui.mainTitle.innerText = "NEON VOID"; ui.mainTitle.style.webkitTextStroke = "3px #ff0055"; ui.mainTitle.style.textShadow = "0 0 50px #ff0055"; 
+            ui.mainTitle.innerText = "LAST PILOT"; ui.mainTitle.style.webkitTextStroke = "3px #ff0055"; ui.mainTitle.style.textShadow = "0 0 50px #ff0055";
             ui.mainDesc.innerHTML = `<strong>ARROW KEYS / WASD</strong> to Move | <strong>SPACE / MOUSE</strong> to Shoot<br><strong>SHIFT / RIGHT-CLICK</strong> to Dash | <strong>[C]</strong> to Toggle Aim | <strong>[ESC]</strong> to Pause<br><span style="color: #ff0055; font-weight:bold;">THE COMPANION & STORY UPDATE</span>`; 
             document.getElementById('menu-coin-display').innerText = `TOTAL COINS: ${totalCoins}`;
             

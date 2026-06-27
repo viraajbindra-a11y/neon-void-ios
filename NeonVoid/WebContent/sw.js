@@ -1,38 +1,18 @@
-const CACHE_NAME = 'neon-void-v62';
+const CACHE_NAME = 'neon-void-v70';
+// Precache ONLY the Last Pilot game's own assets. The Void Arcade portal and its
+// mini-games are a separate product; they are still served and runtime-cached on
+// first visit (see fetch handler) but no longer bloat the game's install.
 const ASSETS = [
   '/',
   '/index.html',
-  '/void-arcade-index.html',
-  '/games/2048.html',
-  '/games/asteroids.html',
-  '/games/breakout.html',
-  '/games/crossy-road.html',
-  '/games/doodle-jump.html',
-  '/games/flappy.html',
-  '/games/fps.html',
-  '/games/fruit-ninja.html',
-  '/games/geometry-dash.html',
-  '/games/idle-clicker.html',
-  '/games/minesweeper.html',
-  '/games/obby.html',
-  '/games/pacman.html',
-  '/games/platformer.html',
-  '/games/pong.html',
-  '/games/rhythm.html',
-  '/games/snake.html',
-  '/games/space-invaders.html',
-  '/games/tank-trouble.html',
-  '/games/tetris.html',
-  '/games/tower-defense.html',
-  '/games/tower-defense-2.html',
-  '/games/wordle.html',
-  '/og.html'
+  '/og.html',
+  '/manifest.json'
 ];
 
-// Install: cache all game files
+// Install: precache core assets resiliently (one 404 must not abort the whole install)
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+    caches.open(CACHE_NAME).then(cache => Promise.allSettled(ASSETS.map(a => cache.add(a))))
   );
   self.skipWaiting();
 });
