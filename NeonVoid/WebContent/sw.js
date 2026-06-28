@@ -1,4 +1,4 @@
-const CACHE_NAME = 'neon-void-v70';
+const CACHE_NAME = 'neon-void-v71';
 // Precache ONLY the Last Pilot game's own assets. The Void Arcade portal and its
 // mini-games are a separate product; they are still served and runtime-cached on
 // first visit (see fetch handler) but no longer bloat the game's install.

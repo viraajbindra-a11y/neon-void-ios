@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0FF471EB0A0A3DF698815662 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 034259A531E5E0F57331F1FF /* PrivacyInfo.xcprivacy */; };
 		3102EFF0D22470CEF24D93F3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 365DE885873CAAD38308133E /* Assets.xcassets */; };
 		43C9CEACBB90B7507F46A525 /* TVGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAD9F0DE78E0243297222F4 /* TVGameView.swift */; };
 		91479769083CA9B510B2AAAA /* NeonVoidTVApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3672338C6489A73CC725F1DA /* NeonVoidTVApp.swift */; };
@@ -21,6 +22,7 @@
 
 /* Begin PBXFileReference section */
 		02DC9076C245DABD3CE9E9B4 /* ShipOrnamentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShipOrnamentView.swift; sourceTree = "<group>"; };
+		034259A531E5E0F57331F1FF /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		0C1ED58928CE4CF264BE01FE /* NeonVoidVision.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = NeonVoidVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F372C09B730C0B8C15C792E /* NeonVoid.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = NeonVoid.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D7424E85DF708472F288A14 /* GameWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameWebView.swift; sourceTree = "<group>"; };
@@ -76,6 +78,7 @@
 				1D7424E85DF708472F288A14 /* GameWebView.swift */,
 				943EAE020DE12AC0F0FD85EF /* Info.plist */,
 				37FC684FC76AE0C791115A1A /* NeonVoidApp.swift */,
+				034259A531E5E0F57331F1FF /* PrivacyInfo.xcprivacy */,
 			);
 			path = NeonVoid;
 			sourceTree = "<group>";
@@ -194,6 +197,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3102EFF0D22470CEF24D93F3 /* Assets.xcassets in Resources */,
+				0FF471EB0A0A3DF698815662 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

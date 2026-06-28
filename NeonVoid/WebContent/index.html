@@ -350,7 +350,6 @@
         <div class="bar-container"><div id="hp-bar" class="bar-fill"></div><div id="shield-bar" class="bar-fill"></div></div>
         <div id="heat-bar-container" style="width:150px;height:8px;border:1px solid #ff4400;background:#111;margin-top:2px;display:none;"><div id="heat-bar-fill" style="height:100%;width:0%;background:#ffcc00;transition:width 0.1s;box-shadow:0 0 6px #ff4400;"></div></div>
         <div id="ng-plus-indicator" style="display:none;color:#ffd700;font-size:11px;font-family:monospace;letter-spacing:2px;text-shadow:0 0 8px #ffd700;">NG+</div>
-        <div id="debt-indicator" style="display:none;color:#ff0055;font-size:11px;font-family:monospace;letter-spacing:1px;">DEBT: 0</div>
     </div>
 
 
@@ -436,7 +435,6 @@
                 <button class="shop-tab" onclick="switchShopTab('wisps')" style="color:#ffcc00;font-size:14px;font-weight:bold;">WISPS</button>
                 <button class="shop-tab" onclick="switchShopTab('forge')" style="color:#ffcc00;font-size:14px;font-weight:bold;">FORGE</button>
                 <button class="shop-tab" onclick="switchShopTab('skills')" style="color:#ffcc00;font-size:14px;font-weight:bold;">SKILLS</button>
-                <button class="shop-tab" onclick="switchShopTab('casino')" style="color:#ffcc00;font-size:14px;font-weight:bold;">CASINO</button>
             </div>
             <div id="shop-section-upgrades" class="shop-section active" style="display:flex;flex-direction:column;align-items:center;">
                 <h2 style="color: #ff0000; text-decoration: underline; margin-top: 10px; letter-spacing: 5px; text-shadow: 0 0 10px #ff0000; font-size:16px;">ILLEGAL UPGRADES</h2>
@@ -446,6 +444,7 @@
             <div id="shop-section-skins" class="shop-section" style="display:none;flex-direction:column;align-items:center;">
                 <h2 style="color: #fff; text-decoration: underline; margin-top: 10px; letter-spacing: 5px; font-size:16px;">COSMETICS</h2>
                 <div class="shop-grid-2col" id="shop-grid"></div>
+                <button onclick="cycleHudTheme()" style="border-color:#44ccff;color:#44ccff;padding:12px 20px;font-size:14px;margin-top:16px;" id="hud-theme-btn">HUD THEME: DEFAULT<br><span style="font-size:11px">Click to cycle themes</span></button>
             </div>
             <div id="shop-section-wisps" class="shop-section" style="display:none;flex-direction:column;align-items:center;">
                 <h2 id="wisp-skins-header" style="color: #00ccff; text-decoration: underline; margin-top: 10px; letter-spacing: 5px; text-shadow: 0 0 10px #00ccff; font-size:16px;">WISP SKINS</h2>
@@ -460,44 +459,6 @@
                 <h2 style="color: #ffaa00; text-decoration: underline; margin-top: 10px; letter-spacing: 5px; text-shadow: 0 0 10px #ffaa00; font-size:16px;">SKILL TREE</h2>
                 <div class="subtitle-text" style="color:rgba(255,170,0,0.53);font-size:12px;">Three paths. Five tiers each. Each tier requires the previous.</div>
                 <div id="skill-tree-container" style="display:flex;flex-wrap:wrap;justify-content:center;gap:30px;max-width:1100px;margin-bottom:30px;"></div>
-            </div>
-            <div id="shop-section-casino" class="shop-section" style="display:none;flex-direction:column;align-items:center;">
-            <h2 style="color: #ff00ff; text-decoration: underline; margin-top: 10px; letter-spacing: 5px; text-shadow: 0 0 20px #ff00ff; font-size:16px;">VOID CASINO</h2>
-            <div class="subtitle-text" style="color:rgba(255,0,255,0.53);font-size:12px;">Risk your coins for massive rewards. The void always wins... or does it?</div>
-            <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:20px;max-width:800px;margin-bottom:30px;">
-                <div style="background:rgba(255,0,255,0.05);border:2px solid rgba(255,0,255,0.27);padding:20px;border-radius:8px;text-align:center;width:340px;">
-                    <div style="color:#ff00ff;font-size:22px;font-weight:bold;letter-spacing:3px;margin-bottom:8px;">COIN FLIP</div>
-                    <div style="color:#888;font-size:13px;margin-bottom:12px;">Double or nothing. 50/50 odds.</div>
-                    <div id="flip-result" style="font-size:40px;height:50px;line-height:50px;margin-bottom:10px;"></div>
-                    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-                        <button onclick="coinFlip(100)" style="border-color:#ff00ff;color:#ff00ff;padding:6px 14px;font-size:13px;">BET 100</button>
-                        <button onclick="coinFlip(1000)" style="border-color:#ff00ff;color:#ff00ff;padding:6px 14px;font-size:13px;">BET 1K</button>
-                        <button onclick="coinFlip(10000)" style="border-color:#ffcc00;color:#ffcc00;padding:6px 14px;font-size:13px;">BET 10K</button>
-                        <button onclick="coinFlip(100000)" style="border-color:#ff0055;color:#ff0055;padding:6px 14px;font-size:13px;">BET 100K</button>
-                    </div>
-                </div>
-                <div style="background:rgba(255,0,255,0.05);border:2px solid rgba(255,0,255,0.27);padding:20px;border-radius:8px;text-align:center;width:340px;">
-                    <div style="color:#ffcc00;font-size:22px;font-weight:bold;letter-spacing:3px;margin-bottom:8px;">VOID SLOTS</div>
-                    <div style="color:#888;font-size:13px;margin-bottom:12px;">Match 3 for big wins. Jackpot = 50x!</div>
-                    <div id="slot-reels" style="display:flex;gap:10px;justify-content:center;margin-bottom:10px;">
-                        <div class="slot-reel" style="font-size:36px;width:50px;height:50px;line-height:50px;border:2px solid rgba(255,204,0,0.4);border-radius:4px;">?</div>
-                        <div class="slot-reel" style="font-size:36px;width:50px;height:50px;line-height:50px;border:2px solid rgba(255,204,0,0.4);border-radius:4px;">?</div>
-                        <div class="slot-reel" style="font-size:36px;width:50px;height:50px;line-height:50px;border:2px solid rgba(255,204,0,0.4);border-radius:4px;">?</div>
-                    </div>
-                    <div id="slot-result" style="color:#ffcc00;font-size:16px;height:24px;margin-bottom:8px;"></div>
-                    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-                        <button onclick="spinSlots(500)" style="border-color:#ffcc00;color:#ffcc00;padding:6px 14px;font-size:13px;">SPIN 500</button>
-                        <button onclick="spinSlots(5000)" style="border-color:#ffcc00;color:#ffcc00;padding:6px 14px;font-size:13px;">SPIN 5K</button>
-                        <button onclick="spinSlots(50000)" style="border-color:#ff0055;color:#ff0055;padding:6px 14px;font-size:13px;">SPIN 50K</button>
-                    </div>
-                </div>
-            </div>
-            <h2 style="color: #ff0055; text-decoration: underline; margin-top: 20px; letter-spacing: 5px; text-shadow: 0 0 10px #ff0055; font-size:16px;">VOID SERVICES</h2>
-            <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:15px;max-width:800px;margin-bottom:30px;">
-                <button onclick="openLoanShark()" style="border-color:#ff0055;color:#ff0055;box-shadow:0 0 15px #ff0055;padding:12px 20px;font-size:14px;">VOID LENDER<br><span style="font-size:11px">Borrow Coins (2x Repay)</span></button>
-                <button onclick="openVoidSlots()" style="border-color:#aa00ff;color:#aa00ff;box-shadow:0 0 15px #aa00ff;padding:12px 20px;font-size:14px;">VOID SLOT MACHINE<br><span style="font-size:11px">5K per Spin - Jackpot 500K!</span></button>
-                <button onclick="cycleHudTheme()" style="border-color:#44ccff;color:#44ccff;padding:12px 20px;font-size:14px;" id="hud-theme-btn">HUD THEME: DEFAULT<br><span style="font-size:11px">Click to cycle themes</span></button>
-            </div>
             </div>
             <button onclick="returnToMenu()" style="border-color: #fff; color: #fff; box-shadow: 0 0 20px #fff; margin-bottom: 50px;">BACK TO MENU</button>
         </div>
@@ -1190,8 +1151,6 @@
         let victoryPoseTimer = 0; // Feature 32: Victory pose
         let photoMode = false, photoZoom = 1, photoPanX = 0, photoPanY = 0, photoFilter = 0; // Feature 37: Photo mode
         let hudTheme = secureLoad('neonVoidHUDTheme', 'default') || 'default'; // Feature 38: HUD themes
-        let loanData = secureLoad('neonVoidLoan', null); // Feature 30: Loan shark
-        if (typeof loanData === 'string') { try { loanData = JSON.parse(loanData); } catch(e) { loanData = null; } }
         let bountyProgress = secureLoad('neonVoidBountyProgress', {}); // Feature 26: Bounties
         if (typeof bountyProgress === 'string') { try { bountyProgress = JSON.parse(bountyProgress); } catch(e) { bountyProgress = {}; } }
         if (typeof bountyProgress !== 'object' || bountyProgress === null) bountyProgress = {};
@@ -4136,7 +4095,6 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             if (state.active && player) {
                 let hbc = document.getElementById('heat-bar-container'); if (hbc) hbc.style.display = 'none';
                 let ngInd = document.getElementById('ng-plus-indicator'); if (ngInd) ngInd.style.display = state.stats && state.stats.ngPlus ? 'block' : 'none';
-                let debtInd = document.getElementById('debt-indicator'); if (debtInd) { if (loanData) { debtInd.style.display='block'; debtInd.innerText='DEBT: '+loanData.amount.toLocaleString(); } else debtInd.style.display='none'; }
             } else {
                 let hbc = document.getElementById('heat-bar-container'); if (hbc) hbc.style.display = 'none';
             }
@@ -4186,8 +4144,6 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                 bountyProgress.run_kills = Math.max(bountyProgress.run_kills||0, state.kills);
                 if (state.mode === 'boss_rush') bountyProgress.boss_rush_bosses = Math.max(bountyProgress.boss_rush_bosses||0, state.bossesDefeated);
             }
-            // Loan repayment reminder
-            if (loanData && state.active && state.frame % 600 === 0) { spawnText(player.x, player.y-60, `DEBT: ${loanData.amount.toLocaleString()} COINS`, '#ff0055', 14); }
             // Feature 42: Race mode
             if (state.active && !state.paused && (state.mode === 'race_solo' || state.mode === 'race_over')) { try { updateRaceMode(); drawRaceMode(ctx); } catch(e){} }
             // Feature 44: PvP mode
@@ -5471,82 +5427,6 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
 
         function openShop() { cleanupMenuAnims(); ui.mainOverlay.classList.add('hidden'); document.getElementById('shop-screen').classList.remove('hidden'); renderShop(); }
 
-        // ==================== VOID CASINO ====================
-        function coinFlip(bet) {
-            if (totalCoins < bet) { document.getElementById('flip-result').innerHTML = '<span style="color:#ff0055;font-size:16px;">NOT ENOUGH COINS</span>'; return; }
-            totalCoins -= bet;
-            let el = document.getElementById('flip-result');
-            let spinning = 0;
-            let interval = setInterval(() => {
-                el.innerText = Math.random() > 0.5 ? '[$]' : '[X]';
-                spinning++;
-                if (spinning > 12) {
-                    clearInterval(interval);
-                    let win = Math.random() < 0.48; // Slight house edge
-                    if (win) {
-                        totalCoins += bet * 2;
-                        el.innerHTML = '[$] <span style="color:#00ff88;font-size:18px;">+' + bet.toLocaleString() + '!</span>';
-                        playSound('powerup');
-                    } else {
-                        el.innerHTML = '[X] <span style="color:#ff0055;font-size:18px;">-' + bet.toLocaleString() + '</span>';
-                        playSound('hit');
-                    }
-                    secureSave('neonVoidCoins', totalCoins);
-                    document.getElementById('shop-coin-display').innerText = 'COINS: ' + totalCoins.toLocaleString();
-                    cloudSave();
-                }
-            }, 80);
-        }
-
-        function spinSlots(bet) {
-            if (totalCoins < bet) { document.getElementById('slot-result').innerHTML = '<span style="color:#ff0055;">NOT ENOUGH COINS</span>'; return; }
-            totalCoins -= bet;
-            let symbols = ['[D]','[F]','[Z]','[$]','[X]','[!]','[*]','[+]'];
-            let reels = document.querySelectorAll('.slot-reel');
-            let results = [0, 0, 0];
-            let spins = [0, 0, 0];
-            let maxSpins = [10, 14, 18]; // Staggered stop
-            let interval = setInterval(() => {
-                for (let i = 0; i < 3; i++) {
-                    if (spins[i] < maxSpins[i]) {
-                        results[i] = Math.floor(Math.random() * symbols.length);
-                        reels[i].innerText = symbols[results[i]];
-                        spins[i]++;
-                    }
-                }
-                if (spins[2] >= maxSpins[2]) {
-                    clearInterval(interval);
-                    let s0 = results[0], s1 = results[1], s2 = results[2];
-                    let el = document.getElementById('slot-result');
-                    if (s0 === s1 && s1 === s2) {
-                        // JACKPOT - all 3 match
-                        let multi = s0 === 3 ? 50 : 20; // 💰 = 50x, others = 20x
-                        let win = bet * multi;
-                        totalCoins += win;
-                        el.innerHTML = 'JACKPOT! +' + win.toLocaleString() + ' (' + multi + 'x)';
-                        el.style.color = '#ffcc00';
-                        playSound('powerup'); playSound('powerup');
-                        // Shake effect
-                        let shopEl = document.getElementById('shop-screen');
-                        shopEl.style.animation = 'shake 0.3s ease'; setTimeout(() => shopEl.style.animation = '', 300);
-                    } else if (s0 === s1 || s1 === s2 || s0 === s2) {
-                        // 2 match - small win
-                        let win = Math.floor(bet * 1.5);
-                        totalCoins += win;
-                        el.innerHTML = '2 MATCH! +' + win.toLocaleString();
-                        el.style.color = '#00ffcc';
-                        playSound('powerup');
-                    } else {
-                        el.innerHTML = '[X] NO MATCH -' + bet.toLocaleString();
-                        el.style.color = '#ff0055';
-                        playSound('hit');
-                    }
-                    secureSave('neonVoidCoins', totalCoins);
-                    document.getElementById('shop-coin-display').innerText = 'COINS: ' + totalCoins.toLocaleString();
-                    cloudSave();
-                }
-            }, 70);
-        }
         function openSettings() { cleanupMenuAnims(); ui.mainOverlay.classList.add('hidden'); document.getElementById('settings-screen').classList.remove('hidden');/* Init new settings UI */let _asld=document.getElementById('autoaim-slider');let _asv=document.getElementById('autoaim-val');if(_asld&&appSettings.autoAimStrength!==undefined){_asld.value=appSettings.autoAimStrength;if(_asv)_asv.textContent=appSettings.autoAimStrength;}let _ssld=document.getElementById('shake-slider');let _ssv=document.getElementById('shake-val');if(_ssld&&appSettings.shakeIntensity!==undefined){_ssld.value=appSettings.shakeIntensity;if(_ssv)_ssv.textContent=appSettings.shakeIntensity;}let _boh=document.getElementById('btn-onehand');if(_boh)_boh.innerText='ONE-HAND MODE: '+(appSettings.oneHandMode?'ON':'OFF');let _bpm=document.getElementById('btn-perfmode');if(_bpm)_bpm.innerText='PERFORMANCE MODE: '+(appSettings.perfMode?'ON':'OFF');if(typeof renderKeybindList==='function')renderKeybindList();let _lm=secureLoad('neonVoidMod', null);let _mst=document.getElementById('mod-status');if(_lm&&_mst){try{let _mp=JSON.parse(_lm);_mst.textContent='Mod active: '+(_mp.enemies||[]).length+' enemies';_mst.style.color='#00ff88';}catch(e){}}}
         
         function switchShopTab(tabName) {
@@ -5573,7 +5453,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             for (const [id, upg] of sortedUpgrades) {
                 let card = document.createElement('div'); card.className = 'skin-card'; card.style.borderColor = '#ff8800'; let isUnlocked = purchasedUpgrades.includes(id);
                 card.innerHTML = `<div style="color: #ff8800; font-weight: bold; text-align: center; font-size:14px;">${upg.name}</div><div style="color: #ccc; text-align: center; font-size:11px; margin-bottom:6px;">${upg.desc}</div>`; let btn = document.createElement('button'); btn.style.borderColor = '#ff8800'; btn.style.color = '#ff8800';
-                if (isUnlocked) { btn.innerText = "UNLOCKED"; btn.style.background = '#ff8800'; btn.style.color = '#000'; btn.disabled = true; } else { let hasDiscount = secureLoad('neonVoidSlotDiscount', '0') === '1'; let finalPrice = hasDiscount ? Math.floor(upg.price * 0.8) : upg.price; let costText = finalPrice >= 1000000 ? (finalPrice/1000000) + 'M' : (finalPrice >= 1000 ? (finalPrice/1000) + 'K' : finalPrice); btn.innerText = hasDiscount ? `BUY: ${costText} (20% OFF!)` : `BUY: ${costText}`; if (hasDiscount) btn.style.textShadow = '0 0 8px #88ccff'; if (totalCoins >= finalPrice) { btn.onclick = () => { totalCoins -= finalPrice; if (hasDiscount) { secureSave('neonVoidSlotDiscount', '0'); } purchasedUpgrades.push(id); secureSave('neonVoidCoins', totalCoins); secureSave('neonVoidUpgrades', purchasedUpgrades); playSound('buy'); cloudSave(); renderShop(); }; } else { btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed'; } }
+                if (isUnlocked) { btn.innerText = "UNLOCKED"; btn.style.background = '#ff8800'; btn.style.color = '#000'; btn.disabled = true; } else { let finalPrice = upg.price; let costText = finalPrice >= 1000000 ? (finalPrice/1000000) + 'M' : (finalPrice >= 1000 ? (finalPrice/1000) + 'K' : finalPrice); btn.innerText = `BUY: ${costText}`; if (totalCoins >= finalPrice) { btn.onclick = () => { totalCoins -= finalPrice; purchasedUpgrades.push(id); secureSave('neonVoidCoins', totalCoins); secureSave('neonVoidUpgrades', purchasedUpgrades); playSound('buy'); cloudSave(); renderShop(); }; } else { btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed'; } }
                 card.appendChild(btn); upGrid.appendChild(card);
             }
             // Wisp skin shop
@@ -6126,29 +6006,6 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
         function saveRunCoins() {
             if (state._coinsSaved) return; state._coinsSaved = true;
             totalCoins += state.runCoins; _nvSec.save('neonVoidCoins', totalCoins); cloudSave();
-            // Feature 30: Loan shark - decrement games remaining
-            if (loanData) {
-                loanData.gamesLeft--;
-                if (loanData.gamesLeft <= 0) {
-                    // Default! Lose a random purchased upgrade
-                    let pu = secureLoad('neonVoidUpgrades', []);
-                    if (pu.length > 0) {
-                        let lost = pu.splice(Math.floor(Math.random()*pu.length),1)[0];
-                        secureSave('neonVoidUpgrades', pu);
-                        // Update purchasedUpgrades without breaking Proxy
-                        purchasedUpgrades.length = 0; pu.forEach(u => purchasedUpgrades.push(u));
-                        setTimeout(()=>alert(`LOAN DEFAULTED! You lost the upgrade: ${PERMANENT_UPGRADES[lost] ? PERMANENT_UPGRADES[lost].name : lost}!`), 800);
-                    } else {
-                        // No upgrades to lose — coins are forfeit as penalty
-                        let penalty = Math.min(totalCoins, Math.floor(loanData.amount * 0.5));
-                        totalCoins -= penalty; _nvSec.save('neonVoidCoins', totalCoins);
-                        setTimeout(()=>alert(`LOAN DEFAULTED! You lost ${penalty.toLocaleString()} coins as penalty!`), 800);
-                    }
-                    loanData = null; localStorage.removeItem('neonVoidLoan');
-                } else {
-                    secureSave('neonVoidLoan', loanData);
-                }
-            }
         }
         
         function gameOver() { state.active = false; state.paused = false; saveRunCoins(); triggerChroma(6); try { trackModeStat(state.mode, Math.floor(state.score)); playerStats.totalDeaths++; playerStats.gamesPlayed++; playerStats.totalKills += (state.kills || 0); playerStats.totalBossesKilled += (state.bossesDefeated || 0); playerStats.totalCoinsEarned += (state.runCoins || 0); if (state.level > (playerStats.highestLevel || 0)) playerStats.highestLevel = state.level; if (state.frame > (playerStats.longestSurvival || 0)) playerStats.longestSurvival = state.frame; savePlayerStats(); } catch(_e) {} if (sandboxPanel) { sandboxPanel.remove(); sandboxPanel = null; } let rogPick = document.getElementById('rogue-pick'); if (rogPick) rogPick.remove(); let hordeUI = document.getElementById('horde-ui'); if (hordeUI) hordeUI.remove();
@@ -6272,48 +6129,6 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             d.innerHTML = `<div style="font-size:20px;color:#ff4488;font-weight:bold;text-align:center;margin-bottom:15px;">BOUNTY BOARD</div>${rows}<button id="bounty-close-btn" style="display:block;margin:10px auto 0;padding:10px 25px;background:none;color:#888;border:1px solid #555;cursor:pointer;font-family:monospace;border-radius:4px;">CLOSE</button>`;
             d.querySelector('#bounty-close-btn').onclick = () => d.remove(); document.body.appendChild(d);
             window.claimBounty = (id, reward) => { secureSave('neonVoidBountyClaimed_'+id, '1'); totalCoins+=reward; secureSave('neonVoidCoins', totalCoins); d.remove(); alert(`BOUNTY CLAIMED! +${reward.toLocaleString()} coins!`); };
-        }
-
-        // ==================== FEATURE 28: VOID SLOTS ====================
-        function openVoidSlots() {
-            let d = document.createElement('div'); d.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:99999;background:rgba(6,6,12,0.97);border:2px solid #aa00ff;border-radius:12px;padding:30px;font-family:monospace;color:#fff;text-align:center;min-width:380px;';
-            let symbols = ['[!]','[*]','[D]','[7]','[F]','[I]'];
-            let reels = [0,1,2]; let spinning = false;
-            d.id = 'void-slots-overlay';
-            d.innerHTML = `<div style="font-size:22px;color:#aa00ff;font-weight:bold;margin-bottom:15px;">VOID SLOTS</div><div style="font-size:12px;color:#888;margin-bottom:15px;">Cost: 5,000 coins per spin</div><div id="slots-display" style="font-size:48px;letter-spacing:20px;margin:20px 0;background:rgba(170,0,255,0.1);padding:15px;border-radius:8px;border:1px solid #aa00ff;">[*] [D] [!]</div><div id="slots-result" style="min-height:40px;font-size:16px;color:#ffcc00;margin-bottom:15px;"></div><div style="font-size:11px;color:#555;margin-bottom:15px;">3x [!] = Random Skin | 3x [*] = 50K Coins | 3x [D] = Upgrade Discount | 3x [7] = JACKPOT 500K</div><button id="spin-btn" style="padding:12px 30px;font-size:16px;font-weight:bold;background:linear-gradient(135deg,#aa00ff,#ff00aa);color:#fff;border:none;cursor:pointer;border-radius:4px;margin-right:10px;" onclick="voidSpinSlots()">SPIN (5K)</button><button onclick="document.getElementById('void-slots-overlay').remove()" style="padding:12px 20px;background:none;color:#888;border:1px solid #555;cursor:pointer;border-radius:4px;">CLOSE</button>`;
-            document.body.appendChild(d);
-            window.voidSpinSlots = function() {
-                if (totalCoins < 5000) { d.querySelector('#slots-result').innerText = 'NOT ENOUGH COINS!'; d.querySelector('#slots-result').style.color='#ff0055'; return; }
-                totalCoins -= 5000; secureSave('neonVoidCoins', totalCoins);
-                let spinBtn = d.querySelector('#spin-btn'); spinBtn.disabled = true;
-                let display = d.querySelector('#slots-display'); let result = d.querySelector('#slots-result');
-                let count = 0; let interval = setInterval(() => {
-                    reels = [Math.floor(Math.random()*symbols.length),Math.floor(Math.random()*symbols.length),Math.floor(Math.random()*symbols.length)];
-                    display.textContent = `${symbols[reels[0]]} ${symbols[reels[1]]} ${symbols[reels[2]]}`;
-                    count++; if (count >= 20) { clearInterval(interval); spinBtn.disabled = false;
-                        if(reels[0]===reels[1]&&reels[1]===reels[2]){
-                            if(reels[0]===3){totalCoins+=500000;secureSave('neonVoidCoins', totalCoins);result.textContent='JACKPOT! +500,000 COINS!';result.style.color='#ffd700';}
-                            else if(reels[0]===1){totalCoins+=50000;secureSave('neonVoidCoins', totalCoins);result.textContent='WINNER! +50,000 COINS!';result.style.color='#00ffcc';}
-                            else if(reels[0]===0){result.textContent='SKULL MATCH! Random skin unlocked!';result.style.color='#ff0055';let sk=Object.keys(SKINS);let rs=sk[Math.floor(Math.random()*sk.length)];if(!unlockedSkins.includes(rs))unlockedSkins.push(rs);secureSave('neonVoidSkins', unlockedSkins);}
-                            else if(reels[0]===2){result.textContent='DIAMOND! All upgrades 20% off next purchase!';result.style.color='#88ccff';secureSave('neonVoidSlotDiscount', '1');}
-                            else{totalCoins+=10000;secureSave('neonVoidCoins', totalCoins);result.textContent='TRIPLE MATCH! +10,000 COINS!';result.style.color='#ffcc00';}
-                        } else { result.textContent='No match. Try again!'; result.style.color='#888'; }
-                    }
-                }, 80);
-            };
-        }
-
-        // ==================== FEATURE 30: LOAN SHARK ====================
-        function openLoanShark() {
-            let d = document.createElement('div'); d.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:99999;background:rgba(6,6,12,0.97);border:2px solid #ff0055;border-radius:12px;padding:30px;font-family:monospace;color:#fff;min-width:380px;text-align:center;';
-            let loans = [{amount:50000,label:'50K'},{amount:100000,label:'100K'},{amount:500000,label:'500K'}];
-            let loanBtns = loanData ? '' : loans.map(l=>`<button onclick="takeLoan(${l.amount})" style="padding:10px 20px;margin:5px;background:rgba(255,0,85,0.2);color:#ff0055;border:1px solid #ff0055;cursor:pointer;border-radius:4px;font-family:monospace;">BORROW ${l.label} COINS</button>`).join('');
-            let debtInfo = loanData ? `<div style="color:#ff0055;font-size:18px;margin:15px 0;">CURRENT DEBT: ${loanData.amount.toLocaleString()} COINS</div><div style="color:#888;font-size:12px;margin-bottom:15px;">Must repay within ${loanData.gamesLeft} games or lose an upgrade!</div><button onclick="repayLoan()" style="padding:12px 25px;background:rgba(0,255,204,0.2);color:#00ffcc;border:1px solid #00ffcc;cursor:pointer;border-radius:4px;font-family:monospace;font-size:14px;">REPAY (${loanData.amount.toLocaleString()} COINS)</button>` : '';
-            d.id = 'void-lender-overlay';
-            d.innerHTML = `<div style="font-size:22px;color:#ff0055;font-weight:bold;margin-bottom:10px;">VOID LENDER</div><div style="font-size:12px;color:#888;margin-bottom:15px;">Borrow now, pay double later. Don't default.</div>${debtInfo}${loanBtns}<br><br><button onclick="document.getElementById('void-lender-overlay').remove()" style="padding:10px 25px;background:none;color:#888;border:1px solid #555;cursor:pointer;border-radius:4px;font-family:monospace;margin-top:10px;">LEAVE</button>`;
-            document.body.appendChild(d);
-            window.takeLoan = (amt) => { loanData = {amount:amt*2,gamesLeft:5}; totalCoins+=amt; secureSave('neonVoidCoins', totalCoins); secureSave('neonVoidLoan', loanData); d.remove(); alert(`Borrowed ${amt.toLocaleString()} coins. Repay ${(amt*2).toLocaleString()} within 5 games!`); };
-            window.repayLoan = () => { if(totalCoins>=loanData.amount){totalCoins-=loanData.amount;secureSave('neonVoidCoins', totalCoins);loanData=null;localStorage.removeItem('neonVoidLoan');d.remove();alert('Debt repaid! The Void Lender nods approvingly.');} else {alert('Not enough coins to repay!');} };
         }
 
         // ==================== FEATURE 37: PHOTO MODE ====================
@@ -9776,7 +9591,6 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                 if (profile.secretItems) _nvSec.save('neonVoidSecretItems', profile.secretItems);
                 if (profile.nemesis) _nvSec.save('neonVoidNemesis', profile.nemesis);
                 if (profile.hudTheme) { hudTheme = profile.hudTheme; _nvSec.save('neonVoidHUDTheme', profile.hudTheme); }
-                if (profile.loan) _nvSec.save('neonVoidLoan', profile.loan);
                 if (profile.bountyProgress) _nvSec.save('neonVoidBountyProgress', profile.bountyProgress);
                 if (profile.materials) { let cur = _nvSec.load('neonVoidMaterials', {}); let merged = typeof cur === 'object' && cur ? cur : {}; Object.keys(profile.materials).forEach(k => { merged[k] = Math.max(merged[k]||0, profile.materials[k]); }); _nvSec.save('neonVoidMaterials', merged); }
                 if (profile.customColor && /^#[0-9a-fA-F]{3,8}$/.test(profile.customColor)) _nvSec.save('neonVoidCustomColor', profile.customColor);
@@ -9835,7 +9649,6 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                 secretItems: _nvSec.load('neonVoidSecretItems', [false,false,false]),
                 nemesis: _nvSec.load('neonVoidNemesis', null),
                 hudTheme: _nvSec.load('neonVoidHUDTheme', 'default'),
-                loan: _nvSec.load('neonVoidLoan', null),
                 bountyProgress: _nvSec.load('neonVoidBountyProgress', {}),
                 materials: _nvSec.load('neonVoidMaterials', {}),
                 customColor: _nvSec.load('neonVoidCustomColor', '#ffffff'),
@@ -15008,32 +14821,36 @@ function openGemShop(){
   ol.innerHTML=html;document.body.appendChild(ol);
 }
 
-// ---- FEATURE 74: TRADE POST ----
-var tradeDay=parseInt(secureLoad('neonVoidTradeDay', 0)||0);
-var cachedTrades=secureLoad('neonVoidTradeOffers', []);
-function getTradeOffers(){
-  var today=Math.floor(Date.now()/86400000);
-  if(tradeDay!==today||!cachedTrades.length){
-    var pool=[{id:'tr1',give:'200 coins',get:'2 gems',giveT:'coins',giveA:200,getT:'gems',getA:2},{id:'tr2',give:'5 gems',get:'1000 coins',giveT:'gems',giveA:5,getT:'coins',getA:1000},{id:'tr3',give:'100 coins',get:'Title: Destroyer',giveT:'coins',giveA:100,getT:'title',getA:'Destroyer'},{id:'tr4',give:'3 gems',get:'Blueprint: Speed Surge',giveT:'gems',giveA:3,getT:'blueprint',getA:'Speed Surge'},{id:'tr5',give:'400 coins',get:'Emote: Dance',giveT:'coins',giveA:400,getT:'emote',getA:'dance'}];
-    pool.sort(function(){return Math.random()-0.5;});cachedTrades=pool.slice(0,3);tradeDay=today;
-    secureSave('neonVoidTradeDay', today);secureSave('neonVoidTradeOffers', cachedTrades);
-  }
-  return cachedTrades;
-}
-function acceptTrade(id){
-  var offers=getTradeOffers();var of=null;for(var i=0;i<offers.length;i++)if(offers[i].id===id){of=offers[i];break;}
-  if(!of)return;
-  if(of.giveT==='coins'){if(totalCoins<of.giveA){alert('Not enough coins!');return;}totalCoins-=of.giveA;secureSave('neonVoidCoins', totalCoins);}
-  else if(of.giveT==='gems'){if(gemCount<of.giveA){alert('Not enough gems!');return;}gemCount-=of.giveA;secureSave('neonVoidGems', gemCount);}
-  if(of.getT==='gems')addGems(of.getA);else if(of.getT==='coins'){totalCoins+=of.getA;secureSave('neonVoidCoins', totalCoins);}else if(of.getT==='title')unlockTitle(of.getA);else if(of.getT==='blueprint'){if(!blueprints.includes(of.getA)){blueprints.push(of.getA);secureSave('neonVoidBlueprints', blueprints);}}else if(of.getT==='emote'){if(!unlockedEmotes.includes(of.getA)){unlockedEmotes.push(of.getA);secureSave('neonVoidEmotes', unlockedEmotes);}}
-  cachedTrades=cachedTrades.filter(function(x){return x.id!==id;});secureSave('neonVoidTradeOffers', cachedTrades);alert('Trade accepted!');
-}
+// ---- FEATURE 74: TRADE POST (Gems <-> Coins exchange) ----
+var GEM_BUY_RATE=250;  // coins to buy 1 gem
+var GEM_SELL_RATE=150; // coins paid per gem sold; spread vs buy prevents arbitrage
+window.buyGems=function(n){
+  var cost=n*GEM_BUY_RATE;
+  if(totalCoins<cost){alert('Not enough coins! Need '+cost.toLocaleString()+' coins.');return;}
+  totalCoins-=cost;secureSave('neonVoidCoins', totalCoins);addGems(n);
+  if(typeof cloudSave==='function')cloudSave();
+  var ex=document.getElementById('trade-overlay');if(ex){ex.remove();openTradePost();}
+};
+window.sellGems=function(n){
+  if(gemCount<n||n<=0){alert('Not enough gems!');return;}
+  gemCount-=n;secureSave('neonVoidGems', gemCount);
+  totalCoins+=n*GEM_SELL_RATE;secureSave('neonVoidCoins', totalCoins);
+  if(typeof cloudSave==='function')cloudSave();
+  var ex=document.getElementById('trade-overlay');if(ex){ex.remove();openTradePost();}
+};
 function openTradePost(){
-  var ol=document.createElement('div');ol.id='trade-overlay';ol.style.cssText='position:fixed;inset:0;background:#06060c;z-index:99999;color:#fff;font-family:monospace;padding:40px;';
-  var offers=getTradeOffers();var html='<h2 style="color:#ffcc44;text-align:center">TRADE POST</h2><p style="text-align:center;color:#aaa">Daily offers</p><div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">';
-  for(var i=0;i<offers.length;i++){var of=offers[i];html+='<div style="background:#1a1400;border:1px solid #ffcc44;padding:16px;min-width:160px;text-align:center"><div style="color:#aaa">Give: <b style="color:#ff8888">'+of.give+'</b></div><div style="margin:8px 0">-&gt;</div><div style="color:#aaa">Get: <b style="color:#88ff88">'+of.get+'</b></div><br><button onclick="acceptTrade(\''+of.id+'\');document.getElementById(\'trade-overlay\').remove();openTradePost();" style="background:#ffcc44;color:#000;border:none;padding:6px 14px;cursor:pointer">TRADE</button></div>';}
-  if(!offers.length)html+='<p style="color:#555;text-align:center;width:100%">No offers today.</p>';
-  html+='</div><div style="text-align:center;margin-top:24px"><button onclick="document.getElementById(\'trade-overlay\').remove()" style="background:#555;color:#fff;border:none;padding:8px 24px;cursor:pointer">CLOSE</button></div>';
+  var ol=document.createElement('div');ol.id='trade-overlay';ol.style.cssText='position:fixed;inset:0;background:#06060c;z-index:99999;color:#fff;font-family:monospace;padding:40px;overflow-y:auto;';
+  var html='<h2 style="color:#ffcc44;text-align:center">TRADE POST</h2><p style="text-align:center;color:#aaa">Exchange coins and gems</p>';
+  html+='<p style="text-align:center">Coins: <b style="color:#ffd700">'+totalCoins.toLocaleString()+'</b> &nbsp;|&nbsp; Gems: <b style="color:#88eeff" id="gem-count-display">'+gemCount+'</b></p>';
+  html+='<div style="display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-top:20px">';
+  html+='<div style="background:#001a22;border:1px solid #88eeff;padding:18px;min-width:210px;text-align:center"><div style="color:#88eeff;font-weight:bold;font-size:16px;margin-bottom:4px">BUY GEMS</div><div style="color:#888;font-size:11px;margin-bottom:12px">'+GEM_BUY_RATE+' coins per gem</div>';
+  [1,5,25].forEach(function(n){html+='<button onclick="buyGems('+n+')" style="display:block;width:100%;margin:6px 0;background:#88eeff;color:#000;border:none;padding:7px 14px;cursor:pointer">'+n+' gem'+(n>1?'s':'')+' for '+(n*GEM_BUY_RATE).toLocaleString()+' coins</button>';});
+  html+='</div>';
+  html+='<div style="background:#1a1400;border:1px solid #ffcc44;padding:18px;min-width:210px;text-align:center"><div style="color:#ffcc44;font-weight:bold;font-size:16px;margin-bottom:4px">SELL GEMS</div><div style="color:#888;font-size:11px;margin-bottom:12px">'+GEM_SELL_RATE+' coins per gem</div>';
+  [1,10].forEach(function(n){html+='<button onclick="sellGems('+n+')" style="display:block;width:100%;margin:6px 0;background:#ffcc44;color:#000;border:none;padding:7px 14px;cursor:pointer">Sell '+n+' gem'+(n>1?'s':'')+' for '+(n*GEM_SELL_RATE).toLocaleString()+' coins</button>';});
+  if(gemCount>0)html+='<button onclick="sellGems('+gemCount+')" style="display:block;width:100%;margin:6px 0;background:#ffaa00;color:#000;border:none;padding:7px 14px;cursor:pointer">Sell all '+gemCount+' for '+(gemCount*GEM_SELL_RATE).toLocaleString()+' coins</button>';
+  html+='</div></div>';
+  html+='<div style="text-align:center;margin-top:24px"><button onclick="document.getElementById(\'trade-overlay\').remove()" style="background:#555;color:#fff;border:none;padding:8px 24px;cursor:pointer">CLOSE</button></div>';
   ol.innerHTML=html;document.body.appendChild(ol);
 }
 

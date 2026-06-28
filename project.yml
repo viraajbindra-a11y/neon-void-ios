@@ -30,6 +30,7 @@ targets:
         buildPhase: resources
         type: folder
       - path: NeonVoid/Assets.xcassets
+      - path: NeonVoid/PrivacyInfo.xcprivacy
     postCompileScripts:
       - script: |
           if [ ! -d "$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/WebContent" ]; then
@@ -43,8 +44,9 @@ targets:
       properties:
         UILaunchScreen:
           UIColorName: ""
-        NSAppTransportSecurity:
-          NSAllowsArbitraryLoads: true
+        CFBundleDisplayName: Last Pilot
+        ITSAppUsesNonExemptEncryption: false
+        LSApplicationCategoryType: public.app-category.games
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.neonvoid.arcade
@@ -65,6 +67,19 @@ targets:
       - path: NeonVoid/WebContent
         type: folder
       - path: NeonVoid/Assets.xcassets
+      - path: NeonVoid/PrivacyInfo.xcprivacy
+    info:
+      path: NeonVoidVision/Info.plist
+      properties:
+        CFBundleDisplayName: Last Pilot
+        ITSAppUsesNonExemptEncryption: false
+        LSApplicationCategoryType: public.app-category.games
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: true
+          UISceneConfigurations: {}
+        UIApplicationPreferredDefaultSceneSessionRole: UIWindowSceneSessionRoleApplication
+        UIBackgroundModes:
+          - audio
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.neonvoid.vision
@@ -84,8 +99,13 @@ targets:
       - path: NeonVoid/WebContent
         type: folder
       - path: NeonVoid/Assets.xcassets
+      - path: NeonVoid/PrivacyInfo.xcprivacy
     info:
       path: NeonVoidTV/Info.plist
+      properties:
+        CFBundleDisplayName: Last Pilot
+        ITSAppUsesNonExemptEncryption: false
+        LSApplicationCategoryType: public.app-category.games
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.neonvoid.tv
