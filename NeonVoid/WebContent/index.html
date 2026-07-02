@@ -9566,6 +9566,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                 if (!data.found) { console.log('No cloud save found for key'); return; }
                 let profile = data.profile;
                 if (profile.coins !== undefined) { totalCoins = Math.max(totalCoins, profile.coins); _nvSec.save('neonVoidCoins', totalCoins); }
+                if (profile.gems !== undefined) { let g = Math.max(parseInt(_nvSec.load('neonVoidGems', 0))||0, profile.gems); _nvSec.save('neonVoidGems', g); if (typeof window.__syncGems === 'function') window.__syncGems(); }
                 if (profile.upgrades) {
                     let merged = [...new Set([...purchasedUpgrades, ...profile.upgrades])];
                     purchasedUpgrades.length = 0;
@@ -9628,6 +9629,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
             let saveData = {
                 name: currentUsername,
                 coins: totalCoins,
+                gems: parseInt(_nvSec.load('neonVoidGems', 0)) || 0,
                 upgrades: [...purchasedUpgrades],
                 skins: unlockedSkins,
                 equippedSkin: equippedSkin,
@@ -14801,7 +14803,10 @@ function doRebirth(){
 // ---- FEATURE 73: GEM CURRENCY ----
 var gemCount=parseInt(secureLoad('neonVoidGems', 0)||0);
 var GEM_SHOP_ITEMS=[{id:'gem_title_ghost',name:'Title: Ghost',cost:5,type:'title',value:'Ghost'},{id:'gem_title_overlord',name:'Title: Overlord',cost:15,type:'title',value:'Overlord'},{id:'gem_glow_pink',name:'Glow: Pink',cost:8,type:'glow',value:'#ff88cc'},{id:'gem_glow_rainbow',name:'Glow: Rainbow',cost:20,type:'glow',value:'rainbow'},{id:'gem_crosshair_heart',name:'Crosshair: Heart',cost:6,type:'crosshair',value:'heart'},{id:'gem_coins',name:'500 Coins',cost:3,type:'coins',value:500},{id:'gem_emote_dance',name:'Emote: Dance',cost:4,type:'emote',value:'dance'},{id:'gem_bp_premium',name:'Battle Pass Premium',cost:10,type:'bp_premium',value:1}];
-function addGems(n){gemCount+=n;secureSave('neonVoidGems', gemCount);var el=document.getElementById('gem-count-display');if(el)el.textContent=gemCount;}
+function addGems(n){gemCount+=n;secureSave('neonVoidGems', gemCount);_refreshGemDisplays();}
+function _refreshGemDisplays(){var els=document.querySelectorAll('.gem-count-display');for(var i=0;i<els.length;i++)els[i].textContent=gemCount;}
+// Re-sync in-memory gem count after a cloud restore writes neonVoidGems from another scope
+window.__syncGems=function(){gemCount=parseInt(secureLoad('neonVoidGems', 0)||0);_refreshGemDisplays();};
 function buyGemItem(id){
   var item=null;for(var i=0;i<GEM_SHOP_ITEMS.length;i++)if(GEM_SHOP_ITEMS[i].id===id){item=GEM_SHOP_ITEMS[i];break;}
   if(!item)return;if(gemCount<item.cost){alert('Not enough gems!');return;}
@@ -14815,7 +14820,7 @@ function buyGemItem(id){
 }
 function openGemShop(){
   var ol=document.createElement('div');ol.id='gemshop-overlay';ol.style.cssText='position:fixed;inset:0;background:#06060c;z-index:99999;color:#fff;font-family:monospace;padding:40px;overflow-y:auto;';
-  var html='<h2 style="color:#88eeff;text-align:center">GEM SHOP</h2><p style="text-align:center">Gems: <b style="color:#88eeff" id="gem-count-display">'+gemCount+'</b></p><div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center">';
+  var html='<h2 style="color:#88eeff;text-align:center">GEM SHOP</h2><p style="text-align:center">Gems: <b class="gem-count-display" style="color:#88eeff">'+gemCount+'</b></p><div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center">';
   for(var i=0;i<GEM_SHOP_ITEMS.length;i++){var it=GEM_SHOP_ITEMS[i];html+='<div style="background:#001a22;border:1px solid #88eeff;padding:14px;min-width:140px;text-align:center"><div style="color:#88eeff;font-weight:bold">'+it.name+'</div><div style="color:#44ddff;margin:8px 0">'+it.cost+' gems</div><button onclick="buyGemItem(\''+it.id+'\');document.getElementById(\'gemshop-overlay\').remove();openGemShop();" style="background:#88eeff;color:#000;border:none;padding:5px 12px;cursor:pointer">BUY</button></div>';}
   html+='</div><div style="text-align:center;margin-top:24px"><button onclick="document.getElementById(\'gemshop-overlay\').remove()" style="background:#555;color:#fff;border:none;padding:8px 24px;cursor:pointer">CLOSE</button></div>';
   ol.innerHTML=html;document.body.appendChild(ol);
@@ -14825,6 +14830,7 @@ function openGemShop(){
 var GEM_BUY_RATE=250;  // coins to buy 1 gem
 var GEM_SELL_RATE=150; // coins paid per gem sold; spread vs buy prevents arbitrage
 window.buyGems=function(n){
+  n=Math.floor(Number(n)); if(!isFinite(n)||n<=0)return;
   var cost=n*GEM_BUY_RATE;
   if(totalCoins<cost){alert('Not enough coins! Need '+cost.toLocaleString()+' coins.');return;}
   totalCoins-=cost;secureSave('neonVoidCoins', totalCoins);addGems(n);
@@ -14832,7 +14838,8 @@ window.buyGems=function(n){
   var ex=document.getElementById('trade-overlay');if(ex){ex.remove();openTradePost();}
 };
 window.sellGems=function(n){
-  if(gemCount<n||n<=0){alert('Not enough gems!');return;}
+  n=Math.floor(Number(n)); if(!isFinite(n)||n<=0)return;
+  if(gemCount<n){alert('Not enough gems!');return;}
   gemCount-=n;secureSave('neonVoidGems', gemCount);
   totalCoins+=n*GEM_SELL_RATE;secureSave('neonVoidCoins', totalCoins);
   if(typeof cloudSave==='function')cloudSave();
@@ -14841,7 +14848,7 @@ window.sellGems=function(n){
 function openTradePost(){
   var ol=document.createElement('div');ol.id='trade-overlay';ol.style.cssText='position:fixed;inset:0;background:#06060c;z-index:99999;color:#fff;font-family:monospace;padding:40px;overflow-y:auto;';
   var html='<h2 style="color:#ffcc44;text-align:center">TRADE POST</h2><p style="text-align:center;color:#aaa">Exchange coins and gems</p>';
-  html+='<p style="text-align:center">Coins: <b style="color:#ffd700">'+totalCoins.toLocaleString()+'</b> &nbsp;|&nbsp; Gems: <b style="color:#88eeff" id="gem-count-display">'+gemCount+'</b></p>';
+  html+='<p style="text-align:center">Coins: <b style="color:#ffd700">'+totalCoins.toLocaleString()+'</b> &nbsp;|&nbsp; Gems: <b class="gem-count-display" style="color:#88eeff">'+gemCount+'</b></p>';
   html+='<div style="display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-top:20px">';
   html+='<div style="background:#001a22;border:1px solid #88eeff;padding:18px;min-width:210px;text-align:center"><div style="color:#88eeff;font-weight:bold;font-size:16px;margin-bottom:4px">BUY GEMS</div><div style="color:#888;font-size:11px;margin-bottom:12px">'+GEM_BUY_RATE+' coins per gem</div>';
   [1,5,25].forEach(function(n){html+='<button onclick="buyGems('+n+')" style="display:block;width:100%;margin:6px 0;background:#88eeff;color:#000;border:none;padding:7px 14px;cursor:pointer">'+n+' gem'+(n>1?'s':'')+' for '+(n*GEM_BUY_RATE).toLocaleString()+' coins</button>';});

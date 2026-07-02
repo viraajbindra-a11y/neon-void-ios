@@ -47,6 +47,7 @@ targets:
         CFBundleDisplayName: Last Pilot
         ITSAppUsesNonExemptEncryption: false
         LSApplicationCategoryType: public.app-category.games
+        CFBundleShortVersionString: "1.0.0"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.neonvoid.arcade
@@ -68,18 +69,25 @@ targets:
         type: folder
       - path: NeonVoid/Assets.xcassets
       - path: NeonVoid/PrivacyInfo.xcprivacy
+    postCompileScripts:
+      - script: |
+          if [ ! -d "$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/WebContent" ]; then
+            cp -R "$SRCROOT/NeonVoid/WebContent" "$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/WebContent"
+          fi
+          cp "$SRCROOT/NeonVoid/PrivacyInfo.xcprivacy" "$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/PrivacyInfo.xcprivacy"
+        name: Copy WebContent and Privacy Manifest
+        basedOnDependencyAnalysis: false
     info:
       path: NeonVoidVision/Info.plist
       properties:
         CFBundleDisplayName: Last Pilot
         ITSAppUsesNonExemptEncryption: false
         LSApplicationCategoryType: public.app-category.games
+        CFBundleShortVersionString: "1.0.0"
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: true
           UISceneConfigurations: {}
         UIApplicationPreferredDefaultSceneSessionRole: UIWindowSceneSessionRoleApplication
-        UIBackgroundModes:
-          - audio
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.neonvoid.vision
@@ -100,12 +108,21 @@ targets:
         type: folder
       - path: NeonVoid/Assets.xcassets
       - path: NeonVoid/PrivacyInfo.xcprivacy
+    postCompileScripts:
+      - script: |
+          if [ ! -d "$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/WebContent" ]; then
+            cp -R "$SRCROOT/NeonVoid/WebContent" "$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/WebContent"
+          fi
+          cp "$SRCROOT/NeonVoid/PrivacyInfo.xcprivacy" "$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/PrivacyInfo.xcprivacy"
+        name: Copy WebContent and Privacy Manifest
+        basedOnDependencyAnalysis: false
     info:
       path: NeonVoidTV/Info.plist
       properties:
         CFBundleDisplayName: Last Pilot
         ITSAppUsesNonExemptEncryption: false
         LSApplicationCategoryType: public.app-category.games
+        CFBundleShortVersionString: "1.0.0"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.neonvoid.tv

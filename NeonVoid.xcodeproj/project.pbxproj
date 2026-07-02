@@ -102,6 +102,7 @@
 			buildConfigurationList = 91867366AA3B4C6120BF4731 /* Build configuration list for PBXNativeTarget "NeonVoidVision" */;
 			buildPhases = (
 				20561E4847BEA58562E379EA /* Sources */,
+				A8E7FFAB7A55960C8F010C99 /* Copy WebContent and Privacy Manifest */,
 			);
 			buildRules = (
 			);
@@ -119,6 +120,7 @@
 			buildConfigurationList = BAF688AD24F48FC9DBD2A568 /* Build configuration list for PBXNativeTarget "NeonVoidTV" */;
 			buildPhases = (
 				CF1929A0A921DCB35CFC65F8 /* Sources */,
+				BCF3B3C25C6058886F960649 /* Copy WebContent and Privacy Manifest */,
 			);
 			buildRules = (
 			);
@@ -222,6 +224,44 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ ! -d \"$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/WebContent\" ]; then\n  cp -R \"$SRCROOT/NeonVoid/WebContent\" \"$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/WebContent\"\n  echo \"Copied WebContent to app bundle\"\nfi\n";
+		};
+		A8E7FFAB7A55960C8F010C99 /* Copy WebContent and Privacy Manifest */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy WebContent and Privacy Manifest";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ ! -d \"$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/WebContent\" ]; then\n  cp -R \"$SRCROOT/NeonVoid/WebContent\" \"$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/WebContent\"\nfi\ncp \"$SRCROOT/NeonVoid/PrivacyInfo.xcprivacy\" \"$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/PrivacyInfo.xcprivacy\"\n";
+		};
+		BCF3B3C25C6058886F960649 /* Copy WebContent and Privacy Manifest */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy WebContent and Privacy Manifest";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ ! -d \"$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/WebContent\" ]; then\n  cp -R \"$SRCROOT/NeonVoid/WebContent\" \"$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/WebContent\"\nfi\ncp \"$SRCROOT/NeonVoid/PrivacyInfo.xcprivacy\" \"$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/PrivacyInfo.xcprivacy\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
