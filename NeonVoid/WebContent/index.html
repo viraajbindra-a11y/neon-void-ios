@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Last Pilot</title>
     <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <meta name="theme-color" content="#ff0055">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -3391,7 +3393,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
 
         function triggerNuke() { 
             playSound('nuke'); shakeScreen(50); triggerChroma(6); ctx.fillStyle = 'rgba(0, 136, 255, 0.8)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            for (let i = entities.enemies.length - 1; i >= 0; i--) { let e = entities.enemies[i]; if (!e) continue; if (typeof recordBestiaryKill === 'function') recordBestiaryKill(e.type); spawnParticles(e.x, e.y, e.color, 8, 2); state.score += (e.xp * 10) * state.combo * (state.dailyScoreMulti || 1); addXp(e.xp); state.runCoins += Math.floor((e.xp * 2) * (state.stats.coinMulti || 1)); entities.enemies.splice(i, 1); state.kills++; }
+            for (let i = entities.enemies.length - 1; i >= 0; i--) { let e = entities.enemies[i]; if (!e) continue; if (typeof recordBestiaryKill === 'function') recordBestiaryKill(e.type); spawnParticles(e.x, e.y, e.color, 8, 2); state.score += (e.xp * 10) * state.combo * (state.dailyScoreMulti || 1); addXp(e.xp); let nukeCoinMult = (state.stats.coinMulti || 1); if (e.type && typeof getMasteryBonus === 'function') nukeCoinMult *= (1 + getMasteryBonus(e.type)); state.runCoins += Math.floor((e.xp * 2) * nukeCoinMult); if (typeof addMasteryKill === 'function') addMasteryKill(e.type); entities.enemies.splice(i, 1); state.kills++; }
             ui.kills.innerText = `KILLS: ${state.kills}`; 
             if (activeBoss && activeBoss.alpha > 0.5) { if (activeBoss.type !== 'TITAN' || !activeBoss.shielded) activeBoss.hp -= 1500 * state.stats.dmgMulti; spawnParticles(activeBoss.x, activeBoss.y, activeBoss.color, 12, 4); spawnText(activeBoss.x, activeBoss.y, "NUKE HIT", '#0088ff', 24); if(activeBoss.hp <= 0 && !activeBoss.isDead) { activeBoss.isDead = true; handleBossDeath(); } } 
         }
@@ -3432,7 +3434,7 @@ state.paused = true; ui.lvlScreen.classList.remove('hidden'); ui.perkContainer.i
                 // Neon void particles spiral toward center
                 for (let p = 0; p < 3; p++) spawnParticles(e.x, e.y, '#cc44ff', 3, 2);
                 spawnParticles(e.x, e.y, e.color, 4, 1.5);
-                if (typeof recordBestiaryKill === 'function') recordBestiaryKill(e.type); state.score += (e.xp * 15) * state.combo * (state.dailyScoreMulti || 1); addXp(e.xp * 2); let coinMult = (state.hardcore ? 5 : 1) * (state.stats.coinMulti || 1); state.runCoins += Math.floor(Math.max(10, e.xp * 2) * coinMult); entities.enemies.splice(i, 1); state.kills++; }
+                if (typeof recordBestiaryKill === 'function') recordBestiaryKill(e.type); state.score += (e.xp * 15) * state.combo * (state.dailyScoreMulti || 1); addXp(e.xp * 2); let coinMult = (state.hardcore ? 5 : 1) * (state.stats.coinMulti || 1); if (e.type && typeof getMasteryBonus === 'function') coinMult *= (1 + getMasteryBonus(e.type)); state.runCoins += Math.floor(Math.max(10, e.xp * 2) * coinMult); if (typeof addMasteryKill === 'function') addMasteryKill(e.type); entities.enemies.splice(i, 1); state.kills++; }
             ui.kills.innerText = `KILLS: ${state.kills}`; if (activeBoss && activeBoss.alpha > 0.5) activeBoss.hp -= 3000 * state.stats.dmgMulti; spawnText(canvas.width/2, canvas.height/2, "EVENT HORIZON", '#cc44ff', 36);
             // Extra center explosion particles
             spawnParticles(cx, cy, '#cc44ff', 20, 3); spawnParticles(cx, cy, '#8800ff', 15, 2); spawnParticles(cx, cy, '#ffffff', 10, 1);

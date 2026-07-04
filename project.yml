@@ -67,7 +67,7 @@ targets:
     resources:
       - path: NeonVoid/WebContent
         type: folder
-      - path: NeonVoid/Assets.xcassets
+      - path: NeonVoidVision/Assets.xcassets
       - path: NeonVoid/PrivacyInfo.xcprivacy
     postCompileScripts:
       - script: |
@@ -106,7 +106,7 @@ targets:
     resources:
       - path: NeonVoid/WebContent
         type: folder
-      - path: NeonVoid/Assets.xcassets
+      - path: NeonVoidTV/Assets.xcassets
       - path: NeonVoid/PrivacyInfo.xcprivacy
     postCompileScripts:
       - script: |
@@ -131,3 +131,4 @@ targets:
         CURRENT_PROJECT_VERSION: 1
         CODE_SIGN_STYLE: Automatic
         SWIFT_VERSION: "6.0"
+        ASSETCATALOG_COMPILER_APPICON_NAME: "App Icon & Top Shelf Image"
